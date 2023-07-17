@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="1.idna与utf-8编码漏洞参考https:&#x2F;&#x2F;www.cnblogs.com&#x2F;cimuhuashuimu&#x2F;p&#x2F;11490431.htmlhttps:&#x2F;&#x2F;github.com&#x2F;python-hyper&#x2F;hyperlink&#x2F;issues&#x2F;19">
+<meta property="og:type" content="article">
+<meta property="og:title" content="遇到的编码漏洞问题">
+<meta property="og:url" content="http://example.com/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="1.idna与utf-8编码漏洞参考https:&#x2F;&#x2F;www.cnblogs.com&#x2F;cimuhuashuimu&#x2F;p&#x2F;11490431.htmlhttps:&#x2F;&#x2F;github.com&#x2F;python-hyper&#x2F;hyperlink&#x2F;issues&#x2F;19">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/1.png">
+<meta property="og:image" content="http://example.com/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/2.png">
+<meta property="article:published_time" content="2020-01-06T05:25:13.000Z">
+<meta property="article:modified_time" content="2020-11-24T04:55:28.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="服务器">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>遇到的编码漏洞问题</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2020/01/06/Python%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/&text=遇到的编码漏洞问题"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/&title=遇到的编码漏洞问题"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/&is_video=false&description=遇到的编码漏洞问题"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=遇到的编码漏洞问题&body=Check out this article: http://example.com/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/&title=遇到的编码漏洞问题"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/&title=遇到的编码漏洞问题"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/&title=遇到的编码漏洞问题"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/&title=遇到的编码漏洞问题"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/&name=遇到的编码漏洞问题&description=&lt;h4 id=&#34;1-idna与utf-8编码漏洞&#34;&gt;&lt;a href=&#34;#1-idna与utf-8编码漏洞&#34; class=&#34;headerlink&#34; title=&#34;1.idna与utf-8编码漏洞&#34;&gt;&lt;/a&gt;1.idna与utf-8编码漏洞&lt;/h4&gt;&lt;p&gt;参考&lt;a href=&#34;https://www.cnblogs.com/cimuhuashuimu/p/11490431.html&#34;&gt;https://www.cnblogs.com/cimuhuashuimu/p/11490431.html&lt;/a&gt;&lt;br&gt;&lt;a href=&#34;https://github.com/python-hyper/hyperlink/issues/19&#34;&gt;https://github.com/python-hyper/hyperlink/issues/19&lt;/a&gt;&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/&t=遇到的编码漏洞问题"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-idna%E4%B8%8Eutf-8%E7%BC%96%E7%A0%81%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.</span> <span class="toc-text">1.idna与utf-8编码漏洞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Unicode%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98"><span class="toc-number">2.</span> <span class="toc-text">Unicode安全问题</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        遇到的编码漏洞问题
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-01-06T05:25:13.000Z" class="dt-published" itemprop="datePublished">2020-01-06</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Web/">Web</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h4 id="1-idna与utf-8编码漏洞"><a href="#1-idna与utf-8编码漏洞" class="headerlink" title="1.idna与utf-8编码漏洞"></a>1.idna与utf-8编码漏洞</h4><p>参考<a target="_blank" rel="noopener" href="https://www.cnblogs.com/cimuhuashuimu/p/11490431.html">https://www.cnblogs.com/cimuhuashuimu/p/11490431.html</a><br><a target="_blank" rel="noopener" href="https://github.com/python-hyper/hyperlink/issues/19">https://github.com/python-hyper/hyperlink/issues/19</a></p>
+<span id="more"></span>
+
+
+<p><img src="/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/1.png"></p>
+<p>suctf-python-nginx<br>源码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, Blueprint, request, Response, escape ,render_template</span><br><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> urlsplit, urlunsplit, unquote</span><br><span class="line"><span class="keyword">from</span> urllib <span class="keyword">import</span> parse</span><br><span class="line"><span class="keyword">import</span> urllib.request</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Index</span></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span>, methods=[<span class="string">&#x27;GET&#x27;</span>]</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">app_index</span>():</span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">&#x27;index.html&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/getUrl&#x27;</span>, methods=[<span class="string">&#x27;GET&#x27;</span>, <span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">getUrl</span>():</span><br><span class="line">    url = request.args.get(<span class="string">&quot;url&quot;</span>)</span><br><span class="line">    host = parse.urlparse(url).hostname</span><br><span class="line">    <span class="keyword">if</span> host == <span class="string">&#x27;suctf.cc&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;我扌 your problem? 111&quot;</span></span><br><span class="line">    parts = <span class="built_in">list</span>(urlsplit(url))</span><br><span class="line">    host = parts[<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">if</span> host == <span class="string">&#x27;suctf.cc&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;我扌 your problem? 222 &quot;</span> + host</span><br><span class="line">    newhost = []</span><br><span class="line">    <span class="keyword">for</span> h <span class="keyword">in</span> host.split(<span class="string">&#x27;.&#x27;</span>):</span><br><span class="line">        newhost.append(h.encode(<span class="string">&#x27;idna&#x27;</span>).decode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">    parts[<span class="number">1</span>] = <span class="string">&#x27;.&#x27;</span>.join(newhost)</span><br><span class="line">    <span class="comment">#去掉 url 中的空格</span></span><br><span class="line">    finalUrl = urlunsplit(parts).split(<span class="string">&#x27; &#x27;</span>)[<span class="number">0</span>]</span><br><span class="line">    host = parse.urlparse(finalUrl).hostname</span><br><span class="line">    <span class="keyword">if</span> host == <span class="string">&#x27;suctf.cc&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> urllib.request.urlopen(finalUrl, timeout=<span class="number">2</span>).read()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;我扌 your problem? 333&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    app.run(host=<span class="string">&#x27;0.0.0.0&#x27;</span>, port=<span class="number">80</span>)</span><br></pre></td></tr></table></figure>
+<p>payload</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> urllib</span><br><span class="line"><span class="keyword">from</span> urllib <span class="keyword">import</span> parse</span><br><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> urlsplit, urlunsplit</span><br><span class="line"></span><br><span class="line"><span class="comment">#url = []</span></span><br><span class="line">url = <span class="string">&quot;file://suctf.cℂ/../../../etc/passwd&quot;</span></span><br><span class="line">host = parse.urlparse(url).hostname</span><br><span class="line"><span class="keyword">if</span> host == <span class="string">&#x27;suctf.cc&#x27;</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;first&#x27;</span>)</span><br><span class="line">    exit(<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;1 &#x27;</span>+host)</span><br><span class="line">parts = <span class="built_in">list</span>(urlsplit(url))</span><br><span class="line">host = parts[<span class="number">1</span>]</span><br><span class="line"><span class="keyword">if</span> host == <span class="string">&#x27;suctf.cc&#x27;</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;sec&#x27;</span>)</span><br><span class="line">    exit(<span class="number">2</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;2 &#x27;</span>+host)</span><br><span class="line">newhost = []</span><br><span class="line"><span class="keyword">for</span> h <span class="keyword">in</span> host.split(<span class="string">&#x27;.&#x27;</span>):</span><br><span class="line">    newhost.append(h.encode(<span class="string">&#x27;idna&#x27;</span>).decode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">parts[<span class="number">1</span>] = <span class="string">&#x27;.&#x27;</span>.join(newhost)</span><br><span class="line"><span class="comment">#去掉 url 中的空格</span></span><br><span class="line">finalUrl = urlunsplit(parts).split(<span class="string">&#x27; &#x27;</span>)[<span class="number">0</span>]</span><br><span class="line">host = parse.urlparse(finalUrl).hostname</span><br><span class="line"><span class="keyword">if</span> host == <span class="string">&#x27;suctf.cc&#x27;</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;3 &#x27;</span>+host)</span><br><span class="line">    <span class="built_in">print</span>(finalUrl)</span><br><span class="line">    <span class="comment">#print(urllib.request.urlopen(finalUrl).read())</span></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;???&#x27;</span>)</span><br><span class="line">    exit(<span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/2.png"><br>解法2<a target="_blank" rel="noopener" href="https://www.cnblogs.com/20175211lyz/p/11470200.html">https://www.cnblogs.com/20175211lyz/p/11470200.html</a></p>
+<h4 id="Unicode安全问题"><a href="#Unicode安全问题" class="headerlink" title="Unicode安全问题"></a>Unicode安全问题</h4><p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/5402">https://xz.aliyun.com/t/5402</a><br><a target="_blank" rel="noopener" href="https://www.blackhat.com/presentations/bh-usa-09/WEBER/BHUSA09-Weber-UnicodeSecurityPreview-PAPER.pdf">https://www.blackhat.com/presentations/bh-usa-09/WEBER/BHUSA09-Weber-UnicodeSecurityPreview-PAPER.pdf</a><br>在线搜索unicode<a target="_blank" rel="noopener" href="https://www.compart.com/en/unicode/">https://www.compart.com/en/unicode/</a><br>python2构造字符对应的等效码表脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">from</span> unicodedata <span class="keyword">import</span> normalize</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    debug = <span class="literal">False</span></span><br><span class="line">    tables = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, <span class="number">0x10000</span>):</span><br><span class="line">        src = unichr(i)</span><br><span class="line">        dst = normalize(<span class="string">&#x27;NFKC&#x27;</span>, src)[<span class="number">0</span>]</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">ord</span>(dst) &lt; <span class="number">128</span> <span class="keyword">and</span> dst != src:</span><br><span class="line">                <span class="keyword">if</span> debug:</span><br><span class="line">                    <span class="built_in">print</span>(<span class="string">&quot;%s (\\u%s) -- normalize --&gt; %s (\\x%s)&quot;</span> % (</span><br><span class="line">                        src, <span class="built_in">hex</span>(i)[<span class="number">2</span>:].rjust(<span class="number">4</span>, <span class="string">&#x27;0&#x27;</span>),</span><br><span class="line">                        dst, <span class="built_in">hex</span>(dst.charAt(<span class="number">0</span>))[<span class="number">2</span>:]</span><br><span class="line">                    ))</span><br><span class="line">                <span class="keyword">if</span> dst <span class="keyword">in</span> tables:</span><br><span class="line">                    tables[dst].append(src)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    tables[dst] = [src]</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="built_in">print</span>(<span class="built_in">repr</span>(e))</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;nfctable.txt&quot;</span>, <span class="string">&quot;wb&quot;</span>) <span class="keyword">as</span> fh:</span><br><span class="line">        json.dump(tables, fh)</span><br><span class="line">        <span class="built_in">print</span>(tables)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<p>得到</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot; &quot;: [&quot;\u00a0&quot;, &quot;\u00a8&quot;, &quot;\u00af&quot;, &quot;\u00b4&quot;, &quot;\u00b8&quot;, &quot;\u02d8&quot;, &quot;\u02d9&quot;, &quot;\u02da&quot;, &quot;\u02db&quot;, &quot;\u02dc&quot;, &quot;\u02dd&quot;, &quot;\u037a&quot;, &quot;\u0384&quot;, &quot;\u0385&quot;, &quot;\u1fbd&quot;, &quot;\u1fbf&quot;, &quot;\u1fc0&quot;, &quot;\u1fc1&quot;, &quot;\u1fcd&quot;, &quot;\u1fce&quot;, &quot;\u1fcf&quot;, &quot;\u1fdd&quot;, &quot;\u1fde&quot;, &quot;\u1fdf&quot;, &quot;\u1fed&quot;, &quot;\u1fee&quot;, &quot;\u1ffd&quot;, &quot;\u1ffe&quot;, &quot;\u2000&quot;, &quot;\u2001&quot;, &quot;\u2002&quot;, &quot;\u2003&quot;, &quot;\u2004&quot;, &quot;\u2005&quot;, &quot;\u2006&quot;, &quot;\u2007&quot;, &quot;\u2008&quot;, &quot;\u2009&quot;, &quot;\u200a&quot;, &quot;\u2017&quot;, &quot;\u202f&quot;, &quot;\u203e&quot;, &quot;\u205f&quot;, &quot;\u3000&quot;, &quot;\u309b&quot;, &quot;\u309c&quot;, &quot;\ufc5e&quot;, &quot;\ufc5f&quot;, &quot;\ufc60&quot;, &quot;\ufc61&quot;, &quot;\ufc62&quot;, &quot;\ufc63&quot;, &quot;\ufe49&quot;, &quot;\ufe4a&quot;, &quot;\ufe4b&quot;, &quot;\ufe4c&quot;, &quot;\ufe70&quot;, &quot;\ufe72&quot;, &quot;\ufe74&quot;, &quot;\ufe76&quot;, &quot;\ufe78&quot;, &quot;\ufe7a&quot;, &quot;\ufe7c&quot;, &quot;\ufe7e&quot;, &quot;\uffe3&quot;], &quot;$&quot;: [&quot;\ufe69&quot;, &quot;\uff04&quot;], &quot;(&quot;: [&quot;\u207d&quot;, &quot;\u208d&quot;, &quot;\u2474&quot;, &quot;\u2475&quot;, &quot;\u2476&quot;, &quot;\u2477&quot;, &quot;\u2478&quot;, &quot;\u2479&quot;, &quot;\u247a&quot;, &quot;\u247b&quot;, &quot;\u247c&quot;, &quot;\u247d&quot;, &quot;\u247e&quot;, &quot;\u247f&quot;, &quot;\u2480&quot;, &quot;\u2481&quot;, &quot;\u2482&quot;, &quot;\u2483&quot;, &quot;\u2484&quot;, &quot;\u2485&quot;, &quot;\u2486&quot;, &quot;\u2487&quot;, &quot;\u249c&quot;, &quot;\u249d&quot;, &quot;\u249e&quot;, &quot;\u249f&quot;, &quot;\u24a0&quot;, &quot;\u24a1&quot;, &quot;\u24a2&quot;, &quot;\u24a3&quot;, &quot;\u24a4&quot;, &quot;\u24a5&quot;, &quot;\u24a6&quot;, &quot;\u24a7&quot;, &quot;\u24a8&quot;, &quot;\u24a9&quot;, &quot;\u24aa&quot;, &quot;\u24ab&quot;, &quot;\u24ac&quot;, &quot;\u24ad&quot;, &quot;\u24ae&quot;, &quot;\u24af&quot;, &quot;\u24b0&quot;, &quot;\u24b1&quot;, &quot;\u24b2&quot;, &quot;\u24b3&quot;, &quot;\u24b4&quot;, &quot;\u24b5&quot;, &quot;\u3200&quot;, &quot;\u3201&quot;, &quot;\u3202&quot;, &quot;\u3203&quot;, &quot;\u3204&quot;, &quot;\u3205&quot;, &quot;\u3206&quot;, &quot;\u3207&quot;, &quot;\u3208&quot;, &quot;\u3209&quot;, &quot;\u320a&quot;, &quot;\u320b&quot;, &quot;\u320c&quot;, &quot;\u320d&quot;, &quot;\u320e&quot;, &quot;\u320f&quot;, &quot;\u3210&quot;, &quot;\u3211&quot;, &quot;\u3212&quot;, &quot;\u3213&quot;, &quot;\u3214&quot;, &quot;\u3215&quot;, &quot;\u3216&quot;, &quot;\u3217&quot;, &quot;\u3218&quot;, &quot;\u3219&quot;, &quot;\u321a&quot;, &quot;\u321b&quot;, &quot;\u321c&quot;, &quot;\u321d&quot;, &quot;\u321e&quot;, &quot;\u3220&quot;, &quot;\u3221&quot;, &quot;\u3222&quot;, &quot;\u3223&quot;, &quot;\u3224&quot;, &quot;\u3225&quot;, &quot;\u3226&quot;, &quot;\u3227&quot;, &quot;\u3228&quot;, &quot;\u3229&quot;, &quot;\u322a&quot;, &quot;\u322b&quot;, &quot;\u322c&quot;, &quot;\u322d&quot;, &quot;\u322e&quot;, &quot;\u322f&quot;, &quot;\u3230&quot;, &quot;\u3231&quot;, &quot;\u3232&quot;, &quot;\u3233&quot;, &quot;\u3234&quot;, &quot;\u3235&quot;, &quot;\u3236&quot;, &quot;\u3237&quot;, &quot;\u3238&quot;, &quot;\u3239&quot;, &quot;\u323a&quot;, &quot;\u323b&quot;, &quot;\u323c&quot;, &quot;\u323d&quot;, &quot;\u323e&quot;, &quot;\u323f&quot;, &quot;\u3240&quot;, &quot;\u3241&quot;, &quot;\u3242&quot;, &quot;\u3243&quot;, &quot;\ufe35&quot;, &quot;\ufe59&quot;, &quot;\uff08&quot;], &quot;,&quot;: [&quot;\ufe10&quot;, &quot;\ufe50&quot;, &quot;\uff0c&quot;], &quot;0&quot;: [&quot;\u2070&quot;, &quot;\u2080&quot;, &quot;\u2189&quot;, &quot;\u24ea&quot;, &quot;\u3358&quot;, &quot;\uff10&quot;], &quot;4&quot;: [&quot;\u2074&quot;, &quot;\u2084&quot;, &quot;\u2158&quot;, &quot;\u2463&quot;, &quot;\u248b&quot;, &quot;\u32b5&quot;, &quot;\u32b6&quot;, &quot;\u32b7&quot;, &quot;\u32b8&quot;, &quot;\u32b9&quot;, &quot;\u32ba&quot;, &quot;\u32bb&quot;, &quot;\u32bc&quot;, &quot;\u32bd&quot;, &quot;\u32be&quot;, &quot;\u32c3&quot;, &quot;\u335c&quot;, &quot;\u33e3&quot;, &quot;\uff14&quot;], &quot;8&quot;: [&quot;\u2078&quot;, &quot;\u2088&quot;, &quot;\u2467&quot;, &quot;\u248f&quot;, &quot;\u32c7&quot;, &quot;\u3360&quot;, &quot;\u33e7&quot;, &quot;\uff18&quot;], &quot;&lt;&quot;: [&quot;\ufe64&quot;, &quot;\uff1c&quot;], &quot;@&quot;: [&quot;\ufe6b&quot;, &quot;\uff20&quot;], &quot;D&quot;: [&quot;\u01c4&quot;, &quot;\u01c5&quot;, &quot;\u01f1&quot;, &quot;\u01f2&quot;, &quot;\u1d30&quot;, &quot;\u2145&quot;, &quot;\u216e&quot;, &quot;\u24b9&quot;, &quot;\uff24&quot;], &quot;H&quot;: [&quot;\u1d34&quot;, &quot;\u210b&quot;, &quot;\u210c&quot;, &quot;\u210d&quot;, &quot;\u24bd&quot;, &quot;\u32cc&quot;, &quot;\u3390&quot;, &quot;\u33cb&quot;, &quot;\uff28&quot;], &quot;L&quot;: [&quot;\u013f&quot;, &quot;\u01c7&quot;, &quot;\u01c8&quot;, &quot;\u1d38&quot;, &quot;\u2112&quot;, &quot;\u216c&quot;, &quot;\u24c1&quot;, &quot;\u32cf&quot;, &quot;\uff2c&quot;], &quot;P&quot;: [&quot;\u1d3e&quot;, &quot;\u2119&quot;, &quot;\u24c5&quot;, &quot;\u3250&quot;, &quot;\u33a9&quot;, &quot;\u33d7&quot;, &quot;\u33d9&quot;, &quot;\u33da&quot;, &quot;\uff30&quot;], &quot;T&quot;: [&quot;\u1d40&quot;, &quot;\u2121&quot;, &quot;\u2122&quot;, &quot;\u24c9&quot;, &quot;\u3394&quot;, &quot;\uff34&quot;], &quot;X&quot;: [&quot;\u2169&quot;, &quot;\u216a&quot;, &quot;\u216b&quot;, &quot;\u24cd&quot;, &quot;\uff38&quot;], &quot;\\&quot;: [&quot;\ufe68&quot;, &quot;\uff3c&quot;], &quot;`&quot;: [&quot;\u1fef&quot;, &quot;\uff40&quot;], &quot;d&quot;: [&quot;\u01c6&quot;, &quot;\u01f3&quot;, &quot;\u1d48&quot;, &quot;\u2146&quot;, &quot;\u217e&quot;, &quot;\u24d3&quot;, &quot;\u3372&quot;, &quot;\u3377&quot;, &quot;\u3378&quot;, &quot;\u3379&quot;, &quot;\u3397&quot;, &quot;\u33c8&quot;, &quot;\uff44&quot;], &quot;h&quot;: [&quot;\u02b0&quot;, &quot;\u210e&quot;, &quot;\u24d7&quot;, &quot;\u3371&quot;, &quot;\u33ca&quot;, &quot;\uff48&quot;], &quot;l&quot;: [&quot;\u0140&quot;, &quot;\u01c9&quot;, &quot;\u02e1&quot;, &quot;\u2113&quot;, &quot;\u217c&quot;, &quot;\u24db&quot;, &quot;\u33d0&quot;, &quot;\u33d1&quot;, &quot;\u33d2&quot;, &quot;\u33d3&quot;, &quot;\uff4c&quot;], &quot;p&quot;: [&quot;\u1d56&quot;, &quot;\u24df&quot;, &quot;\u3376&quot;, &quot;\u3380&quot;, &quot;\u338a&quot;, &quot;\u33b0&quot;, &quot;\u33b4&quot;, &quot;\u33ba&quot;, &quot;\u33d8&quot;, &quot;\uff50&quot;], &quot;t&quot;: [&quot;\u1d57&quot;, &quot;\u24e3&quot;, &quot;\uff54&quot;], &quot;x&quot;: [&quot;\u02e3&quot;, &quot;\u2093&quot;, &quot;\u2179&quot;, &quot;\u217a&quot;, &quot;\u217b&quot;, &quot;\u24e7&quot;, &quot;\uff58&quot;], &quot;|&quot;: [&quot;\uff5c&quot;], &quot;#&quot;: [&quot;\ufe5f&quot;, &quot;\uff03&quot;], &quot;&#x27;&quot;: [&quot;\uff07&quot;], &quot;+&quot;: [&quot;\u207a&quot;, &quot;\u208a&quot;, &quot;\ufb29&quot;, &quot;\ufe62&quot;, &quot;\uff0b&quot;], &quot;/&quot;: [&quot;\uff0f&quot;], &quot;3&quot;: [&quot;\u00b3&quot;, &quot;\u00be&quot;, &quot;\u2083&quot;, &quot;\u2157&quot;, &quot;\u215c&quot;, &quot;\u2462&quot;, &quot;\u248a&quot;, &quot;\u325a&quot;, &quot;\u325b&quot;, &quot;\u325c&quot;, &quot;\u325d&quot;, &quot;\u325e&quot;, &quot;\u325f&quot;, &quot;\u32b1&quot;, &quot;\u32b2&quot;, &quot;\u32b3&quot;, &quot;\u32b4&quot;, &quot;\u32c2&quot;, &quot;\u335b&quot;, &quot;\u33e2&quot;, &quot;\u33fd&quot;, &quot;\u33fe&quot;, &quot;\uff13&quot;], &quot;7&quot;: [&quot;\u2077&quot;, &quot;\u2087&quot;, &quot;\u215e&quot;, &quot;\u2466&quot;, &quot;\u248e&quot;, &quot;\u32c6&quot;, &quot;\u335f&quot;, &quot;\u33e6&quot;, &quot;\uff17&quot;], &quot;;&quot;: [&quot;\u037e&quot;, &quot;\ufe14&quot;, &quot;\ufe54&quot;, &quot;\uff1b&quot;], &quot;?&quot;: [&quot;\u2047&quot;, &quot;\u2048&quot;, &quot;\ufe16&quot;, &quot;\ufe56&quot;, &quot;\uff1f&quot;], &quot;C&quot;: [&quot;\u2102&quot;, &quot;\u212d&quot;, &quot;\u216d&quot;, &quot;\u24b8&quot;, &quot;\u33c6&quot;, &quot;\u33c7&quot;, &quot;\uff23&quot;], &quot;G&quot;: [&quot;\u1d33&quot;, &quot;\u24bc&quot;, &quot;\u3387&quot;, &quot;\u3393&quot;, &quot;\u33ac&quot;, &quot;\u33c9&quot;, &quot;\uff27&quot;], &quot;K&quot;: [&quot;\u1d37&quot;, &quot;\u212a&quot;, &quot;\u24c0&quot;, &quot;\u3385&quot;, &quot;\u33cd&quot;, &quot;\u33ce&quot;, &quot;\uff2b&quot;], &quot;O&quot;: [&quot;\u1d3c&quot;, &quot;\u24c4&quot;, &quot;\uff2f&quot;], &quot;S&quot;: [&quot;\u2120&quot;, &quot;\u24c8&quot;, &quot;\u33dc&quot;, &quot;\uff33&quot;], &quot;W&quot;: [&quot;\u1d42&quot;, &quot;\u24cc&quot;, &quot;\u33dd&quot;, &quot;\uff37&quot;], &quot;[&quot;: [&quot;\ufe47&quot;, &quot;\uff3b&quot;], &quot;_&quot;: [&quot;\ufe33&quot;, &quot;\ufe34&quot;, &quot;\ufe4d&quot;, &quot;\ufe4e&quot;, &quot;\ufe4f&quot;, &quot;\uff3f&quot;], &quot;c&quot;: [&quot;\u1d9c&quot;, &quot;\u2105&quot;, &quot;\u2106&quot;, &quot;\u217d&quot;, &quot;\u24d2&quot;, &quot;\u3388&quot;, &quot;\u339d&quot;, &quot;\u33a0&quot;, &quot;\u33a4&quot;, &quot;\u33c4&quot;, &quot;\u33c5&quot;, &quot;\uff43&quot;], &quot;g&quot;: [&quot;\u1d4d&quot;, &quot;\u210a&quot;, &quot;\u24d6&quot;, &quot;\u33ff&quot;, &quot;\uff47&quot;], &quot;k&quot;: [&quot;\u1d4f&quot;, &quot;\u24da&quot;, &quot;\u3384&quot;, &quot;\u3389&quot;, &quot;\u338f&quot;, &quot;\u3391&quot;, &quot;\u3398&quot;, &quot;\u339e&quot;, &quot;\u33a2&quot;, &quot;\u33a6&quot;, &quot;\u33aa&quot;, &quot;\u33b8&quot;, &quot;\u33be&quot;, &quot;\u33c0&quot;, &quot;\u33cf&quot;, &quot;\uff4b&quot;], &quot;o&quot;: [&quot;\u00ba&quot;, &quot;\u1d52&quot;, &quot;\u2092&quot;, &quot;\u2134&quot;, &quot;\u24de&quot;, &quot;\u3375&quot;, &quot;\uff4f&quot;], &quot;s&quot;: [&quot;\u017f&quot;, &quot;\u02e2&quot;, &quot;\u24e2&quot;, &quot;\u33db&quot;, &quot;\ufb05&quot;, &quot;\ufb06&quot;, &quot;\uff53&quot;], &quot;w&quot;: [&quot;\u02b7&quot;, &quot;\u24e6&quot;, &quot;\uff57&quot;], &quot;&#123;&quot;: [&quot;\ufe37&quot;, &quot;\ufe5b&quot;, &quot;\uff5b&quot;], &quot;\&quot;&quot;: [&quot;\uff02&quot;], &quot;&amp;&quot;: [&quot;\ufe60&quot;, &quot;\uff06&quot;], &quot;*&quot;: [&quot;\ufe61&quot;, &quot;\uff0a&quot;], &quot;.&quot;: [&quot;\u2024&quot;, &quot;\u2025&quot;, &quot;\u2026&quot;, &quot;\ufe19&quot;, &quot;\ufe30&quot;, &quot;\ufe52&quot;, &quot;\uff0e&quot;], &quot;2&quot;: [&quot;\u00b2&quot;, &quot;\u2082&quot;, &quot;\u2154&quot;, &quot;\u2156&quot;, &quot;\u2461&quot;, &quot;\u2473&quot;, &quot;\u2489&quot;, &quot;\u249b&quot;, &quot;\u3251&quot;, &quot;\u3252&quot;, &quot;\u3253&quot;, &quot;\u3254&quot;, &quot;\u3255&quot;, &quot;\u3256&quot;, &quot;\u3257&quot;, &quot;\u3258&quot;, &quot;\u3259&quot;, &quot;\u32c1&quot;, &quot;\u335a&quot;, &quot;\u336c&quot;, &quot;\u336d&quot;, &quot;\u336e&quot;, &quot;\u336f&quot;, &quot;\u3370&quot;, &quot;\u33e1&quot;, &quot;\u33f3&quot;, &quot;\u33f4&quot;, &quot;\u33f5&quot;, &quot;\u33f6&quot;, &quot;\u33f7&quot;, &quot;\u33f8&quot;, &quot;\u33f9&quot;, &quot;\u33fa&quot;, &quot;\u33fb&quot;, &quot;\u33fc&quot;, &quot;\uff12&quot;], &quot;6&quot;: [&quot;\u2076&quot;, &quot;\u2086&quot;, &quot;\u2465&quot;, &quot;\u248d&quot;, &quot;\u32c5&quot;, &quot;\u335e&quot;, &quot;\u33e5&quot;, &quot;\uff16&quot;], &quot;:&quot;: [&quot;\u2a74&quot;, &quot;\ufe13&quot;, &quot;\ufe55&quot;, &quot;\uff1a&quot;], &quot;&gt;&quot;: [&quot;\ufe65&quot;, &quot;\uff1e&quot;], &quot;B&quot;: [&quot;\u1d2e&quot;, &quot;\u212c&quot;, &quot;\u24b7&quot;, &quot;\u33c3&quot;, &quot;\uff22&quot;], &quot;F&quot;: [&quot;\u2131&quot;, &quot;\u213b&quot;, &quot;\u24bb&quot;, &quot;\uff26&quot;], &quot;J&quot;: [&quot;\u1d36&quot;, &quot;\u24bf&quot;, &quot;\uff2a&quot;], &quot;N&quot;: [&quot;\u01ca&quot;, &quot;\u01cb&quot;, &quot;\u1d3a&quot;, &quot;\u2115&quot;, &quot;\u2116&quot;, &quot;\u24c3&quot;, &quot;\uff2e&quot;], &quot;R&quot;: [&quot;\u1d3f&quot;, &quot;\u20a8&quot;, &quot;\u211b&quot;, &quot;\u211c&quot;, &quot;\u211d&quot;, &quot;\u24c7&quot;, &quot;\uff32&quot;], &quot;V&quot;: [&quot;\u2164&quot;, &quot;\u2165&quot;, &quot;\u2166&quot;, &quot;\u2167&quot;, &quot;\u24cb&quot;, &quot;\u2c7d&quot;, &quot;\u33de&quot;, &quot;\uff36&quot;], &quot;Z&quot;: [&quot;\u2124&quot;, &quot;\u2128&quot;, &quot;\u24cf&quot;, &quot;\uff3a&quot;], &quot;^&quot;: [&quot;\uff3e&quot;], &quot;b&quot;: [&quot;\u1d47&quot;, &quot;\u24d1&quot;, &quot;\u3374&quot;, &quot;\uff42&quot;], &quot;f&quot;: [&quot;\u1da0&quot;, &quot;\u24d5&quot;, &quot;\u3399&quot;, &quot;\ufb00&quot;, &quot;\ufb01&quot;, &quot;\ufb02&quot;, &quot;\ufb03&quot;, &quot;\ufb04&quot;, &quot;\uff46&quot;], &quot;j&quot;: [&quot;\u02b2&quot;, &quot;\u2149&quot;, &quot;\u24d9&quot;, &quot;\u2c7c&quot;, &quot;\uff4a&quot;], &quot;n&quot;: [&quot;\u01cc&quot;, &quot;\u207f&quot;, &quot;\u24dd&quot;, &quot;\u3381&quot;, &quot;\u338b&quot;, &quot;\u339a&quot;, &quot;\u33b1&quot;, &quot;\u33b5&quot;, &quot;\u33bb&quot;, &quot;\uff4e&quot;], &quot;r&quot;: [&quot;\u02b3&quot;, &quot;\u1d63&quot;, &quot;\u24e1&quot;, &quot;\u33ad&quot;, &quot;\u33ae&quot;, &quot;\u33af&quot;, &quot;\uff52&quot;], &quot;v&quot;: [&quot;\u1d5b&quot;, &quot;\u1d65&quot;, &quot;\u2174&quot;, &quot;\u2175&quot;, &quot;\u2176&quot;, &quot;\u2177&quot;, &quot;\u24e5&quot;, &quot;\uff56&quot;], &quot;z&quot;: [&quot;\u1dbb&quot;, &quot;\u24e9&quot;, &quot;\uff5a&quot;], &quot;~&quot;: [&quot;\uff5e&quot;], &quot;!&quot;: [&quot;\u203c&quot;, &quot;\u2049&quot;, &quot;\ufe15&quot;, &quot;\ufe57&quot;, &quot;\uff01&quot;], &quot;%&quot;: [&quot;\ufe6a&quot;, &quot;\uff05&quot;], &quot;)&quot;: [&quot;\u207e&quot;, &quot;\u208e&quot;, &quot;\ufe36&quot;, &quot;\ufe5a&quot;, &quot;\uff09&quot;], &quot;-&quot;: [&quot;\ufe63&quot;, &quot;\uff0d&quot;], &quot;1&quot;: [&quot;\u00b9&quot;, &quot;\u00bc&quot;, &quot;\u00bd&quot;, &quot;\u2081&quot;, &quot;\u2150&quot;, &quot;\u2151&quot;, &quot;\u2152&quot;, &quot;\u2153&quot;, &quot;\u2155&quot;, &quot;\u2159&quot;, &quot;\u215b&quot;, &quot;\u215f&quot;, &quot;\u2460&quot;, &quot;\u2469&quot;, &quot;\u246a&quot;, &quot;\u246b&quot;, &quot;\u246c&quot;, &quot;\u246d&quot;, &quot;\u246e&quot;, &quot;\u246f&quot;, &quot;\u2470&quot;, &quot;\u2471&quot;, &quot;\u2472&quot;, &quot;\u2488&quot;, &quot;\u2491&quot;, &quot;\u2492&quot;, &quot;\u2493&quot;, &quot;\u2494&quot;, &quot;\u2495&quot;, &quot;\u2496&quot;, &quot;\u2497&quot;, &quot;\u2498&quot;, &quot;\u2499&quot;, &quot;\u249a&quot;, &quot;\u32c0&quot;, &quot;\u32c9&quot;, &quot;\u32ca&quot;, &quot;\u32cb&quot;, &quot;\u3359&quot;, &quot;\u3362&quot;, &quot;\u3363&quot;, &quot;\u3364&quot;, &quot;\u3365&quot;, &quot;\u3366&quot;, &quot;\u3367&quot;, &quot;\u3368&quot;, &quot;\u3369&quot;, &quot;\u336a&quot;, &quot;\u336b&quot;, &quot;\u33e0&quot;, &quot;\u33e9&quot;, &quot;\u33ea&quot;, &quot;\u33eb&quot;, &quot;\u33ec&quot;, &quot;\u33ed&quot;, &quot;\u33ee&quot;, &quot;\u33ef&quot;, &quot;\u33f0&quot;, &quot;\u33f1&quot;, &quot;\u33f2&quot;, &quot;\uff11&quot;], &quot;5&quot;: [&quot;\u2075&quot;, &quot;\u2085&quot;, &quot;\u215a&quot;, &quot;\u215d&quot;, &quot;\u2464&quot;, &quot;\u248c&quot;, &quot;\u32bf&quot;, &quot;\u32c4&quot;, &quot;\u335d&quot;, &quot;\u33e4&quot;, &quot;\uff15&quot;], &quot;9&quot;: [&quot;\u2079&quot;, &quot;\u2089&quot;, &quot;\u2468&quot;, &quot;\u2490&quot;, &quot;\u32c8&quot;, &quot;\u3361&quot;, &quot;\u33e8&quot;, &quot;\uff19&quot;], &quot;=&quot;: [&quot;\u207c&quot;, &quot;\u208c&quot;, &quot;\u2a75&quot;, &quot;\u2a76&quot;, &quot;\ufe66&quot;, &quot;\uff1d&quot;], &quot;A&quot;: [&quot;\u1d2c&quot;, &quot;\u24b6&quot;, &quot;\u3373&quot;, &quot;\u33df&quot;, &quot;\uff21&quot;], &quot;E&quot;: [&quot;\u1d31&quot;, &quot;\u2130&quot;, &quot;\u24ba&quot;, &quot;\uff25&quot;], &quot;I&quot;: [&quot;\u0132&quot;, &quot;\u1d35&quot;, &quot;\u2110&quot;, &quot;\u2111&quot;, &quot;\u2160&quot;, &quot;\u2161&quot;, &quot;\u2162&quot;, &quot;\u2163&quot;, &quot;\u2168&quot;, &quot;\u24be&quot;, &quot;\u337a&quot;, &quot;\uff29&quot;], &quot;M&quot;: [&quot;\u1d39&quot;, &quot;\u2133&quot;, &quot;\u216f&quot;, &quot;\u24c2&quot;, &quot;\u3386&quot;, &quot;\u3392&quot;, &quot;\u33ab&quot;, &quot;\u33b9&quot;, &quot;\u33bf&quot;, &quot;\u33c1&quot;, &quot;\uff2d&quot;], &quot;Q&quot;: [&quot;\u211a&quot;, &quot;\u24c6&quot;, &quot;\uff31&quot;], &quot;U&quot;: [&quot;\u1d41&quot;, &quot;\u24ca&quot;, &quot;\uff35&quot;], &quot;Y&quot;: [&quot;\u24ce&quot;, &quot;\uff39&quot;], &quot;]&quot;: [&quot;\ufe48&quot;, &quot;\uff3d&quot;], &quot;a&quot;: [&quot;\u00aa&quot;, &quot;\u1d43&quot;, &quot;\u1e9a&quot;, &quot;\u2090&quot;, &quot;\u2100&quot;, &quot;\u2101&quot;, &quot;\u24d0&quot;, &quot;\u33c2&quot;, &quot;\uff41&quot;], &quot;e&quot;: [&quot;\u1d49&quot;, &quot;\u2091&quot;, &quot;\u212f&quot;, &quot;\u2147&quot;, &quot;\u24d4&quot;, &quot;\u32cd&quot;, &quot;\u32ce&quot;, &quot;\uff45&quot;], &quot;i&quot;: [&quot;\u0133&quot;, &quot;\u1d62&quot;, &quot;\u2071&quot;, &quot;\u2139&quot;, &quot;\u2148&quot;, &quot;\u2170&quot;, &quot;\u2171&quot;, &quot;\u2172&quot;, &quot;\u2173&quot;, &quot;\u2178&quot;, &quot;\u24d8&quot;, &quot;\u33cc&quot;, &quot;\uff49&quot;], &quot;m&quot;: [&quot;\u1d50&quot;, &quot;\u217f&quot;, &quot;\u24dc&quot;, &quot;\u3383&quot;, &quot;\u338e&quot;, &quot;\u3396&quot;, &quot;\u339c&quot;, &quot;\u339f&quot;, &quot;\u33a1&quot;, &quot;\u33a3&quot;, &quot;\u33a5&quot;, &quot;\u33a7&quot;, &quot;\u33a8&quot;, &quot;\u33b3&quot;, &quot;\u33b7&quot;, &quot;\u33bd&quot;, &quot;\u33d4&quot;, &quot;\u33d5&quot;, &quot;\u33d6&quot;, &quot;\ufad1&quot;, &quot;\uff4d&quot;], &quot;q&quot;: [&quot;\u24e0&quot;, &quot;\uff51&quot;], &quot;u&quot;: [&quot;\u1d58&quot;, &quot;\u1d64&quot;, &quot;\u24e4&quot;, &quot;\uff55&quot;], &quot;y&quot;: [&quot;\u02b8&quot;, &quot;\u24e8&quot;, &quot;\uff59&quot;], &quot;&#125;&quot;: [&quot;\ufe38&quot;, &quot;\ufe5c&quot;, &quot;\uff5d&quot;]&#125;</span><br></pre></td></tr></table></figure>
+<p>题目[ASIS 2019]Unicorn shop-&gt;wp<a target="_blank" rel="noopener" href="https://github.com/hyperreality/ctf-writeups/tree/master/2019-asis">https://github.com/hyperreality/ctf-writeups/tree/master/2019-asis</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-idna%E4%B8%8Eutf-8%E7%BC%96%E7%A0%81%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.</span> <span class="toc-text">1.idna与utf-8编码漏洞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Unicode%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98"><span class="toc-number">2.</span> <span class="toc-text">Unicode安全问题</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/&text=遇到的编码漏洞问题"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/&title=遇到的编码漏洞问题"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/&is_video=false&description=遇到的编码漏洞问题"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=遇到的编码漏洞问题&body=Check out this article: http://example.com/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/&title=遇到的编码漏洞问题"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/&title=遇到的编码漏洞问题"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/&title=遇到的编码漏洞问题"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/&title=遇到的编码漏洞问题"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/&name=遇到的编码漏洞问题&description=&lt;h4 id=&#34;1-idna与utf-8编码漏洞&#34;&gt;&lt;a href=&#34;#1-idna与utf-8编码漏洞&#34; class=&#34;headerlink&#34; title=&#34;1.idna与utf-8编码漏洞&#34;&gt;&lt;/a&gt;1.idna与utf-8编码漏洞&lt;/h4&gt;&lt;p&gt;参考&lt;a href=&#34;https://www.cnblogs.com/cimuhuashuimu/p/11490431.html&#34;&gt;https://www.cnblogs.com/cimuhuashuimu/p/11490431.html&lt;/a&gt;&lt;br&gt;&lt;a href=&#34;https://github.com/python-hyper/hyperlink/issues/19&#34;&gt;https://github.com/python-hyper/hyperlink/issues/19&lt;/a&gt;&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/&t=遇到的编码漏洞问题"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

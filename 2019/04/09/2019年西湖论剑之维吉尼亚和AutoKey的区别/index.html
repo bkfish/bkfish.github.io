@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="奇怪的TTL题目描述：我们截获了一些IP数据报，发现报文头中的TTL值特别可疑，怀疑是通信方嵌入了数据到TTL，我们将这些TTL值提取了出来，你能看出什么端倪吗？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2019年西湖论剑之维吉尼亚和AutoKey的区别">
+<meta property="og:url" content="http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="奇怪的TTL题目描述：我们截获了一些IP数据报，发现报文头中的TTL值特别可疑，怀疑是通信方嵌入了数据到TTL，我们将这些TTL值提取了出来，你能看出什么端倪吗？">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/2.jpg">
+<meta property="og:image" content="http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/3.png">
+<meta property="og:image" content="http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/4.png">
+<meta property="og:image" content="http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/1.webp">
+<meta property="og:image" content="http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/5.png">
+<meta property="article:published_time" content="2019-04-09T11:39:43.000Z">
+<meta property="article:modified_time" content="2020-11-24T04:48:20.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="密码学">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/2.jpg">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>2019年西湖论剑之维吉尼亚和AutoKey的区别</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2019/04/11/PHP%E7%89%B9%E6%80%A7/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2019/04/02/Android-Studio%E8%B8%A9%E8%BF%87%E7%9A%84%E5%9D%91/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/&text=2019年西湖论剑之维吉尼亚和AutoKey的区别"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/&title=2019年西湖论剑之维吉尼亚和AutoKey的区别"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/&is_video=false&description=2019年西湖论剑之维吉尼亚和AutoKey的区别"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=2019年西湖论剑之维吉尼亚和AutoKey的区别&body=Check out this article: http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/&title=2019年西湖论剑之维吉尼亚和AutoKey的区别"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/&title=2019年西湖论剑之维吉尼亚和AutoKey的区别"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/&title=2019年西湖论剑之维吉尼亚和AutoKey的区别"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/&title=2019年西湖论剑之维吉尼亚和AutoKey的区别"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/&name=2019年西湖论剑之维吉尼亚和AutoKey的区别&description=&lt;h3 id=&#34;奇怪的TTL&#34;&gt;&lt;a href=&#34;#奇怪的TTL&#34; class=&#34;headerlink&#34; title=&#34;奇怪的TTL&#34;&gt;&lt;/a&gt;奇怪的TTL&lt;/h3&gt;&lt;p&gt;题目描述：&lt;br&gt;我们截获了一些IP数据报，发现报文头中的TTL值特别可疑，怀疑是通信方嵌入了数据到TTL，我们将这些TTL值提取了出来，你能看出什么端倪吗？&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/&t=2019年西湖论剑之维吉尼亚和AutoKey的区别"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A5%87%E6%80%AA%E7%9A%84TTL"><span class="toc-number">1.</span> <span class="toc-text">奇怪的TTL</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81%E6%95%B0%E6%8D%AE%E6%95%B4%E7%90%86"><span class="toc-number">1.1.</span> <span class="toc-text">1、数据整理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81%E7%84%B6%E5%90%8E%E5%BC%80%E5%A7%8B%E5%85%A5%E5%9D%91"><span class="toc-number">1.2.</span> <span class="toc-text">2、然后开始入坑</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%81%E5%95%A5%C2%B7%E6%98%AFAutoKey-Cipher"><span class="toc-number">1.3.</span> <span class="toc-text">3、啥·是AutoKey Cipher</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%E3%80%81%E4%BD%BF%E7%94%A8Python3%E8%A7%A3%E5%AF%86"><span class="toc-number">1.4.</span> <span class="toc-text">4、使用Python3解密</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#AutoKey-Cipher"><span class="toc-number">1.4.1.</span> <span class="toc-text">AutoKey Cipher</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#Vigenere"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">Vigenere</span></a></li></ol></li></ol></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        2019年西湖论剑之维吉尼亚和AutoKey的区别
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-04-09T11:39:43.000Z" class="dt-published" itemprop="datePublished">2019-04-09</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Crypto/">Crypto</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E5%AF%86%E7%A0%81%E5%AD%A6/" rel="tag">密码学</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h3 id="奇怪的TTL"><a href="#奇怪的TTL" class="headerlink" title="奇怪的TTL"></a>奇怪的TTL</h3><p>题目描述：<br>我们截获了一些IP数据报，发现报文头中的TTL值特别可疑，怀疑是通信方嵌入了数据到TTL，我们将这些TTL值提取了出来，你能看出什么端倪吗？</p>
+<span id="more"></span>
+
+
+<h4 id="1、数据整理"><a href="#1、数据整理" class="headerlink" title="1、数据整理"></a>1、数据整理</h4><p>附件中给了个文件,发现ttl.txt中的ttl只有4个值63,127,191,255，写出他们的二进制表示后发现只有最高两位不同，把前两位提取出来，然后十六进制转字符串，发现所有字符串都是1<del>9,a</del>f之间,然后自然考虑这是又是十六进制，然后写入文件中。发现写出来的16进制数开头是ffd8,打开是这样的</p>
+<!--more-->
+<p><img src="/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/2.jpg"></p>
+<p>万物皆可binwalk 放在linux下binwalk分离到6张残图</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">foremost 或者binwalk -e</span><br></pre></td></tr></table></figure>
+<p>得到</p>
+<p><img src="/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/3.png"><br><img src="/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/4.png"></p>
+<p>扫描得到</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">key:AutomaticKey cipher:fftu&#123;2028mb39927wn1f96o6e12z03j58002p&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="2、然后开始入坑"><a href="#2、然后开始入坑" class="headerlink" title="2、然后开始入坑"></a>2、然后开始入坑</h4><p>一开始以为是维吉尼亚加密，这里解释一下维吉尼亚加密<br>维吉尼亚密码(Vigenère Cipher)是在单一恺撒密码的基础上扩展出多表代换密码，根据密钥(当密钥长度小于明文长度时可以循环使用)来决定用哪一行的密表来进行替换，以此来对抗字频统计<br><img src="/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/1.webp"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">明文：THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG</span><br><span class="line">密钥(循环使用)：CULTURE</span><br><span class="line">加密过程：如果第一行为明文字母，第一列为密钥字母，那么明文字母&#x27;T&#x27;列和密钥字母&#x27;C&#x27;行的交点就是密文字母&#x27;V&#x27;，以此类推。</span><br><span class="line">密文：VBP JOZGM VCHQE JQR UNGGW QPPK NYI NUKR XFK</span><br></pre></td></tr></table></figure>
+<p>然后拿着本题的密钥和密文去解密，得到答案然后gg<br><img src="/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/5.png"> 其实是AutoKey Cipher，人家在题目里都提示了，只能怪自己太死脑筋和孤陋寡闻</p>
+<h4 id="3、啥·是AutoKey-Cipher"><a href="#3、啥·是AutoKey-Cipher" class="headerlink" title="3、啥·是AutoKey Cipher"></a>3、啥·是AutoKey Cipher</h4><p>其实原理和维吉尼亚基本一致的，但是维吉尼亚当密钥长度小于明文，将会循环使用密钥，而Autokey Cipher当密钥长度不足时，将会开始使用明文的第一个字母开始附加在密钥上。<br>在本题的体现是密钥12位，而密文中字母有14哥所以最后两个需要拿f l 替换<br><a target="_blank" rel="noopener" href="https://www.wishingstarmoye.com/ctf/autokey">AutoKey Cipher在线加解密</a></p>
+<h4 id="4、使用Python3解密"><a href="#4、使用Python3解密" class="headerlink" title="4、使用Python3解密"></a>4、使用Python3解密</h4><h5 id="AutoKey-Cipher"><a href="#AutoKey-Cipher" class="headerlink" title="AutoKey Cipher"></a>AutoKey Cipher</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; from pycipher import Autokey</span><br><span class="line">&gt;&gt;&gt; Autokey(&#x27;AutomaticKey&#x27;).decipher(&#x27;fftu&#123;2028mb39927wn1f96o6e12z03j58002p&#125;&#x27;)</span><br><span class="line">&#x27;FLAGABDFDEABEE&#x27;</span><br><span class="line">&gt;&gt;&gt; Autokey(&#x27;AutomaticKey&#x27;).encipher(&#x27;FLAGABDFDEABEE&#x27;)</span><br><span class="line">&#x27;FFTUMBWNFOEZJP&#x27;</span><br></pre></td></tr></table></figure>
+<h6 id="Vigenere"><a href="#Vigenere" class="headerlink" title="Vigenere"></a>Vigenere</h6><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt;from pycipher import Vigenere</span><br><span class="line">&gt;&gt;&gt;Vigenere(&#x27;CULTURE&#x27;).encipher(&#x27;THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG&#x27;)</span><br><span class="line">&#x27;VBPJOZGMVCHQEJQRUNGGWQPPKNYINUKRXFK&#x27;</span><br><span class="line">&gt;&gt;&gt;Vigenere(&#x27;CULTURE&#x27;).decipher(&#x27;VBPJOZGMVCHQEJQRUNGGWQPPKNYINUKRXFK&#x27;</span><br><span class="line">&#x27;THEQUICKBROWNFOXJUMPSOVERTHELAZYDOG&#x27;</span><br></pre></td></tr></table></figure>
+
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A5%87%E6%80%AA%E7%9A%84TTL"><span class="toc-number">1.</span> <span class="toc-text">奇怪的TTL</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81%E6%95%B0%E6%8D%AE%E6%95%B4%E7%90%86"><span class="toc-number">1.1.</span> <span class="toc-text">1、数据整理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81%E7%84%B6%E5%90%8E%E5%BC%80%E5%A7%8B%E5%85%A5%E5%9D%91"><span class="toc-number">1.2.</span> <span class="toc-text">2、然后开始入坑</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%81%E5%95%A5%C2%B7%E6%98%AFAutoKey-Cipher"><span class="toc-number">1.3.</span> <span class="toc-text">3、啥·是AutoKey Cipher</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%E3%80%81%E4%BD%BF%E7%94%A8Python3%E8%A7%A3%E5%AF%86"><span class="toc-number">1.4.</span> <span class="toc-text">4、使用Python3解密</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#AutoKey-Cipher"><span class="toc-number">1.4.1.</span> <span class="toc-text">AutoKey Cipher</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#Vigenere"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">Vigenere</span></a></li></ol></li></ol></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/&text=2019年西湖论剑之维吉尼亚和AutoKey的区别"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/&title=2019年西湖论剑之维吉尼亚和AutoKey的区别"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/&is_video=false&description=2019年西湖论剑之维吉尼亚和AutoKey的区别"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=2019年西湖论剑之维吉尼亚和AutoKey的区别&body=Check out this article: http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/&title=2019年西湖论剑之维吉尼亚和AutoKey的区别"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/&title=2019年西湖论剑之维吉尼亚和AutoKey的区别"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/&title=2019年西湖论剑之维吉尼亚和AutoKey的区别"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/&title=2019年西湖论剑之维吉尼亚和AutoKey的区别"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/&name=2019年西湖论剑之维吉尼亚和AutoKey的区别&description=&lt;h3 id=&#34;奇怪的TTL&#34;&gt;&lt;a href=&#34;#奇怪的TTL&#34; class=&#34;headerlink&#34; title=&#34;奇怪的TTL&#34;&gt;&lt;/a&gt;奇怪的TTL&lt;/h3&gt;&lt;p&gt;题目描述：&lt;br&gt;我们截获了一些IP数据报，发现报文头中的TTL值特别可疑，怀疑是通信方嵌入了数据到TTL，我们将这些TTL值提取了出来，你能看出什么端倪吗？&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/04/09/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/&t=2019年西湖论剑之维吉尼亚和AutoKey的区别"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

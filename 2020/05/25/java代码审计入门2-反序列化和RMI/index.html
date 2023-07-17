@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="java反序列化博客前面也记了很多php，python反序列化的内容，所以本文也就不再复述序列化反序列化的作用之类的，直奔主题-java的反序列化利用  Java 序列化是指把 Java 对象转换为字节序列的过程ObjectOutputStream类的 writeObject() 方法可以实现序列化Java 反序列化是指把字节序列恢复为 Java 对象的过程ObjectInputStream 类的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JAVA2-反序列化和RMI">
+<meta property="og:url" content="http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="java反序列化博客前面也记了很多php，python反序列化的内容，所以本文也就不再复述序列化反序列化的作用之类的，直奔主题-java的反序列化利用  Java 序列化是指把 Java 对象转换为字节序列的过程ObjectOutputStream类的 writeObject() 方法可以实现序列化Java 反序列化是指把字节序列恢复为 Java 对象的过程ObjectInputStream 类的">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/3.png">
+<meta property="og:image" content="http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/4.png">
+<meta property="og:image" content="http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/2.jpg">
+<meta property="og:image" content="http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/2.png">
+<meta property="og:image" content="http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/1.png">
+<meta property="article:published_time" content="2020-05-25T07:34:23.000Z">
+<meta property="article:modified_time" content="2020-12-14T17:15:50.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/3.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>JAVA2-反序列化和RMI</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2020/05/29/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A83-ysoserial%E8%B0%83%E8%AF%95%E5%92%8C%E6%9E%84%E9%80%A0URLDNS%E7%9A%84pop%E9%93%BE/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/&text=JAVA2-反序列化和RMI"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/&title=JAVA2-反序列化和RMI"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/&is_video=false&description=JAVA2-反序列化和RMI"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=JAVA2-反序列化和RMI&body=Check out this article: http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/&title=JAVA2-反序列化和RMI"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/&title=JAVA2-反序列化和RMI"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/&title=JAVA2-反序列化和RMI"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/&title=JAVA2-反序列化和RMI"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/&name=JAVA2-反序列化和RMI&description=&lt;h3 id=&#34;java反序列化&#34;&gt;&lt;a href=&#34;#java反序列化&#34; class=&#34;headerlink&#34; title=&#34;java反序列化&#34;&gt;&lt;/a&gt;java反序列化&lt;/h3&gt;&lt;p&gt;博客前面也记了很多php，python反序列化的内容，所以本文也就不再复述序列化反序列化的作用之类的，直奔主题-java的反序列化利用&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Java 序列化是指把 Java 对象转换为字节序列的过程&lt;br&gt;ObjectOutputStream类的 writeObject() 方法可以实现序列化&lt;br&gt;Java 反序列化是指把字节序列恢复为 Java 对象的过程&lt;br&gt;ObjectInputStream 类的 readObject() 方法用于反序列化。&lt;/p&gt;
+&lt;/blockquote&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/&t=JAVA2-反序列化和RMI"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">1.</span> <span class="toc-text">java反序列化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9readObject-%E6%96%B9%E6%B3%95%EF%BC%8C%E5%BC%95%E5%8F%91%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C"><span class="toc-number">2.</span> <span class="toc-text">修改readObject()方法，引发恶意代码执行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RMI%E4%BB%8B%E7%BB%8D"><span class="toc-number">3.</span> <span class="toc-text">RMI介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#rmi-demo"><span class="toc-number">4.</span> <span class="toc-text">rmi-demo</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RMI%E5%BC%95%E8%B5%B7%E7%9A%84%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E"><span class="toc-number">5.</span> <span class="toc-text">RMI引起的反序列化漏洞</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RMI%E5%BC%95%E8%B5%B7%E7%9A%84%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E-demo-%E5%BE%85%E5%A1%AB%E5%9D%91"><span class="toc-number">6.</span> <span class="toc-text">RMI引起的反序列化漏洞-demo(待填坑)</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        JAVA2-反序列化和RMI
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-05-25T07:34:23.000Z" class="dt-published" itemprop="datePublished">2020-05-25</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/java%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/">java安全研究</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Java/" rel="tag">Java</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h3 id="java反序列化"><a href="#java反序列化" class="headerlink" title="java反序列化"></a>java反序列化</h3><p>博客前面也记了很多php，python反序列化的内容，所以本文也就不再复述序列化反序列化的作用之类的，直奔主题-java的反序列化利用</p>
+<blockquote>
+<p>Java 序列化是指把 Java 对象转换为字节序列的过程<br>ObjectOutputStream类的 writeObject() 方法可以实现序列化<br>Java 反序列化是指把字节序列恢复为 Java 对象的过程<br>ObjectInputStream 类的 readObject() 方法用于反序列化。</p>
+</blockquote>
+<span id="more"></span>
+
+
+<p>java反序序列化例子</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">User</span> <span class="keyword">implements</span> <span class="title class_">Serializable</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setName</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.name=name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getName</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Helloworld</span>&#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">            User user=<span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">            user.setName(<span class="string">&quot;st4ck&quot;</span>);</span><br><span class="line">            <span class="type">byte</span>[] serializeData=serialize(user);</span><br><span class="line">            <span class="type">FileOutputStream</span> <span class="variable">fout</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;user.bin&quot;</span>);</span><br><span class="line">            fout.write(serializeData);</span><br><span class="line">            fout.close();</span><br><span class="line"></span><br><span class="line">            User user2=(User) unserialize(serializeData);</span><br><span class="line">            System.out.println(user2.getName());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">byte</span>[] serialize(<span class="keyword">final</span> Object obj) <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">            <span class="type">ByteArrayOutputStream</span> <span class="variable">btout</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ByteArrayOutputStream</span>();</span><br><span class="line">            <span class="type">ObjectOutputStream</span> <span class="variable">objOut</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(btout);</span><br><span class="line">            objOut.writeObject(obj);</span><br><span class="line">            <span class="keyword">return</span> btout.toByteArray();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title function_">unserialize</span><span class="params">(<span class="keyword">final</span> <span class="type">byte</span>[] serialized)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">            <span class="type">ByteArrayInputStream</span> <span class="variable">btin</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ByteArrayInputStream</span>(serialized);</span><br><span class="line">            <span class="type">ObjectInputStream</span> <span class="variable">objIn</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(btin);</span><br><span class="line">            <span class="keyword">return</span> objIn.readObject();</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//输出st4ck</span></span><br></pre></td></tr></table></figure>
+<p>tips:从文件中读取字节流</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">byte</span>[] getContent(String filePath) <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">       <span class="type">File</span> <span class="variable">file</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(filePath);</span><br><span class="line">       <span class="type">long</span> <span class="variable">fileSize</span> <span class="operator">=</span> file.length();</span><br><span class="line">       <span class="keyword">if</span> (fileSize &gt; Integer.MAX_VALUE) &#123;</span><br><span class="line">           System.out.println(<span class="string">&quot;file too big...&quot;</span>);</span><br><span class="line">           <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="type">FileInputStream</span> <span class="variable">fi</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileInputStream</span>(file);</span><br><span class="line">       <span class="type">byte</span>[] buffer = <span class="keyword">new</span> <span class="title class_">byte</span>[(<span class="type">int</span>) fileSize];</span><br><span class="line">       <span class="type">int</span> <span class="variable">offset</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">       <span class="type">int</span> <span class="variable">numRead</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">       <span class="keyword">while</span> (offset &lt; buffer.length</span><br><span class="line">               &amp;&amp; (numRead = fi.read(buffer, offset, buffer.length - offset)) &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">           offset += numRead;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">if</span> (offset != buffer.length) &#123;</span><br><span class="line">           <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IOException</span>(<span class="string">&quot;Could not completely read file &quot;</span></span><br><span class="line">                   + file.getName());</span><br><span class="line">       &#125;</span><br><span class="line">       fi.close();</span><br><span class="line">       <span class="keyword">return</span> buffer;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>直接将用户序列化了，然后反序列化<br>我们可以查看生成的bin文件<br><img src="/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/3.png"><br>我们发现对于php的反序列化大部分是肉眼可读了，java的序列化的字节流确实不太友好。</p>
+<hr>
+<h3 id="修改readObject-方法，引发恶意代码执行"><a href="#修改readObject-方法，引发恶意代码执行" class="headerlink" title="修改readObject()方法，引发恶意代码执行"></a>修改readObject()方法，引发恶意代码执行</h3><blockquote>
+<p>在进行反序列化时，java会调用ObjectInputStream类的readObject()方法。如果被反序列化的类重写了readObject()，那么该类在进行反序列化时，Java会优先调用重写的readObject()方法</p>
+</blockquote>
+<p>writeObject类同<br>这就有点像php反序列化的魔法函数和python反序列化的__reduce__函数了<br>我们可以尝试修改上面的user类，添加一个恶意函数，参数就为名字了，这样我们名字可以当作任意代码执行的参数比如calc.exe</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">User</span> <span class="keyword">implements</span> <span class="title class_">Serializable</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setName</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.name=name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getName</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">readObject</span><span class="params">(java.io.ObjectInputStream stream)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        stream.defaultReadObject();</span><br><span class="line">        Runtime.getRuntime().exec(name);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Helloworld</span>&#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">            User user=<span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">            user.setName(<span class="string">&quot;calc.exe&quot;</span>);</span><br><span class="line">            <span class="type">byte</span>[] serializeData=serialize(user);</span><br><span class="line">            <span class="type">FileOutputStream</span> <span class="variable">fout</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;user.bin&quot;</span>);</span><br><span class="line">            fout.write(serializeData);</span><br><span class="line">            fout.close();</span><br><span class="line">            User user2=(User) unserialize(serializeData);</span><br><span class="line">            System.out.println(user2.getName());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">byte</span>[] serialize(<span class="keyword">final</span> Object obj) <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">            <span class="type">ByteArrayOutputStream</span> <span class="variable">btout</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ByteArrayOutputStream</span>();</span><br><span class="line">            <span class="type">ObjectOutputStream</span> <span class="variable">objOut</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(btout);</span><br><span class="line">            objOut.writeObject(obj);</span><br><span class="line">            <span class="keyword">return</span> btout.toByteArray();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title function_">unserialize</span><span class="params">(<span class="keyword">final</span> <span class="type">byte</span>[] serialized)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">            <span class="type">ByteArrayInputStream</span> <span class="variable">btin</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ByteArrayInputStream</span>(serialized);</span><br><span class="line">            <span class="type">ObjectInputStream</span> <span class="variable">objIn</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(btin);</span><br><span class="line">            <span class="keyword">return</span> objIn.readObject();</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如我们所愿<br><img src="/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/4.png"><br>当然java直接反序列化的情况太少了这个只能当基础，更多情况需要结合反射，rmi等机制</p>
+<h3 id="RMI介绍"><a href="#RMI介绍" class="headerlink" title="RMI介绍"></a>RMI介绍</h3><p><code>RMI(Remote Method Invocation)</code>即<code>Java</code>远程方法调用，<code>RMI</code>用于构建分布式应用程序，<code>RMI</code>实现了<code>Java</code>程序之间跨<code>JVM</code>的远程通信。<br><img src="/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/2.jpg"><br>调用机制大概如下：</p>
+<ol>
+<li><code>RMI客户端</code>在调用远程方法时会先创建<code>Stub(sun.rmi.registry.RegistryImpl_Stub)</code>。</li>
+<li><code>Stub</code>会将<code>Remote</code>对象传递给<code>远程引用层(java.rmi.server.RemoteRef)</code>并创建<code>java.rmi.server.RemoteCall(远程调用)</code>对象。</li>
+<li><code>RemoteCall</code>序列化<code>RMI服务名称</code>、<code>Remote</code>对象。</li>
+<li><code>RMI客户端</code>的<code>远程引用层</code>传输<code>RemoteCall</code>序列化后的请求信息通过<code>Socket</code>连接的方式传输到<code>RMI服务端</code>的<code>远程引用层</code>。</li>
+<li><code>RMI服务端</code>的<code>远程引用层(sun.rmi.server.UnicastServerRef)</code>收到请求会请求传递给<code>Skeleton(sun.rmi.registry.RegistryImpl_Skel#dispatch)</code>。</li>
+<li><code>Skeleton</code>调用<code>RemoteCall</code>反序列化<code>RMI客户端</code>传过来的序列化。</li>
+<li><code>Skeleton</code>处理客户端请求：<code>bind</code>、<code>list</code>、<code>lookup</code>、<code>rebind</code>、<code>unbind</code>，如果是<code>lookup</code>则查找<code>RMI服务名</code>绑定的接口对象，序列化该对象并通过<code>RemoteCall</code>传输到客户端。</li>
+<li><code>RMI客户端</code>反序列化服务端结果，获取远程对象的引用。</li>
+<li><code>RMI客户端</code>调用远程方法，<code>RMI服务端</code>反射调用<code>RMI服务实现类</code>的对应方法并序列化执行结果返回给客户端。</li>
+<li><code>RMI客户端</code>反序列化<code>RMI</code>远程方法调用结果。</li>
+</ol>
+<h3 id="rmi-demo"><a href="#rmi-demo" class="headerlink" title="rmi-demo"></a>rmi-demo</h3><p>通过rmi调用服务器读取flag的函数,（ps:好像是server不该是serve,英语tcl）<br>代码<a target="_blank" rel="noopener" href="https://github.com/Kit4y/rmi-demo">https://github.com/Kit4y/rmi-demo</a><br><img src="/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/2.png"><br>&#x2F;client&#x2F;src&#x2F;Client</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Client</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Registry registry= LocateRegistry.getRegistry(<span class="string">&quot;localhost&quot;</span>, <span class="number">8086</span>);</span><br><span class="line">            RmiTestInterface t=(RmiTestInterface) registry.lookup(<span class="string">&quot;test&quot;</span>);</span><br><span class="line">            System.out.println(<span class="string">&quot;Client:&quot;</span>+t.getTest());</span><br><span class="line">        &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;<span class="keyword">catch</span> (NotBoundException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&#x2F;client&#x2F;src&#x2F;RmiTestInterface和&#x2F;serve&#x2F;src&#x2F;RmiTestInterface</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">RmiTestInterface</span> <span class="keyword">extends</span> <span class="title class_">Remote</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getTest</span><span class="params">()</span> <span class="keyword">throws</span> RemoteException;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&#x2F;serve&#x2F;src&#x2F;RmiTestImpl</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RmiTestImpl</span> <span class="keyword">implements</span> <span class="title class_">RmiTestInterface</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">RmiTestImpl</span><span class="params">()</span> <span class="keyword">throws</span> RemoteException &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">readToBuffer</span><span class="params">(StringBuffer buffer, String filePath)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">InputStream</span> <span class="variable">is</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileInputStream</span>(filePath);</span><br><span class="line">        String line; <span class="comment">// 用来保存每行读取的内容</span></span><br><span class="line">        <span class="type">BufferedReader</span> <span class="variable">reader</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BufferedReader</span>(<span class="keyword">new</span> <span class="title class_">InputStreamReader</span>(is));</span><br><span class="line">        line = reader.readLine(); <span class="comment">// 读取第一行</span></span><br><span class="line">        <span class="keyword">while</span> (line != <span class="literal">null</span>) &#123; <span class="comment">// 如果 line 为空说明读完了</span></span><br><span class="line">            buffer.append(line); <span class="comment">// 将读到的内容添加到 buffer 中</span></span><br><span class="line">            buffer.append(<span class="string">&quot;\n&quot;</span>); <span class="comment">// 添加换行符</span></span><br><span class="line">            line = reader.readLine(); <span class="comment">// 读取下一行</span></span><br><span class="line">        &#125;</span><br><span class="line">        reader.close();</span><br><span class="line">        is.close();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getTest</span><span class="params">()</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">StringBuffer</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuffer</span>();</span><br><span class="line">        RmiTestImpl.readToBuffer(sb, <span class="string">&quot;C:\\Users\\38138\\Desktop\\rmi-demo\\serve\\src\\flag.txt&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span>  sb.toString();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> RemoteException &#123;</span><br><span class="line">        RmiTestImpl t=<span class="keyword">new</span> <span class="title class_">RmiTestImpl</span>();</span><br><span class="line">        RmiTestInterface tt=(RmiTestInterface) UnicastRemoteObject.exportObject(t, <span class="number">0</span>);</span><br><span class="line">        Registry registry= LocateRegistry.createRegistry(<span class="number">8086</span>);</span><br><span class="line">        registry.rebind(<span class="string">&quot;test&quot;</span>, tt);</span><br><span class="line">        System.out.println(<span class="string">&quot;server is start&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>先运行RmiTestImpl，然后运行Client<br><img src="/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/1.png"></p>
+<h3 id="RMI引起的反序列化漏洞"><a href="#RMI引起的反序列化漏洞" class="headerlink" title="RMI引起的反序列化漏洞"></a>RMI引起的反序列化漏洞</h3><p><code>RMI</code>通信中所有的对象都是通过Java序列化传输的<br>既然<code>RMI</code>使用了反序列化机制来传输<code>Remote</code>对象，那么可以通过构建一个恶意的<code>Remote</code>对象，这个对象经过序列化后传输到服务器端，服务器端在反序列化时候就会触发反序列化漏洞。</p>
+<h3 id="RMI引起的反序列化漏洞-demo-待填坑"><a href="#RMI引起的反序列化漏洞-demo-待填坑" class="headerlink" title="RMI引起的反序列化漏洞-demo(待填坑)"></a>RMI引起的反序列化漏洞-demo(待填坑)</h3>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">1.</span> <span class="toc-text">java反序列化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9readObject-%E6%96%B9%E6%B3%95%EF%BC%8C%E5%BC%95%E5%8F%91%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C"><span class="toc-number">2.</span> <span class="toc-text">修改readObject()方法，引发恶意代码执行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RMI%E4%BB%8B%E7%BB%8D"><span class="toc-number">3.</span> <span class="toc-text">RMI介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#rmi-demo"><span class="toc-number">4.</span> <span class="toc-text">rmi-demo</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RMI%E5%BC%95%E8%B5%B7%E7%9A%84%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E"><span class="toc-number">5.</span> <span class="toc-text">RMI引起的反序列化漏洞</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RMI%E5%BC%95%E8%B5%B7%E7%9A%84%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E-demo-%E5%BE%85%E5%A1%AB%E5%9D%91"><span class="toc-number">6.</span> <span class="toc-text">RMI引起的反序列化漏洞-demo(待填坑)</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/&text=JAVA2-反序列化和RMI"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/&title=JAVA2-反序列化和RMI"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/&is_video=false&description=JAVA2-反序列化和RMI"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=JAVA2-反序列化和RMI&body=Check out this article: http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/&title=JAVA2-反序列化和RMI"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/&title=JAVA2-反序列化和RMI"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/&title=JAVA2-反序列化和RMI"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/&title=JAVA2-反序列化和RMI"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/&name=JAVA2-反序列化和RMI&description=&lt;h3 id=&#34;java反序列化&#34;&gt;&lt;a href=&#34;#java反序列化&#34; class=&#34;headerlink&#34; title=&#34;java反序列化&#34;&gt;&lt;/a&gt;java反序列化&lt;/h3&gt;&lt;p&gt;博客前面也记了很多php，python反序列化的内容，所以本文也就不再复述序列化反序列化的作用之类的，直奔主题-java的反序列化利用&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Java 序列化是指把 Java 对象转换为字节序列的过程&lt;br&gt;ObjectOutputStream类的 writeObject() 方法可以实现序列化&lt;br&gt;Java 反序列化是指把字节序列恢复为 Java 对象的过程&lt;br&gt;ObjectInputStream 类的 readObject() 方法用于反序列化。&lt;/p&gt;
+&lt;/blockquote&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/&t=JAVA2-反序列化和RMI"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

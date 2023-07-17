@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="一、Introduction书名Wireshark数据包分析实战第二版译者是诸葛建伟老师orz,有很多一部分讲协议分析的，这里主要记录一下Wireshark工具的使用，捕捉和显示过滤器的规则。Wireshark官方文档">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Wireshark数据包分析实战">
+<meta property="og:url" content="http://example.com/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="一、Introduction书名Wireshark数据包分析实战第二版译者是诸葛建伟老师orz,有很多一部分讲协议分析的，这里主要记录一下Wireshark工具的使用，捕捉和显示过滤器的规则。Wireshark官方文档">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/2.png">
+<meta property="og:image" content="http://example.com/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/1.png">
+<meta property="article:published_time" content="2019-05-05T05:43:58.000Z">
+<meta property="article:modified_time" content="2020-11-24T04:53:08.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="Wireshark">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/2.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Wireshark数据包分析实战</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2019/05/27/python3%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%AE%9E%E4%BE%8B%E4%B9%8B%E6%89%B9%E9%87%8F%E6%A3%80%E6%B5%8Bwebshell%E5%AD%98%E6%B4%BB%E5%B7%A5%E5%85%B7/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2019/04/27/Sqli-Labs/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/&text=Wireshark数据包分析实战"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/&title=Wireshark数据包分析实战"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/&is_video=false&description=Wireshark数据包分析实战"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Wireshark数据包分析实战&body=Check out this article: http://example.com/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/&title=Wireshark数据包分析实战"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/&title=Wireshark数据包分析实战"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/&title=Wireshark数据包分析实战"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/&title=Wireshark数据包分析实战"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/&name=Wireshark数据包分析实战&description=&lt;h3 id=&#34;一、Introduction&#34;&gt;&lt;a href=&#34;#一、Introduction&#34; class=&#34;headerlink&#34; title=&#34;一、Introduction&#34;&gt;&lt;/a&gt;一、Introduction&lt;/h3&gt;&lt;p&gt;书名Wireshark数据包分析实战第二版译者是诸葛建伟老师orz,有很多一部分讲协议分析的，这里主要记录一下Wireshark工具的使用，捕捉和显示过滤器的规则。&lt;br&gt;&lt;a href=&#34;https://www.wireshark.org/docs/wsug_html_chunked/index.html&#34;&gt;Wireshark官方文档&lt;/a&gt;&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/&t=Wireshark数据包分析实战"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81Introduction"><span class="toc-number">1.</span> <span class="toc-text">一、Introduction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%95%B4%E6%9C%AC%E4%B9%A6%E6%A6%82%E6%8B%AC"><span class="toc-number">2.</span> <span class="toc-text">二、整本书概括</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E7%9B%91%E5%90%AC%E7%BD%91%E7%BB%9C%E7%BA%BF%E8%B7%AF"><span class="toc-number">3.</span> <span class="toc-text">三、监听网络线路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E4%B8%80%E4%BA%9B%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="toc-number">4.</span> <span class="toc-text">四、一些基本操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E9%AB%98%E7%BA%A7%E7%89%B9%E6%80%A7"><span class="toc-number">5.</span> <span class="toc-text">五、高级特性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E4%B8%A4%E7%A7%8D%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="toc-number">6.</span> <span class="toc-text">六、两种过滤器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8D%95%E6%8D%89%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="toc-number">6.1.</span> <span class="toc-text">捕捉过滤器</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Protocol%EF%BC%88%E5%8D%8F%E8%AE%AE%EF%BC%89"><span class="toc-number">6.1.1.</span> <span class="toc-text">Protocol（协议）:</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Direction%EF%BC%88%E6%96%B9%E5%90%91%EF%BC%89"><span class="toc-number">6.1.2.</span> <span class="toc-text">Direction（方向）:</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Host-s"><span class="toc-number">6.1.3.</span> <span class="toc-text">Host(s):</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Logical-Operations%EF%BC%88%E9%80%BB%E8%BE%91%E8%BF%90%E7%AE%97%EF%BC%89"><span class="toc-number">6.1.4.</span> <span class="toc-text">Logical Operations（逻辑运算）:</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BE%8B%E5%AD%90%EF%BC%9A"><span class="toc-number">6.1.5.</span> <span class="toc-text">例子：</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%98%BE%E7%A4%BA%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="toc-number">6.2.</span> <span class="toc-text">显示过滤器</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BE%8B%E5%AD%90%EF%BC%9A-1"><span class="toc-number">6.2.1.</span> <span class="toc-text">例子：</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Wireshark数据包分析实战
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-05-05T05:43:58.000Z" class="dt-published" itemprop="datePublished">2019-05-05</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/">Wireshark数据包分析实战</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Wireshark/" rel="tag">Wireshark</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h3 id="一、Introduction"><a href="#一、Introduction" class="headerlink" title="一、Introduction"></a>一、Introduction</h3><p>书名Wireshark数据包分析实战第二版译者是诸葛建伟老师orz,有很多一部分讲协议分析的，这里主要记录一下Wireshark工具的使用，捕捉和显示过滤器的规则。<br><a target="_blank" rel="noopener" href="https://www.wireshark.org/docs/wsug_html_chunked/index.html">Wireshark官方文档</a></p>
+<span id="more"></span>
+
+
+<h3 id="二、整本书概括"><a href="#二、整本书概括" class="headerlink" title="二、整本书概括"></a>二、整本书概括</h3><p><img src="/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/2.png"></p>
+<h3 id="三、监听网络线路"><a href="#三、监听网络线路" class="headerlink" title="三、监听网络线路"></a>三、监听网络线路</h3><p>1.混杂模式是从网络线路上查看所有流量的模式，即使流量不是发给本机的。正常的情况可以收到arp协议发送的广播包。</p>
+<p>2.在集线器连接的网络中嗅探可以看到所有的流量，但是同一时刻只有一个设备可以通信，现在不常见，经常会产生冲突。</p>
+<p>3.在交换式网络中嗅探：（正常的可视范围是本机数据包和广播数据包）</p>
+<h3 id="四、一些基本操作"><a href="#四、一些基本操作" class="headerlink" title="四、一些基本操作"></a>四、一些基本操作</h3><p>1.主界面：packet list、packet details、packet bytes</p>
+<p>2.设置首选项：edit-&gt;preferences</p>
+<p>3.着色规则：view-&gt;coloring rules 可以使用明显的颜色来标记关注的流量</p>
+<p>4.查找：ctrl+F （Ctrl+B&#x2F;N 前后切换）</p>
+<p>5.标记：Ctrl+M （Shift+Ctrl+B&#x2F;N 前后切换）</p>
+<h3 id="五、高级特性"><a href="#五、高级特性" class="headerlink" title="五、高级特性"></a>五、高级特性</h3><p>1.查看端点、会话信息 Statistics-&gt;endpoints&#x2F;conversations</p>
+<p>2.查看协议分布情况、占的比重 Statistics-&gt;Protocol Hierarchy</p>
+<p>3.名字解析即一个用来将其地址转化成名字的协议，可能会失败，会带来额外的开销，额外的流量，每次打开一个捕获文件就要重新解析一次。</p>
+<p>4.协议解析即将原始的比特流翻译成wireshark程序识别的协议并显示出来。比如员工用了443端口来传输ftp流量，wireshark会以ssl解析器来显示。这时，可以强制更换解析器：右键，decode as。可以查看解析器的源码来了解解析的过程，安装程序目录：epan&#x2F;dissectors&#x2F;。</p>
+<p>5.跟踪TCP流可以将TCP流重组成易读的形式。</p>
+<p>6.查看数据包的长度可以了解到是控制流量比较多还是上传下载的流量比较多。</p>
+<p>7.图形显示：</p>
+<p>IO图IO Graph：看系统某时刻的吞吐量，看不同协议的流量传输的时间走势。<br>双向时间图TCP-&gt;Round Trip Time：显示某个数据包一个RTT占用的时间，用来找到通信中的瓶颈。<br>数据流图Flow Graph：将ip端口之间的交流可视化，比如可以直观的展示TCP三次握手。<br>8.专家信息：可以用来统计数据包中某些特定状态的警告。如：tcp重传输，重复ack等。</p>
+<h3 id="六、两种过滤器"><a href="#六、两种过滤器" class="headerlink" title="六、两种过滤器"></a>六、两种过滤器</h3><p>捕捉过滤器（CaptureFilters）：用于决定将什么样的信息记录在捕捉结果中。需要在开始捕捉前设置。<br>显示过滤器（DisplayFilters）：在捕捉结果中进行详细查找。他们可以在得到捕捉结果后随意修改。</p>
+<h4 id="捕捉过滤器"><a href="#捕捉过滤器" class="headerlink" title="捕捉过滤器"></a>捕捉过滤器</h4><p><img src="/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/1.png"></p>
+<h5 id="Protocol（协议）"><a href="#Protocol（协议）" class="headerlink" title="Protocol（协议）:"></a>Protocol（协议）:</h5><p>可能的值: ether, fddi, ip, arp, rarp, decnet, lat, sca, moprc, mopdl, tcp and udp.<br>如果没有特别指明是什么协议，则默认使用所有支持的协议。</p>
+<h5 id="Direction（方向）"><a href="#Direction（方向）" class="headerlink" title="Direction（方向）:"></a>Direction（方向）:</h5><p>可能的值: src, dst, src and dst, src or dst<br>如果没有特别指明来源或目的地，则默认使用 &ldquo;src or dst&rdquo; 作为关键字。<br>例如，&rdquo;host 10.2.2.2&Prime;与&rdquo;src or dst host 10.2.2.2&Prime;是一样的。</p>
+<h5 id="Host-s"><a href="#Host-s" class="headerlink" title="Host(s):"></a>Host(s):</h5><p>可能的值： net, port, host, portrange.<br>如果没有指定此值，则默认使用&rdquo;host&rdquo;关键字。<br>例如，&rdquo;src 10.1.1.1&Prime;与&rdquo;src host 10.1.1.1&Prime;相同。</p>
+<h5 id="Logical-Operations（逻辑运算）"><a href="#Logical-Operations（逻辑运算）" class="headerlink" title="Logical Operations（逻辑运算）:"></a>Logical Operations（逻辑运算）:</h5><p>可能的值：not, and, or.<br>否(&ldquo;not&rdquo;)具有最高的优先级。或(&ldquo;or&rdquo;)和与(&ldquo;and&rdquo;)具有相同的优先级，运算时从左至右进行。</p>
+<h5 id="例子："><a href="#例子：" class="headerlink" title="例子："></a>例子：</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">tcp dst port 3128  //捕捉目的TCP端口为3128的封包。</span><br><span class="line">ip src host 10.1.1.1  //捕捉来源IP地址为10.1.1.1的封包。</span><br><span class="line">host 10.1.2.3  //捕捉目的或来源IP地址为10.1.2.3的封包。</span><br><span class="line">ether host e0-05-c5-44-b1-3c //捕捉目的或来源MAC地址为e0-05-c5-44-b1-3c的封包。如果你想抓本机与所有外网通讯的数据包时，可以将这里的mac地址换成路由的mac地址即可。</span><br><span class="line">src portrange 2000-2500  //捕捉来源为UDP或TCP，并且端口号在2000至2500范围内的封包。</span><br><span class="line">not imcp  //显示除了icmp以外的所有封包。（icmp通常被ping工具使用）</span><br><span class="line">src host 10.7.2.12 and not dst net 10.200.0.0/16 //显示来源IP地址为10.7.2.12，但目的地不是10.200.0.0/16的封包。</span><br><span class="line">(src host 10.4.1.12 or src net 10.6.0.0/16) and tcp dst portrange 200-10000 and dst net 10.0.0.0/8  //捕捉来源IP为10.4.1.12或者来源网络为10.6.0.0/16，目的地TCP端口号在200至10000之间，并且目的位于网络 10.0.0.0/8内的所有封包。</span><br><span class="line">src net 192.168.0.0/24 </span><br><span class="line">src net 192.168.0.0 mask 255.255.255.0  //捕捉源地址为192.168.0.0网络内的所有封包。</span><br></pre></td></tr></table></figure>
+<h4 id="显示过滤器"><a href="#显示过滤器" class="headerlink" title="显示过滤器"></a>显示过滤器</h4><h5 id="例子：-1"><a href="#例子：-1" class="headerlink" title="例子："></a>例子：</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">snmp || dns || icmp //显示SNMP或DNS或ICMP封包。 </span><br><span class="line">ip.addr == 10.1.1.1  //显示来源或目的IP地址为10.1.1.1的封包。</span><br><span class="line">ip.src != 10.1.2.3 or ip.dst != 10.4.5.6  //显示来源不为10.1.2.3或者目的不为10.4.5.6的封包。</span><br><span class="line">ip.src != 10.1.2.3 and ip.dst != 10.4.5.6  //显示来源不为10.1.2.3并且目的IP不为10.4.5.6的封包。</span><br><span class="line">tcp.port == 25  //显示来源或目的TCP端口号为25的封包。 </span><br><span class="line">tcp.dstport == 25  //显示目的TCP端口号为25的封包。 </span><br><span class="line">tcp.flags  //显示包含TCP标志的封包。 </span><br><span class="line">tcp.flags.syn == 0&amp;times;02  //显示包含TCP SYN标志的封包。 </span><br></pre></td></tr></table></figure>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81Introduction"><span class="toc-number">1.</span> <span class="toc-text">一、Introduction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%95%B4%E6%9C%AC%E4%B9%A6%E6%A6%82%E6%8B%AC"><span class="toc-number">2.</span> <span class="toc-text">二、整本书概括</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E7%9B%91%E5%90%AC%E7%BD%91%E7%BB%9C%E7%BA%BF%E8%B7%AF"><span class="toc-number">3.</span> <span class="toc-text">三、监听网络线路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E4%B8%80%E4%BA%9B%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="toc-number">4.</span> <span class="toc-text">四、一些基本操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E9%AB%98%E7%BA%A7%E7%89%B9%E6%80%A7"><span class="toc-number">5.</span> <span class="toc-text">五、高级特性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E4%B8%A4%E7%A7%8D%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="toc-number">6.</span> <span class="toc-text">六、两种过滤器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8D%95%E6%8D%89%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="toc-number">6.1.</span> <span class="toc-text">捕捉过滤器</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Protocol%EF%BC%88%E5%8D%8F%E8%AE%AE%EF%BC%89"><span class="toc-number">6.1.1.</span> <span class="toc-text">Protocol（协议）:</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Direction%EF%BC%88%E6%96%B9%E5%90%91%EF%BC%89"><span class="toc-number">6.1.2.</span> <span class="toc-text">Direction（方向）:</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Host-s"><span class="toc-number">6.1.3.</span> <span class="toc-text">Host(s):</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Logical-Operations%EF%BC%88%E9%80%BB%E8%BE%91%E8%BF%90%E7%AE%97%EF%BC%89"><span class="toc-number">6.1.4.</span> <span class="toc-text">Logical Operations（逻辑运算）:</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BE%8B%E5%AD%90%EF%BC%9A"><span class="toc-number">6.1.5.</span> <span class="toc-text">例子：</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%98%BE%E7%A4%BA%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="toc-number">6.2.</span> <span class="toc-text">显示过滤器</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BE%8B%E5%AD%90%EF%BC%9A-1"><span class="toc-number">6.2.1.</span> <span class="toc-text">例子：</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/&text=Wireshark数据包分析实战"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/&title=Wireshark数据包分析实战"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/&is_video=false&description=Wireshark数据包分析实战"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Wireshark数据包分析实战&body=Check out this article: http://example.com/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/&title=Wireshark数据包分析实战"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/&title=Wireshark数据包分析实战"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/&title=Wireshark数据包分析实战"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/&title=Wireshark数据包分析实战"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/&name=Wireshark数据包分析实战&description=&lt;h3 id=&#34;一、Introduction&#34;&gt;&lt;a href=&#34;#一、Introduction&#34; class=&#34;headerlink&#34; title=&#34;一、Introduction&#34;&gt;&lt;/a&gt;一、Introduction&lt;/h3&gt;&lt;p&gt;书名Wireshark数据包分析实战第二版译者是诸葛建伟老师orz,有很多一部分讲协议分析的，这里主要记录一下Wireshark工具的使用，捕捉和显示过滤器的规则。&lt;br&gt;&lt;a href=&#34;https://www.wireshark.org/docs/wsug_html_chunked/index.html&#34;&gt;Wireshark官方文档&lt;/a&gt;&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/05/05/Wireshark%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/&t=Wireshark数据包分析实战"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

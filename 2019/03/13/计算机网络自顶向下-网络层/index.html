@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="网络层提供的服务网络层提供主机到主机的通信服务。 一、转发和路由选择区别：转发是将分组从一个输入链路接口转移到适当的输出链路接口的路由器本地动作。路由选择是网络范围的过程，决定分组从源到目的地所采取的端到端路径。考虑旅行者从宾夕法尼亚州到佛罗里达州的行程，转发就类似于图中要经过很多立交桥，离开每个立交桥的时候才决定走哪一条路，而路由选择像出发前旅行者就看地图在许多可能的路径(每条路径包含多个立交桥">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机网络自顶向下-网络层">
+<meta property="og:url" content="http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="网络层提供的服务网络层提供主机到主机的通信服务。 一、转发和路由选择区别：转发是将分组从一个输入链路接口转移到适当的输出链路接口的路由器本地动作。路由选择是网络范围的过程，决定分组从源到目的地所采取的端到端路径。考虑旅行者从宾夕法尼亚州到佛罗里达州的行程，转发就类似于图中要经过很多立交桥，离开每个立交桥的时候才决定走哪一条路，而路由选择像出发前旅行者就看地图在许多可能的路径(每条路径包含多个立交桥">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/1.png">
+<meta property="og:image" content="http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/2.png">
+<meta property="og:image" content="http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/3.png">
+<meta property="og:image" content="http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/4.png">
+<meta property="og:image" content="http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/5.png">
+<meta property="og:image" content="http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/6.png">
+<meta property="og:image" content="http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/7.png">
+<meta property="og:image" content="http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/8.png">
+<meta property="og:image" content="http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/9.png">
+<meta property="og:image" content="http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/10.png">
+<meta property="og:image" content="http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/11.png">
+<meta property="article:published_time" content="2019-03-13T10:44:14.000Z">
+<meta property="article:modified_time" content="2020-11-24T04:55:16.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>计算机网络自顶向下-网络层</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E8%BF%90%E8%BE%93%E5%B1%82/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/&text=计算机网络自顶向下-网络层"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/&title=计算机网络自顶向下-网络层"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/&is_video=false&description=计算机网络自顶向下-网络层"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=计算机网络自顶向下-网络层&body=Check out this article: http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/&title=计算机网络自顶向下-网络层"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/&title=计算机网络自顶向下-网络层"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/&title=计算机网络自顶向下-网络层"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/&title=计算机网络自顶向下-网络层"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/&name=计算机网络自顶向下-网络层&description=&lt;h3 id=&#34;网络层提供的服务&#34;&gt;&lt;a href=&#34;#网络层提供的服务&#34; class=&#34;headerlink&#34; title=&#34;网络层提供的服务&#34;&gt;&lt;/a&gt;网络层提供的服务&lt;/h3&gt;&lt;p&gt;网络层提供主机到主机的通信服务。&lt;/p&gt;
+&lt;h3 id=&#34;一、转发和路由选择&#34;&gt;&lt;a href=&#34;#一、转发和路由选择&#34; class=&#34;headerlink&#34; title=&#34;一、转发和路由选择&#34;&gt;&lt;/a&gt;一、转发和路由选择&lt;/h3&gt;&lt;p&gt;区别：转发是将分组从一个输入链路接口转移到适当的输出链路接口的路由器&lt;code&gt;本地动作&lt;/code&gt;。路由选择是&lt;code&gt;网络范围&lt;/code&gt;的过程，决定分组从源到目的地所采取的端到端路径。&lt;br&gt;考虑旅行者从宾夕法尼亚州到佛罗里达州的行程，转发就类似于图中要经过很多立交桥，离开每个立交桥的时候才决定走哪一条路，而路由选择像出发前旅行者就看地图在许多可能的路径(每条路径包含多个立交桥)中选择一条路线。&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/&t=计算机网络自顶向下-网络层"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E5%B1%82%E6%8F%90%E4%BE%9B%E7%9A%84%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.</span> <span class="toc-text">网络层提供的服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E8%BD%AC%E5%8F%91%E5%92%8C%E8%B7%AF%E7%94%B1%E9%80%89%E6%8B%A9"><span class="toc-number">2.</span> <span class="toc-text">一、转发和路由选择</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E8%99%9A%E7%94%B5%E8%B7%AF%E5%92%8C%E6%95%B0%E6%8D%AE%E6%8A%A5%E7%BD%91%E7%BB%9C"><span class="toc-number">3.</span> <span class="toc-text">二、虚电路和数据报网络</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%99%9A%E7%94%B5%E8%B7%AF%EF%BC%9A"><span class="toc-number">3.0.1.</span> <span class="toc-text">虚电路：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%8A%A5%E7%BD%91%E7%BB%9C"><span class="toc-number">3.0.2.</span> <span class="toc-text">数据报网络:</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E8%B7%AF%E7%94%B1%E5%99%A8%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">4.</span> <span class="toc-text">三、路由器的工作原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E5%99%A8%E7%9A%84%E7%BB%84%E6%88%90%E9%83%A8%E5%88%86"><span class="toc-number">4.1.</span> <span class="toc-text">路由器的组成部分</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%BE%93%E5%85%A5%E7%AB%AF%E5%8F%A3%EF%BC%9A"><span class="toc-number">4.1.1.</span> <span class="toc-text">输入端口：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BA%A4%E6%8D%A2%E7%BB%93%E6%9E%84"><span class="toc-number">4.1.2.</span> <span class="toc-text">交换结构</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%BE%93%E5%87%BA%E7%AB%AF%E5%8F%A3"><span class="toc-number">4.1.3.</span> <span class="toc-text">输出端口</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E9%80%89%E6%8B%A9%E5%A4%84%E7%90%86%E5%99%A8"><span class="toc-number">4.1.4.</span> <span class="toc-text">路由选择处理器</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E8%BD%AC%E5%8F%91%E5%B9%B3%E9%9D%A2"><span class="toc-number">4.1.5.</span> <span class="toc-text">路由转发平面</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E6%8E%A7%E5%88%B6%E5%B9%B3%E9%9D%A2"><span class="toc-number">4.1.6.</span> <span class="toc-text">路由控制平面</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%89%E7%A7%8D%E4%BA%A4%E6%8D%A2%E6%A8%A1%E5%BC%8F"><span class="toc-number">4.2.</span> <span class="toc-text">三种交换模式</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%BB%8F%E5%86%85%E5%AD%98%E4%BA%A4%E6%8D%A2"><span class="toc-number">4.2.1.</span> <span class="toc-text">经内存交换</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%BB%8F%E6%80%BB%E7%BA%BF%E4%BA%A4%E6%8D%A2"><span class="toc-number">4.2.2.</span> <span class="toc-text">经总线交换</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%BB%8F%E4%BA%92%E8%81%94%E7%BD%91%E7%BB%9C%E4%BA%A4%E6%8D%A2"><span class="toc-number">4.2.3.</span> <span class="toc-text">经互联网络交换</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E7%BD%91%E9%99%85%E5%8D%8F%E8%AE%AE%EF%BC%88IP%EF%BC%89%EF%BC%9A%E5%9B%A0%E7%89%B9%E7%BD%91%E4%B8%AD%E7%9A%84%E8%BD%AC%E5%8F%91%E5%92%8C%E7%BC%96%E5%9D%80"><span class="toc-number">5.</span> <span class="toc-text">四、网际协议（IP）：因特网中的转发和编址</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E5%B1%82%E4%B8%89%E4%B8%AA%E7%BB%84%E4%BB%B6"><span class="toc-number">5.1.</span> <span class="toc-text">网络层三个组件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IP%E6%95%B0%E6%8D%AE%E6%8A%A5%E6%A0%BC%E5%BC%8F%E5%88%86%E6%9E%90"><span class="toc-number">5.2.</span> <span class="toc-text">IP数据报格式分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IP%E6%95%B0%E6%8D%AE%E6%8A%A5%E5%88%86%E7%89%87"><span class="toc-number">5.3.</span> <span class="toc-text">IP数据报分片</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E7%B1%BB%E7%9A%84IP%E5%9C%B0%E5%9D%80-%E2%80%94-%E6%9C%80%E5%9F%BA%E6%9C%AC%E7%9A%84%E7%BC%96%E5%9D%80%E6%96%B9%E6%B3%95"><span class="toc-number">5.4.</span> <span class="toc-text">分类的IP地址 — 最基本的编址方法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#A%E7%B1%BB%E5%9C%B0%E5%9D%80"><span class="toc-number">5.4.1.</span> <span class="toc-text">A类地址</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#B%E7%B1%BB%E5%9C%B0%E5%9D%80"><span class="toc-number">5.4.2.</span> <span class="toc-text">B类地址</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#C%E7%B1%BB%E5%9C%B0%E5%9D%80"><span class="toc-number">5.4.3.</span> <span class="toc-text">C类地址</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#D%EF%BC%8CE%E7%B1%BB%E4%B8%93%E7%94%A8%E4%BA%86%EF%BC%8C%E4%B8%80%E8%88%AC%E5%BE%88%E5%B0%91%E8%A7%81"><span class="toc-number">5.4.4.</span> <span class="toc-text">D，E类专用了，一般很少见</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%92%E5%88%86%E5%AD%90%E7%BD%91"><span class="toc-number">5.5.</span> <span class="toc-text">划分子网</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E8%B7%AF%E7%94%B1%E9%80%89%E6%8B%A9%E7%AE%97%E6%B3%95"><span class="toc-number">6.</span> <span class="toc-text">五、路由选择算法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E7%A7%8D%E5%B9%BF%E4%B9%89%E5%88%86%E7%B1%BB%E5%8F%AF%E5%B0%86%E8%B7%AF%E7%94%B1%E9%80%89%E6%8B%A9%E7%AE%97%E6%B3%95%E5%88%86%E4%B8%BA"><span class="toc-number">6.1.</span> <span class="toc-text">一种广义分类可将路由选择算法分为</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E8%87%AA%E6%B2%BB%E7%B3%BB%E7%BB%9F%E5%86%85%E8%B7%AF%E7%94%B1%E9%80%89%E6%8B%A9-%E2%80%93-%E5%86%85%E9%83%A8%E7%BD%91%E5%85%B3%E5%8D%8F%E8%AE%AE"><span class="toc-number">7.</span> <span class="toc-text">六、自治系统内路由选择 – 内部网关协议</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-1%E3%80%81%E8%B7%AF%E7%94%B1%E9%80%89%E6%8B%A9%E4%BF%A1%E6%81%AF%E5%8D%8F%E8%AE%AE-Routing-Information-Protocol-RIP"><span class="toc-number">7.1.</span> <span class="toc-text">6.1、路由选择信息协议(Routing Information Protocol, RIP)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2%E3%80%81%E5%BC%80%E6%94%BE%E6%9C%80%E7%9F%AD%E8%B7%AF%E5%BE%84%E4%BC%98%E5%85%88-Open-Shortest-Path-First-OSPF"><span class="toc-number">7.2.</span> <span class="toc-text">6.2、开放最短路径优先(Open Shortest Path First, OSPF)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-3%E3%80%81%E5%A4%96%E9%83%A8%E7%BD%91%E5%85%B3%E5%8D%8F%E8%AE%AEBGP"><span class="toc-number">7.3.</span> <span class="toc-text">6.3、外部网关协议BGP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E5%B9%BF%E6%92%AD%E4%B8%8E%E5%A4%9A%E6%92%AD%E8%B7%AF%E7%94%B1%E9%80%89%E6%8B%A9"><span class="toc-number">8.</span> <span class="toc-text">七、广播与多播路由选择</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#7-1%E3%80%81-%E5%B9%BF%E6%92%AD%E8%B7%AF%E7%94%B1%E9%80%89%E6%8B%A9%E7%AE%97%E6%B3%95"><span class="toc-number">8.1.</span> <span class="toc-text">7.1、 广播路由选择算法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#N%E6%AC%A1%E5%8D%95%E6%92%AD"><span class="toc-number">8.1.1.</span> <span class="toc-text">N次单播</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%97%A0%E6%8E%A7%E5%88%B6%E6%B4%AA%E6%B3%9B"><span class="toc-number">8.1.2.</span> <span class="toc-text">无控制洪泛</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8F%97%E6%8E%A7%E6%B4%AA%E6%B3%9B"><span class="toc-number">8.1.3.</span> <span class="toc-text">受控洪泛</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E6%A0%91%E5%B9%BF%E6%92%AD"><span class="toc-number">8.1.4.</span> <span class="toc-text">生成树广播</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-2%E3%80%81%E5%A4%9A%E6%92%AD"><span class="toc-number">8.2.</span> <span class="toc-text">7.2、多播</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E6%96%B0%E5%85%B4%E5%BA%94%E7%94%A8%E8%A6%81%E6%B1%82%E5%B0%86%E5%88%86%E7%BB%84%E4%BB%8E%E4%B8%80%E4%B8%AA%E6%88%96%E5%A4%9A%E4%B8%AA%E5%8F%91%E9%80%81%E6%96%B9%E4%BA%A4%E4%BB%98%E7%BB%99%E4%B8%80%E7%BB%84%E6%8E%A5%E6%94%B6%E6%96%B9%EF%BC%8C%E6%AF%94%E5%A6%82%E5%90%84%E7%A7%8D%E7%9B%B4%E6%92%AD%E3%80%81%E6%B8%B8%E6%88%8F"><span class="toc-number">8.2.1.</span> <span class="toc-text">一些新兴应用要求将分组从一个或多个发送方交付给一组接收方，比如各种直播、游戏</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%A4%9A%E6%92%AD%E6%95%B0%E6%8D%AE%E6%8A%A5%E4%BD%BF%E7%94%A8%E9%97%B4%E6%8E%A5%E5%9C%B0%E5%9D%80%E6%9D%A5%E7%BC%96%E5%9D%80%E3%80%82%E6%AF%8F%E4%B8%AA%E5%88%86%E7%BB%84%E9%9A%BE%E9%81%93%E6%90%BA%E5%B8%A6%E6%89%80%E6%9C%89%E6%8E%A5%E6%94%B6%E6%96%B9IP%E5%9C%B0%E5%9D%80%EF%BC%9F%E8%BF%99%E4%B8%8D%E7%A7%91%E5%AD%A6"><span class="toc-number">8.2.2.</span> <span class="toc-text">多播数据报使用间接地址来编址。每个分组难道携带所有接收方IP地址？这不科学</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9B%A0%E7%89%B9%E7%BD%91%E7%BB%84%E7%AE%A1%E7%90%86%E5%8D%8F%E8%AE%AEIGMP"><span class="toc-number">8.2.3.</span> <span class="toc-text">因特网组管理协议IGMP</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        计算机网络自顶向下-网络层
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-03-13T10:44:14.000Z" class="dt-published" itemprop="datePublished">2019-03-13</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/">计算机网络自顶向下</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag">计算机网络</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h3 id="网络层提供的服务"><a href="#网络层提供的服务" class="headerlink" title="网络层提供的服务"></a>网络层提供的服务</h3><p>网络层提供主机到主机的通信服务。</p>
+<h3 id="一、转发和路由选择"><a href="#一、转发和路由选择" class="headerlink" title="一、转发和路由选择"></a>一、转发和路由选择</h3><p>区别：转发是将分组从一个输入链路接口转移到适当的输出链路接口的路由器<code>本地动作</code>。路由选择是<code>网络范围</code>的过程，决定分组从源到目的地所采取的端到端路径。<br>考虑旅行者从宾夕法尼亚州到佛罗里达州的行程，转发就类似于图中要经过很多立交桥，离开每个立交桥的时候才决定走哪一条路，而路由选择像出发前旅行者就看地图在许多可能的路径(每条路径包含多个立交桥)中选择一条路线。</p>
+<span id="more"></span>
+
+
+<h3 id="二、虚电路和数据报网络"><a href="#二、虚电路和数据报网络" class="headerlink" title="二、虚电路和数据报网络"></a>二、虚电路和数据报网络</h3><p>目前所有网络层不同时提供两种不同服务，在网络层提供连接服务被称为虚电路（VC）网络，在网络层提供无连接服务的计算机网络称为数据报网络。</p>
+<h5 id="虚电路："><a href="#虚电路：" class="headerlink" title="虚电路："></a>虚电路：</h5><p>属于一条虚电路的分组将在首部携带一个VC号，因为一条虚电路在每条链路上可能具有不同的VC号，每台中间路由器必须用一个新的VC号来替代每个传输分组的VC号。新VC号从转发表获得。<br>无论何时跨越一台路由器创建一条新的虚电路，转发表就增加了一个新表项。类似地，无论何时终止一条虚电路，沿着该途径每个表中的相应项将被删除。</p>
+<h5 id="数据报网络"><a href="#数据报网络" class="headerlink" title="数据报网络:"></a>数据报网络:</h5><p>在数据报网络中，每台路由器由一个将目的地址映射到链路接口的转发表，当分组到达路由器时，路由器使用该分组的目的底子好在转发表中查找适当的输出链路接口。然后路由器有意将分组向该输出链路接口转发。<br><img src="/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/1.png"></p>
+<h3 id="三、路由器的工作原理"><a href="#三、路由器的工作原理" class="headerlink" title="三、路由器的工作原理"></a>三、路由器的工作原理</h3><p>一台路由器的<code>输入端口</code>，<code>输出端口</code>和<code>交换结构与</code>共同实现了这种转发功能，而且总是用硬件实现。这些转发功能有时总称为路由器转发平面。</p>
+<h4 id="路由器的组成部分"><a href="#路由器的组成部分" class="headerlink" title="路由器的组成部分"></a>路由器的组成部分</h4><h5 id="输入端口："><a href="#输入端口：" class="headerlink" title="输入端口："></a>输入端口：</h5><ol>
+<li>执行将一条输入的物理链路与路由器相连接的物理层功能</li>
+<li>执行与位于入链路远端的数据链路层交互的数据链路层功能</li>
+<li>查找功能，查询转发表决定路由器的输出端口，将分组转发到输出端口</li>
+</ol>
+<h5 id="交换结构"><a href="#交换结构" class="headerlink" title="交换结构"></a>交换结构</h5><ol>
+<li>将路由器的输入端口与输出端口相连</li>
+<li>分组通过交换结构转发到输出端口</li>
+</ol>
+<h5 id="输出端口"><a href="#输出端口" class="headerlink" title="输出端口"></a>输出端口</h5><ol>
+<li>存储从交换结构接收的分组，执行必要的链路层和物理层功能在输入链路上传输这些分组。</li>
+<li>当链路是双向的时，输出端口与输入端口在同一线路卡成对出现</li>
+</ol>
+<h5 id="路由选择处理器"><a href="#路由选择处理器" class="headerlink" title="路由选择处理器"></a>路由选择处理器</h5><ol>
+<li>执行路由选择协议</li>
+<li>维护路由选择表、连接的链路状态信息，为路由器计算转发表</li>
+<li>网络管理</li>
+</ol>
+<h5 id="路由转发平面"><a href="#路由转发平面" class="headerlink" title="路由转发平面"></a>路由转发平面</h5><ol>
+<li>一台路由器的输入端口、输出端口和交换结构共同实现了转发功能，并且用硬件实现（软件太慢，需以纳秒时间尺度运行）</li>
+</ol>
+<h5 id="路由控制平面"><a href="#路由控制平面" class="headerlink" title="路由控制平面"></a>路由控制平面</h5><ol>
+<li>路由器的控制功能（执行路由选择协议、对上线或者下线链路进行响应、管理功能），在毫秒时间尺度上运行，用软件实现并在选择处理器上执行（一种cpu）</li>
+</ol>
+<h4 id="三种交换模式"><a href="#三种交换模式" class="headerlink" title="三种交换模式"></a>三种交换模式</h4><h5 id="经内存交换"><a href="#经内存交换" class="headerlink" title="经内存交换"></a>经内存交换</h5><p>一个分组到达输入端口时，该端口会先通过中断方式向路由选择处理器发出信号<br>分组从输入端口复制到处理器内存中（现代路由器查找交换进内存，是由输入线路卡处理的）<br>早期路由选择处理器从首部提取目的地址，在转发表查找输出端口，将分组复制到输出端口</p>
+<h5 id="经总线交换"><a href="#经总线交换" class="headerlink" title="经总线交换"></a>经总线交换</h5><p>输入端口经一根共享总线将分组直接传送到输出端口，无需路由选择处理器的干预<br>路由器的交换带宽受总线速率限制</p>
+<h5 id="经互联网络交换"><a href="#经互联网络交换" class="headerlink" title="经互联网络交换"></a>经互联网络交换</h5><p>纵横式交换机，2N条总线组成网络，连接N各输入端口和N个输出端口<br>每条垂直的总线与每条水平的总线交叉，交叉点通过交换结构控制器开启闭合<br>某分组到达端口A，需要转发到Y，交换机控制器闭合总线A和Y的交叉点，A在其总线上发送分组，仅由Y接收；同时B也能发分组到X，因为没有公用总线。纵横式网络能并行转发多个分组</p>
+<h3 id="四、网际协议（IP）：因特网中的转发和编址"><a href="#四、网际协议（IP）：因特网中的转发和编址" class="headerlink" title="四、网际协议（IP）：因特网中的转发和编址"></a>四、网际协议（IP）：因特网中的转发和编址</h3><h4 id="网络层三个组件"><a href="#网络层三个组件" class="headerlink" title="网络层三个组件"></a>网络层三个组件</h4><ol>
+<li>IP协议</li>
+<li>路由选择协议</li>
+<li>控制报文协议（ICMP）：报告数据报中的差错、对某些网络层信息请求进行响应的设施</li>
+</ol>
+<h4 id="IP数据报格式分析"><a href="#IP数据报格式分析" class="headerlink" title="IP数据报格式分析"></a>IP数据报格式分析</h4><p><img src="/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/2.png"></p>
+<ol>
+<li>版本号（IPv4、IPv6）：不同版本对数据报不同解释</li>
+<li>首部长度：数据报可包含可变数量的选项。不过大部分没有，首部固定20字节</li>
+<li>服务类型：区分不同类型的IP数据报</li>
+<li>数据报长度：首部+数据的长度。该字段16bit，然而一般数据报很少超过1500字节<br>标识、标志、片偏移：IP分片相关。不过IPv6不允许在路由器上对分组分片</li>
+<li>寿命TTL：确保数据报不会永远在网络中循环。每被一个路由器处理时，值-1。若值减到0，丢弃数据报</li>
+<li>协议号：到达最终目的地才有用，指示了IP数据报的数据部分应该交给哪个运输层协议。如6交给TCP，如17交给UDP </li>
+<li>协议号是将网络层与运输层绑定到一起的粘合剂；端口号是将运输层和应用层绑定的粘合剂</li>
+<li>首部检验和：帮忙路由器检测收到IP数据报中首部的比特错误，有错一般丢弃</li>
+<li>源和目的IP地址：源主机通过DNS查找目的地址</li>
+<li>选项：IPv6已抛弃选项字段</li>
+<li>数据（有效载荷）：包含运输层报文段（TCP或UDP），或ICMP报文段<br>一个IP数据报有长为20的首部，如果数据报承载一个TCP报文段，则每个无分片数据报承载总长40的首部（还有TCP的20）以及应用层报文</li>
+</ol>
+<h4 id="IP数据报分片"><a href="#IP数据报分片" class="headerlink" title="IP数据报分片"></a>IP数据报分片</h4><p>因为不是所有的链路层协议都能承载相同长度的网络层分组。比如以太网帧的MTU(Maximum Transmission)即最大传送单元(一个链路层帧能承载的最大数据量)为1500字节。链路层的MTU严格限制IP数据报的长度。因此要进行分片，将IP数据报中的数据分片成多个较小的IP数据报(fragment)再分别用链路层帧封装。</p>
+<p>e.g. 一个4000字节的数据报(20字节IP首部加上3980字节IP有效载荷)到达一台路由器，且必须被转发到一条MTU为1500字节的链路上。问要分多少片？每片多少字节？<br>解答： 3980&#x2F;1500 &#x3D; 2.65 &lt; 3 则应该分为3片，数据字段分别长1480, 1480, 1020 <code>(3980-1480-1480)</code><br>注意！分片除了最后一片，所有数据字段长应该是8的倍数！偏移值应当被规定以8字节块为单位！</p>
+<h4 id="分类的IP地址-—-最基本的编址方法"><a href="#分类的IP地址-—-最基本的编址方法" class="headerlink" title="分类的IP地址 — 最基本的编址方法"></a>分类的IP地址 — 最基本的编址方法</h4><p><img src="/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/3.png"></p>
+<h5 id="A类地址"><a href="#A类地址" class="headerlink" title="A类地址"></a>A类地址</h5><p>可指派的网络号是126即：$2^{7}-2$个.(减去全0和全1两种情况)。最大主机数 $2^{24}-2$个。(减去主机号全0和全1)</p>
+<h5 id="B类地址"><a href="#B类地址" class="headerlink" title="B类地址"></a>B类地址</h5><p>可指派的网络号是16383即：$2^{14}-1$个.(没有主机号全0和全1的情况，但是128.0.0.0不指配，最小网络地址128.1.0.0)。最大主机数$2^{16}-2$个。(减去主机号全0和全1)</p>
+<h5 id="C类地址"><a href="#C类地址" class="headerlink" title="C类地址"></a>C类地址</h5><p>可指派的网络号是2097151即：$2^{21}-1$个.(没有主机号全0和全1的情况，但是192.0.0.0不指配,最小网络地址192.0.1.0)。最大主机数$2^{8}-2$个。(减去主机号全0和全1)</p>
+<h5 id="D，E类专用了，一般很少见"><a href="#D，E类专用了，一般很少见" class="headerlink" title="D，E类专用了，一般很少见"></a>D，E类专用了，一般很少见</h5><p><img src="/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/4.png"><br><img src="/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/5.png"></p>
+<h4 id="划分子网"><a href="#划分子网" class="headerlink" title="划分子网"></a>划分子网</h4><p>从网络的主机号借用若干位作为子网号。划分子网在内部，因此对外仍是一个网络！<br><img src="/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/6.png"><br>子网掩码(network mask)<br><img src="/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/7.png"><br>子网的网络地址 &#x3D; 子网掩码 &amp; IP地址 (相与 and)<br>一张图足以概括。另外，若没有划分子网，也必须有子网掩码，使用默认子网掩码。<br><img src="/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/8.png"></p>
+<h3 id="五、路由选择算法"><a href="#五、路由选择算法" class="headerlink" title="五、路由选择算法"></a>五、路由选择算法</h3><h4 id="一种广义分类可将路由选择算法分为"><a href="#一种广义分类可将路由选择算法分为" class="headerlink" title="一种广义分类可将路由选择算法分为"></a>一种广义分类可将路由选择算法分为</h4><ol>
+<li>全局式路由选择算法(global routing algorithm)：用完整的、全局性的网络制式计算出从源到目的地之间的最低费用路径。实践中，具有全局状态信息的算法常被称为链路状态(Link State, LS)算法。</li>
+<li>分散式路由选择算法(decentralized routing algorithm)：以迭代、分布式的方式计算出最低费用路径。一个常用的算法为距离向量(Distance-Vector, DV)算法。<br>由于过于复杂，需要单独研究</li>
+</ol>
+<h3 id="六、自治系统内路由选择-–-内部网关协议"><a href="#六、自治系统内路由选择-–-内部网关协议" class="headerlink" title="六、自治系统内路由选择 – 内部网关协议"></a>六、自治系统内路由选择 – 内部网关协议</h3><h4 id="6-1、路由选择信息协议-Routing-Information-Protocol-RIP"><a href="#6-1、路由选择信息协议-Routing-Information-Protocol-RIP" class="headerlink" title="6.1、路由选择信息协议(Routing Information Protocol, RIP)"></a>6.1、路由选择信息协议(Routing Information Protocol, RIP)</h4><p>使用距离向量算法。</p>
+<ol>
+<li>仅和相邻路由器交换信息。</li>
+<li>路由器交换的信息时当前本路由器知道的全部信息。</li>
+<li>按固定的时间间隔交换路由信息。</li>
+</ol>
+<p>刚开始时，到直接相连的网络距离定义为1。每经过一个路由器，跳数加1，跳数为16相当于不可达。事实证明，RIP协议可以较快收敛。<br>缺点是当网络出现故障，要记过比较长的时间才能将信息传送到所有的路由器。</p>
+<p>RIP协议使用运输层的用户数据报UDP进行传送。RIP1和RIP2的报文首部相同，路由部分有些不同。<br><img src="/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/9.png"></p>
+<h4 id="6-2、开放最短路径优先-Open-Shortest-Path-First-OSPF"><a href="#6-2、开放最短路径优先-Open-Shortest-Path-First-OSPF" class="headerlink" title="6.2、开放最短路径优先(Open Shortest Path First, OSPF)"></a>6.2、开放最短路径优先(Open Shortest Path First, OSPF)</h4><p>使用链路状态协议。</p>
+<ol>
+<li>向本自治系统中所有路由器发送信息。使洪泛法(flooding)。</li>
+<li>发送的信息就是与本路由器相邻的所有路由器的链路状态。</li>
+<li>只有当链路状态发生变化时，路由器才向所有路由器用洪泛法发送此消息。</li>
+</ol>
+<p>各个路由器频繁的交换链路状态信息，所有的路由器建立一个链路状态数据库，这实际上就是全网的拓扑图。OSPF的更新过程收敛得快。<br>OSPF直接用IP数据报传送。(注意RIP是用UDP的)<br><img src="/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/10.png"></p>
+<h4 id="6-3、外部网关协议BGP"><a href="#6-3、外部网关协议BGP" class="headerlink" title="6.3、外部网关协议BGP"></a>6.3、外部网关协议BGP</h4><p>BGP采用路径向量(path vector)路由选择协议。协议交换路由信息节点数量级是自治系统个数的数量级。刚开始运行时，BGP的邻站是交换整个的BGP路由表。但以后只需要在发生变化时更新有变化的部分。<br><img src="/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/11.png"></p>
+<h3 id="七、广播与多播路由选择"><a href="#七、广播与多播路由选择" class="headerlink" title="七、广播与多播路由选择"></a>七、广播与多播路由选择</h3><h4 id="7-1、-广播路由选择算法"><a href="#7-1、-广播路由选择算法" class="headerlink" title="7.1、 广播路由选择算法"></a>7.1、 广播路由选择算法</h4><h5 id="N次单播"><a href="#N次单播" class="headerlink" title="N次单播"></a>N次单播</h5><p>给定N个目的节点，源结点产生该分组的N份副本，对不同目的地每个副本编址，用单播路由选择传送<br>效率低，多份独立的副本会重复经过某段链路，让网络结点本身生成分组副本更有效</p>
+<h5 id="无控制洪泛"><a href="#无控制洪泛" class="headerlink" title="无控制洪泛"></a>无控制洪泛</h5><p>源节点向所有邻居发送分组副本，结点复制该分组并向它邻居转发<br>图中有环，会无休止循环<br>当一个结点与两个以上结点连接时，它将生成并转发广播分组的多个副本，副本中的每个又产生多个副本，产生广播风暴，使网络变得毫无用处</p>
+<h5 id="受控洪泛"><a href="#受控洪泛" class="headerlink" title="受控洪泛"></a>受控洪泛</h5><p>序号控制洪泛：源节点将其地址或其他唯一标识和广播序号放入广播分组，每个结点维护源地址和序号列表<br>反向路径转发RPF：仅当分组到达的链路正好位于它自己返回源的最短单薄路径上，才传输报文，否则丢弃</p>
+<h5 id="生成树广播"><a href="#生成树广播" class="headerlink" title="生成树广播"></a>生成树广播</h5><p>构造最小生成树；结点只需知道哪些邻居在生成树中<br>分布式生成树算法<br>基于中心的方法：建立一棵生成树时，定义一个中心结点（汇合点、核），结点向中心结点单薄加入树的报文。加入树的报文使用单播路由选择朝着中心结点进发，直到它到达一个生成树中，经过的路径再嫁接到现有生成树中</p>
+<h4 id="7-2、多播"><a href="#7-2、多播" class="headerlink" title="7.2、多播"></a>7.2、多播</h4><h5 id="一些新兴应用要求将分组从一个或多个发送方交付给一组接收方，比如各种直播、游戏"><a href="#一些新兴应用要求将分组从一个或多个发送方交付给一组接收方，比如各种直播、游戏" class="headerlink" title="一些新兴应用要求将分组从一个或多个发送方交付给一组接收方，比如各种直播、游戏"></a>一些新兴应用要求将分组从一个或多个发送方交付给一组接收方，比如各种直播、游戏</h5><h5 id="多播数据报使用间接地址来编址。每个分组难道携带所有接收方IP地址？这不科学"><a href="#多播数据报使用间接地址来编址。每个分组难道携带所有接收方IP地址？这不科学" class="headerlink" title="多播数据报使用间接地址来编址。每个分组难道携带所有接收方IP地址？这不科学"></a>多播数据报使用间接地址来编址。每个分组难道携带所有接收方IP地址？这不科学</h5><p>用一个标识表示一组接收方（D类多播地址），接收方小组称为多播组</p>
+<h5 id="因特网组管理协议IGMP"><a href="#因特网组管理协议IGMP" class="headerlink" title="因特网组管理协议IGMP"></a>因特网组管理协议IGMP</h5><p>IGMP + 多播路由选择协议 组成网络层多播</p>
+<ol>
+<li>第一阶段：当某个主机加入新的多播组时，该主机应向多播组的多播地址发送IGMP 报文，声明自己要成为该组的成员。本地的多播路由器收到 IGMP 报文后，将组成员关系转发给因特网上的其他多播路由器。</li>
+<li>第二阶段：因为组成员关系是动态的，因此本地多播路由器要周期性地探询本地局域网上的主机，以便知道这些主机是否还继续是组的成员。只要对某个组有一个主机响应，那么多播路由器就认为这个组是活跃的。但一个组在经过几次的探询后仍然没有一个主机响应，则不再将该组的成员关系转发给其他的多播路由器。</li>
+</ol>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E5%B1%82%E6%8F%90%E4%BE%9B%E7%9A%84%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.</span> <span class="toc-text">网络层提供的服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E8%BD%AC%E5%8F%91%E5%92%8C%E8%B7%AF%E7%94%B1%E9%80%89%E6%8B%A9"><span class="toc-number">2.</span> <span class="toc-text">一、转发和路由选择</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E8%99%9A%E7%94%B5%E8%B7%AF%E5%92%8C%E6%95%B0%E6%8D%AE%E6%8A%A5%E7%BD%91%E7%BB%9C"><span class="toc-number">3.</span> <span class="toc-text">二、虚电路和数据报网络</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%99%9A%E7%94%B5%E8%B7%AF%EF%BC%9A"><span class="toc-number">3.0.1.</span> <span class="toc-text">虚电路：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%8A%A5%E7%BD%91%E7%BB%9C"><span class="toc-number">3.0.2.</span> <span class="toc-text">数据报网络:</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E8%B7%AF%E7%94%B1%E5%99%A8%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">4.</span> <span class="toc-text">三、路由器的工作原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E5%99%A8%E7%9A%84%E7%BB%84%E6%88%90%E9%83%A8%E5%88%86"><span class="toc-number">4.1.</span> <span class="toc-text">路由器的组成部分</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%BE%93%E5%85%A5%E7%AB%AF%E5%8F%A3%EF%BC%9A"><span class="toc-number">4.1.1.</span> <span class="toc-text">输入端口：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BA%A4%E6%8D%A2%E7%BB%93%E6%9E%84"><span class="toc-number">4.1.2.</span> <span class="toc-text">交换结构</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%BE%93%E5%87%BA%E7%AB%AF%E5%8F%A3"><span class="toc-number">4.1.3.</span> <span class="toc-text">输出端口</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E9%80%89%E6%8B%A9%E5%A4%84%E7%90%86%E5%99%A8"><span class="toc-number">4.1.4.</span> <span class="toc-text">路由选择处理器</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E8%BD%AC%E5%8F%91%E5%B9%B3%E9%9D%A2"><span class="toc-number">4.1.5.</span> <span class="toc-text">路由转发平面</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E6%8E%A7%E5%88%B6%E5%B9%B3%E9%9D%A2"><span class="toc-number">4.1.6.</span> <span class="toc-text">路由控制平面</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%89%E7%A7%8D%E4%BA%A4%E6%8D%A2%E6%A8%A1%E5%BC%8F"><span class="toc-number">4.2.</span> <span class="toc-text">三种交换模式</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%BB%8F%E5%86%85%E5%AD%98%E4%BA%A4%E6%8D%A2"><span class="toc-number">4.2.1.</span> <span class="toc-text">经内存交换</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%BB%8F%E6%80%BB%E7%BA%BF%E4%BA%A4%E6%8D%A2"><span class="toc-number">4.2.2.</span> <span class="toc-text">经总线交换</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%BB%8F%E4%BA%92%E8%81%94%E7%BD%91%E7%BB%9C%E4%BA%A4%E6%8D%A2"><span class="toc-number">4.2.3.</span> <span class="toc-text">经互联网络交换</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E7%BD%91%E9%99%85%E5%8D%8F%E8%AE%AE%EF%BC%88IP%EF%BC%89%EF%BC%9A%E5%9B%A0%E7%89%B9%E7%BD%91%E4%B8%AD%E7%9A%84%E8%BD%AC%E5%8F%91%E5%92%8C%E7%BC%96%E5%9D%80"><span class="toc-number">5.</span> <span class="toc-text">四、网际协议（IP）：因特网中的转发和编址</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E5%B1%82%E4%B8%89%E4%B8%AA%E7%BB%84%E4%BB%B6"><span class="toc-number">5.1.</span> <span class="toc-text">网络层三个组件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IP%E6%95%B0%E6%8D%AE%E6%8A%A5%E6%A0%BC%E5%BC%8F%E5%88%86%E6%9E%90"><span class="toc-number">5.2.</span> <span class="toc-text">IP数据报格式分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IP%E6%95%B0%E6%8D%AE%E6%8A%A5%E5%88%86%E7%89%87"><span class="toc-number">5.3.</span> <span class="toc-text">IP数据报分片</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E7%B1%BB%E7%9A%84IP%E5%9C%B0%E5%9D%80-%E2%80%94-%E6%9C%80%E5%9F%BA%E6%9C%AC%E7%9A%84%E7%BC%96%E5%9D%80%E6%96%B9%E6%B3%95"><span class="toc-number">5.4.</span> <span class="toc-text">分类的IP地址 — 最基本的编址方法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#A%E7%B1%BB%E5%9C%B0%E5%9D%80"><span class="toc-number">5.4.1.</span> <span class="toc-text">A类地址</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#B%E7%B1%BB%E5%9C%B0%E5%9D%80"><span class="toc-number">5.4.2.</span> <span class="toc-text">B类地址</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#C%E7%B1%BB%E5%9C%B0%E5%9D%80"><span class="toc-number">5.4.3.</span> <span class="toc-text">C类地址</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#D%EF%BC%8CE%E7%B1%BB%E4%B8%93%E7%94%A8%E4%BA%86%EF%BC%8C%E4%B8%80%E8%88%AC%E5%BE%88%E5%B0%91%E8%A7%81"><span class="toc-number">5.4.4.</span> <span class="toc-text">D，E类专用了，一般很少见</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%92%E5%88%86%E5%AD%90%E7%BD%91"><span class="toc-number">5.5.</span> <span class="toc-text">划分子网</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E8%B7%AF%E7%94%B1%E9%80%89%E6%8B%A9%E7%AE%97%E6%B3%95"><span class="toc-number">6.</span> <span class="toc-text">五、路由选择算法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E7%A7%8D%E5%B9%BF%E4%B9%89%E5%88%86%E7%B1%BB%E5%8F%AF%E5%B0%86%E8%B7%AF%E7%94%B1%E9%80%89%E6%8B%A9%E7%AE%97%E6%B3%95%E5%88%86%E4%B8%BA"><span class="toc-number">6.1.</span> <span class="toc-text">一种广义分类可将路由选择算法分为</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E8%87%AA%E6%B2%BB%E7%B3%BB%E7%BB%9F%E5%86%85%E8%B7%AF%E7%94%B1%E9%80%89%E6%8B%A9-%E2%80%93-%E5%86%85%E9%83%A8%E7%BD%91%E5%85%B3%E5%8D%8F%E8%AE%AE"><span class="toc-number">7.</span> <span class="toc-text">六、自治系统内路由选择 – 内部网关协议</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-1%E3%80%81%E8%B7%AF%E7%94%B1%E9%80%89%E6%8B%A9%E4%BF%A1%E6%81%AF%E5%8D%8F%E8%AE%AE-Routing-Information-Protocol-RIP"><span class="toc-number">7.1.</span> <span class="toc-text">6.1、路由选择信息协议(Routing Information Protocol, RIP)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2%E3%80%81%E5%BC%80%E6%94%BE%E6%9C%80%E7%9F%AD%E8%B7%AF%E5%BE%84%E4%BC%98%E5%85%88-Open-Shortest-Path-First-OSPF"><span class="toc-number">7.2.</span> <span class="toc-text">6.2、开放最短路径优先(Open Shortest Path First, OSPF)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-3%E3%80%81%E5%A4%96%E9%83%A8%E7%BD%91%E5%85%B3%E5%8D%8F%E8%AE%AEBGP"><span class="toc-number">7.3.</span> <span class="toc-text">6.3、外部网关协议BGP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E5%B9%BF%E6%92%AD%E4%B8%8E%E5%A4%9A%E6%92%AD%E8%B7%AF%E7%94%B1%E9%80%89%E6%8B%A9"><span class="toc-number">8.</span> <span class="toc-text">七、广播与多播路由选择</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#7-1%E3%80%81-%E5%B9%BF%E6%92%AD%E8%B7%AF%E7%94%B1%E9%80%89%E6%8B%A9%E7%AE%97%E6%B3%95"><span class="toc-number">8.1.</span> <span class="toc-text">7.1、 广播路由选择算法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#N%E6%AC%A1%E5%8D%95%E6%92%AD"><span class="toc-number">8.1.1.</span> <span class="toc-text">N次单播</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%97%A0%E6%8E%A7%E5%88%B6%E6%B4%AA%E6%B3%9B"><span class="toc-number">8.1.2.</span> <span class="toc-text">无控制洪泛</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8F%97%E6%8E%A7%E6%B4%AA%E6%B3%9B"><span class="toc-number">8.1.3.</span> <span class="toc-text">受控洪泛</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E6%A0%91%E5%B9%BF%E6%92%AD"><span class="toc-number">8.1.4.</span> <span class="toc-text">生成树广播</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-2%E3%80%81%E5%A4%9A%E6%92%AD"><span class="toc-number">8.2.</span> <span class="toc-text">7.2、多播</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E6%96%B0%E5%85%B4%E5%BA%94%E7%94%A8%E8%A6%81%E6%B1%82%E5%B0%86%E5%88%86%E7%BB%84%E4%BB%8E%E4%B8%80%E4%B8%AA%E6%88%96%E5%A4%9A%E4%B8%AA%E5%8F%91%E9%80%81%E6%96%B9%E4%BA%A4%E4%BB%98%E7%BB%99%E4%B8%80%E7%BB%84%E6%8E%A5%E6%94%B6%E6%96%B9%EF%BC%8C%E6%AF%94%E5%A6%82%E5%90%84%E7%A7%8D%E7%9B%B4%E6%92%AD%E3%80%81%E6%B8%B8%E6%88%8F"><span class="toc-number">8.2.1.</span> <span class="toc-text">一些新兴应用要求将分组从一个或多个发送方交付给一组接收方，比如各种直播、游戏</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%A4%9A%E6%92%AD%E6%95%B0%E6%8D%AE%E6%8A%A5%E4%BD%BF%E7%94%A8%E9%97%B4%E6%8E%A5%E5%9C%B0%E5%9D%80%E6%9D%A5%E7%BC%96%E5%9D%80%E3%80%82%E6%AF%8F%E4%B8%AA%E5%88%86%E7%BB%84%E9%9A%BE%E9%81%93%E6%90%BA%E5%B8%A6%E6%89%80%E6%9C%89%E6%8E%A5%E6%94%B6%E6%96%B9IP%E5%9C%B0%E5%9D%80%EF%BC%9F%E8%BF%99%E4%B8%8D%E7%A7%91%E5%AD%A6"><span class="toc-number">8.2.2.</span> <span class="toc-text">多播数据报使用间接地址来编址。每个分组难道携带所有接收方IP地址？这不科学</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9B%A0%E7%89%B9%E7%BD%91%E7%BB%84%E7%AE%A1%E7%90%86%E5%8D%8F%E8%AE%AEIGMP"><span class="toc-number">8.2.3.</span> <span class="toc-text">因特网组管理协议IGMP</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/&text=计算机网络自顶向下-网络层"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/&title=计算机网络自顶向下-网络层"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/&is_video=false&description=计算机网络自顶向下-网络层"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=计算机网络自顶向下-网络层&body=Check out this article: http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/&title=计算机网络自顶向下-网络层"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/&title=计算机网络自顶向下-网络层"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/&title=计算机网络自顶向下-网络层"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/&title=计算机网络自顶向下-网络层"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/&name=计算机网络自顶向下-网络层&description=&lt;h3 id=&#34;网络层提供的服务&#34;&gt;&lt;a href=&#34;#网络层提供的服务&#34; class=&#34;headerlink&#34; title=&#34;网络层提供的服务&#34;&gt;&lt;/a&gt;网络层提供的服务&lt;/h3&gt;&lt;p&gt;网络层提供主机到主机的通信服务。&lt;/p&gt;
+&lt;h3 id=&#34;一、转发和路由选择&#34;&gt;&lt;a href=&#34;#一、转发和路由选择&#34; class=&#34;headerlink&#34; title=&#34;一、转发和路由选择&#34;&gt;&lt;/a&gt;一、转发和路由选择&lt;/h3&gt;&lt;p&gt;区别：转发是将分组从一个输入链路接口转移到适当的输出链路接口的路由器&lt;code&gt;本地动作&lt;/code&gt;。路由选择是&lt;code&gt;网络范围&lt;/code&gt;的过程，决定分组从源到目的地所采取的端到端路径。&lt;br&gt;考虑旅行者从宾夕法尼亚州到佛罗里达州的行程，转发就类似于图中要经过很多立交桥，离开每个立交桥的时候才决定走哪一条路，而路由选择像出发前旅行者就看地图在许多可能的路径(每条路径包含多个立交桥)中选择一条路线。&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/&t=计算机网络自顶向下-网络层"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

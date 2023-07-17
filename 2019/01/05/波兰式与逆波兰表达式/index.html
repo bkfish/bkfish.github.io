@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前缀、中缀、后缀表达式(逆波兰表达式)整体介绍 前缀表达式、中缀表达式、后缀表达式都是四则运算的表达方式,用以四则运算表达式求值  ,即数学表达式的求值  一、中缀表达式1.1、简介 中缀表达式就是常见的运算表达式，如(3+4)×5-6">
+<meta property="og:type" content="article">
+<meta property="og:title" content="波兰式与逆波兰表达式">
+<meta property="og:url" content="http://example.com/2019/01/05/%E6%B3%A2%E5%85%B0%E5%BC%8F%E4%B8%8E%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="前缀、中缀、后缀表达式(逆波兰表达式)整体介绍 前缀表达式、中缀表达式、后缀表达式都是四则运算的表达方式,用以四则运算表达式求值  ,即数学表达式的求值  一、中缀表达式1.1、简介 中缀表达式就是常见的运算表达式，如(3+4)×5-6">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/1.png">
+<meta property="og:image" content="http://example.com/2.png">
+<meta property="article:published_time" content="2019-01-05T04:56:30.000Z">
+<meta property="article:modified_time" content="2020-11-24T04:54:32.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="数据结构">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>波兰式与逆波兰表达式</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2019/01/06/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E6%B3%95/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/01/05/%E6%B3%A2%E5%85%B0%E5%BC%8F%E4%B8%8E%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/01/05/%E6%B3%A2%E5%85%B0%E5%BC%8F%E4%B8%8E%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/&text=波兰式与逆波兰表达式"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/01/05/%E6%B3%A2%E5%85%B0%E5%BC%8F%E4%B8%8E%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/&title=波兰式与逆波兰表达式"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/01/05/%E6%B3%A2%E5%85%B0%E5%BC%8F%E4%B8%8E%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/&is_video=false&description=波兰式与逆波兰表达式"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=波兰式与逆波兰表达式&body=Check out this article: http://example.com/2019/01/05/%E6%B3%A2%E5%85%B0%E5%BC%8F%E4%B8%8E%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/01/05/%E6%B3%A2%E5%85%B0%E5%BC%8F%E4%B8%8E%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/&title=波兰式与逆波兰表达式"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/01/05/%E6%B3%A2%E5%85%B0%E5%BC%8F%E4%B8%8E%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/&title=波兰式与逆波兰表达式"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/01/05/%E6%B3%A2%E5%85%B0%E5%BC%8F%E4%B8%8E%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/&title=波兰式与逆波兰表达式"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/01/05/%E6%B3%A2%E5%85%B0%E5%BC%8F%E4%B8%8E%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/&title=波兰式与逆波兰表达式"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/01/05/%E6%B3%A2%E5%85%B0%E5%BC%8F%E4%B8%8E%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/&name=波兰式与逆波兰表达式&description=&lt;h2 id=&#34;前缀、中缀、后缀表达式-逆波兰表达式-整体介绍&#34;&gt;&lt;a href=&#34;#前缀、中缀、后缀表达式-逆波兰表达式-整体介绍&#34; class=&#34;headerlink&#34; title=&#34;前缀、中缀、后缀表达式(逆波兰表达式)整体介绍&#34;&gt;&lt;/a&gt;前缀、中缀、后缀表达式(逆波兰表达式)整体介绍&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;前缀表达式、中缀表达式、后缀表达式都是四则运算的表达方式,用以四则运算表达式求值  ,即数学表达式的求值&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;一、中缀表达式&#34;&gt;&lt;a href=&#34;#一、中缀表达式&#34; class=&#34;headerlink&#34; title=&#34;一、中缀表达式&#34;&gt;&lt;/a&gt;一、中缀表达式&lt;/h3&gt;&lt;h3 id=&#34;1-1、简介&#34;&gt;&lt;a href=&#34;#1-1、简介&#34; class=&#34;headerlink&#34; title=&#34;1.1、简介&#34;&gt;&lt;/a&gt;1.1、简介&lt;/h3&gt;&lt;blockquote&gt;
+&lt;p&gt;中缀表达式就是常见的运算表达式，如(3+4)×5-6&lt;/p&gt;
+&lt;/blockquote&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/01/05/%E6%B3%A2%E5%85%B0%E5%BC%8F%E4%B8%8E%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/&t=波兰式与逆波兰表达式"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E7%BC%80%E3%80%81%E4%B8%AD%E7%BC%80%E3%80%81%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F-%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F-%E6%95%B4%E4%BD%93%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">前缀、中缀、后缀表达式(逆波兰表达式)整体介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%B8%AD%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.1.</span> <span class="toc-text">一、中缀表达式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1%E3%80%81%E7%AE%80%E4%BB%8B"><span class="toc-number">1.2.</span> <span class="toc-text">1.1、简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%89%8D%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.3.</span> <span class="toc-text">二、前缀表达式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1%E3%80%81%E7%AE%80%E4%BB%8B"><span class="toc-number">1.3.1.</span> <span class="toc-text">2.1、简介</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2%E3%80%81%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87%E5%89%8D%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%9D%A5%E6%B1%82%E5%80%BC"><span class="toc-number">1.3.2.</span> <span class="toc-text">2.2、如何通过前缀表达式来求值</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3%E3%80%81%E5%B0%86%E4%B8%AD%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%BD%AC%E6%8D%A2%E4%B8%BA%E5%89%8D%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.3.3.</span> <span class="toc-text">2.3、将中缀表达式转换为前缀表达式</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F-%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.4.</span> <span class="toc-text">三、后缀表达式(逆波兰表达式)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1%E3%80%81%E7%AE%80%E4%BB%8B"><span class="toc-number">1.4.1.</span> <span class="toc-text">3.1、简介</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2%E3%80%81%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%B1%82%E5%80%BC"><span class="toc-number">1.4.2.</span> <span class="toc-text">3.2、后缀表达式计算机求值</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3%E3%80%81%E5%B0%86%E4%B8%AD%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%BD%AC%E6%8D%A2%E4%B8%BA%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.4.3.</span> <span class="toc-text">3.3、将中缀表达式转换为后缀表达式步骤</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4%E3%80%81C%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0%E4%B8%AD%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%8F%98%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.4.4.</span> <span class="toc-text">3.4、C语言实现中缀表达式变后缀表达式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-5%E3%80%81C%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0%E9%80%86%E6%B3%A2%E5%85%B0%E8%AE%A1%E7%AE%97%E5%99%A8"><span class="toc-number">1.4.5.</span> <span class="toc-text">3.5、C语言实现逆波兰计算器</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        波兰式与逆波兰表达式
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-01-05T04:56:30.000Z" class="dt-published" itemprop="datePublished">2019-01-05</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag">数据结构</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="前缀、中缀、后缀表达式-逆波兰表达式-整体介绍"><a href="#前缀、中缀、后缀表达式-逆波兰表达式-整体介绍" class="headerlink" title="前缀、中缀、后缀表达式(逆波兰表达式)整体介绍"></a>前缀、中缀、后缀表达式(逆波兰表达式)整体介绍</h2><blockquote>
+<p>前缀表达式、中缀表达式、后缀表达式都是四则运算的表达方式,用以四则运算表达式求值  ,即数学表达式的求值</p>
+</blockquote>
+<h3 id="一、中缀表达式"><a href="#一、中缀表达式" class="headerlink" title="一、中缀表达式"></a>一、中缀表达式</h3><h3 id="1-1、简介"><a href="#1-1、简介" class="headerlink" title="1.1、简介"></a>1.1、简介</h3><blockquote>
+<p>中缀表达式就是常见的运算表达式，如(3+4)×5-6</p>
+</blockquote>
+<span id="more"></span>
+
+
+<h3 id="二、前缀表达式"><a href="#二、前缀表达式" class="headerlink" title="二、前缀表达式"></a>二、前缀表达式</h3><h4 id="2-1、简介"><a href="#2-1、简介" class="headerlink" title="2.1、简介"></a>2.1、简介</h4><blockquote>
+<p>前缀表达式又称波兰式，<strong>前缀表达式的运算符位于操作数之前</strong></p>
+</blockquote>
+<blockquote>
+<p>比如:<strong>- × + 3 4 5 6</strong></p>
+</blockquote>
+<h4 id="2-2、如何通过前缀表达式来求值"><a href="#2-2、如何通过前缀表达式来求值" class="headerlink" title="2.2、如何通过前缀表达式来求值"></a>2.2、如何通过前缀表达式来求值</h4><blockquote>
+<p>从右至左扫描表达式，遇到数字时，将数字压入堆栈，遇到运算符时，弹出栈顶的两个数，用运算符对它们做相应的计算（栈顶元素 op 次顶元素），并将结果入栈；重复上述过程直到表达式最左端，最后运算得出的值即为表达式的结果</p>
+</blockquote>
+<ul>
+<li><p>例如:<strong>- × + 3 4 5 6</strong></p>
+<blockquote>
+<ol>
+<li>从右至左扫描，将6、5、4、3压入堆栈</li>
+<li>遇到+运算符，因此弹出3和4（3为栈顶元素，4为次顶元素，注意与后缀表达式做比较），计算出3+4的值，得7，再将7入栈</li>
+<li>接下来是×运算符，因此弹出7和5，计算出7×5&#x3D;35，将35入栈</li>
+<li>最后是-运算符，计算出35-6的值，即29，由此得出最终结果</li>
+</ol>
+</blockquote>
+</li>
+</ul>
+<h4 id="2-3、将中缀表达式转换为前缀表达式"><a href="#2-3、将中缀表达式转换为前缀表达式" class="headerlink" title="2.3、将中缀表达式转换为前缀表达式"></a>2.3、将中缀表达式转换为前缀表达式</h4><blockquote>
+<p><strong>转换步骤如下</strong>:</p>
+</blockquote>
+<ol>
+<li>初始化两个栈:运算符栈s1，储存中间结果的栈s2</li>
+<li>从右至左扫描中缀表达式</li>
+<li>遇到操作数时，将其压入s2</li>
+<li>遇到运算符时，比较其与s1栈顶运算符的优先级<ol>
+<li>如果s1为空，或栈顶运算符为右括号“)”，则直接将此运算符入栈</li>
+<li>否则，若优先级比栈顶运算符的较高或相等，也将运算符压入s1</li>
+<li>否则，将s1栈顶的运算符弹出并压入到s2中，再次转到(4-1)与s1中新的栈顶运算符相比较</li>
+</ol>
+</li>
+<li>遇到括号时<ol>
+<li>如果是右括号“)”，则直接压入s1</li>
+<li>如果是左括号“(”，则依次弹出S1栈顶的运算符，并压入S2，直到遇到右括号为止，此时将这一对括号丢弃</li>
+</ol>
+</li>
+<li>重复步骤2至5，直到表达式的最左边</li>
+<li>将s1中剩余的运算符依次弹出并压入s2</li>
+<li>依次弹出s2中的元素并输出，结果即为中缀表达式对应的前缀表达式</li>
+</ol>
+<blockquote>
+<p><strong>例如:1+((2+3)×4)-5具体过程，如下表</strong></p>
+</blockquote>
+<p><img src="/1.png"></p>
+<blockquote>
+<p><strong>结果是:- + 1 × + 2 3 4 5</strong></p>
+</blockquote>
+<h3 id="三、后缀表达式-逆波兰表达式"><a href="#三、后缀表达式-逆波兰表达式" class="headerlink" title="三、后缀表达式(逆波兰表达式)"></a>三、后缀表达式(逆波兰表达式)</h3><h4 id="3-1、简介"><a href="#3-1、简介" class="headerlink" title="3.1、简介"></a>3.1、简介</h4><blockquote>
+<p>后缀表达式又称逆波兰表达式,与前缀表达式相似，只是运算符位于操作数之后</p>
+</blockquote>
+<blockquote>
+<p>比如:<strong>3 4 + 5 × 6 -</strong></p>
+</blockquote>
+<h4 id="3-2、后缀表达式计算机求值"><a href="#3-2、后缀表达式计算机求值" class="headerlink" title="3.2、后缀表达式计算机求值"></a>3.2、后缀表达式计算机求值</h4><blockquote>
+<p>与前缀表达式类似，只是顺序是从左至右：</p>
+</blockquote>
+<blockquote>
+<p>从左至右扫描表达式，遇到数字时，将数字压入堆栈，遇到运算符时，弹出栈顶的两个数，用运算符对它们做相应的计算（次顶元素 op 栈顶元素），并将结果入栈；重复上述过程直到表达式最右端，最后运算得出的值即为表达式的结果</p>
+</blockquote>
+<blockquote>
+<p><strong>例如后缀表达式“3 4 + 5 × 6 -”</strong>：</p>
+</blockquote>
+<ol>
+<li>从左至右扫描，将3和4压入堆栈；</li>
+<li>遇到+运算符，因此弹出4和3（4为栈顶元素，3为次顶元素，注意与前缀表达式做比较），计算出3+4的值，得7，再将7入栈；</li>
+<li>将5入栈；</li>
+<li>接下来是×运算符，因此弹出5和7，计算出7×5&#x3D;35，将35入栈；</li>
+<li>将6入栈；</li>
+<li>最后是-运算符，计算出35-6的值，即29，由此得出最终结果。</li>
+</ol>
+<h4 id="3-3、将中缀表达式转换为后缀表达式步骤"><a href="#3-3、将中缀表达式转换为后缀表达式步骤" class="headerlink" title="3.3、将中缀表达式转换为后缀表达式步骤"></a>3.3、将中缀表达式转换为后缀表达式步骤</h4><blockquote>
+<p>与转换为前缀表达式相似，步骤如下：</p>
+</blockquote>
+<ol>
+<li>初始化两个栈：运算符栈s1和储存中间结果的栈s2；</li>
+<li>从左至右扫描中缀表达式；</li>
+<li>遇到操作数时，将其压s2；</li>
+<li>遇到运算符时，比较其与s1栈顶运算符的优先级：<ol>
+<li>如果s1为空，或栈顶运算符为左括号“(”，则直接将此运算符入栈；</li>
+<li>否则，若优先级比栈顶运算符的高，也将运算符压入s1（<strong>注意转换为前缀表达式时是优先级较高或相同，而这里则不包括相同的情况</strong>）；</li>
+<li>否则，将s1栈顶的运算符弹出并压入到s2中，再次转到(4-1)与s1中新的栈顶运算符相比较；</li>
+</ol>
+</li>
+<li>遇到括号时：<ol>
+<li>如果是左括号“(”，则直接压入s1；</li>
+<li>如果是右括号“)”，则依次弹出s1栈顶的运算符，并压入s2，直到遇到左括号为止，此时将这一对括号丢弃；</li>
+</ol>
+</li>
+<li>重复步骤2至5，直到表达式的最右边；</li>
+<li>将s1中剩余的运算符依次弹出并压入s2；</li>
+<li>依次弹出s2中的元素并输出，<strong>结果的逆序即为中缀表达式对应的后缀表达式（转换为前缀表达式时不用逆序）</strong></li>
+</ol>
+<blockquote>
+<p><strong>例如，将中缀表达式“1+((2+3)×4)-5”转换为后缀表达式的过程如下</strong>：</p>
+</blockquote>
+<p><img src="/2.png"></p>
+<blockquote>
+<p><strong>因此结果为“1 2 3 + 4 × + 5 -”</strong></p>
+</blockquote>
+<h4 id="3-4、C语言实现中缀表达式变后缀表达式"><a href="#3-4、C语言实现中缀表达式变后缀表达式" class="headerlink" title="3.4、C语言实现中缀表达式变后缀表达式"></a>3.4、C语言实现中缀表达式变后缀表达式</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line"></span><br><span class="line">typedef struct Node</span><br><span class="line">&#123;</span><br><span class="line">    char ele;</span><br><span class="line">    struct Node * next;</span><br><span class="line">&#125;Node;</span><br><span class="line"></span><br><span class="line">typedef Node * Stack;</span><br><span class="line"></span><br><span class="line">Stack MakeStack(void)//新建栈并返回栈顶</span><br><span class="line">&#123;</span><br><span class="line">    Stack S = (Node *)malloc(sizeof(Node));</span><br><span class="line">    S-&gt;next = NULL;</span><br><span class="line">    return S;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void MakeNUll(Stack S)//置空栈</span><br><span class="line">&#123;</span><br><span class="line">    S-&gt;next = NULL;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void Pop(Stack S)//将栈顶弹出</span><br><span class="line">&#123;</span><br><span class="line">    Stack temp = S-&gt;next;</span><br><span class="line">    S-&gt;next = temp-&gt;next;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void Push(Stack S, char c)//将新节点压入栈</span><br><span class="line">&#123;</span><br><span class="line">    Stack temp = (Node *)malloc(sizeof(Node));</span><br><span class="line">    temp-&gt;ele = c;</span><br><span class="line">    temp-&gt;next = S-&gt;next;</span><br><span class="line">    S-&gt;next = temp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Stack FindHead(Stack S)//返回栈顶</span><br><span class="line">&#123;</span><br><span class="line">    Stack temp = S-&gt;next;</span><br><span class="line">    return temp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void PrintHead(Stack S)//打印栈顶元素</span><br><span class="line">&#123;</span><br><span class="line">    Stack temp = S-&gt;next;</span><br><span class="line">    printf(&quot;%c&quot;, temp-&gt;ele);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main(void)</span><br><span class="line">&#123;</span><br><span class="line">    Stack S = MakeStack();</span><br><span class="line">    int i = 0;</span><br><span class="line">    char str[200];</span><br><span class="line">    printf(&quot;Type something.\n&quot;);</span><br><span class="line">    gets(str);</span><br><span class="line"></span><br><span class="line">    while(str[i] != &#x27;\0&#x27;)</span><br><span class="line">    &#123;</span><br><span class="line">        if(str[i] == &#x27;+&#x27; || str[i] == &#x27;-&#x27;)//如果str[i]是加号或减号，则先弹出栈顶直到栈已空或栈顶元素为左括号，再将str[i]压入栈</span><br><span class="line">        &#123;</span><br><span class="line">            if(FindHead(S) == NULL)//若栈已空时，栈顶指针为空，找不到其元素，故须单独讨论</span><br><span class="line">            &#123;</span><br><span class="line">                Push(S, str[i]);</span><br><span class="line">            &#125;</span><br><span class="line">            else</span><br><span class="line">            &#123;</span><br><span class="line">                while(FindHead(S)-&gt;ele == &#x27;+&#x27; || FindHead(S)-&gt;ele == &#x27;-&#x27; || FindHead(S)-&gt;ele == &#x27;*&#x27; || FindHead(S)-&gt;ele == &#x27;/&#x27;)</span><br><span class="line">                &#123;</span><br><span class="line">                    PrintHead(S);</span><br><span class="line">                    Pop(S);</span><br><span class="line">                &#125;</span><br><span class="line">                Push(S, str[i]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        else if(str[i] == &#x27;*&#x27; || str[i] == &#x27;/&#x27;)//如果str[i]是乘号或除号，则只有栈顶也是乘除号时才需要弹出</span><br><span class="line">        &#123;</span><br><span class="line">            if(FindHead(S) == NULL)</span><br><span class="line">            &#123;</span><br><span class="line">                Push(S, str[i]);</span><br><span class="line">            &#125;</span><br><span class="line">            else</span><br><span class="line">            &#123;</span><br><span class="line">                while(FindHead(S)-&gt;ele == &#x27;*&#x27; || FindHead(S)-&gt;ele == &#x27;/&#x27;)</span><br><span class="line">                &#123;</span><br><span class="line">                    PrintHead(S);</span><br><span class="line">                    Pop(S);</span><br><span class="line">                &#125;</span><br><span class="line">                Push(S, str[i]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        else if(str[i] == &#x27;(&#x27;)//如果str[i]是左括号则直接压入栈</span><br><span class="line">        &#123;</span><br><span class="line">            Push(S, str[i]);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        else if(str[i] == &#x27;)&#x27;)//如果str[i]是右括号，则打印并弹出栈中第一个左括号前的所有操作符，最后将此左括号直接弹出</span><br><span class="line">        &#123;</span><br><span class="line">            while(FindHead(S)-&gt;ele != &#x27;(&#x27;)</span><br><span class="line">            &#123;</span><br><span class="line">                PrintHead(S);</span><br><span class="line">                Pop(S);</span><br><span class="line">            &#125;</span><br><span class="line">            Pop(S);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        else//如果str[i]不是操作符则直接打印</span><br><span class="line">        &#123;</span><br><span class="line">            printf(&quot;%c&quot;, str[i]);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        i++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    while(FindHead(S) != NULL)//遍历后如果栈不为空，则弹出所有操作符</span><br><span class="line">    &#123;</span><br><span class="line">        PrintHead(S);</span><br><span class="line">        Pop(S);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="3-5、C语言实现逆波兰计算器"><a href="#3-5、C语言实现逆波兰计算器" class="headerlink" title="3.5、C语言实现逆波兰计算器"></a>3.5、C语言实现逆波兰计算器</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;math.h&gt;</span><br><span class="line"></span><br><span class="line">#define STACK_INIT_SIZE 20</span><br><span class="line">#define STACKINCREMENT 10</span><br><span class="line">#define MAXBUFFER 10</span><br><span class="line"></span><br><span class="line">typedef double ElemType;</span><br><span class="line">typedef struct&#123;</span><br><span class="line">    ElemType *base;</span><br><span class="line">    ElemType *top;</span><br><span class="line">    int stackSize;</span><br><span class="line">&#125;sqStack;</span><br><span class="line"></span><br><span class="line">// 创建一个栈</span><br><span class="line">void InitStack(sqlStack *s)&#123;</span><br><span class="line">    s-&gt;base = (ElemType *)malloc(STACK_INIT_SIZE *sizeof(ElemType));</span><br><span class="line"></span><br><span class="line">    if(!s-&gt;base)&#123;</span><br><span class="line">        exit(0);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    s-&gt;top = s-&gt;base;</span><br><span class="line">    s-&gt;stackSize = STACK_INIT_SIZE;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 压栈</span><br><span class="line">void Push(sqStack *s, ElemType e)&#123;</span><br><span class="line"></span><br><span class="line">    if(s-&gt;top - s-&gt;base &gt;= s-&gt;stackSize)&#123;</span><br><span class="line">        s-&gt;base = (ElemType *)realloc(s-&gt;base, (s-&gt;stackSize + STACKINCREMENT)*sizeof(ElemType));</span><br><span class="line">        if(!s-&gt;base)&#123;</span><br><span class="line">            exit(0);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    *(s-&gt;top) = e;</span><br><span class="line">    s-&gt;top++;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void Pop(sqStack *s, ElemType *e)&#123;</span><br><span class="line">    if(s-&gt;top == s-&gt;base)&#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    *e = *--(s-&gt;top);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 计算栈的当前容量 </span><br><span class="line">int StackLen(sqStack s)&#123;</span><br><span class="line">    return (s.top - s.base);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">double main()&#123;</span><br><span class="line">    sqStack s;      </span><br><span class="line">    char c;</span><br><span class="line">    double d, e;</span><br><span class="line">    char str[MAXBUFFER];</span><br><span class="line"> </span><br><span class="line">    InitStacke(&amp;s);</span><br><span class="line"></span><br><span class="line">    printf(&quot;请按逆波兰表达式输入待计算数据，数据与运算符之间用空格隔开，以#号作为结束标志：\n&quot;);</span><br><span class="line">    scanf(&quot;%c&quot;, &amp;c);</span><br><span class="line"></span><br><span class="line">    while(C != &#x27;#&#x27;)&#123;</span><br><span class="line"></span><br><span class="line">        while(isdigit(c) || c==&#x27;.&#x27;)&#123; // 用于过滤数字</span><br><span class="line">            str[i++] = c;</span><br><span class="line">            str[i] = &#x27;\0&#x27;;</span><br><span class="line">            if(i&gt;=10)&#123;</span><br><span class="line">                printf(&quot;出错：输入的单个数据过大!\n&quot;);</span><br><span class="line">                return -1;</span><br><span class="line">            &#125;</span><br><span class="line">            scanf(&quot;%c&quot;, &amp;c);</span><br><span class="line">            if(c == &#x27; &#x27;)&#123;</span><br><span class="line">                d = atof(str);</span><br><span class="line">                Push(&amp;s, d);</span><br><span class="line">                i = 0;</span><br><span class="line">                break;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        switch(c)&#123;</span><br><span class="line">            case &#x27;+&#x27;:</span><br><span class="line">                Pop(&amp;s, &amp;e);</span><br><span class="line">                Pop(&amp;s, &amp;d);</span><br><span class="line">                Push(&amp;s, d+e);</span><br><span class="line">                break;</span><br><span class="line">            case &#x27;-&#x27;:</span><br><span class="line">                Pop(&amp;s, &amp;e);</span><br><span class="line">                Pop(&amp;s, &amp;d);</span><br><span class="line">                Push(&amp;s, d-e);</span><br><span class="line">                break;</span><br><span class="line">            case &#x27;*&#x27;:</span><br><span class="line">                Pop(&amp;s, &amp;e);</span><br><span class="line">                Pop(&amp;s, &amp;d);</span><br><span class="line">                Push(&amp;s, d*e);</span><br><span class="line">                break;</span><br><span class="line">            case &#x27;/&#x27;:</span><br><span class="line">                Pop(&amp;s, &amp;e);</span><br><span class="line">                Pop(&amp;s, &amp;d);</span><br><span class="line">                if(e != 0)&#123;</span><br><span class="line">                    Push(&amp;s, d/e);</span><br><span class="line">                &#125;else&#123;</span><br><span class="line">                    printf(&quot;\n出错：除数为零!\n&quot;);</span><br><span class="line">                    return -1;</span><br><span class="line">                &#125;</span><br><span class="line">                </span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line">        scanf(&quot;%c&quot;, &amp;c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    Pop(&amp;s, &amp;d);</span><br><span class="line">    printf(&quot;\n最终的计算结果为:%f\n&quot;, d);</span><br><span class="line"></span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 计算案例 </span><br><span class="line">// 1 2 - 4 5 + *   结果：9.000000</span><br><span class="line">// 5 - (6 + 7) * 8 + 9 / 4      5 6 7 + 8 * - 9 4 / +   结果：-96.750000</span><br></pre></td></tr></table></figure>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E7%BC%80%E3%80%81%E4%B8%AD%E7%BC%80%E3%80%81%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F-%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F-%E6%95%B4%E4%BD%93%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">前缀、中缀、后缀表达式(逆波兰表达式)整体介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%B8%AD%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.1.</span> <span class="toc-text">一、中缀表达式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1%E3%80%81%E7%AE%80%E4%BB%8B"><span class="toc-number">1.2.</span> <span class="toc-text">1.1、简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%89%8D%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.3.</span> <span class="toc-text">二、前缀表达式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1%E3%80%81%E7%AE%80%E4%BB%8B"><span class="toc-number">1.3.1.</span> <span class="toc-text">2.1、简介</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2%E3%80%81%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87%E5%89%8D%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%9D%A5%E6%B1%82%E5%80%BC"><span class="toc-number">1.3.2.</span> <span class="toc-text">2.2、如何通过前缀表达式来求值</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3%E3%80%81%E5%B0%86%E4%B8%AD%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%BD%AC%E6%8D%A2%E4%B8%BA%E5%89%8D%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.3.3.</span> <span class="toc-text">2.3、将中缀表达式转换为前缀表达式</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F-%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.4.</span> <span class="toc-text">三、后缀表达式(逆波兰表达式)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1%E3%80%81%E7%AE%80%E4%BB%8B"><span class="toc-number">1.4.1.</span> <span class="toc-text">3.1、简介</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2%E3%80%81%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%B1%82%E5%80%BC"><span class="toc-number">1.4.2.</span> <span class="toc-text">3.2、后缀表达式计算机求值</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3%E3%80%81%E5%B0%86%E4%B8%AD%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%BD%AC%E6%8D%A2%E4%B8%BA%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.4.3.</span> <span class="toc-text">3.3、将中缀表达式转换为后缀表达式步骤</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4%E3%80%81C%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0%E4%B8%AD%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%8F%98%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.4.4.</span> <span class="toc-text">3.4、C语言实现中缀表达式变后缀表达式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-5%E3%80%81C%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0%E9%80%86%E6%B3%A2%E5%85%B0%E8%AE%A1%E7%AE%97%E5%99%A8"><span class="toc-number">1.4.5.</span> <span class="toc-text">3.5、C语言实现逆波兰计算器</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/01/05/%E6%B3%A2%E5%85%B0%E5%BC%8F%E4%B8%8E%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/01/05/%E6%B3%A2%E5%85%B0%E5%BC%8F%E4%B8%8E%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/&text=波兰式与逆波兰表达式"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/01/05/%E6%B3%A2%E5%85%B0%E5%BC%8F%E4%B8%8E%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/&title=波兰式与逆波兰表达式"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/01/05/%E6%B3%A2%E5%85%B0%E5%BC%8F%E4%B8%8E%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/&is_video=false&description=波兰式与逆波兰表达式"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=波兰式与逆波兰表达式&body=Check out this article: http://example.com/2019/01/05/%E6%B3%A2%E5%85%B0%E5%BC%8F%E4%B8%8E%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/01/05/%E6%B3%A2%E5%85%B0%E5%BC%8F%E4%B8%8E%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/&title=波兰式与逆波兰表达式"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/01/05/%E6%B3%A2%E5%85%B0%E5%BC%8F%E4%B8%8E%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/&title=波兰式与逆波兰表达式"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/01/05/%E6%B3%A2%E5%85%B0%E5%BC%8F%E4%B8%8E%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/&title=波兰式与逆波兰表达式"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/01/05/%E6%B3%A2%E5%85%B0%E5%BC%8F%E4%B8%8E%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/&title=波兰式与逆波兰表达式"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/01/05/%E6%B3%A2%E5%85%B0%E5%BC%8F%E4%B8%8E%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/&name=波兰式与逆波兰表达式&description=&lt;h2 id=&#34;前缀、中缀、后缀表达式-逆波兰表达式-整体介绍&#34;&gt;&lt;a href=&#34;#前缀、中缀、后缀表达式-逆波兰表达式-整体介绍&#34; class=&#34;headerlink&#34; title=&#34;前缀、中缀、后缀表达式(逆波兰表达式)整体介绍&#34;&gt;&lt;/a&gt;前缀、中缀、后缀表达式(逆波兰表达式)整体介绍&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;前缀表达式、中缀表达式、后缀表达式都是四则运算的表达方式,用以四则运算表达式求值  ,即数学表达式的求值&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;一、中缀表达式&#34;&gt;&lt;a href=&#34;#一、中缀表达式&#34; class=&#34;headerlink&#34; title=&#34;一、中缀表达式&#34;&gt;&lt;/a&gt;一、中缀表达式&lt;/h3&gt;&lt;h3 id=&#34;1-1、简介&#34;&gt;&lt;a href=&#34;#1-1、简介&#34; class=&#34;headerlink&#34; title=&#34;1.1、简介&#34;&gt;&lt;/a&gt;1.1、简介&lt;/h3&gt;&lt;blockquote&gt;
+&lt;p&gt;中缀表达式就是常见的运算表达式，如(3+4)×5-6&lt;/p&gt;
+&lt;/blockquote&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/01/05/%E6%B3%A2%E5%85%B0%E5%BC%8F%E4%B8%8E%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/&t=波兰式与逆波兰表达式"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

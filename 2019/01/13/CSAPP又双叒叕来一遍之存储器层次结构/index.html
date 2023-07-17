@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="再安利一波csapp真优秀，本章之后你会了解内存，机械硬盘，固态硬盘等储存器的优劣原理，你会理解为什么只有机械硬盘的笔记本升级到固态就脱胎换骨了一番，内存是DRAM,而固态等是ROM,还有就是局部性的哲学。通过学习高速缓存，理解程序的局部性的真正意义（你还能看到csapp第三版封面的图是啥玩意。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP又双叒叕来一遍之存储器层次结构">
+<meta property="og:url" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="再安利一波csapp真优秀，本章之后你会了解内存，机械硬盘，固态硬盘等储存器的优劣原理，你会理解为什么只有机械硬盘的笔记本升级到固态就脱胎换骨了一番，内存是DRAM,而固态等是ROM,还有就是局部性的哲学。通过学习高速缓存，理解程序的局部性的真正意义（你还能看到csapp第三版封面的图是啥玩意。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/1.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/2.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/3.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/4.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/5.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/6.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/7.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/8.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/9.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/10.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/11.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/12.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/13.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/14.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/15.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/16.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/17.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/17.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/19.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/20.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/21.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/22.webp">
+<meta property="article:published_time" content="2019-01-13T01:47:22.000Z">
+<meta property="article:modified_time" content="2020-11-24T04:49:08.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="存储器层次结构">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/1.webp">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>CSAPP又双叒叕来一遍之存储器层次结构</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2019/01/11/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/&text=CSAPP又双叒叕来一遍之存储器层次结构"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/&title=CSAPP又双叒叕来一遍之存储器层次结构"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/&is_video=false&description=CSAPP又双叒叕来一遍之存储器层次结构"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=CSAPP又双叒叕来一遍之存储器层次结构&body=Check out this article: http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/&title=CSAPP又双叒叕来一遍之存储器层次结构"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/&title=CSAPP又双叒叕来一遍之存储器层次结构"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/&title=CSAPP又双叒叕来一遍之存储器层次结构"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/&title=CSAPP又双叒叕来一遍之存储器层次结构"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/&name=CSAPP又双叒叕来一遍之存储器层次结构&description=&lt;h4 id=&#34;再安利一波csapp真优秀，本章之后你会了解内存，机械硬盘，固态硬盘等储存器的优劣原理，你会理解为什么只有机械硬盘的笔记本升级到固态就脱胎换骨了一番，内存是DRAM-而固态等是ROM-还有就是局部性的哲学。通过学习高速缓存，理解程序的局部性的真正意义（你还能看到csapp第三版封面的图是啥玩意。&#34;&gt;&lt;a href=&#34;#再安利一波csapp真优秀，本章之后你会了解内存，机械硬盘，固态硬盘等储存器的优劣原理，你会理解为什么只有机械硬盘的笔记本升级到固态就脱胎换骨了一番，内存是DRAM-而固态等是ROM-还有就是局部性的哲学。通过学习高速缓存，理解程序的局部性的真正意义（你还能看到csapp第三版封面的图是啥玩意。&#34; class=&#34;headerlink&#34; title=&#34;再安利一波csapp真优秀，本章之后你会了解内存，机械硬盘，固态硬盘等储存器的优劣原理，你会理解为什么只有机械硬盘的笔记本升级到固态就脱胎换骨了一番，内存是DRAM,而固态等是ROM,还有就是局部性的哲学。通过学习高速缓存，理解程序的局部性的真正意义（你还能看到csapp第三版封面的图是啥玩意。&#34;&gt;&lt;/a&gt;再安利一波csapp真优秀，本章之后你会了解内存，机械硬盘，固态硬盘等储存器的优劣原理，你会理解为什么只有机械硬盘的笔记本升级到固态就脱胎换骨了一番，内存是DRAM,而固态等是ROM,还有就是局部性的哲学。通过学习高速缓存，理解程序的局部性的真正意义（你还能看到csapp第三版封面的图是啥玩意。&lt;/h4&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/&t=CSAPP又双叒叕来一遍之存储器层次结构"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%8D%E5%AE%89%E5%88%A9%E4%B8%80%E6%B3%A2csapp%E7%9C%9F%E4%BC%98%E7%A7%80%EF%BC%8C%E6%9C%AC%E7%AB%A0%E4%B9%8B%E5%90%8E%E4%BD%A0%E4%BC%9A%E4%BA%86%E8%A7%A3%E5%86%85%E5%AD%98%EF%BC%8C%E6%9C%BA%E6%A2%B0%E7%A1%AC%E7%9B%98%EF%BC%8C%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98%E7%AD%89%E5%82%A8%E5%AD%98%E5%99%A8%E7%9A%84%E4%BC%98%E5%8A%A3%E5%8E%9F%E7%90%86%EF%BC%8C%E4%BD%A0%E4%BC%9A%E7%90%86%E8%A7%A3%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%AA%E6%9C%89%E6%9C%BA%E6%A2%B0%E7%A1%AC%E7%9B%98%E7%9A%84%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%8D%87%E7%BA%A7%E5%88%B0%E5%9B%BA%E6%80%81%E5%B0%B1%E8%84%B1%E8%83%8E%E6%8D%A2%E9%AA%A8%E4%BA%86%E4%B8%80%E7%95%AA%EF%BC%8C%E5%86%85%E5%AD%98%E6%98%AFDRAM-%E8%80%8C%E5%9B%BA%E6%80%81%E7%AD%89%E6%98%AFROM-%E8%BF%98%E6%9C%89%E5%B0%B1%E6%98%AF%E5%B1%80%E9%83%A8%E6%80%A7%E7%9A%84%E5%93%B2%E5%AD%A6%E3%80%82%E9%80%9A%E8%BF%87%E5%AD%A6%E4%B9%A0%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%EF%BC%8C%E7%90%86%E8%A7%A3%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%B1%80%E9%83%A8%E6%80%A7%E7%9A%84%E7%9C%9F%E6%AD%A3%E6%84%8F%E4%B9%89%EF%BC%88%E4%BD%A0%E8%BF%98%E8%83%BD%E7%9C%8B%E5%88%B0csapp%E7%AC%AC%E4%B8%89%E7%89%88%E5%B0%81%E9%9D%A2%E7%9A%84%E5%9B%BE%E6%98%AF%E5%95%A5%E7%8E%A9%E6%84%8F%E3%80%82"><span class="toc-number">1.</span> <span class="toc-text">再安利一波csapp真优秀，本章之后你会了解内存，机械硬盘，固态硬盘等储存器的优劣原理，你会理解为什么只有机械硬盘的笔记本升级到固态就脱胎换骨了一番，内存是DRAM,而固态等是ROM,还有就是局部性的哲学。通过学习高速缓存，理解程序的局部性的真正意义（你还能看到csapp第三版封面的图是啥玩意。</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF"><span class="toc-number"></span> <span class="toc-text">1、存储技术</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1%E3%80%81%E9%9A%8F%E6%9C%BA%E8%AE%BF%E9%97%AE%E5%AD%98%E5%82%A8%E5%99%A8"><span class="toc-number">1.</span> <span class="toc-text">1.1、随机访问存储器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2%E3%80%81%E5%AD%98%E5%82%A8%E5%99%A8%E6%A8%A1%E5%9D%97"><span class="toc-number">2.</span> <span class="toc-text">1.2、存储器模块</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3%E3%80%81%E8%AE%BF%E9%97%AE%E4%B8%BB%E5%AD%98%EF%BC%88%E8%AF%BB%E4%BA%8B%E5%8A%A1%E3%80%81%E5%86%99%E4%BA%8B%E5%8A%A1%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">1.3、访问主存（读事务、写事务）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-4%E3%80%81%E7%A3%81%E7%9B%98%E5%AD%98%E5%82%A8-%EF%BC%88%E7%A1%AC%E7%9B%98%EF%BC%89"><span class="toc-number">4.</span> <span class="toc-text">1.4、磁盘存储 （硬盘）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E5%B1%80%E9%83%A8%E6%80%A7"><span class="toc-number"></span> <span class="toc-text">2、局部性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84"><span class="toc-number"></span> <span class="toc-text">3、存储器层次结构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1%E3%80%81%E4%B9%A6%E4%B8%8A%E5%A4%A7%E5%9B%BE"><span class="toc-number">1.</span> <span class="toc-text">3.1、书上大图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2%E3%80%81%E7%BC%93%E5%AD%98%E5%91%BD%E4%B8%AD%E5%92%8C%E4%B8%8D%E5%91%BD%E4%B8%AD"><span class="toc-number">2.</span> <span class="toc-text">3.2、缓存命中和不命中</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3%E3%80%81%E7%B1%BB%E6%AF%94%E4%B8%80%E4%B8%8Bweb%E7%9A%84%E7%BC%93%E5%AD%98"><span class="toc-number">3.</span> <span class="toc-text">3.3、类比一下web的缓存</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%E5%AD%98%E5%82%A8%E5%99%A8%EF%BC%88%E9%9B%86%E6%88%90%E5%9C%A8CPU%E5%86%85%E9%83%A8%E7%9A%84%E4%B8%80%E4%B8%AA%E9%83%A8%E4%BB%B6L1%E3%80%81L2%E3%80%81L3%E4%B8%89%E7%BA%A7%E7%BC%93%E5%AD%98%EF%BC%89"><span class="toc-number"></span> <span class="toc-text">4、高速缓存存储器（集成在CPU内部的一个部件L1、L2、L3三级缓存）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1%E3%80%81%E9%80%9A%E7%94%A8%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%E5%AD%98%E5%82%A8%E5%99%A8%E5%86%85%E9%83%A8%E7%BB%93%E6%9E%84"><span class="toc-number">1.</span> <span class="toc-text">4.1、通用高速缓存存储器内部结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2%E3%80%81%E7%9B%B4%E6%8E%A5%E6%98%A0%E5%B0%84%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%EF%BC%88%E6%AF%8F%E4%B8%AA%E7%BB%84%E5%8F%AA%E6%9C%89%E4%B8%80%E8%A1%8C%E7%9A%84%E7%AE%80%E5%8D%95%E8%AE%BF%E9%97%AE%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">4.2、直接映射高速缓存（每个组只有一行的简单访问模式）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-3%E3%80%81%E7%BB%93%E6%9E%84%E5%89%96%E6%9E%90%EF%BC%88%E7%9C%9F%E6%AD%A3%E6%84%8F%E4%B9%89%E4%B8%8A%E7%9A%84%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">4.3、结构剖析（真正意义上的高速缓存）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5%E3%80%81%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%B1%E5%9B%BE%E2%99%82"><span class="toc-number">4.</span> <span class="toc-text">5、存储器山图♂</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        CSAPP又双叒叕来一遍之存储器层次结构
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-01-13T01:47:22.000Z" class="dt-published" itemprop="datePublished">2019-01-13</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/CSAPP/">CSAPP</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/" rel="tag">存储器层次结构</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h4 id="再安利一波csapp真优秀，本章之后你会了解内存，机械硬盘，固态硬盘等储存器的优劣原理，你会理解为什么只有机械硬盘的笔记本升级到固态就脱胎换骨了一番，内存是DRAM-而固态等是ROM-还有就是局部性的哲学。通过学习高速缓存，理解程序的局部性的真正意义（你还能看到csapp第三版封面的图是啥玩意。"><a href="#再安利一波csapp真优秀，本章之后你会了解内存，机械硬盘，固态硬盘等储存器的优劣原理，你会理解为什么只有机械硬盘的笔记本升级到固态就脱胎换骨了一番，内存是DRAM-而固态等是ROM-还有就是局部性的哲学。通过学习高速缓存，理解程序的局部性的真正意义（你还能看到csapp第三版封面的图是啥玩意。" class="headerlink" title="再安利一波csapp真优秀，本章之后你会了解内存，机械硬盘，固态硬盘等储存器的优劣原理，你会理解为什么只有机械硬盘的笔记本升级到固态就脱胎换骨了一番，内存是DRAM,而固态等是ROM,还有就是局部性的哲学。通过学习高速缓存，理解程序的局部性的真正意义（你还能看到csapp第三版封面的图是啥玩意。"></a>再安利一波csapp真优秀，本章之后你会了解内存，机械硬盘，固态硬盘等储存器的优劣原理，你会理解为什么只有机械硬盘的笔记本升级到固态就脱胎换骨了一番，内存是DRAM,而固态等是ROM,还有就是局部性的哲学。通过学习高速缓存，理解程序的局部性的真正意义（你还能看到csapp第三版封面的图是啥玩意。</h4><span id="more"></span>
+
+
+<p><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/1.webp"></p>
+<h3 id="1、存储技术"><a href="#1、存储技术" class="headerlink" title="1、存储技术"></a>1、存储技术</h3><h4 id="1-1、随机访问存储器"><a href="#1-1、随机访问存储器" class="headerlink" title="1.1、随机访问存储器"></a>1.1、随机访问存储器</h4><p>静态RAM：（SRAM）用作高速缓存，通常只有几兆，在CPU芯片上、下；硬件设计中，将每个位存在一个双稳定的存储单元中，如下图所示，只有在两边的时候保持稳定性：<br><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/2.webp"><br>动态RAM：（DRAM）用作主存（我们通常说的机器的内存），通常几百、几千兆。每个单位使用一个电容和一个访问晶体管构成，容易被干扰，有的加入有纠错码。系统需要周期性读出，然后刷新重写存储器的每一位。DRAM详细构造图：<br><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/3.webp"><br><strong>访问示例（我们来看看是如何访问超单元（2，1）处的内容）</strong><br><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/4.webp"><br>为了加快二维数组的访问，存储控制器在读取（2，1）处的内容的时候，使用addr先发送行地址2到DRAM芯片中，拷贝整个第二行的内容到内部缓冲区中，然后发送列地址1，从内部行缓冲区中读取1的地址内容通过data发送到存储控制器中去。<br>有缓存的问题所有这就能解释当初zzz学长解释下面两个循环为什么第一个快于第二个。（赵神牛逼<br><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/5.webp"><br><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/6.webp"></p>
+<h4 id="1-2、存储器模块"><a href="#1-2、存储器模块" class="headerlink" title="1.2、存储器模块"></a>1.2、存储器模块</h4><p><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/7.webp"><br>如图所示是一个64M的主存，芯片编号0-7，每个芯片存储8M的数据，存储器模块将其组合起来，聚合内存。将每单个芯片的超单元映射成主存地址A的各个字段。这样控制器收到一个主存地址A的时候，存储控制器将其选择包含的具体芯片，将A转换成（i，j）的形式，然后将（i，j）发送到芯片模块中开始取数据。<br><strong>存储在ROM设备中的程序通常称为固件，当一个计算机系统通电以后，它会运行存储在ROM中的固件。</strong></p>
+<h4 id="1-3、访问主存（读事务、写事务）"><a href="#1-3、访问主存（读事务、写事务）" class="headerlink" title="1.3、访问主存（读事务、写事务）"></a>1.3、访问主存（读事务、写事务）</h4><p><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/8.webp"><br>读事务：考虑当我们执行，movl A，%eax的情况，地址A的内容会被加载到eax中去，总线发起读事务（分三步）：①CPU将A的地址总线放到系统总线上，桥作为中转点，将地址信号传送到存储器总线上去；②主存感觉到了存储器总线上的地址信号，从存储器总线上读地址，并从主存中取出相应的数据，写入到存储器总线上去，桥将数据专递到系统总线中去；③CPU感觉到了系统总线上的数据，将数据拷贝到eax中。I&#x2F;O桥作为中转，将地址信号从系统总线转到存储器总线，然后又将数据从存储器总线转到系统总线。在这个过程中，CPU始终是从系统总线上发送地址，读取数据，主存始终是从存储器总线上接受地址并发送数据。（写事务是一个逆向过程不做讲解）</p>
+<h4 id="1-4、磁盘存储-（硬盘）"><a href="#1-4、磁盘存储-（硬盘）" class="headerlink" title="1.4、磁盘存储 （硬盘）"></a>1.4、磁盘存储 （硬盘）</h4><p><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/9.webp"><br>磁盘由盘片构成，表面覆盖的有磁性材料，中间是一个主轴，通过旋转读取和记录数据。每组同心圆磁道分割的区域就是一个扇区。扇区之间是有间隙的，如图：<br><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/10.webp"><br><strong>磁盘读写操作：</strong><br><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/11.webp"><br>磁盘以扇区为单位来读写数据，对扇区的访问时间由三个部分组成：寻道时间、旋转时间、传送时间。<br>以图a为例，当我们要访问同心圆磁道5的内容时，寻道时间是指传动手臂将读写头移动到同心圆第五磁道的时间，旋转时间指的是同心圆5开始读取内容的位置，如果手臂移动到第五磁道的时候读写位置刚过，就要等磁盘旋转一圈之后再读取；传送时间，扇区第一个位处于读写头的时候，读写该扇区的时间。（寻道时间和旋转延迟大致相当）</p>
+<h3 id="2、局部性"><a href="#2、局部性" class="headerlink" title="2、局部性"></a>2、局部性</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">局部性原理是指CPU访问存储器时，无论是存取指令还是存取数据，所访问的存储单元都趋于聚集在一个较小的连续区域中。 –来自百度百科</span><br></pre></td></tr></table></figure>
+<p>我们讲存储器体系结构就会很好的理解局部性，简单的来说，我们的主存就是我们为了提高我们磁盘文件的一个高速缓存，因为我们知道这一时刻访问到磁盘的数据可以下一时刻也会被访问，这一位置被访问的数据，邻居位置也可能会被访问。这也就是我们通常说的：时间局部性和空间局部性。<br>最好的例子就是上面数组求和。可以往前看看。</p>
+<h3 id="3、存储器层次结构"><a href="#3、存储器层次结构" class="headerlink" title="3、存储器层次结构"></a>3、存储器层次结构</h3><h4 id="3-1、书上大图"><a href="#3-1、书上大图" class="headerlink" title="3.1、书上大图"></a>3.1、书上大图</h4><p><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/12.webp"><br>越往上，代表的是访问速度越快，当然存储容量小，价格也非常的高。越往下，意味着访问速度越慢，存储容量大，价格相对便宜。通常我们CPU的寄存器是L1的高速缓存，L1是L2的高速缓存，以此类推。</p>
+<h4 id="3-2、缓存命中和不命中"><a href="#3-2、缓存命中和不命中" class="headerlink" title="3.2、缓存命中和不命中"></a>3.2、缓存命中和不命中</h4><p><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/13.webp"><br>上图我们把k+1理解为主存，被划分为16个块来存储数据，块的大小是固定的。我们把K层理解成L3高速缓存，任何时刻L3就是主存的一个子集。上图我们能看出，L3只能保存4个块的数据，块的大小保持和主存的大小一样的。上图中我们看到，L3中保存的是主存中的4，9，14，3的数据。那么什么又是命中率和不命中率呢？<br><strong>缓存命中</strong>：当程序需要第k+1层数据块14的时候，程序会在当前存储的k层，寻找块14的数据，刚好14在k层的话，就是一个缓存命中，这比从k+1层读取的速度要快很多。<br><strong>缓存不命中</strong>：当程序需要访问到块12的时候，在k层没有该数据块，就是一个缓存不命中，这时候就会从k+1层中读取块12将其替换到k层的一个数据块（覆盖或驱逐一个已有的数据块）。程序还是从k层访问块12。<br><strong>放置策略</strong>：如果我们从k+1层中获得的数据随机的放置在k层，这样的随机放置就会导致访问的效率降低，我们的放置策略是块i必须放置在（imod4）中，也就是0，4，8，12会映射到同一个k层的块0中。这就会导致一个冲突不命中，也就是说如果程序交替请求k+1层的0，4块，由于会一直映射到k层的0块中，这时候虽然k层有空余的缓存，但还是每次不命中。</p>
+<h4 id="3-3、类比一下web的缓存"><a href="#3-3、类比一下web的缓存" class="headerlink" title="3.3、类比一下web的缓存"></a>3.3、类比一下web的缓存</h4><p>web缓存是通过http头中的上次If-Modified-Since或者If-Unmodified-Since使用对比上次修改时间验证资源是否需要更新，当访问一个网页，网页如果在本地有缓存其实并不是直接使用缓存中的page因为你要保证服务器没变化，所以本机还是会发出一个请求询问服务器该界面最后一次修改的时间，服务器只要返回时间就可以而不必要返回内容，如果服务器上网页的修改时间是缓存时间之前的，那直接使用缓存的，如果缓存之后的服务器修改了，将重新请求网页。</p>
+<h3 id="4、高速缓存存储器（集成在CPU内部的一个部件L1、L2、L3三级缓存）"><a href="#4、高速缓存存储器（集成在CPU内部的一个部件L1、L2、L3三级缓存）" class="headerlink" title="4、高速缓存存储器（集成在CPU内部的一个部件L1、L2、L3三级缓存）"></a>4、高速缓存存储器（集成在CPU内部的一个部件L1、L2、L3三级缓存）</h3><p><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/14.webp"></p>
+<h4 id="4-1、通用高速缓存存储器内部结构"><a href="#4-1、通用高速缓存存储器内部结构" class="headerlink" title="4.1、通用高速缓存存储器内部结构"></a>4.1、通用高速缓存存储器内部结构</h4><p><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/15.webp"><br>高速缓存是一个数组，每个组包含一个或多个行，每个行有一个有效位、一个标记位，以及数据块。我们进行访问的地址结构就是：t的标记位+s个组索引+b个块偏移；<br><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/16.webp"></p>
+<h4 id="4-2、直接映射高速缓存（每个组只有一行的简单访问模式）"><a href="#4-2、直接映射高速缓存（每个组只有一行的简单访问模式）" class="headerlink" title="4.2、直接映射高速缓存（每个组只有一行的简单访问模式）"></a>4.2、直接映射高速缓存（每个组只有一行的简单访问模式）</h4><p><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/17.webp"><br>(举例：直接映射高速缓存的抽取请求字的过程就像我们投递快件一样，组索引其实就像我们的邮政编码，比如我们这里的510824，然后找到编码的组，也就是我的大位置（xx县），然后看标记上写的具体xx小区x栋楼，并且核实该地址是否有效（有效位1），两项都满足条件以后将该快件给快递员投递，快递员到达具体xx小区x楼的时候就根据门牌号（偏移位）敲开你家的门。binggo，快递到达）<br>高速缓存确定一个请求是否命中，然后抽出请求字的过程分两步：<br><strong>1&gt; 组选择</strong>：很好理解，就是地址位中的组索引匹配高速缓存中的组<br><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/17.webp"><br><strong>2&gt; 行匹配和字抽取</strong>：行匹配主要是对有效位进行匹配，和标记位与高速缓存中的标记位一致，这就是一个命中。最后的字抽取就简单了，只是看地址后面的偏移值。<br><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/19.webp"></p>
+<h4 id="4-3、结构剖析（真正意义上的高速缓存）"><a href="#4-3、结构剖析（真正意义上的高速缓存）" class="headerlink" title="4.3、结构剖析（真正意义上的高速缓存）"></a>4.3、结构剖析（真正意义上的高速缓存）</h4><p><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/20.webp"><br><strong>Intel Core I7高速缓存层次结构</strong><br>在实际的商用CPU中，将高速缓存分为d-cache数据高速缓存，i-cache指令高速缓存和同一高速缓存，i7的架构中我们可以看出，L1分为数据和指令高速缓存，共享L2高速缓存，同时每个核共享L3高速缓存</p>
+<h4 id="5、存储器山图♂"><a href="#5、存储器山图♂" class="headerlink" title="5、存储器山图♂"></a>5、存储器山图♂</h4><p><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/21.webp"><br>存储器的性能不能简单的用一个数字来描述，如果实在要形容的话，是一座时间局部性和空间局部性构成的山。山峰和低谷的差别不是一个数量级。明智的程序员会试图构造运行在山峰的程序而不是低谷。我们来看看这座存储器山是啥意思。<br><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/22.webp"><br>这段代码所做的事情，就是将data数组的内容依次读取到CPU的寄存器中。其中elems代表的是data的工作集大小也就是size时间局部性，代表Y轴；而stride（步长）代表的是横轴X；Z轴表示吞吐量，Mb&#x2F;s。越往上吞吐量越大（红色部分）。我们反复以不同的size和stride值调用我们的核心测试代码，就会得到如上图的存储器山。最高处的红色山峰为L1，由于工作集（size）很小，能全部保存在L1高速缓存中，所以这时候即使stride很长，对于性能也没太大的影响。L2和L3、主存随着stride的增加有明显的坡度，空间局部性下降。特别明显的是，主存的蓝色山峰，即使工作集很大（时间局部性极地）其stride（空间局部性）的影响也相当的明显，最高与最低处相差7倍。也就是告诫我们，即使时间局部性无法改变了，空间局部性也可以使得程序的性能极大的提高。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%8D%E5%AE%89%E5%88%A9%E4%B8%80%E6%B3%A2csapp%E7%9C%9F%E4%BC%98%E7%A7%80%EF%BC%8C%E6%9C%AC%E7%AB%A0%E4%B9%8B%E5%90%8E%E4%BD%A0%E4%BC%9A%E4%BA%86%E8%A7%A3%E5%86%85%E5%AD%98%EF%BC%8C%E6%9C%BA%E6%A2%B0%E7%A1%AC%E7%9B%98%EF%BC%8C%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98%E7%AD%89%E5%82%A8%E5%AD%98%E5%99%A8%E7%9A%84%E4%BC%98%E5%8A%A3%E5%8E%9F%E7%90%86%EF%BC%8C%E4%BD%A0%E4%BC%9A%E7%90%86%E8%A7%A3%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%AA%E6%9C%89%E6%9C%BA%E6%A2%B0%E7%A1%AC%E7%9B%98%E7%9A%84%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%8D%87%E7%BA%A7%E5%88%B0%E5%9B%BA%E6%80%81%E5%B0%B1%E8%84%B1%E8%83%8E%E6%8D%A2%E9%AA%A8%E4%BA%86%E4%B8%80%E7%95%AA%EF%BC%8C%E5%86%85%E5%AD%98%E6%98%AFDRAM-%E8%80%8C%E5%9B%BA%E6%80%81%E7%AD%89%E6%98%AFROM-%E8%BF%98%E6%9C%89%E5%B0%B1%E6%98%AF%E5%B1%80%E9%83%A8%E6%80%A7%E7%9A%84%E5%93%B2%E5%AD%A6%E3%80%82%E9%80%9A%E8%BF%87%E5%AD%A6%E4%B9%A0%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%EF%BC%8C%E7%90%86%E8%A7%A3%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%B1%80%E9%83%A8%E6%80%A7%E7%9A%84%E7%9C%9F%E6%AD%A3%E6%84%8F%E4%B9%89%EF%BC%88%E4%BD%A0%E8%BF%98%E8%83%BD%E7%9C%8B%E5%88%B0csapp%E7%AC%AC%E4%B8%89%E7%89%88%E5%B0%81%E9%9D%A2%E7%9A%84%E5%9B%BE%E6%98%AF%E5%95%A5%E7%8E%A9%E6%84%8F%E3%80%82"><span class="toc-number">1.</span> <span class="toc-text">再安利一波csapp真优秀，本章之后你会了解内存，机械硬盘，固态硬盘等储存器的优劣原理，你会理解为什么只有机械硬盘的笔记本升级到固态就脱胎换骨了一番，内存是DRAM,而固态等是ROM,还有就是局部性的哲学。通过学习高速缓存，理解程序的局部性的真正意义（你还能看到csapp第三版封面的图是啥玩意。</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF"><span class="toc-number"></span> <span class="toc-text">1、存储技术</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1%E3%80%81%E9%9A%8F%E6%9C%BA%E8%AE%BF%E9%97%AE%E5%AD%98%E5%82%A8%E5%99%A8"><span class="toc-number">1.</span> <span class="toc-text">1.1、随机访问存储器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2%E3%80%81%E5%AD%98%E5%82%A8%E5%99%A8%E6%A8%A1%E5%9D%97"><span class="toc-number">2.</span> <span class="toc-text">1.2、存储器模块</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3%E3%80%81%E8%AE%BF%E9%97%AE%E4%B8%BB%E5%AD%98%EF%BC%88%E8%AF%BB%E4%BA%8B%E5%8A%A1%E3%80%81%E5%86%99%E4%BA%8B%E5%8A%A1%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">1.3、访问主存（读事务、写事务）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-4%E3%80%81%E7%A3%81%E7%9B%98%E5%AD%98%E5%82%A8-%EF%BC%88%E7%A1%AC%E7%9B%98%EF%BC%89"><span class="toc-number">4.</span> <span class="toc-text">1.4、磁盘存储 （硬盘）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E5%B1%80%E9%83%A8%E6%80%A7"><span class="toc-number"></span> <span class="toc-text">2、局部性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84"><span class="toc-number"></span> <span class="toc-text">3、存储器层次结构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1%E3%80%81%E4%B9%A6%E4%B8%8A%E5%A4%A7%E5%9B%BE"><span class="toc-number">1.</span> <span class="toc-text">3.1、书上大图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2%E3%80%81%E7%BC%93%E5%AD%98%E5%91%BD%E4%B8%AD%E5%92%8C%E4%B8%8D%E5%91%BD%E4%B8%AD"><span class="toc-number">2.</span> <span class="toc-text">3.2、缓存命中和不命中</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3%E3%80%81%E7%B1%BB%E6%AF%94%E4%B8%80%E4%B8%8Bweb%E7%9A%84%E7%BC%93%E5%AD%98"><span class="toc-number">3.</span> <span class="toc-text">3.3、类比一下web的缓存</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%E5%AD%98%E5%82%A8%E5%99%A8%EF%BC%88%E9%9B%86%E6%88%90%E5%9C%A8CPU%E5%86%85%E9%83%A8%E7%9A%84%E4%B8%80%E4%B8%AA%E9%83%A8%E4%BB%B6L1%E3%80%81L2%E3%80%81L3%E4%B8%89%E7%BA%A7%E7%BC%93%E5%AD%98%EF%BC%89"><span class="toc-number"></span> <span class="toc-text">4、高速缓存存储器（集成在CPU内部的一个部件L1、L2、L3三级缓存）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1%E3%80%81%E9%80%9A%E7%94%A8%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%E5%AD%98%E5%82%A8%E5%99%A8%E5%86%85%E9%83%A8%E7%BB%93%E6%9E%84"><span class="toc-number">1.</span> <span class="toc-text">4.1、通用高速缓存存储器内部结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2%E3%80%81%E7%9B%B4%E6%8E%A5%E6%98%A0%E5%B0%84%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%EF%BC%88%E6%AF%8F%E4%B8%AA%E7%BB%84%E5%8F%AA%E6%9C%89%E4%B8%80%E8%A1%8C%E7%9A%84%E7%AE%80%E5%8D%95%E8%AE%BF%E9%97%AE%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">4.2、直接映射高速缓存（每个组只有一行的简单访问模式）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-3%E3%80%81%E7%BB%93%E6%9E%84%E5%89%96%E6%9E%90%EF%BC%88%E7%9C%9F%E6%AD%A3%E6%84%8F%E4%B9%89%E4%B8%8A%E7%9A%84%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">4.3、结构剖析（真正意义上的高速缓存）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5%E3%80%81%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%B1%E5%9B%BE%E2%99%82"><span class="toc-number">4.</span> <span class="toc-text">5、存储器山图♂</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/&text=CSAPP又双叒叕来一遍之存储器层次结构"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/&title=CSAPP又双叒叕来一遍之存储器层次结构"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/&is_video=false&description=CSAPP又双叒叕来一遍之存储器层次结构"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=CSAPP又双叒叕来一遍之存储器层次结构&body=Check out this article: http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/&title=CSAPP又双叒叕来一遍之存储器层次结构"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/&title=CSAPP又双叒叕来一遍之存储器层次结构"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/&title=CSAPP又双叒叕来一遍之存储器层次结构"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/&title=CSAPP又双叒叕来一遍之存储器层次结构"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/&name=CSAPP又双叒叕来一遍之存储器层次结构&description=&lt;h4 id=&#34;再安利一波csapp真优秀，本章之后你会了解内存，机械硬盘，固态硬盘等储存器的优劣原理，你会理解为什么只有机械硬盘的笔记本升级到固态就脱胎换骨了一番，内存是DRAM-而固态等是ROM-还有就是局部性的哲学。通过学习高速缓存，理解程序的局部性的真正意义（你还能看到csapp第三版封面的图是啥玩意。&#34;&gt;&lt;a href=&#34;#再安利一波csapp真优秀，本章之后你会了解内存，机械硬盘，固态硬盘等储存器的优劣原理，你会理解为什么只有机械硬盘的笔记本升级到固态就脱胎换骨了一番，内存是DRAM-而固态等是ROM-还有就是局部性的哲学。通过学习高速缓存，理解程序的局部性的真正意义（你还能看到csapp第三版封面的图是啥玩意。&#34; class=&#34;headerlink&#34; title=&#34;再安利一波csapp真优秀，本章之后你会了解内存，机械硬盘，固态硬盘等储存器的优劣原理，你会理解为什么只有机械硬盘的笔记本升级到固态就脱胎换骨了一番，内存是DRAM,而固态等是ROM,还有就是局部性的哲学。通过学习高速缓存，理解程序的局部性的真正意义（你还能看到csapp第三版封面的图是啥玩意。&#34;&gt;&lt;/a&gt;再安利一波csapp真优秀，本章之后你会了解内存，机械硬盘，固态硬盘等储存器的优劣原理，你会理解为什么只有机械硬盘的笔记本升级到固态就脱胎换骨了一番，内存是DRAM,而固态等是ROM,还有就是局部性的哲学。通过学习高速缓存，理解程序的局部性的真正意义（你还能看到csapp第三版封面的图是啥玩意。&lt;/h4&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/&t=CSAPP又双叒叕来一遍之存储器层次结构"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="一、安全1、PHP 作为弱类型语言，在底层它是怎么判断变量的类型的PHP 作为弱类型语言，在底层它是怎么判断变量的类型的 2、SQL 注入时有哪些替代空格&#x2F;**&#x2F;替代空格and(1&#x3D;0)括号绕过%09  %0A  %0D  +都可以替代空格绕过">
+<meta property="og:type" content="article">
+<meta property="og:title" content="web安全面经积累">
+<meta property="og:url" content="http://example.com/2000/02/13/%E9%9D%A2%E7%BB%8F%E7%A7%AF%E7%B4%AF/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="一、安全1、PHP 作为弱类型语言，在底层它是怎么判断变量的类型的PHP 作为弱类型语言，在底层它是怎么判断变量的类型的 2、SQL 注入时有哪些替代空格&#x2F;**&#x2F;替代空格and(1&#x3D;0)括号绕过%09  %0A  %0D  +都可以替代空格绕过">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2000-02-13T07:19:15.000Z">
+<meta property="article:modified_time" content="2020-11-24T14:55:00.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="面经">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>web安全面经积累</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2000/02/13/%E9%9D%A2%E7%BB%8F%E7%A7%AF%E7%B4%AF/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2000/02/13/%E9%9D%A2%E7%BB%8F%E7%A7%AF%E7%B4%AF/&text=web安全面经积累"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2000/02/13/%E9%9D%A2%E7%BB%8F%E7%A7%AF%E7%B4%AF/&title=web安全面经积累"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2000/02/13/%E9%9D%A2%E7%BB%8F%E7%A7%AF%E7%B4%AF/&is_video=false&description=web安全面经积累"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=web安全面经积累&body=Check out this article: http://example.com/2000/02/13/%E9%9D%A2%E7%BB%8F%E7%A7%AF%E7%B4%AF/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2000/02/13/%E9%9D%A2%E7%BB%8F%E7%A7%AF%E7%B4%AF/&title=web安全面经积累"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2000/02/13/%E9%9D%A2%E7%BB%8F%E7%A7%AF%E7%B4%AF/&title=web安全面经积累"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2000/02/13/%E9%9D%A2%E7%BB%8F%E7%A7%AF%E7%B4%AF/&title=web安全面经积累"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2000/02/13/%E9%9D%A2%E7%BB%8F%E7%A7%AF%E7%B4%AF/&title=web安全面经积累"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2000/02/13/%E9%9D%A2%E7%BB%8F%E7%A7%AF%E7%B4%AF/&name=web安全面经积累&description=&lt;!-- toc --&gt;
+
+&lt;h3 id=&#34;一、安全&#34;&gt;&lt;a href=&#34;#一、安全&#34; class=&#34;headerlink&#34; title=&#34;一、安全&#34;&gt;&lt;/a&gt;一、安全&lt;/h3&gt;&lt;h4 id=&#34;1、PHP-作为弱类型语言，在底层它是怎么判断变量的类型的&#34;&gt;&lt;a href=&#34;#1、PHP-作为弱类型语言，在底层它是怎么判断变量的类型的&#34; class=&#34;headerlink&#34; title=&#34;1、PHP 作为弱类型语言，在底层它是怎么判断变量的类型的&#34;&gt;&lt;/a&gt;1、PHP 作为弱类型语言，在底层它是怎么判断变量的类型的&lt;/h4&gt;&lt;p&gt;&lt;a href=&#34;https://www.cnblogs.com/tangchuanyang/p/6185655.html&#34;&gt;PHP 作为弱类型语言，在底层它是怎么判断变量的类型的&lt;/a&gt;&lt;/p&gt;
+&lt;h4 id=&#34;2、SQL-注入时有哪些替代空格&#34;&gt;&lt;a href=&#34;#2、SQL-注入时有哪些替代空格&#34; class=&#34;headerlink&#34; title=&#34;2、SQL 注入时有哪些替代空格&#34;&gt;&lt;/a&gt;2、SQL 注入时有哪些替代空格&lt;/h4&gt;&lt;p&gt;&amp;#x2F;**&amp;#x2F;替代空格&lt;br&gt;and(1&amp;#x3D;0)括号绕过&lt;br&gt;&lt;code&gt;%09  %0A  %0D  +都可以替代空格&lt;/code&gt;绕过&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2000/02/13/%E9%9D%A2%E7%BB%8F%E7%A7%AF%E7%B4%AF/&t=web安全面经积累"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%AE%89%E5%85%A8"><span class="toc-number">1.</span> <span class="toc-text">一、安全</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81PHP-%E4%BD%9C%E4%B8%BA%E5%BC%B1%E7%B1%BB%E5%9E%8B%E8%AF%AD%E8%A8%80%EF%BC%8C%E5%9C%A8%E5%BA%95%E5%B1%82%E5%AE%83%E6%98%AF%E6%80%8E%E4%B9%88%E5%88%A4%E6%96%AD%E5%8F%98%E9%87%8F%E7%9A%84%E7%B1%BB%E5%9E%8B%E7%9A%84"><span class="toc-number">1.1.</span> <span class="toc-text">1、PHP 作为弱类型语言，在底层它是怎么判断变量的类型的</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81SQL-%E6%B3%A8%E5%85%A5%E6%97%B6%E6%9C%89%E5%93%AA%E4%BA%9B%E6%9B%BF%E4%BB%A3%E7%A9%BA%E6%A0%BC"><span class="toc-number">1.2.</span> <span class="toc-text">2、SQL 注入时有哪些替代空格</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%81xss%E4%B8%8Ecsrf%E5%8C%BA%E5%88%AB"><span class="toc-number">1.3.</span> <span class="toc-text">3、xss与csrf区别</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%E3%80%81%E5%95%A5%E6%98%AF%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%EF%BC%8C%E8%B7%A8%E5%9F%9F%E6%9C%89%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="toc-number">1.4.</span> <span class="toc-text">4、啥是同源策略，跨域有几种方式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5%E3%80%81jsonp"><span class="toc-number">1.5.</span> <span class="toc-text">5、jsonp</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6%E3%80%81%E5%86%85%E5%AE%B9%E5%AE%89%E5%85%A8%E7%AD%96%E7%95%A5%EF%BC%88CSP%EF%BC%89"><span class="toc-number">1.6.</span> <span class="toc-text">6、内容安全策略（CSP）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7%E3%80%81SSRF%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F%E5%88%A9%E7%94%A8%E6%97%B6%E6%9C%89%E5%93%AA%E4%BA%9B%E4%BC%AA%E5%8D%8F%E8%AE%AE"><span class="toc-number">1.7.</span> <span class="toc-text">7、SSRF漏洞原理是什么？利用时有哪些伪协议</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8%E3%80%81%E4%BA%91waf"><span class="toc-number">1.8.</span> <span class="toc-text">8、云waf</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9%E3%80%81%E9%93%BE%E8%B7%AF%E5%B1%82%E5%8A%AB%E6%8C%81"><span class="toc-number">1.9.</span> <span class="toc-text">9、链路层劫持</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#10%E3%80%81%E5%A6%82%E4%BD%95%E7%BB%95%E8%BF%87cdn%EF%BC%8C%E8%8E%B7%E5%8F%96%E7%9C%9F%E5%AE%9Eip"><span class="toc-number">1.10.</span> <span class="toc-text">10、如何绕过cdn，获取真实ip</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11%E3%80%81ARP%E6%94%BB%E5%87%BB"><span class="toc-number">1.11.</span> <span class="toc-text">11、ARP攻击</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#12%E3%80%81HTTPS%E5%8E%9F%E7%90%86%EF%BC%8C%E4%BB%A5%E5%8F%8A%E5%8A%A0%E5%AF%86%E3%80%81%E8%A7%A3%E5%AF%86%E7%9A%84%E5%8E%9F%E7%90%86"><span class="toc-number">1.12.</span> <span class="toc-text">12、HTTPS原理，以及加密、解密的原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#13%E3%80%81MYSQL5-7%E4%B8%AD%E7%9A%84%E5%AE%89%E5%85%A8%E7%89%B9%E6%80%A7"><span class="toc-number">1.13.</span> <span class="toc-text">13、MYSQL5.7中的安全特性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#14%E3%80%81MYSQL%E5%8A%A0%E5%AF%86%E6%96%B9%E5%BC%8F"><span class="toc-number">1.14.</span> <span class="toc-text">14、MYSQL加密方式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#15%E3%80%81localStorage-sesseionStorage"><span class="toc-number">1.15.</span> <span class="toc-text">15、localStorage,sesseionStorage</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#16%E3%80%81HQL%E6%B3%A8%E5%85%A5"><span class="toc-number">1.16.</span> <span class="toc-text">16、HQL注入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#17%E3%80%81order-by-%E6%B3%A8%E5%85%A5"><span class="toc-number">1.17.</span> <span class="toc-text">17、order by 注入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#18%E3%80%81-limit-%E6%B3%A8%E5%85%A5"><span class="toc-number">1.18.</span> <span class="toc-text">18、 limit 注入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#19%E3%80%81PHP%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E2%80%93session"><span class="toc-number">1.19.</span> <span class="toc-text">19、PHP文件包含–session</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#20%E3%80%81IIS%E7%9F%AD%E6%96%87%E4%BB%B6%E5%90%8D%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.20.</span> <span class="toc-text">20、IIS短文件名漏洞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#21%E3%80%81SSRF%E6%97%A0%E5%9B%9E%E6%98%BE"><span class="toc-number">1.21.</span> <span class="toc-text">21、SSRF无回显</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#22%E3%80%81redis%E6%9C%AA%E6%8E%88%E6%9D%83getshell"><span class="toc-number">1.22.</span> <span class="toc-text">22、redis未授权getshell</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#23%E3%80%81phar-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">1.23.</span> <span class="toc-text">23、phar+反序列化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#23%E3%80%81http-only%E7%BB%95%E8%BF%87%E6%96%B9%E6%B3%95"><span class="toc-number">1.24.</span> <span class="toc-text">23、http-only绕过方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#24%E3%80%81PHP5-5-PHP7-2-%E6%96%B0%E7%89%B9%E6%80%A7"><span class="toc-number">1.25.</span> <span class="toc-text">24、PHP5.5 ~ PHP7.2 新特性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#25%E3%80%81OWASP-top10"><span class="toc-number">1.26.</span> <span class="toc-text">25、OWASP-top10</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#26%E3%80%81GOpher%E5%8D%8F%E8%AE%AE"><span class="toc-number">1.27.</span> <span class="toc-text">26、GOpher协议</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#27%E3%80%81%E6%96%87%E4%BB%B6%E5%90%8D%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.28.</span> <span class="toc-text">27、文件名解析漏洞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#28%E3%80%81java%E5%AE%89%E5%85%A8"><span class="toc-number">1.29.</span> <span class="toc-text">28、java安全</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#29%E3%80%81%E5%90%8E%E6%B8%97%E9%80%8F"><span class="toc-number">1.30.</span> <span class="toc-text">29、后渗透</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#30%E3%80%81FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">1.31.</span> <span class="toc-text">30、FastJson反序列化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#31%E3%80%81DNSlog"><span class="toc-number">1.32.</span> <span class="toc-text">31、DNSlog</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#32%E3%80%81iptables"><span class="toc-number">1.33.</span> <span class="toc-text">32、iptables</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#33%E3%80%81JavaScript-%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93"><span class="toc-number">1.34.</span> <span class="toc-text">33、JavaScript 原型链污染</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#34%E3%80%81websocket"><span class="toc-number">1.35.</span> <span class="toc-text">34、websocket</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#35%E3%80%81%E4%B8%80%E4%BA%9Bcms%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="toc-number">1.36.</span> <span class="toc-text">35、一些cms漏洞分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#36%E3%80%81%E5%85%8D%E6%9D%80"><span class="toc-number">1.37.</span> <span class="toc-text">36、免杀</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#37%E3%80%81sql%E6%B3%A8%E5%85%A5%E9%98%B2%E5%BE%A1"><span class="toc-number">1.38.</span> <span class="toc-text">37、sql注入防御</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#38%E3%80%81%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E7%BB%95%E8%BF%87"><span class="toc-number">1.39.</span> <span class="toc-text">38、一次有趣的绕过</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#39%E3%80%81linux%E4%B8%8Bpasswd%E5%92%8Cshadow%E5%8C%BA%E5%88%AB"><span class="toc-number">1.40.</span> <span class="toc-text">39、linux下passwd和shadow区别</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81python"><span class="toc-number">2.</span> <span class="toc-text">二、python</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81PYTHON%E4%B8%89%E5%A4%A7%E7%A5%9E%E5%99%A8%EF%BC%9A%E8%A3%85%E9%A5%B0%E5%99%A8%EF%BC%8C%E8%BF%AD%E4%BB%A3%E5%99%A8%EF%BC%8C%E7%94%9F%E6%88%90%E5%99%A8"><span class="toc-number">2.1.</span> <span class="toc-text">1、PYTHON三大神器：装饰器，迭代器，生成器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81%E6%A0%87%E5%87%86%E5%BA%93%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E7%9A%84%E9%98%9F%E5%88%97%E6%98%AF%E5%93%AA%E4%B8%80%E4%B8%AA%EF%BC%9F%E4%B8%8D%E5%AE%89%E5%85%A8%E7%9A%84%E6%98%AF%E5%93%AA%E4%B8%80%E4%B8%AA%EF%BC%9Flogging%E6%98%AF%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E7%9A%84%E5%90%97%EF%BC%9F"><span class="toc-number">2.2.</span> <span class="toc-text">2、标准库线程安全的队列是哪一个？不安全的是哪一个？logging是线程安全的吗？</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%90%8E%E6%B8%97%E9%80%8F"><span class="toc-number">3.</span> <span class="toc-text">三、后渗透</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81mysql%E6%8F%90%E6%9D%83"><span class="toc-number">3.1.</span> <span class="toc-text">1、mysql提权</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E5%85%B6%E4%BB%96"><span class="toc-number">4.</span> <span class="toc-text">四、其他</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1%E7%9A%84%E4%B8%89%E5%A4%A7%E8%8C%83%E5%BC%8F"><span class="toc-number">4.1.</span> <span class="toc-text">数据库设计的三大范式</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        web安全面经积累
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2000-02-13T07:19:15.000Z" class="dt-published" itemprop="datePublished">2000-02-13</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Web/">Web</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E9%9D%A2%E7%BB%8F/" rel="tag">面经</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <!-- toc -->
+
+<h3 id="一、安全"><a href="#一、安全" class="headerlink" title="一、安全"></a>一、安全</h3><h4 id="1、PHP-作为弱类型语言，在底层它是怎么判断变量的类型的"><a href="#1、PHP-作为弱类型语言，在底层它是怎么判断变量的类型的" class="headerlink" title="1、PHP 作为弱类型语言，在底层它是怎么判断变量的类型的"></a>1、PHP 作为弱类型语言，在底层它是怎么判断变量的类型的</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/tangchuanyang/p/6185655.html">PHP 作为弱类型语言，在底层它是怎么判断变量的类型的</a></p>
+<h4 id="2、SQL-注入时有哪些替代空格"><a href="#2、SQL-注入时有哪些替代空格" class="headerlink" title="2、SQL 注入时有哪些替代空格"></a>2、SQL 注入时有哪些替代空格</h4><p>&#x2F;**&#x2F;替代空格<br>and(1&#x3D;0)括号绕过<br><code>%09  %0A  %0D  +都可以替代空格</code>绕过</p>
+<span id="more"></span>
+
+
+<h4 id="3、xss与csrf区别"><a href="#3、xss与csrf区别" class="headerlink" title="3、xss与csrf区别"></a>3、xss与csrf区别</h4><p><code>CSRF</code>：无法获取受害者的cookie，无法看到cookie；<br>              只是利用受害者是被服务器信任的（靠验证cookie），而给服务器发送请求；<br><code>XSS</code>：利用cookie只是xss的一种体现，xss还可以篡改网页、URL跳转等等；跨站脚本，脚本可以做什么，xss就可以做什么；单在利用cookie上来说：获取受害者的cookie，从而得到服务器的信任，进行后续攻击<br>获取手段是反射、存储、dom</p>
+<h4 id="4、啥是同源策略，跨域有几种方式"><a href="#4、啥是同源策略，跨域有几种方式" class="headerlink" title="4、啥是同源策略，跨域有几种方式"></a>4、啥是同源策略，跨域有几种方式</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/lsg14215/article/details/102753275">https://blog.csdn.net/lsg14215/article/details/102753275</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/203217977b22">https://www.jianshu.com/p/203217977b22</a><br>跨域1、通过jsonp请求  2、通过服务器代理进行跨域请求</p>
+<h4 id="5、jsonp"><a href="#5、jsonp" class="headerlink" title="5、jsonp"></a>5、jsonp</h4><p><a target="_blank" rel="noopener" href="https://www.runoob.com/json/json-jsonp.html">https://www.runoob.com/json/json-jsonp.html</a><br>jsonp是jquery提供的跨域方式<br>cors是w3c提供的一个跨域标准<br>jsonp只支持get方式的跨域<br>cors支持get和post方式的跨域</p>
+<h4 id="6、内容安全策略（CSP）"><a href="#6、内容安全策略（CSP）" class="headerlink" title="6、内容安全策略（CSP）"></a>6、内容安全策略（CSP）</h4><p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/Security/CSP/CSP_policy_directives">https://developer.mozilla.org/zh-CN/docs/Web/Security/CSP/CSP_policy_directives</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_37943295/article/details/79978761">https://blog.csdn.net/qq_37943295&#x2F;article&#x2F;details&#x2F;79978761</a></p>
+<h4 id="7、SSRF漏洞原理是什么？利用时有哪些伪协议"><a href="#7、SSRF漏洞原理是什么？利用时有哪些伪协议" class="headerlink" title="7、SSRF漏洞原理是什么？利用时有哪些伪协议"></a>7、SSRF漏洞原理是什么？利用时有哪些伪协议</h4><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/dd46267a8947">SSRF漏洞原理是什么？利用时有哪些伪协议</a><br>原理：利用一个可以发起网络请求的服务当作跳板来攻击内部其他服务。<br>ssrf用处：探测内网信息,用协议探ftp%26ip&#x3D;{ip}%26port&#x3D;{port}，攻击内网或本地其他服务，穿透防火墙<br>利用协议：curl,file:&#x2F;&#x2F;,Dict:&#x2F;&#x2F;,SFTP:&#x2F;&#x2F;,TFTP:&#x2F;&#x2F;,LDAP:&#x2F;&#x2F;,Gopher:&#x2F;&#x2F;</p>
+<h4 id="8、云waf"><a href="#8、云waf" class="headerlink" title="8、云waf"></a>8、云waf</h4><p>云WAF部署在web应用程序前面，在用户请求到达web服务器前对用户请求进行扫描和过滤，分析并校验每个用户请求的网络包，确保每个用户请求有效且安全，对无效或有攻击行为的请求进行阻断或隔离。通过检查HTTP流量，可以防止源自web应用程序的安全漏洞（如SQL注入，跨站脚本攻击，文件包含和安全配置错误）的攻击。<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/bmjoker/p/8806214.html">https://www.cnblogs.com/bmjoker/p/8806214.html</a><br><a target="_blank" rel="noopener" href="https://www.idcbest.com/idcnews/11003330.html">https://www.idcbest.com/idcnews/11003330.html</a></p>
+<h4 id="9、链路层劫持"><a href="#9、链路层劫持" class="headerlink" title="9、链路层劫持"></a>9、链路层劫持</h4><p>链路层劫持是指第三方（可能是运营商、黑客）通过在用户至服务器之间，植入恶意设备或者控制网络设备的手段，侦听或篡改用户和服务器之间的数据，达到窃取用户重要数据（包括用户密码，用户身份数据等等）的目的。链路层劫持最明显的危害就是帐号、密码被窃取。<br><a target="_blank" rel="noopener" href="http://www.sohu.com/a/84898660_188485">http://www.sohu.com/a/84898660_188485</a></p>
+<h4 id="10、如何绕过cdn，获取真实ip"><a href="#10、如何绕过cdn，获取真实ip" class="headerlink" title="10、如何绕过cdn，获取真实ip"></a>10、如何绕过cdn，获取真实ip</h4><p><a target="_blank" rel="noopener" href="https://www.sohu.com/a/223174102_609556">如何绕过cdn，获取真实ip </a><br>1、二级域名法<br>2、nslookup<br>例如：<code>nslookup http://xxx.com 8.8.8.8</code>，提示：你要找冷门国外DNS才行，像谷歌的DNS，国内用的人越来越多了，很多CDN提供商都把谷歌DNS作为国内市场之一<br>3、第三方搜索，fofa,凌波微步<br>4、phpinfo，rss订阅</p>
+<h4 id="11、ARP攻击"><a href="#11、ARP攻击" class="headerlink" title="11、ARP攻击"></a>11、ARP攻击</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/zhydream77/article/details/85334042">https://blog.csdn.net/zhydream77/article/details/85334042</a></p>
+<h4 id="12、HTTPS原理，以及加密、解密的原理"><a href="#12、HTTPS原理，以及加密、解密的原理" class="headerlink" title="12、HTTPS原理，以及加密、解密的原理"></a>12、HTTPS原理，以及加密、解密的原理</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/liuqiyun/p/10250891.html">HTTPS原理，以及加密、解密的原理</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/e30a8c4fa329">https://www.jianshu.com/p/e30a8c4fa329</a><br>HTTPS &#x3D; HTTP + SSL</p>
+<h4 id="13、MYSQL5-7中的安全特性"><a href="#13、MYSQL5-7中的安全特性" class="headerlink" title="13、MYSQL5.7中的安全特性"></a>13、MYSQL5.7中的安全特性</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/bamuta/article/details/52213660">https://blog.csdn.net/bamuta/article/details/52213660</a><br><a target="_blank" rel="noopener" href="http://www.imooc.com/article/47820">http://www.imooc.com/article/47820</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_33805992/article/details/86132485">https://blog.csdn.net/weixin_33805992&#x2F;article&#x2F;details&#x2F;86132485</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zhoujinyi/p/5627494.html">https://www.cnblogs.com/zhoujinyi/p/5627494.html</a></p>
+<p>5.7版本的用户表mysql.user要求plugin字段非空，且默认值是mysql_native_password认证插件，并且不再支持mysql_old_password认证插件。5.7用户长度最大为32字节，之前最大长度为16字节，并且CREATE USER 和 DROP USER 命令里实现了<code> IF [NOT] EXISTS</code> 条件判断。5.7之后用户通过grant创建用户报warning</p>
+<h4 id="14、MYSQL加密方式"><a href="#14、MYSQL加密方式" class="headerlink" title="14、MYSQL加密方式"></a>14、MYSQL加密方式</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/ichunqiu/p/7810914.html">https://www.cnblogs.com/ichunqiu/p/7810914.html</a><br>MYSQL数据库的认证密码有两种方式，MYSQL 4.1版本之前是MYSQL323加密，MYSQL 4.1和之后的版本都是MYSQLSHA1加密，MYSQL数据库中自带Old_Password（str）和Password（str）函数,它们均可以在MYSQL数据库里进行查询，前者是MYSQL323加密，后者是MYSQLSHA1方式加密。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">show create user dxy@localhost;</span><br><span class="line">+----------------------------------------------------------------------------------+</span><br><span class="line">| CREATE USER &#x27;dxy&#x27;@&#x27;localhost&#x27; IDENTIFIED WITH &#x27;mysql_native_password&#x27; AS &#x27;*6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9&#x27; REQUIRE NONE PASSWORD EXPIRE DEFAULT ACCOUNT UNLOCK |</span><br><span class="line">+----------------------------------------------------------------------------------+</span><br></pre></td></tr></table></figure>
+<h4 id="15、localStorage-sesseionStorage"><a href="#15、localStorage-sesseionStorage" class="headerlink" title="15、localStorage,sesseionStorage"></a>15、localStorage,sesseionStorage</h4><p><a target="_blank" rel="noopener" href="https://jerryzou.com/posts/cookie-and-web-storage/">https://jerryzou.com/posts/cookie-and-web-storage/</a><br>sessionStorage和localStorage不会把数据发给服务器，仅在本地保存</p>
+<ul>
+<li>cookie只在设置的cookie过期时间之前一直有效，即使窗口或浏览器关闭</li>
+<li>sessionStorage：仅在当前浏览器窗口关闭前有效</li>
+<li>localStorage 始终有效，长期保存</li>
+</ul>
+<p>1、cookie<br>本身用于客户端和服务端通信，但是它有本地存储的功能，于是就被“借用”，document.cookie &#x3D; …获取和修改即可，cookie用于存储的缺点<br>存储量太小，只有4kb<br>所有http请求都带着，会影响获取资源的效率<br>api简单，需要封装才能用document.cookie<br>2、localStorage,sesseionStorage<br>html5专门为存储而设计，最大容量5M，api简单易用，lcoalStorage.setItem(key, value);localStorage.getItem(key);，ios safari隐藏模式下:localStorage.getItem会报错，建议统一使用try-catch封装<br>3、sessionStorage用于本地存储一个会话（session）中的数据，这些数据只有在同一个会话中的页面才能访问并且当会话结束后数据也随之销毁。因此sessionStorage不是一种持久化的本地存储，仅仅是会话级别的存储。而localStorage用于持久化的本地存储，除非主动删除数据，否则数据是永远不会过期的。</p>
+<h4 id="16、HQL注入"><a href="#16、HQL注入" class="headerlink" title="16、HQL注入"></a>16、HQL注入</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/-qing-/p/11650774.html">Hibernate HQL注入与防御(ctf实例)</a></p>
+<h4 id="17、order-by-注入"><a href="#17、order-by-注入" class="headerlink" title="17、order by 注入"></a>17、order by 注入</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/icez/p/Mysql-Order-By-Injection-Summary.html">https://www.cnblogs.com/icez/p/Mysql-Order-By-Injection-Summary.html</a></p>
+<h4 id="18、-limit-注入"><a href="#18、-limit-注入" class="headerlink" title="18、 limit 注入"></a>18、 limit 注入</h4><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/6c1420a7a7d9">https://www.jianshu.com/p/6c1420a7a7d9</a><br>不存在 order by 关键字:这种情况下的 limit 后面可以使用union进行联合查询注入<br>存在 order by 关键字会报错：limit 关键字后面还可跟PROCEDURE和 INTO两个关键字，但是 INTO 后面写入文件需要知道绝对路径以及写入shell的权限，因此利用比较难，因此这里以PROCEDURE为例进行注入<br>mysql时间盲注一般都怎么注?</p>
+<p>最简单的就是sleep了，用if(1&#x3D;1,sleep(5),0)</p>
+<p>benchmark函数</p>
+<p>heavy query 笛卡尔积 —-&gt;具体的方式就是将简单的表查询不断的叠加，使之以指数倍运算量的速度增长，不断增加系统执行 sql 语句的负荷，直到产生攻击者想要的时间延迟</p>
+<p>get_lock GET_LOCK有两个参数，一个是key,表示要加锁的字段，另一个是加锁失败后的等待时间(s)，一个客户端对某个字段加锁以后另一个客户端再想对这个字段加锁就会失败，然后就会等待设定好的时间</p>
+<h4 id="19、PHP文件包含–session"><a href="#19、PHP文件包含–session" class="headerlink" title="19、PHP文件包含–session"></a>19、PHP文件包含–session</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/Oran9e/p/8082962.html">https://www.cnblogs.com/Oran9e/p/8082962.html</a><br>利用条件：session文件路径已知，且其中内容部分可控。<br>文件包含：伪协议，session，包含日志，包含environ，包含fd，包含临时文件，包含上传文件</p>
+<h4 id="20、IIS短文件名漏洞"><a href="#20、IIS短文件名漏洞" class="headerlink" title="20、IIS短文件名漏洞"></a>20、IIS短文件名漏洞</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/20180ss916/p/9602568.html">IIS短文件名漏洞</a><br><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/web/172561.html">https://www.freebuf.com/articles/web/172561.html</a></p>
+<h4 id="21、SSRF无回显"><a href="#21、SSRF无回显" class="headerlink" title="21、SSRF无回显"></a>21、SSRF无回显</h4><p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/6373#toc-2">https://xz.aliyun.com/t/6373#toc-2</a><br>Bool型</p>
+<h4 id="22、redis未授权getshell"><a href="#22、redis未授权getshell" class="headerlink" title="22、redis未授权getshell"></a>22、redis未授权getshell</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/csacs/article/details/86776708">ssrf打内网</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/KevinGeorge/p/7995462.html">redis未授权getshell</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zuoxiaolongzzz/p/8945413.html">https://www.cnblogs.com/zuoxiaolongzzz/p/8945413.html</a></p>
+<h4 id="23、phar-反序列化"><a href="#23、phar-反序列化" class="headerlink" title="23、phar+反序列化"></a>23、phar+反序列化</h4><p><a target="_blank" rel="noopener" href="https://st4ck.gitee.io/2019/07/20/php-fan-xu-lie-hua-lou-dong/">https://st4ck.gitee.io/2019/07/20/php-fan-xu-lie-hua-lou-dong/</a><br><a target="_blank" rel="noopener" href="https://st4ck.gitee.io/2020/01/06/python-fan-xu-lie-hua-lou-dong/">https://st4ck.gitee.io/2020/01/06/python-fan-xu-lie-hua-lou-dong/</a><br><a target="_blank" rel="noopener" href="https://st4ck.gitee.io/2020/01/04/phar-de-li-yong-zi-shi/">phar的利用姿https://st4ck.gitee.io/2020/01/04/phar-de-li-yong-zi-shi/)势</a><br>php反序列化：变量覆盖的问题吧，我们传入的字符串反序列化，导致控制参数或者任意代码执行<br>phar:在使用phar:&#x2F;&#x2F;协议读取文件时，文件会被解析成phar<br>解析过程中会触发php_var_unserialize()函数对meta-data的操作，造成反序列化。</p>
+<h4 id="23、http-only绕过方法"><a href="#23、http-only绕过方法" class="headerlink" title="23、http-only绕过方法"></a>23、http-only绕过方法</h4><p><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/web/129384.html">利用HTML5的CORS特性绕过httpOnly的限制实现XSS会话劫持</a></p>
+<h4 id="24、PHP5-5-PHP7-2-新特性"><a href="#24、PHP5-5-PHP7-2-新特性" class="headerlink" title="24、PHP5.5 ~ PHP7.2 新特性"></a>24、PHP5.5 ~ PHP7.2 新特性</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_16885135/article/details/79755713">PHP5.5 ~ PHP7.2 新特性整理</a><br>null合并运算符 +太空船操作符（组合比较符）+preg_replace () 的&#x2F;e修饰符+assert() 默认不在可以执行代码</p>
+<p>php7.2<br>允许重写抽象方法(Abstract method)，扩展了参数类型，允许分组命名空间的尾部逗号<br>php5-&gt;7<br>标量类型声明 有两种模式: 强制 (默认) 和 严格模式。 现在可以使用下列类型参数（无论用强制模式还是严格模式）： 字符串(string), 整数 (int), 浮点数 (float), 以及布尔值 (bool)<br>返回值类型声明<br>null合并运算符</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//Before PHP7:</span><br><span class="line">$id = isset($_GET[‘id’]) ? $_GET[‘id’] : null;</span><br><span class="line">//In PHP7:</span><br><span class="line">$id = $_GET[‘id’] ?? null;  //equivalent of writing old above syntax</span><br></pre></td></tr></table></figure>
+<p>CSPRNG（伪随机数产生器）<br>php7取消了preg_replace () 的&#x2F;e修饰符，<br>preg_replace_callback()<br>assert() 默认不在可以执行代码<br> 性能提升</p>
+<h4 id="25、OWASP-top10"><a href="#25、OWASP-top10" class="headerlink" title="25、OWASP-top10"></a>25、OWASP-top10</h4><p><a target="_blank" rel="noopener" href="http://blog.nsfocus.net/owasp-top10-2017/">http://blog.nsfocus.net/owasp-top10-2017/</a></p>
+<h4 id="26、GOpher协议"><a href="#26、GOpher协议" class="headerlink" title="26、GOpher协议"></a>26、GOpher协议</h4><p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/5844">https://xz.aliyun.com/t/5844</a></p>
+<h4 id="27、文件名解析漏洞"><a href="#27、文件名解析漏洞" class="headerlink" title="27、文件名解析漏洞"></a>27、文件名解析漏洞</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zlgxzswjy/p/6561229.html">https://www.cnblogs.com/zlgxzswjy/p/6561229.html</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/224ac688d135">https://www.jianshu.com/p/224ac688d135</a></p>
+<h4 id="28、java安全"><a href="#28、java安全" class="headerlink" title="28、java安全"></a>28、java安全</h4><p>Java家族安全</p>
+<p> 在Java中的反射机制是指在运行状态中，对于任意一个类都能够知道这个类所有的属性和方法；并且对于任意一个对象，都能够调用它的任意一个方法；这种动态获取信息以及动态调用对象方法的功能成为Java语言的反射机制。 </p>
+<p><a target="_blank" rel="noopener" href="https://javasec.org/">https://javasec.org/</a><br>著名java发序列化漏洞 Apache的common Collection组件里的调用链的原理和利用思路(这个文章特别多) 后续的很多软件的漏洞都是因为使用了这个apache的组件导致的。我写了一个关于我的理解(<a target="_blank" rel="noopener" href="https://tiaotiaolong.net/2019/07/19/Apache-Common%E7%BB%84%E4%BB%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%9F%E7%90%86/)%E5%90%8C%E6%97%B6%E4%B9%9F%E6%94%B6%E5%BD%95%E5%88%B0%E6%88%91%E8%87%AA%E5%B7%B1%E7%9A%84git%E9%A1%B9%E7%9B%AE[tiaoVulenv](https://github.com/tiaotiaolong/tiaoVulenv)%E9%87%8C%E3%80%82">https://tiaotiaolong.net/2019/07/19/Apache-Common组件反序列化原理/)同时也收录到我自己的git项目[tiaoVulenv](https://github.com/tiaotiaolong/tiaoVulenv)里。</a></p>
+<p>关于java反序列化一般都是怎么修复的，修复思路是什么？黑名单？</p>
+<p>fastjson 反序列化的问题 关于fastjson我写了一个连载，在博客里，同时也在我自己的git项目tiaoVulenv里。<br><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/5680">https://xz.aliyun.com/t/5680</a><br>shiro 认证模块反序列化漏洞 大致原理以及利用方式。<br>读取cookie -&gt; base64解码 -&gt; AES解密 -&gt; 反序列化<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/paperpen/p/11312671.html">https://www.cnblogs.com/paperpen/p/11312671.html</a><br><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av57241403/">https://www.bilibili.com/video/av57241403/</a><br>Spring 安全 原理 利用方法</p>
+<p>Struts2 安全 原理 利用方法（s-45上传模块异常处理）<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/qiantan/p/10695567.html">https://www.cnblogs.com/qiantan/p/10695567.html</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/xiao190128/article/details/61202955">045-https://blog.csdn.net/xiao190128/article/details/61202955</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/xiao190128/article/details/61202955">https://blog.csdn.net/xiao190128/article/details/61202955</a><br>JBoss 安全 原理 利用方法(未授权上传+反序列化)<br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/55ef524dd85d">https://www.jianshu.com/p/55ef524dd85d</a><br>Tomcat 安全 原理 利用方法（可通过 PUT 方式创建一个 JSP 文件，并可以执行任意代码。）<br><a target="_blank" rel="noopener" href="https://www.freebuf.com/vuls/148283.html">Tomcat 远程代码执行</a></p>
+<p>WebLogic安全 原理 利用方法<br><a target="_blank" rel="noopener" href="https://www.freebuf.com/column/203816.html">https://www.freebuf.com/column/203816.html</a><br>由WebLogic Server WLS组件远程命令执行漏洞通过构造构造SOAP（XML）格式的请求，在解析的过程中导致XMLDecoder反序列化漏洞。</p>
+<p>jenkins 安全问题</p>
+<p>JVM学习 可以参考深入理解Java虚拟机。</p>
+<h4 id="29、后渗透"><a href="#29、后渗透" class="headerlink" title="29、后渗透"></a>29、后渗透</h4><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/21090f74edb3">https://www.jianshu.com/p/21090f74edb3</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/aa1e23ccda92">https://www.jianshu.com/p/aa1e23ccda92</a></p>
+<h4 id="30、FastJson反序列化"><a href="#30、FastJson反序列化" class="headerlink" title="30、FastJson反序列化"></a>30、FastJson反序列化</h4><p>fastjson 反序列化的问题 关于fastjson我写了一个连载，在博客里，同时也在我自己的git项目tiaoVulenv里。<br><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/5680">https://xz.aliyun.com/t/5680</a></p>
+<h4 id="31、DNSlog"><a href="#31、DNSlog" class="headerlink" title="31、DNSlog"></a>31、DNSlog</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/sstfy/p/10351807.html">https://www.cnblogs.com/sstfy/p/10351807.html</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/afanti/p/8047530.html">https://www.cnblogs.com/afanti/p/8047530.html</a></p>
+<h4 id="32、iptables"><a href="#32、iptables" class="headerlink" title="32、iptables"></a>32、iptables</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_37998647/article/details/78895754">https://blog.csdn.net/weixin_37998647&#x2F;article&#x2F;details&#x2F;78895754</a></p>
+<h4 id="33、JavaScript-原型链污染"><a href="#33、JavaScript-原型链污染" class="headerlink" title="33、JavaScript 原型链污染"></a>33、JavaScript 原型链污染</h4><p><a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/176884">https://www.anquanke.com/post/id/176884</a><br>在javascript中,每个对象的都有一个指向他的原型(prototype)的内部链接，这个原型对象又有它自己的原型，直到null为止</p>
+<h4 id="34、websocket"><a href="#34、websocket" class="headerlink" title="34、websocket"></a>34、websocket</h4><p>它的最大特点就是，服务器可以主动向客户端推送信息，客户端也可以主动向服务器发送信息，是真正的双向平等对话，属于服务器推送技术的一种。</p>
+<h4 id="35、一些cms漏洞分析"><a href="#35、一些cms漏洞分析" class="headerlink" title="35、一些cms漏洞分析"></a>35、一些cms漏洞分析</h4><p>discuz任意代码执行<br><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1511932">https://cloud.tencent.com/developer/article/1511932</a></p>
+<p>thinkphp任意代码执行<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_40884727/article/details/101452478">https://blog.csdn.net/qq_40884727&#x2F;article&#x2F;details&#x2F;101452478</a></p>
+<h4 id="36、免杀"><a href="#36、免杀" class="headerlink" title="36、免杀"></a>36、免杀</h4><p>混淆<br>Powershell天然免杀，我们可以直接用Powershell命令去加载相应的脚本，下载后执行。这种方法是在内存中直接加载，能够绕过杀软的检测<br>第一步，上传Procdump到服务器，Procdump是一个Windows Debug工具，而且是微软爸爸官方提供的，所以无论如何杀软都不会把这货列进黑名单的</p>
+<p><a target="_blank" rel="noopener" href="https://www.wtfsec.org/mimikatz-mian-sha/">https://www.wtfsec.org/mimikatz-mian-sha/</a></p>
+<p>利用抽空ProcessImage就起了一个进程（正常软件），然后把里面的Image抽掉然后映射你的软件进去</p>
+<h4 id="37、sql注入防御"><a href="#37、sql注入防御" class="headerlink" title="37、sql注入防御"></a>37、sql注入防御</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/nzjdsds/article/details/77829158">https://blog.csdn.net/nzjdsds/article/details/77829158</a></p>
+<h4 id="38、一次有趣的绕过"><a href="#38、一次有趣的绕过" class="headerlink" title="38、一次有趣的绕过"></a>38、一次有趣的绕过</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/xishaonian/p/7693136.html">https://www.cnblogs.com/xishaonian/p/7693136.html</a></p>
+<h4 id="39、linux下passwd和shadow区别"><a href="#39、linux下passwd和shadow区别" class="headerlink" title="39、linux下passwd和shadow区别"></a>39、linux下passwd和shadow区别</h4><p>shadow是root可读<br>passwd匿名都可读</p>
+<h3 id="二、python"><a href="#二、python" class="headerlink" title="二、python"></a>二、python</h3><h4 id="1、PYTHON三大神器：装饰器，迭代器，生成器"><a href="#1、PYTHON三大神器：装饰器，迭代器，生成器" class="headerlink" title="1、PYTHON三大神器：装饰器，迭代器，生成器"></a>1、PYTHON三大神器：装饰器，迭代器，生成器</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/leeeel/p/10769278.html">PYTHON三大神器：装饰器，迭代器，生成器</a></p>
+<h4 id="2、标准库线程安全的队列是哪一个？不安全的是哪一个？logging是线程安全的吗？"><a href="#2、标准库线程安全的队列是哪一个？不安全的是哪一个？logging是线程安全的吗？" class="headerlink" title="2、标准库线程安全的队列是哪一个？不安全的是哪一个？logging是线程安全的吗？"></a>2、标准库线程安全的队列是哪一个？不安全的是哪一个？logging是线程安全的吗？</h4><p>Python队列都是线程安全的,该问题主要考察你对队列的了解和线程安全的概念.<br>所谓线程安全：就是对于多线程同时操作是是安全的而不会发生写冲突,比如python的Queue<br>相反非线程安全：就是多线程同时操作时会发生写冲突,比如python的其他list,set,dict<br>logging是Python标准库里的日志模块(线程安全)</p>
+<h3 id="三、后渗透"><a href="#三、后渗透" class="headerlink" title="三、后渗透"></a>三、后渗透</h3><h4 id="1、mysql提权"><a href="#1、mysql提权" class="headerlink" title="1、mysql提权"></a>1、mysql提权</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/he_and/article/details/81434865">https://blog.csdn.net/he_and&#x2F;article&#x2F;details&#x2F;81434865</a><br>mof提权:在windows平台下，c:&#x2F;windows&#x2F;system32&#x2F;wbem&#x2F;mof&#x2F;nullevt.mof这个文件会每间隔一段时间（很短暂）就会以system权限执行一次，所以，只要我们将我们先要做的事通过代码存储到这个mof文件中，就可以实现权限提升。<br>udf提权:UDF提权是利用MYSQL的自定义函数功能，将MYSQL账号转化为系统system权限<br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/d01167862c42">https://www.jianshu.com/p/d01167862c42</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/R4v3n/articles/8722657.html">https://www.cnblogs.com/R4v3n/articles/8722657.html</a><br>mysql写木马<br>mysql反弹shell提权<br>phpmyadmin提权</p>
+<h3 id="四、其他"><a href="#四、其他" class="headerlink" title="四、其他"></a>四、其他</h3><h4 id="数据库设计的三大范式"><a href="#数据库设计的三大范式" class="headerlink" title="数据库设计的三大范式"></a>数据库设计的三大范式</h4><p>1、<a target="_blank" rel="noopener" href="https://blog.csdn.net/xy707707/article/details/80509123">数据库设计的三大范式</a></p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a target="_blank" rel="noopener" href="https://attacker.cc/index.php/archives/24/">https://attacker.cc/index.php/archives/24/</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%AE%89%E5%85%A8"><span class="toc-number">1.</span> <span class="toc-text">一、安全</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81PHP-%E4%BD%9C%E4%B8%BA%E5%BC%B1%E7%B1%BB%E5%9E%8B%E8%AF%AD%E8%A8%80%EF%BC%8C%E5%9C%A8%E5%BA%95%E5%B1%82%E5%AE%83%E6%98%AF%E6%80%8E%E4%B9%88%E5%88%A4%E6%96%AD%E5%8F%98%E9%87%8F%E7%9A%84%E7%B1%BB%E5%9E%8B%E7%9A%84"><span class="toc-number">1.1.</span> <span class="toc-text">1、PHP 作为弱类型语言，在底层它是怎么判断变量的类型的</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81SQL-%E6%B3%A8%E5%85%A5%E6%97%B6%E6%9C%89%E5%93%AA%E4%BA%9B%E6%9B%BF%E4%BB%A3%E7%A9%BA%E6%A0%BC"><span class="toc-number">1.2.</span> <span class="toc-text">2、SQL 注入时有哪些替代空格</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%81xss%E4%B8%8Ecsrf%E5%8C%BA%E5%88%AB"><span class="toc-number">1.3.</span> <span class="toc-text">3、xss与csrf区别</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%E3%80%81%E5%95%A5%E6%98%AF%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%EF%BC%8C%E8%B7%A8%E5%9F%9F%E6%9C%89%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="toc-number">1.4.</span> <span class="toc-text">4、啥是同源策略，跨域有几种方式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5%E3%80%81jsonp"><span class="toc-number">1.5.</span> <span class="toc-text">5、jsonp</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6%E3%80%81%E5%86%85%E5%AE%B9%E5%AE%89%E5%85%A8%E7%AD%96%E7%95%A5%EF%BC%88CSP%EF%BC%89"><span class="toc-number">1.6.</span> <span class="toc-text">6、内容安全策略（CSP）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7%E3%80%81SSRF%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F%E5%88%A9%E7%94%A8%E6%97%B6%E6%9C%89%E5%93%AA%E4%BA%9B%E4%BC%AA%E5%8D%8F%E8%AE%AE"><span class="toc-number">1.7.</span> <span class="toc-text">7、SSRF漏洞原理是什么？利用时有哪些伪协议</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8%E3%80%81%E4%BA%91waf"><span class="toc-number">1.8.</span> <span class="toc-text">8、云waf</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9%E3%80%81%E9%93%BE%E8%B7%AF%E5%B1%82%E5%8A%AB%E6%8C%81"><span class="toc-number">1.9.</span> <span class="toc-text">9、链路层劫持</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#10%E3%80%81%E5%A6%82%E4%BD%95%E7%BB%95%E8%BF%87cdn%EF%BC%8C%E8%8E%B7%E5%8F%96%E7%9C%9F%E5%AE%9Eip"><span class="toc-number">1.10.</span> <span class="toc-text">10、如何绕过cdn，获取真实ip</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11%E3%80%81ARP%E6%94%BB%E5%87%BB"><span class="toc-number">1.11.</span> <span class="toc-text">11、ARP攻击</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#12%E3%80%81HTTPS%E5%8E%9F%E7%90%86%EF%BC%8C%E4%BB%A5%E5%8F%8A%E5%8A%A0%E5%AF%86%E3%80%81%E8%A7%A3%E5%AF%86%E7%9A%84%E5%8E%9F%E7%90%86"><span class="toc-number">1.12.</span> <span class="toc-text">12、HTTPS原理，以及加密、解密的原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#13%E3%80%81MYSQL5-7%E4%B8%AD%E7%9A%84%E5%AE%89%E5%85%A8%E7%89%B9%E6%80%A7"><span class="toc-number">1.13.</span> <span class="toc-text">13、MYSQL5.7中的安全特性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#14%E3%80%81MYSQL%E5%8A%A0%E5%AF%86%E6%96%B9%E5%BC%8F"><span class="toc-number">1.14.</span> <span class="toc-text">14、MYSQL加密方式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#15%E3%80%81localStorage-sesseionStorage"><span class="toc-number">1.15.</span> <span class="toc-text">15、localStorage,sesseionStorage</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#16%E3%80%81HQL%E6%B3%A8%E5%85%A5"><span class="toc-number">1.16.</span> <span class="toc-text">16、HQL注入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#17%E3%80%81order-by-%E6%B3%A8%E5%85%A5"><span class="toc-number">1.17.</span> <span class="toc-text">17、order by 注入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#18%E3%80%81-limit-%E6%B3%A8%E5%85%A5"><span class="toc-number">1.18.</span> <span class="toc-text">18、 limit 注入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#19%E3%80%81PHP%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E2%80%93session"><span class="toc-number">1.19.</span> <span class="toc-text">19、PHP文件包含–session</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#20%E3%80%81IIS%E7%9F%AD%E6%96%87%E4%BB%B6%E5%90%8D%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.20.</span> <span class="toc-text">20、IIS短文件名漏洞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#21%E3%80%81SSRF%E6%97%A0%E5%9B%9E%E6%98%BE"><span class="toc-number">1.21.</span> <span class="toc-text">21、SSRF无回显</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#22%E3%80%81redis%E6%9C%AA%E6%8E%88%E6%9D%83getshell"><span class="toc-number">1.22.</span> <span class="toc-text">22、redis未授权getshell</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#23%E3%80%81phar-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">1.23.</span> <span class="toc-text">23、phar+反序列化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#23%E3%80%81http-only%E7%BB%95%E8%BF%87%E6%96%B9%E6%B3%95"><span class="toc-number">1.24.</span> <span class="toc-text">23、http-only绕过方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#24%E3%80%81PHP5-5-PHP7-2-%E6%96%B0%E7%89%B9%E6%80%A7"><span class="toc-number">1.25.</span> <span class="toc-text">24、PHP5.5 ~ PHP7.2 新特性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#25%E3%80%81OWASP-top10"><span class="toc-number">1.26.</span> <span class="toc-text">25、OWASP-top10</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#26%E3%80%81GOpher%E5%8D%8F%E8%AE%AE"><span class="toc-number">1.27.</span> <span class="toc-text">26、GOpher协议</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#27%E3%80%81%E6%96%87%E4%BB%B6%E5%90%8D%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.28.</span> <span class="toc-text">27、文件名解析漏洞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#28%E3%80%81java%E5%AE%89%E5%85%A8"><span class="toc-number">1.29.</span> <span class="toc-text">28、java安全</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#29%E3%80%81%E5%90%8E%E6%B8%97%E9%80%8F"><span class="toc-number">1.30.</span> <span class="toc-text">29、后渗透</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#30%E3%80%81FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">1.31.</span> <span class="toc-text">30、FastJson反序列化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#31%E3%80%81DNSlog"><span class="toc-number">1.32.</span> <span class="toc-text">31、DNSlog</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#32%E3%80%81iptables"><span class="toc-number">1.33.</span> <span class="toc-text">32、iptables</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#33%E3%80%81JavaScript-%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93"><span class="toc-number">1.34.</span> <span class="toc-text">33、JavaScript 原型链污染</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#34%E3%80%81websocket"><span class="toc-number">1.35.</span> <span class="toc-text">34、websocket</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#35%E3%80%81%E4%B8%80%E4%BA%9Bcms%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="toc-number">1.36.</span> <span class="toc-text">35、一些cms漏洞分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#36%E3%80%81%E5%85%8D%E6%9D%80"><span class="toc-number">1.37.</span> <span class="toc-text">36、免杀</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#37%E3%80%81sql%E6%B3%A8%E5%85%A5%E9%98%B2%E5%BE%A1"><span class="toc-number">1.38.</span> <span class="toc-text">37、sql注入防御</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#38%E3%80%81%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E7%BB%95%E8%BF%87"><span class="toc-number">1.39.</span> <span class="toc-text">38、一次有趣的绕过</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#39%E3%80%81linux%E4%B8%8Bpasswd%E5%92%8Cshadow%E5%8C%BA%E5%88%AB"><span class="toc-number">1.40.</span> <span class="toc-text">39、linux下passwd和shadow区别</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81python"><span class="toc-number">2.</span> <span class="toc-text">二、python</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81PYTHON%E4%B8%89%E5%A4%A7%E7%A5%9E%E5%99%A8%EF%BC%9A%E8%A3%85%E9%A5%B0%E5%99%A8%EF%BC%8C%E8%BF%AD%E4%BB%A3%E5%99%A8%EF%BC%8C%E7%94%9F%E6%88%90%E5%99%A8"><span class="toc-number">2.1.</span> <span class="toc-text">1、PYTHON三大神器：装饰器，迭代器，生成器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81%E6%A0%87%E5%87%86%E5%BA%93%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E7%9A%84%E9%98%9F%E5%88%97%E6%98%AF%E5%93%AA%E4%B8%80%E4%B8%AA%EF%BC%9F%E4%B8%8D%E5%AE%89%E5%85%A8%E7%9A%84%E6%98%AF%E5%93%AA%E4%B8%80%E4%B8%AA%EF%BC%9Flogging%E6%98%AF%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E7%9A%84%E5%90%97%EF%BC%9F"><span class="toc-number">2.2.</span> <span class="toc-text">2、标准库线程安全的队列是哪一个？不安全的是哪一个？logging是线程安全的吗？</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%90%8E%E6%B8%97%E9%80%8F"><span class="toc-number">3.</span> <span class="toc-text">三、后渗透</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81mysql%E6%8F%90%E6%9D%83"><span class="toc-number">3.1.</span> <span class="toc-text">1、mysql提权</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E5%85%B6%E4%BB%96"><span class="toc-number">4.</span> <span class="toc-text">四、其他</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1%E7%9A%84%E4%B8%89%E5%A4%A7%E8%8C%83%E5%BC%8F"><span class="toc-number">4.1.</span> <span class="toc-text">数据库设计的三大范式</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2000/02/13/%E9%9D%A2%E7%BB%8F%E7%A7%AF%E7%B4%AF/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2000/02/13/%E9%9D%A2%E7%BB%8F%E7%A7%AF%E7%B4%AF/&text=web安全面经积累"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2000/02/13/%E9%9D%A2%E7%BB%8F%E7%A7%AF%E7%B4%AF/&title=web安全面经积累"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2000/02/13/%E9%9D%A2%E7%BB%8F%E7%A7%AF%E7%B4%AF/&is_video=false&description=web安全面经积累"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=web安全面经积累&body=Check out this article: http://example.com/2000/02/13/%E9%9D%A2%E7%BB%8F%E7%A7%AF%E7%B4%AF/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2000/02/13/%E9%9D%A2%E7%BB%8F%E7%A7%AF%E7%B4%AF/&title=web安全面经积累"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2000/02/13/%E9%9D%A2%E7%BB%8F%E7%A7%AF%E7%B4%AF/&title=web安全面经积累"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2000/02/13/%E9%9D%A2%E7%BB%8F%E7%A7%AF%E7%B4%AF/&title=web安全面经积累"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2000/02/13/%E9%9D%A2%E7%BB%8F%E7%A7%AF%E7%B4%AF/&title=web安全面经积累"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2000/02/13/%E9%9D%A2%E7%BB%8F%E7%A7%AF%E7%B4%AF/&name=web安全面经积累&description=&lt;!-- toc --&gt;
+
+&lt;h3 id=&#34;一、安全&#34;&gt;&lt;a href=&#34;#一、安全&#34; class=&#34;headerlink&#34; title=&#34;一、安全&#34;&gt;&lt;/a&gt;一、安全&lt;/h3&gt;&lt;h4 id=&#34;1、PHP-作为弱类型语言，在底层它是怎么判断变量的类型的&#34;&gt;&lt;a href=&#34;#1、PHP-作为弱类型语言，在底层它是怎么判断变量的类型的&#34; class=&#34;headerlink&#34; title=&#34;1、PHP 作为弱类型语言，在底层它是怎么判断变量的类型的&#34;&gt;&lt;/a&gt;1、PHP 作为弱类型语言，在底层它是怎么判断变量的类型的&lt;/h4&gt;&lt;p&gt;&lt;a href=&#34;https://www.cnblogs.com/tangchuanyang/p/6185655.html&#34;&gt;PHP 作为弱类型语言，在底层它是怎么判断变量的类型的&lt;/a&gt;&lt;/p&gt;
+&lt;h4 id=&#34;2、SQL-注入时有哪些替代空格&#34;&gt;&lt;a href=&#34;#2、SQL-注入时有哪些替代空格&#34; class=&#34;headerlink&#34; title=&#34;2、SQL 注入时有哪些替代空格&#34;&gt;&lt;/a&gt;2、SQL 注入时有哪些替代空格&lt;/h4&gt;&lt;p&gt;&amp;#x2F;**&amp;#x2F;替代空格&lt;br&gt;and(1&amp;#x3D;0)括号绕过&lt;br&gt;&lt;code&gt;%09  %0A  %0D  +都可以替代空格&lt;/code&gt;绕过&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2000/02/13/%E9%9D%A2%E7%BB%8F%E7%A7%AF%E7%B4%AF/&t=web安全面经积累"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="楔子很久就想写和java审计有关的文章了，java博大精深，学得断断续续，最近来长亭实习，从旁边一个Java大牛师傅学了一下下，还是打算记一下，内容偏易，大牛绕道目录">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JAVA1-反射机制">
+<meta property="og:url" content="http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="楔子很久就想写和java审计有关的文章了，java博大精深，学得断断续续，最近来长亭实习，从旁边一个Java大牛师傅学了一下下，还是打算记一下，内容偏易，大牛绕道目录">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/1.png">
+<meta property="og:image" content="http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/2.png">
+<meta property="og:image" content="http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/3.png">
+<meta property="og:image" content="http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/4.png">
+<meta property="og:image" content="http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/5.png">
+<meta property="og:image" content="http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/7.png">
+<meta property="og:image" content="http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/6.png">
+<meta property="article:published_time" content="2020-05-25T02:29:10.000Z">
+<meta property="article:modified_time" content="2020-11-24T04:50:30.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>JAVA1-反射机制</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A82-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8CRMI/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2020/04/27/%E4%BB%96%E6%98%AF%E5%A6%82%E4%BD%95%E7%99%BD%E6%89%8B%E8%B5%B7%E5%AE%B6/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&text=JAVA1-反射机制"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&title=JAVA1-反射机制"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&is_video=false&description=JAVA1-反射机制"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=JAVA1-反射机制&body=Check out this article: http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&title=JAVA1-反射机制"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&title=JAVA1-反射机制"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&title=JAVA1-反射机制"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&title=JAVA1-反射机制"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&name=JAVA1-反射机制&description=&lt;!-- toc --&gt;
+
+&lt;h3 id=&#34;楔子&#34;&gt;&lt;a href=&#34;#楔子&#34; class=&#34;headerlink&#34; title=&#34;楔子&#34;&gt;&lt;/a&gt;楔子&lt;/h3&gt;&lt;p&gt;很久就想写和java审计有关的文章了，java博大精深，学得断断续续，最近来长亭实习，从旁边一个Java大牛师傅学了一下下，还是打算记一下，内容偏易，大牛绕道&lt;br&gt;目录&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&t=JAVA1-反射机制"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A5%94%E5%AD%90"><span class="toc-number">1.</span> <span class="toc-text">楔子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Java%E5%8F%8D%E5%B0%84"><span class="toc-number">2.</span> <span class="toc-text">Java反射</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BE%8B%E5%AD%90-%E5%8F%8D%E5%B0%84"><span class="toc-number">3.</span> <span class="toc-text">例子-反射</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#forName"><span class="toc-number">3.1.</span> <span class="toc-text">forName</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#getMethod"><span class="toc-number">3.2.</span> <span class="toc-text">getMethod</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#invoke"><span class="toc-number">3.3.</span> <span class="toc-text">invoke</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%88%E5%B9%B6%E5%8F%8D%E5%B0%84%E5%87%BD%E6%95%B0%E5%BC%B9%E8%AE%A1%E7%AE%97%E5%99%A8"><span class="toc-number">4.</span> <span class="toc-text">合并反射函数弹计算器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%87%E5%AE%9A%E7%9A%84%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95%E7%94%9F%E6%88%90%E7%B1%BB%E7%9A%84%E5%AE%9E%E4%BE%8B"><span class="toc-number">5.</span> <span class="toc-text">指定的构造方法生成类的实例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E7%A7%81%E6%9C%89%E6%96%B9%E6%B3%95"><span class="toc-number">6.</span> <span class="toc-text">执行私有方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%84%E5%BD%95"><span class="toc-number">7.</span> <span class="toc-text">附录</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6%E7%9A%84%E7%9B%B8%E5%85%B3%E7%B1%BB"><span class="toc-number">7.1.</span> <span class="toc-text">反射机制的相关类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Class%E7%B1%BB"><span class="toc-number">7.2.</span> <span class="toc-text">Class类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Field%E7%B1%BB"><span class="toc-number">7.3.</span> <span class="toc-text">Field类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Method%E7%B1%BB"><span class="toc-number">7.4.</span> <span class="toc-text">Method类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Constructor%E7%B1%BB"><span class="toc-number">7.5.</span> <span class="toc-text">Constructor类</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        JAVA1-反射机制
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-05-25T02:29:10.000Z" class="dt-published" itemprop="datePublished">2020-05-25</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/java%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/">java安全研究</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Java/" rel="tag">Java</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <!-- toc -->
+
+<h3 id="楔子"><a href="#楔子" class="headerlink" title="楔子"></a>楔子</h3><p>很久就想写和java审计有关的文章了，java博大精深，学得断断续续，最近来长亭实习，从旁边一个Java大牛师傅学了一下下，还是打算记一下，内容偏易，大牛绕道<br>目录</p>
+<span id="more"></span>
+
+
+<h3 id="Java反射"><a href="#Java反射" class="headerlink" title="Java反射"></a>Java反射</h3><p>真正反序列化漏洞的利用，肯定需要了解java反射原理。因为java反序列化的payload大多与反射机制密切相关。</p>
+<blockquote>
+<p>在Java中的反射机制是指在运行状态中，对于任意一个类都能够知道这个类所有的属性和方法；并且对于任意一个对象，都能够调用它的任意一个方法；这种动态获取信息以及动态调用对象方法的功能成为Java语言的反射机制。<br>总的来说，反射让java可以在运行时，根据传入的类名字符串，去执行这个类存在的方法，而且可以修改属性的访问修饰符（public、private、protect）</p>
+</blockquote>
+<p>总所周知，一个技术的存活，一定有他的价值，否则在自然生存定律中必定被淘汰，核弹之下无冤魂（狗头）。<br>那么java反射有什么价值么？</p>
+<p>我认为就是实现<code>动态</code>。我们举一个例子</p>
+<hr>
+<h3 id="例子-反射"><a href="#例子-反射" class="headerlink" title="例子-反射"></a>例子-反射</h3><p>假设我们来定义一个女朋友的接口，接口就为想peach，我们尽量使用implements操作，所以抽象的女朋友就行，反正也没有，那么长这样。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">Girl_friend</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title function_">dream_peach</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为女孩子种类不同，比如小萝莉还是富婆，我们可以实现一下不同的类女朋友</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Luoli</span> <span class="keyword">implements</span> <span class="title class_">Girl_friend</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">dream_peach</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;I&#x27;m your girlFriend, i am Luoli&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Fupo</span> <span class="keyword">implements</span> <span class="title class_">Girl_friend</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">dream_peach</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;I&#x27;m your girlFriend, i am Fupo&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么我们需要在主类中想peach那就得这样写</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Helloworld</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] a)</span>&#123;</span><br><span class="line">        Girl_friend f=<span class="keyword">new</span> <span class="title class_">Fupo</span>();</span><br><span class="line">        f.dream_peach();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//输出I&#x27;m your girlFriend, i am Fupo</span></span><br></pre></td></tr></table></figure>
+<p>桃子确实想好了，但是这样就没有动态的概念了，我所理解的动态是你要修改一个类的时候，不需要修改代码，而是通过传参就可</p>
+<p>那么我们可以使用传统的工厂方法获取女朋友的实例</p>
+<blockquote>
+<p>工厂方法可以理解为你把女朋友的属性交给工厂，工厂就帮你制作一个女朋友的实例</p>
+</blockquote>
+<p>那么工厂代码应该这样这样写</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Girl_friend_factory</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Girl_friend <span class="title function_">getInstance</span><span class="params">(String girlName)</span>&#123;</span><br><span class="line">        Girl_friend f=<span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">if</span>(<span class="string">&quot;Luoli&quot;</span>.equals(girlName))&#123;</span><br><span class="line">            f=<span class="keyword">new</span> <span class="title class_">Luoli</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(<span class="string">&quot;Fupo&quot;</span>.equals(girlName))&#123;</span><br><span class="line">            f=<span class="keyword">new</span> <span class="title class_">Fupo</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> f;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们可以传入我们期望的女朋友的类型名字就获得了这个实例（可惜现实世界并没有）。<br>那么我们要用的时候先使用工厂拿到实例<code>Girl_friend f=Girl_friend_factory.getInstance(&quot;Luoli&quot;);</code>。那么整体代码就是这样了<br>Helloworld.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">Girl_friend</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title function_">dream_peach</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Luoli</span> <span class="keyword">implements</span> <span class="title class_">Girl_friend</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">dream_peach</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;I&#x27;m your girlFriend, i am Luoli&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Fupo</span> <span class="keyword">implements</span> <span class="title class_">Girl_friend</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">dream_peach</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;I&#x27;m your girlFriend, i am Fupo&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Girl_friend_factory</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Girl_friend <span class="title function_">getInstance</span><span class="params">(String girlName)</span>&#123;</span><br><span class="line">        Girl_friend f=<span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">if</span>(<span class="string">&quot;Luoli&quot;</span>.equals(girlName))&#123;</span><br><span class="line">            f=<span class="keyword">new</span> <span class="title class_">Luoli</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(<span class="string">&quot;Fupo&quot;</span>.equals(girlName))&#123;</span><br><span class="line">            f=<span class="keyword">new</span> <span class="title class_">Fupo</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> f;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Helloworld</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] a)</span>&#123;</span><br><span class="line">        Girl_friend f=Girl_friend_factory.getInstance(<span class="string">&quot;Luoli&quot;</span>);</span><br><span class="line">        f.dream_peach();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//输出I&#x27;m your girlFriend, i am Luoli</span></span><br></pre></td></tr></table></figure>
+<p>似乎一切很顺利了<br>但是不知道有没有发现，在Girl_friend_factory中我们用了很多if判断类名，那么一旦这个type有几十种，我们每增加一种都要做三布步操作</p>
+<ul>
+<li>1、增加新的女朋友类型</li>
+<li>2、增加if判断</li>
+<li>3、主类中调用</li>
+</ul>
+<p>那么反射其实解决的就是这么一个问题。<br>反射主要是有这么几个函数直接可调用</p>
+<blockquote>
+<p>获取类的⽅法： forName<br>实例化类对象的⽅法： newInstance<br>获取函数的⽅法： getMethod<br>执⾏函数的⽅法： invoke</p>
+</blockquote>
+<p>我们先来说一说forName的方法</p>
+<blockquote>
+<p>Class.forName 如果你知道某个类的名字，想获取到这个类，就可以使⽤ forName 来获取</p>
+</blockquote>
+<p>比如我们想获得上面的萝莉类（Luoli）,就不需要<code>f=new Luoli();</code>了,而是直接使用反射<br><code>Girl_friend f=(Girl_friend)Class.forName(&quot;Luoli&quot;).newInstance();</code>就获得了萝莉的实例，不知道现在有没有键盘侠站出来说明明<code>f=new Luoli();</code>比后面的短不是么。</p>
+<p>但是我们现在说的重点是动态，后者的类名可以动态传入，岂不是美滋滋。<br>那么完整的代码就是</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">Girl_friend</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title function_">dream_peach</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Luoli</span> <span class="keyword">implements</span> <span class="title class_">Girl_friend</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">dream_peach</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;I&#x27;m your girlFriend, i am Luoli&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Fupo</span> <span class="keyword">implements</span> <span class="title class_">Girl_friend</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">dream_peach</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;I&#x27;m your girlFriend, i am Fupo&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Girl_friend_factory</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Girl_friend <span class="title function_">getInstance</span><span class="params">(String girlName)</span>&#123;</span><br><span class="line">        Girl_friend f=<span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">try</span>&#123;</span><br><span class="line">            f=(Girl_friend)Class.forName(girlName).newInstance();</span><br><span class="line">        &#125;<span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> f;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Helloworld</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] a)</span>&#123;</span><br><span class="line">        Girl_friend f=Girl_friend_factory.getInstance(<span class="string">&quot;Luoli&quot;</span>);</span><br><span class="line">        f.dream_peach();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>到此我们反射获取类的⽅法： forName的意义大概就有了</p>
+<hr>
+<p>我们一直说到反射有4个函数比较重要</p>
+<blockquote>
+<p>获取类的⽅法： forName<br>实例化类对象的⽅法： newInstance<br>获取函数的⽅法： getMethod<br>执⾏函数的⽅法： invoke</p>
+</blockquote>
+<p>那么比较重要的例子一般就是长这样</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">execute</span><span class="params">(String className, String methodName)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> Class.forName(className);    </span><br><span class="line">    clazz.getMethod(methodName).invoke(clazz.newInstance()); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>知道一点点java-rce的同志应该见过java命令执行最常见的直接调用payload</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Runtime.getRuntime().exec(<span class="string">&quot;calc.exe&quot;</span>);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>getRuntime():其实就是Runtime类获取对象的方式，等于new一个Runtime类。之所以封装成一个函数是为了不调用一次建立一个对象，只获取一个对象来执行操作。<br>exec():调用exec函数<br>calc.exe：调用计算器程序</p>
+</blockquote>
+<p>如果我们将这个poc拓展，使用反射四个函数来利用，那么长这样</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.reflect.InvocationTargetException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Helloworld</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] a)</span> <span class="keyword">throws</span> ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException &#123;</span><br><span class="line">        <span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;java.lang.Runtime&quot;</span>);</span><br><span class="line">        clazz.getMethod(<span class="string">&quot;exec&quot;</span>, String.class).invoke(clazz.getMethod(<span class="string">&quot;getRuntime&quot;</span>).invoke(clazz), <span class="string">&quot;calc.exe&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/1.png" alt="java代码审计入门"></p>
+<hr>
+<p>我们一步一步来聊一聊这个反射的poc为何能成功。</p>
+<hr>
+<h4 id="forName"><a href="#forName" class="headerlink" title="forName"></a>forName</h4><p>获得一个class对象(java.lang.Class)有三种方法：</p>
+<ol>
+<li>obj.getClass(): 如果上下⽂中存在某个类的实例 obj ，那么我们可以直接通过，obj.getClass() 来获取它的类</li>
+<li>Test.class:Test是一个已经加载的类，想获取它的java.lang.Class对象，直接拿取class参数即可。（这不是反射机制）</li>
+<li>Class.forName:如果知道类的名字，可以直接使用forname来获取</li>
+</ol>
+<p>可以通过简短的代码验证-其中Runtime是一个已经加载了的类，getRuntime能获得一个类的一个对象，类似于工厂了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">System.out.println(Runtime.getRuntime());</span><br><span class="line">System.out.println(Runtime.class);</span><br><span class="line">System.out.println( );</span><br><span class="line">System.out.println(Class.forName(<span class="string">&quot;java.lang.Runtime&quot;</span>));</span><br></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">java.lang.Runtime@16b98e56</span><br><span class="line">class java.lang.Runtime</span><br><span class="line">class java.lang.Runtime</span><br><span class="line">class java.lang.Runtime</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h4 id="getMethod"><a href="#getMethod" class="headerlink" title="getMethod"></a>getMethod</h4><p>getMethod 的作用是通过反射获取一个类的某个特定的<code>公有</code>方法。<br>而Java中支持类的重载，我们不能仅通过函数名来确定一个函数。所以，在调用 getMethod 的时候，我们需要传给他你需要获取的函数的参数类型列表，如下：<br>后面的String.class是参数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Class.forName(<span class="string">&quot;java.lang.Runtime&quot;</span>).getMethod(<span class="string">&quot;exec&quot;</span>, String.class)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h4 id="invoke"><a href="#invoke" class="headerlink" title="invoke"></a>invoke</h4><p>invoke方法位于Method类下，其的作用是传入参数，执行方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object obj, Object... args)</span></span><br></pre></td></tr></table></figure>
+<p>注意它的第一个参数是执行method的对象<br>它的第一个参数是执行method的对象：</p>
+<ul>
+<li>如果这个方法是一个普通方法，那么第一个参数是类对象</li>
+<li>如果这个方法是一个静态方法，那么第一个参数是类</li>
+</ul>
+<p>我们正常执行方法是 <code>[1].method([2], [3], [4]...) </code>，其实在反射里就是<br><code>method.invoke([1], [2], [3], [4]...) </code>。<br>对于我们的exec，是一个普通方法，所以需要传入类对象，即<code>invoke(类对象，exec方法传入的参数)</code></p>
+<hr>
+<h3 id="合并反射函数弹计算器"><a href="#合并反射函数弹计算器" class="headerlink" title="合并反射函数弹计算器"></a>合并反射函数弹计算器</h3><p>那么通过反射调用计算器的一句话代码可以为</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Class.forName(<span class="string">&quot;java.lang.Runtime&quot;</span>).getMethod(<span class="string">&quot;exec&quot;</span>, String.class).invoke(Class.forName(<span class="string">&quot;java.lang.Runtime&quot;</span>).getMethod(<span class="string">&quot;getRuntime&quot;</span>).invoke(Class.forName(<span class="string">&quot;java.lang.Runtime&quot;</span>)),<span class="string">&quot;calc.exe&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>我通过缩进来更友好的体现</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Class.forName(<span class="string">&quot;java.lang.Runtime&quot;</span>) </span><br><span class="line">        .getMethod(<span class="string">&quot;exec&quot;</span>, String.class)</span><br><span class="line">        .invoke(</span><br><span class="line">                Class.forName(<span class="string">&quot;java.lang.Runtime&quot;</span>)</span><br><span class="line">                        .getMethod(<span class="string">&quot;getRuntime&quot;</span>)</span><br><span class="line">                        .invoke(Class.forName(<span class="string">&quot;java.lang.Runtime&quot;</span>))</span><br><span class="line">                ,<span class="string">&quot;calc.exe&quot;</span></span><br><span class="line">                );</span><br></pre></td></tr></table></figure>
+<p>其实是调用了2次invoke函数，里面一层是使用getRuntime的无参函数获得一个实例。外面一层则是调用exec来弹计算器<br><img src="/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/2.png" alt="java代码审计入门"><br>如果做拆分，那么一步步就是这样的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;java.lang.Runtime&quot;</span>);</span><br><span class="line"><span class="type">Method</span> <span class="variable">execMethod</span> <span class="operator">=</span> clazz.getMethod(<span class="string">&quot;exec&quot;</span>, String.class);</span><br><span class="line"><span class="type">Method</span> <span class="variable">getRuntimeMethod</span> <span class="operator">=</span> clazz.getMethod(<span class="string">&quot;getRuntime&quot;</span>);</span><br><span class="line"><span class="type">Object</span> <span class="variable">runtime</span> <span class="operator">=</span> getRuntimeMethod.invoke(clazz);</span><br><span class="line">execMethod.invoke(runtime, <span class="string">&quot;calc.exe&quot;</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="指定的构造方法生成类的实例"><a href="#指定的构造方法生成类的实例" class="headerlink" title="指定的构造方法生成类的实例"></a>指定的构造方法生成类的实例</h3><p>假设一个类没有getRuntime这样的获取实例的方法，也没有公共的无参构造方法的时候，就要用到getConsturctor()函数</p>
+<blockquote>
+<p>getConsturctor()函数可以选定指定接口格式的构造函数(由于构造函数也可以根据参数来进行重载)，即：getConsturctor(参数类型)<br>选定后我们可以通过newInstance(),并传入构造函数的参数执行构造函数，即newInstance(传入的构造函数参数)。</p>
+</blockquote>
+<p>比如ProcessBuilder有两个构造函数：</p>
+<blockquote>
+<p>public ProcessBuilder(List<String> command)<br>public ProcessBuilder(String… command)(此处，String…这种语法表示String参数数量是可变的，与String[]一样)</p>
+</blockquote>
+<p>对应2种方法的poc即长这样</p>
+<blockquote>
+<p>Class.forName(“java.lang.ProcessBuilder”).getConstructor(String.class).newInstance(“calc.exe”))<br>Class.forName(“java.lang.ProcessBuilder”).getConstructor(List.class).newInstance(Arrays.asList(“calc.exe”)))</p>
+</blockquote>
+<p>作为list的构造那么代码为</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;java.lang.ProcessBuilder&quot;</span>);</span><br><span class="line">clazz.getMethod(<span class="string">&quot;start&quot;</span>).invoke(</span><br><span class="line">    clazz.getConstructor(List.class).newInstance(Arrays.asList(<span class="string">&quot;calc.exe&quot;</span>))</span><br><span class="line">    );</span><br></pre></td></tr></table></figure>
+<p>作为string的构造代码为</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;java.lang.ProcessBuilder&quot;</span>);</span><br><span class="line">clazz.getMethod(<span class="string">&quot;start&quot;</span>).invoke(</span><br><span class="line">        clazz.getConstructor(String[].class).newInstance(<span class="keyword">new</span> <span class="title class_">String</span>[][]&#123;&#123;<span class="string">&quot;calc.exe&quot;</span>&#125;&#125;)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/3.png" alt="java代码审计入门"></p>
+<h3 id="执行私有方法"><a href="#执行私有方法" class="headerlink" title="执行私有方法"></a>执行私有方法</h3><p>这是我认为反射最骚的<br>我们前面用的方法或构造方法是public函数，但是如果是私有方法，我们该如何调用？<br>之前我们用的都是getMethod、getConstructor，接下来需要使用getDeclaredMethod、getDeclaredConstructor</p>
+<blockquote>
+<p>getMethod等方法获取的是当前类中所有公共方法，包括从父类继承的方法<br>getDeclared等方法获取的是当前类中“声明”的方法，是实在写在这个类里的，包括私有的方法，但从父类里继承来的就不包含了</p>
+</blockquote>
+<p>之前说到Runtime的构造方式是一个私有方法<br><img src="/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/4.png"><br>如果代码还是按之前的写法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;java.lang.Runtime&quot;</span>);</span><br><span class="line"><span class="type">Constructor</span> <span class="variable">m</span> <span class="operator">=</span> clazz.getConstructor();</span><br><span class="line">clazz.getMethod(<span class="string">&quot;exec&quot;</span>, String.class).invoke(m.newInstance(), <span class="string">&quot;calc.exe&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>得到报错<br><img src="/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/5.png"><br>大概意思就是不能直接使用clazz.getConstructor() 函数<br>那么接下来我们通过修改修饰符来调用Runtime的构造方法来获取一个实例来执行calc.exe<br>代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;java.lang.Runtime&quot;</span>);</span><br><span class="line"><span class="type">Constructor</span> <span class="variable">m</span> <span class="operator">=</span> clazz.getDeclaredConstructor();</span><br><span class="line">m.setAccessible(<span class="literal">true</span>);</span><br><span class="line">clazz.getMethod(<span class="string">&quot;exec&quot;</span>, String.class).invoke(m.newInstance(), <span class="string">&quot;calc.exe&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>成功弹出计算器<br><img src="/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/7.png"><br>我们假设把m.setAccessible(true);注释起来<br>原因确实是私有变量的问题<br><img src="/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/6.png"></p>
+<blockquote>
+<p>在获取到私有方法后，通过setAccessible(true)可以打破私有方法访问限制，从而进行调用。在其他地方的使用，getDeclaredMethod、getDeclaredConstructor和getMethod、getConstructor使用方法是一致的</p>
+</blockquote>
+<h3 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h3><h4 id="反射机制的相关类"><a href="#反射机制的相关类" class="headerlink" title="反射机制的相关类"></a>反射机制的相关类</h4><p>与Java反射相关的类如下：</p>
+<table>
+<thead>
+<tr>
+<th>类名</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Class类</td>
+<td>代表类的实体，在运行的Java应用程序中表示类和接口</td>
+</tr>
+<tr>
+<td>Field类</td>
+<td>代表类的成员变量（成员变量也称为类的属性）</td>
+</tr>
+<tr>
+<td>Method类</td>
+<td>代表类的方法</td>
+</tr>
+<tr>
+<td>Constructor类</td>
+<td>代表类的构造方法</td>
+</tr>
+</tbody></table>
+<h4 id="Class类"><a href="#Class类" class="headerlink" title="Class类"></a>Class类</h4><p><a target="_blank" rel="noopener" href="https://developer.android.google.cn/reference/java/lang/Class">Class</a>代表类的实体，在运行的Java应用程序中表示类和接口。在这个类中提供了很多有用的方法，这里对他们简单的分类介绍。</p>
+<ul>
+<li><strong>获得类相关的方法</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>asSubclass(Class<U> clazz)</td>
+<td>把传递的类的对象转换成代表其子类的对象</td>
+</tr>
+<tr>
+<td>Cast</td>
+<td>把对象转换成代表类或是接口的对象</td>
+</tr>
+<tr>
+<td>getClassLoader()</td>
+<td>获得类的加载器</td>
+</tr>
+<tr>
+<td>getClasses()</td>
+<td>返回一个数组，数组中包含该类中所有公共类和接口类的对象</td>
+</tr>
+<tr>
+<td>getDeclaredClasses()</td>
+<td>返回一个数组，数组中包含该类中所有类和接口类的对象</td>
+</tr>
+<tr>
+<td>forName(String className)</td>
+<td>根据类名返回类的对象</td>
+</tr>
+<tr>
+<td>getName()</td>
+<td>获得类的完整路径名字</td>
+</tr>
+<tr>
+<td>newInstance()</td>
+<td>创建类的实例</td>
+</tr>
+<tr>
+<td>getPackage()</td>
+<td>获得类的包</td>
+</tr>
+<tr>
+<td>getSimpleName()</td>
+<td>获得类的名字</td>
+</tr>
+<tr>
+<td>getSuperclass()</td>
+<td>获得当前类继承的父类的名字</td>
+</tr>
+<tr>
+<td>getInterfaces()</td>
+<td>获得当前类实现的类或是接口</td>
+</tr>
+</tbody></table>
+<ul>
+<li><strong>获得类中属性相关的方法</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>getField(String name)</td>
+<td>获得某个公有的属性对象</td>
+</tr>
+<tr>
+<td>getFields()</td>
+<td>获得所有公有的属性对象</td>
+</tr>
+<tr>
+<td>getDeclaredField(String name)</td>
+<td>获得某个属性对象</td>
+</tr>
+<tr>
+<td>getDeclaredFields()</td>
+<td>获得所有属性对象</td>
+</tr>
+</tbody></table>
+<ul>
+<li><strong>获得类中注解相关的方法</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>getAnnotation(Class<A> annotationClass)</td>
+<td>返回该类中与参数类型匹配的公有注解对象</td>
+</tr>
+<tr>
+<td>getAnnotations()</td>
+<td>返回该类所有的公有注解对象</td>
+</tr>
+<tr>
+<td>getDeclaredAnnotation(Class<A> annotationClass)</td>
+<td>返回该类中与参数类型匹配的所有注解对象</td>
+</tr>
+<tr>
+<td>getDeclaredAnnotations()</td>
+<td>返回该类所有的注解对象</td>
+</tr>
+</tbody></table>
+<ul>
+<li><strong>获得类中构造器相关的方法</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>getConstructor(Class…&lt;?&gt; parameterTypes)</td>
+<td>获得该类中与参数类型匹配的公有构造方法</td>
+</tr>
+<tr>
+<td>getConstructors()</td>
+<td>获得该类的所有公有构造方法</td>
+</tr>
+<tr>
+<td>getDeclaredConstructor(Class…&lt;?&gt; parameterTypes)</td>
+<td>获得该类中与参数类型匹配的构造方法</td>
+</tr>
+<tr>
+<td>getDeclaredConstructors()</td>
+<td>获得该类所有构造方法</td>
+</tr>
+</tbody></table>
+<ul>
+<li><strong>获得类中方法相关的方法</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>getMethod(String name, Class…&lt;?&gt; parameterTypes)</td>
+<td>获得该类某个公有的方法</td>
+</tr>
+<tr>
+<td>getMethods()</td>
+<td>获得该类所有公有的方法</td>
+</tr>
+<tr>
+<td>getDeclaredMethod(String name, Class…&lt;?&gt; parameterTypes)</td>
+<td>获得该类某个方法</td>
+</tr>
+<tr>
+<td>getDeclaredMethods()</td>
+<td>获得该类所有方法</td>
+</tr>
+</tbody></table>
+<ul>
+<li><strong>类中其他重要的方法</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>isAnnotation()</td>
+<td>如果是注解类型则返回true</td>
+</tr>
+<tr>
+<td>isAnnotationPresent(Class&lt;? extends Annotation&gt; annotationClass)</td>
+<td>如果是指定类型注解类型则返回true</td>
+</tr>
+<tr>
+<td>isAnonymousClass()</td>
+<td>如果是匿名类则返回true</td>
+</tr>
+<tr>
+<td>isArray()</td>
+<td>如果是一个数组类则返回true</td>
+</tr>
+<tr>
+<td>isEnum()</td>
+<td>如果是枚举类则返回true</td>
+</tr>
+<tr>
+<td>isInstance(Object obj)</td>
+<td>如果obj是该类的实例则返回true</td>
+</tr>
+<tr>
+<td>isInterface()</td>
+<td>如果是接口类则返回true</td>
+</tr>
+<tr>
+<td>isLocalClass()</td>
+<td>如果是局部类则返回true</td>
+</tr>
+<tr>
+<td>isMemberClass()</td>
+<td>如果是内部类则返回true</td>
+</tr>
+</tbody></table>
+<h4 id="Field类"><a href="#Field类" class="headerlink" title="Field类"></a>Field类</h4><p><a target="_blank" rel="noopener" href="https://developer.android.google.cn/reference/java/lang/reflect/Field">Field</a>代表类的成员变量（成员变量也称为类的属性）。</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>equals(Object obj)</td>
+<td>属性与obj相等则返回true</td>
+</tr>
+<tr>
+<td>get(Object obj)</td>
+<td>获得obj中对应的属性值</td>
+</tr>
+<tr>
+<td>set(Object obj, Object value)</td>
+<td>设置obj中对应属性值</td>
+</tr>
+</tbody></table>
+<h4 id="Method类"><a href="#Method类" class="headerlink" title="Method类"></a>Method类</h4><p><a target="_blank" rel="noopener" href="https://developer.android.google.cn/reference/java/lang/reflect/Method">Method</a>代表类的方法。</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>invoke(Object obj, Object… args)</td>
+<td>传递object对象及参数调用该对象对应的方法</td>
+</tr>
+</tbody></table>
+<h4 id="Constructor类"><a href="#Constructor类" class="headerlink" title="Constructor类"></a>Constructor类</h4><p><a target="_blank" rel="noopener" href="https://developer.android.google.cn/reference/java/lang/reflect/Constructor">Constructor</a>代表类的构造方法。</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>newInstance(Object… initargs)</td>
+<td>根据传递的参数创建类的对象</td>
+</tr>
+</tbody></table>
+<p>测试</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">System.out.println(Runtime.class.getName());</span><br><span class="line">System.out.println(Runtime.class.getClasses());</span><br><span class="line">System.out.println(Runtime.class.getPackage());</span><br></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">java.lang.Runtime</span><br><span class="line">[Ljava.lang.Class;@7ef20235</span><br><span class="line">package java.lang</span><br></pre></td></tr></table></figure>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A5%94%E5%AD%90"><span class="toc-number">1.</span> <span class="toc-text">楔子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Java%E5%8F%8D%E5%B0%84"><span class="toc-number">2.</span> <span class="toc-text">Java反射</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BE%8B%E5%AD%90-%E5%8F%8D%E5%B0%84"><span class="toc-number">3.</span> <span class="toc-text">例子-反射</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#forName"><span class="toc-number">3.1.</span> <span class="toc-text">forName</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#getMethod"><span class="toc-number">3.2.</span> <span class="toc-text">getMethod</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#invoke"><span class="toc-number">3.3.</span> <span class="toc-text">invoke</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%88%E5%B9%B6%E5%8F%8D%E5%B0%84%E5%87%BD%E6%95%B0%E5%BC%B9%E8%AE%A1%E7%AE%97%E5%99%A8"><span class="toc-number">4.</span> <span class="toc-text">合并反射函数弹计算器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%87%E5%AE%9A%E7%9A%84%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95%E7%94%9F%E6%88%90%E7%B1%BB%E7%9A%84%E5%AE%9E%E4%BE%8B"><span class="toc-number">5.</span> <span class="toc-text">指定的构造方法生成类的实例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E7%A7%81%E6%9C%89%E6%96%B9%E6%B3%95"><span class="toc-number">6.</span> <span class="toc-text">执行私有方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%84%E5%BD%95"><span class="toc-number">7.</span> <span class="toc-text">附录</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6%E7%9A%84%E7%9B%B8%E5%85%B3%E7%B1%BB"><span class="toc-number">7.1.</span> <span class="toc-text">反射机制的相关类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Class%E7%B1%BB"><span class="toc-number">7.2.</span> <span class="toc-text">Class类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Field%E7%B1%BB"><span class="toc-number">7.3.</span> <span class="toc-text">Field类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Method%E7%B1%BB"><span class="toc-number">7.4.</span> <span class="toc-text">Method类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Constructor%E7%B1%BB"><span class="toc-number">7.5.</span> <span class="toc-text">Constructor类</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&text=JAVA1-反射机制"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&title=JAVA1-反射机制"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&is_video=false&description=JAVA1-反射机制"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=JAVA1-反射机制&body=Check out this article: http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&title=JAVA1-反射机制"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&title=JAVA1-反射机制"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&title=JAVA1-反射机制"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&title=JAVA1-反射机制"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&name=JAVA1-反射机制&description=&lt;!-- toc --&gt;
+
+&lt;h3 id=&#34;楔子&#34;&gt;&lt;a href=&#34;#楔子&#34; class=&#34;headerlink&#34; title=&#34;楔子&#34;&gt;&lt;/a&gt;楔子&lt;/h3&gt;&lt;p&gt;很久就想写和java审计有关的文章了，java博大精深，学得断断续续，最近来长亭实习，从旁边一个Java大牛师傅学了一下下，还是打算记一下，内容偏易，大牛绕道&lt;br&gt;目录&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2020/05/25/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%85%A5%E9%97%A8/&t=JAVA1-反射机制"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

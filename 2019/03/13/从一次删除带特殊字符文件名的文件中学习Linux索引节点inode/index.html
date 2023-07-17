@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="楔子在很久很久之前，一个很傻很傻的刘萌新不知何因上传了一个带特殊字符文件名的文件到服务器中，于是他想着怎么删除。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从一次删除带特殊字符文件名的文件中学习Linux索引节点inode">
+<meta property="og:url" content="http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="楔子在很久很久之前，一个很傻很傻的刘萌新不知何因上传了一个带特殊字符文件名的文件到服务器中，于是他想着怎么删除。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/1.png">
+<meta property="og:image" content="http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/2.png">
+<meta property="og:image" content="http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/3.png">
+<meta property="og:image" content="http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/7.png">
+<meta property="og:image" content="http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/4.png">
+<meta property="og:image" content="http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/5.png">
+<meta property="og:image" content="http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/6.png">
+<meta property="article:published_time" content="2019-03-13T13:29:25.000Z">
+<meta property="article:modified_time" content="2020-11-24T04:53:48.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>从一次删除带特殊字符文件名的文件中学习Linux索引节点inode</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2019/03/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/&text=从一次删除带特殊字符文件名的文件中学习Linux索引节点inode"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/&title=从一次删除带特殊字符文件名的文件中学习Linux索引节点inode"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/&is_video=false&description=从一次删除带特殊字符文件名的文件中学习Linux索引节点inode"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=从一次删除带特殊字符文件名的文件中学习Linux索引节点inode&body=Check out this article: http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/&title=从一次删除带特殊字符文件名的文件中学习Linux索引节点inode"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/&title=从一次删除带特殊字符文件名的文件中学习Linux索引节点inode"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/&title=从一次删除带特殊字符文件名的文件中学习Linux索引节点inode"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/&title=从一次删除带特殊字符文件名的文件中学习Linux索引节点inode"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/&name=从一次删除带特殊字符文件名的文件中学习Linux索引节点inode&description=&lt;h3 id=&#34;楔子&#34;&gt;&lt;a href=&#34;#楔子&#34; class=&#34;headerlink&#34; title=&#34;楔子&#34;&gt;&lt;/a&gt;楔子&lt;/h3&gt;&lt;p&gt;在很久很久之前，一个很傻很傻的刘萌新不知何因上传了一个带特殊字符文件名的文件到服务器中，于是他想着怎么删除。&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/&t=从一次删除带特殊字符文件名的文件中学习Linux索引节点inode"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A5%94%E5%AD%90"><span class="toc-number">1.</span> <span class="toc-text">楔子</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81inode%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">1、inode简介</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81inode%E7%9A%84%E5%86%85%E5%AE%B9"><span class="toc-number">1.2.</span> <span class="toc-text">2、inode的内容</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%81inode%E5%8F%B7%E7%A0%81"><span class="toc-number">1.3.</span> <span class="toc-text">3、inode号码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%E3%80%81%E7%A1%AC%E9%93%BE%E6%8E%A5"><span class="toc-number">1.4.</span> <span class="toc-text">4、硬链接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5%E3%80%81%E8%BD%AF%E9%93%BE%E6%8E%A5"><span class="toc-number">1.5.</span> <span class="toc-text">5、软链接</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BD%93%E6%88%91%E4%BB%AC%E7%9F%A5%E9%81%93%E6%9C%89inode%E5%8F%B7%E7%A0%81%E8%BF%99%E4%B9%88%E4%B8%AA%E4%B8%9C%E8%A5%BF%E5%90%8E%EF%BC%8C%E9%82%A3%E4%B9%88%E5%88%98%E8%90%8C%E6%96%B0%E7%9A%84%E9%97%AE%E9%A2%98%E5%B0%B1%E8%83%BD%E8%BF%8E%E5%88%83%E8%80%8C%E8%A7%A3%E4%BA%86"><span class="toc-number">2.</span> <span class="toc-text">当我们知道有inode号码这么个东西后，那么刘萌新的问题就能迎刃而解了</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        从一次删除带特殊字符文件名的文件中学习Linux索引节点inode
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-03-13T13:29:25.000Z" class="dt-published" itemprop="datePublished">2019-03-13</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/">计算机杂七杂八</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Linux/" rel="tag">Linux</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h3 id="楔子"><a href="#楔子" class="headerlink" title="楔子"></a>楔子</h3><p>在很久很久之前，一个很傻很傻的刘萌新不知何因上传了一个带特殊字符文件名的文件到服务器中，于是他想着怎么删除。</p>
+<span id="more"></span>
+
+
+<p><img src="/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/1.png"><br>方法1、从面板中删除，然而面板和萌新一样垃圾，在文件管理中根本不显示这个文件<br>方法2、xshell连接，rm -rf一梭子下去 ，但是文件名你不能输入，并且同目录下有其他重要的东西。<br><img src="/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/2.png"><br>然后你会想通过 | grep 啦正则啦 一梭子来找到那个文件，没错本萌新就是这样的 ε&#x3D;ε&#x3D;ε&#x3D;┏(゜ロ゜;)┛。但是还是找不到<br><img src="/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/3.png"><br>直到你发现了一个叫inode的东西</p>
+<h4 id="1、inode简介"><a href="#1、inode简介" class="headerlink" title="1、inode简介"></a>1、inode简介</h4><p>理解inode，要从文件储存说起。<br>文件储存在硬盘上，硬盘的最小存储单位叫做”扇区”（Sector）。每个扇区储存512字节（相当于0.5KB）。<br>操作系统读取硬盘的时候，不会一个个扇区地读取，这样效率太低，而是一次性连续读取多个扇区，即一次性读取一个”块”（block）。这种由多个扇区组成的”块”，是文件存取的最小单位。”块”的大小，最常见的是4KB，即连续八个 sector组成一个 block。<br>文件数据都储存在”块”中，那么很显然，我们还必须找到一个地方储存文件的元信息，比如文件的创建者、文件的创建日期、文件的大小等等。这种储存文件元信息的区域就叫做inode，中文译名为”索引节点”。</p>
+<h4 id="2、inode的内容"><a href="#2、inode的内容" class="headerlink" title="2、inode的内容"></a>2、inode的内容</h4><p>inode包含文件的元信息，具体来说有以下内容：<br>    * 文件的字节数<br>    * 文件拥有者的User ID<br>    * 文件的Group ID<br>    * 文件的读、写、执行权限<br>    * 文件的时间戳，共有三个：ctime指inode上一次变动的时间，mtime指文件内容上一次变动的时间，atime指文件上一次打开的时间。<br>    * 链接数，即有多少文件名指向这个inode<br>    * 文件数据block的位置<br>    可以用stat命令，查看某个文件的inode信息：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost /]# stat example.txt  </span><br></pre></td></tr></table></figure>
+<h4 id="3、inode号码"><a href="#3、inode号码" class="headerlink" title="3、inode号码"></a>3、inode号码</h4><p>每个inode都有一个号码，操作系统用inode号码来识别不同的文件。<br>    这里值得重复一遍，Unix&#x2F;Linux系统内部不使用文件名，而使用inode号码来识别文件。对于系统来说，文件名只是inode号码便于识别的别称或者绰号。表面上，用户通过文件名，打开文件。实际上，系统内部这个过程分成三步：首先，系统找到这个文件名对应的inode号码；其次，通过inode号码，获取inode信息；最后，根据inode信息，找到文件数据所在的block，读出数据。<br>     使用ls -i命令，可以看到文件名对应的inode号码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost /]# ls -i test.txt   </span><br><span class="line">6970 test.txt  </span><br></pre></td></tr></table></figure>
+<p><img src="/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/7.png"></p>
+<h4 id="4、硬链接"><a href="#4、硬链接" class="headerlink" title="4、硬链接"></a>4、硬链接</h4><p>一般情况下，文件名和inode号码是”一一对应”关系，每个inode号码对应一个文件名。但是，Unix&#x2F;Linux系统，允许多个文件名指向同一个inode号码。这意味着，可以用不同的文件名访问同样的内容；对文件内容进行修改，会影响到所有文件名；但是，删除一个文件名，不影响另一个文件名的访问。这种情况就被称为”硬链接”（hard link）。</p>
+<h4 id="5、软链接"><a href="#5、软链接" class="headerlink" title="5、软链接"></a>5、软链接</h4><p>除了硬链接以外，还有一种特殊情况。文件A和文件B的inode号码虽然不一样，但是文件A的内容是文件B的路径。读取文件A时，系统会自动将访问者导向文件B。因此，无论打开哪一个文件，最终读取的都是文件B。这时，文件A就称为文件B的”软链接”（soft link）或者”符号链接（symbolic link）。<br>这意味着，文件A依赖于文件B而存在，如果删除了文件B，打开文件A就会报错：”No such file or directory”。这是软链接与硬链接最大的不同：文件A指向文件B的文件名，而不是文件B的inode号码，文件B的inode”链接数”不会因此发生变化。<br>ln -s命令可以创建软链接。</p>
+<h3 id="当我们知道有inode号码这么个东西后，那么刘萌新的问题就能迎刃而解了"><a href="#当我们知道有inode号码这么个东西后，那么刘萌新的问题就能迎刃而解了" class="headerlink" title="当我们知道有inode号码这么个东西后，那么刘萌新的问题就能迎刃而解了"></a>当我们知道有inode号码这么个东西后，那么刘萌新的问题就能迎刃而解了</h3><p><img src="/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/4.png"><br><img src="/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/5.png"><br><img src="/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/6.png"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A5%94%E5%AD%90"><span class="toc-number">1.</span> <span class="toc-text">楔子</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81inode%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">1、inode简介</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81inode%E7%9A%84%E5%86%85%E5%AE%B9"><span class="toc-number">1.2.</span> <span class="toc-text">2、inode的内容</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%81inode%E5%8F%B7%E7%A0%81"><span class="toc-number">1.3.</span> <span class="toc-text">3、inode号码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%E3%80%81%E7%A1%AC%E9%93%BE%E6%8E%A5"><span class="toc-number">1.4.</span> <span class="toc-text">4、硬链接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5%E3%80%81%E8%BD%AF%E9%93%BE%E6%8E%A5"><span class="toc-number">1.5.</span> <span class="toc-text">5、软链接</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BD%93%E6%88%91%E4%BB%AC%E7%9F%A5%E9%81%93%E6%9C%89inode%E5%8F%B7%E7%A0%81%E8%BF%99%E4%B9%88%E4%B8%AA%E4%B8%9C%E8%A5%BF%E5%90%8E%EF%BC%8C%E9%82%A3%E4%B9%88%E5%88%98%E8%90%8C%E6%96%B0%E7%9A%84%E9%97%AE%E9%A2%98%E5%B0%B1%E8%83%BD%E8%BF%8E%E5%88%83%E8%80%8C%E8%A7%A3%E4%BA%86"><span class="toc-number">2.</span> <span class="toc-text">当我们知道有inode号码这么个东西后，那么刘萌新的问题就能迎刃而解了</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/&text=从一次删除带特殊字符文件名的文件中学习Linux索引节点inode"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/&title=从一次删除带特殊字符文件名的文件中学习Linux索引节点inode"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/&is_video=false&description=从一次删除带特殊字符文件名的文件中学习Linux索引节点inode"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=从一次删除带特殊字符文件名的文件中学习Linux索引节点inode&body=Check out this article: http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/&title=从一次删除带特殊字符文件名的文件中学习Linux索引节点inode"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/&title=从一次删除带特殊字符文件名的文件中学习Linux索引节点inode"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/&title=从一次删除带特殊字符文件名的文件中学习Linux索引节点inode"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/&title=从一次删除带特殊字符文件名的文件中学习Linux索引节点inode"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/&name=从一次删除带特殊字符文件名的文件中学习Linux索引节点inode&description=&lt;h3 id=&#34;楔子&#34;&gt;&lt;a href=&#34;#楔子&#34; class=&#34;headerlink&#34; title=&#34;楔子&#34;&gt;&lt;/a&gt;楔子&lt;/h3&gt;&lt;p&gt;在很久很久之前，一个很傻很傻的刘萌新不知何因上传了一个带特殊字符文件名的文件到服务器中，于是他想着怎么删除。&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/&t=从一次删除带特殊字符文件名的文件中学习Linux索引节点inode"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

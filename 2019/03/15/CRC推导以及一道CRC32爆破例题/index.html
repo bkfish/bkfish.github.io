@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="[TOC] 一、在计算机网络自顶向下链路层有一笔带过CRC检验，感觉这个地方很实用，也经常见所以还是认真对待了一下百度百科：循环冗余校验(Cyclic Redundancy Check, CRC)是一种根据网络数据包或电脑文件等数据产生简短固定位数校验码的一种散列函数，主要用来检测或校验数据传输或者保存后可能出现的错误。它是利用除法及余数的原理来作错误侦测的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CRC推导以及一道CRC32爆破例题">
+<meta property="og:url" content="http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="[TOC] 一、在计算机网络自顶向下链路层有一笔带过CRC检验，感觉这个地方很实用，也经常见所以还是认真对待了一下百度百科：循环冗余校验(Cyclic Redundancy Check, CRC)是一种根据网络数据包或电脑文件等数据产生简短固定位数校验码的一种散列函数，主要用来检测或校验数据传输或者保存后可能出现的错误。它是利用除法及余数的原理来作错误侦测的">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/1.gif">
+<meta property="og:image" content="http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/2.gif">
+<meta property="og:image" content="http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/7.png">
+<meta property="og:image" content="http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/3.png">
+<meta property="og:image" content="http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/22.png">
+<meta property="og:image" content="http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/4.png">
+<meta property="og:image" content="http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/5.png">
+<meta property="og:image" content="http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/6.png">
+<meta property="og:image" content="http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/1.png">
+<meta property="article:published_time" content="2019-03-15T08:33:12.000Z">
+<meta property="article:modified_time" content="2020-11-24T14:51:10.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="CRC">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/1.gif">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>CRC推导以及一道CRC32爆破例题</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-Web%E7%BD%91%E9%A1%B5%E8%AF%B7%E6%B1%82%E8%BF%87%E7%A8%8B/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/&text=CRC推导以及一道CRC32爆破例题"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/&title=CRC推导以及一道CRC32爆破例题"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/&is_video=false&description=CRC推导以及一道CRC32爆破例题"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=CRC推导以及一道CRC32爆破例题&body=Check out this article: http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/&title=CRC推导以及一道CRC32爆破例题"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/&title=CRC推导以及一道CRC32爆破例题"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/&title=CRC推导以及一道CRC32爆破例题"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/&title=CRC推导以及一道CRC32爆破例题"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/&name=CRC推导以及一道CRC32爆破例题&description=&lt;p&gt;[TOC]&lt;/p&gt;
+&lt;h3 id=&#34;一、在计算机网络自顶向下链路层有一笔带过CRC检验，感觉这个地方很实用，也经常见所以还是认真对待了一下&#34;&gt;&lt;a href=&#34;#一、在计算机网络自顶向下链路层有一笔带过CRC检验，感觉这个地方很实用，也经常见所以还是认真对待了一下&#34; class=&#34;headerlink&#34; title=&#34;一、在计算机网络自顶向下链路层有一笔带过CRC检验，感觉这个地方很实用，也经常见所以还是认真对待了一下&#34;&gt;&lt;/a&gt;一、在计算机网络自顶向下链路层有一笔带过CRC检验，感觉这个地方很实用，也经常见所以还是认真对待了一下&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;百度百科&lt;/strong&gt;：循环冗余校验(Cyclic Redundancy Check, CRC)是一种根据网络数据包或电脑文件等数据产生简短固定位数校验码的一种散列函数，主要用来检测或校验数据传输或者保存后可能出现的错误。它是利用除法及余数的原理来作错误侦测的&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/&t=CRC推导以及一道CRC32爆破例题"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%9C%A8%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E9%93%BE%E8%B7%AF%E5%B1%82%E6%9C%89%E4%B8%80%E7%AC%94%E5%B8%A6%E8%BF%87CRC%E6%A3%80%E9%AA%8C%EF%BC%8C%E6%84%9F%E8%A7%89%E8%BF%99%E4%B8%AA%E5%9C%B0%E6%96%B9%E5%BE%88%E5%AE%9E%E7%94%A8%EF%BC%8C%E4%B9%9F%E7%BB%8F%E5%B8%B8%E8%A7%81%E6%89%80%E4%BB%A5%E8%BF%98%E6%98%AF%E8%AE%A4%E7%9C%9F%E5%AF%B9%E5%BE%85%E4%BA%86%E4%B8%80%E4%B8%8B"><span class="toc-number">1.</span> <span class="toc-text">一、在计算机网络自顶向下链路层有一笔带过CRC检验，感觉这个地方很实用，也经常见所以还是认真对待了一下</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%8E%E4%B9%88%E6%A3%80%E9%AA%8C%EF%BC%9F%EF%BC%9A"><span class="toc-number">1.1.</span> <span class="toc-text">怎么检验？：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%95%B0%E5%AD%A6%E6%8E%A8%E7%90%86"><span class="toc-number">2.</span> <span class="toc-text">二、数学推理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81bugku%E4%BE%8B%E9%A2%98%EF%BC%9A"><span class="toc-number">3.</span> <span class="toc-text">三、bugku例题：</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        CRC推导以及一道CRC32爆破例题
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-03-15T08:33:12.000Z" class="dt-published" itemprop="datePublished">2019-03-15</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Crypto/">Crypto</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/CRC/" rel="tag">CRC</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>[TOC]</p>
+<h3 id="一、在计算机网络自顶向下链路层有一笔带过CRC检验，感觉这个地方很实用，也经常见所以还是认真对待了一下"><a href="#一、在计算机网络自顶向下链路层有一笔带过CRC检验，感觉这个地方很实用，也经常见所以还是认真对待了一下" class="headerlink" title="一、在计算机网络自顶向下链路层有一笔带过CRC检验，感觉这个地方很实用，也经常见所以还是认真对待了一下"></a>一、在计算机网络自顶向下链路层有一笔带过CRC检验，感觉这个地方很实用，也经常见所以还是认真对待了一下</h3><p><strong>百度百科</strong>：循环冗余校验(Cyclic Redundancy Check, CRC)是一种根据网络数据包或电脑文件等数据产生简短固定位数校验码的一种散列函数，主要用来检测或校验数据传输或者保存后可能出现的错误。它是利用除法及余数的原理来作错误侦测的</p>
+<span id="more"></span>
+
+
+<p><strong>一句话定义就是</strong>：假设数据传输过程中需要发送15位的二进制信息g&#x3D;101001110100001，这串二进制码可表示为代数多项式g(x) &#x3D; x^14 + x^12 + x^9 + x^8 + x^7 + x^5 + 1，其中g中第k位的值，对应g(x)中x^k的系数。将g(x)乘以x^m，既将g后加m个0，然后除以m阶多项式h(x)，得到的(m-1)阶余项r(x)对应的二进制码r就是CRC编码。<br>正常人类一下子应该看不太懂，那多说几句话。<br>1、一个不同寻常的除法运算<br>g(x)和h(x)的除运算，可以通过g和h做xor（异或）运算。比如将11001与10101做xor运算：</p>
+<p><img src="/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/1.gif"></p>
+<p>明白了xor运算法则后，举一个例子使用CRC-8算法求101001110100001的效验码。CRC-8标准的h(x) &#x3D; x^8 + x^7 + x^6 + x^4 + x^2 + 1，既h是9位的二进制串111010101。 </p>
+<p><img src="/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/2.gif"><br>经过迭代运算后，最终得到的r是10001100，这就是CRC效验码。<br>得到余数R也就是FCS，将FCS加到M上，就得到了要发送的帧。<br>M&#x3D;10100111010000110001100</p>
+<h4 id="怎么检验？："><a href="#怎么检验？：" class="headerlink" title="怎么检验？："></a>怎么检验？：</h4><p>把M循环再除111010101 最后余数一定为0，否者比特流中途出现错误</p>
+<h3 id="二、数学推理"><a href="#二、数学推理" class="headerlink" title="二、数学推理"></a>二、数学推理</h3><p>1.设欲传输的信息有K位,如图6.1所示<br>2.首先将欲传输的数据序列m(x)乘以 XR , 其中R为g(x)的最高次冥。<br>3.将得到的多项式XR m(x)除以约定的多项式g(x)<br>4.忽略除法结果的“商”，取出其余数，并与XRm(x)相加，形成K+R位的发送序列，即：m’(x) &#x3D; XRm(x) +r(x)</p>
+<p><img src="/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/7.png"></p>
+<p>CRC编码过程如下：<br>设待校验的信息码有k位，即：$$m &#x3D; (m^{k-1}、m^{k-2}、m^{k-3}……m^{1}、m^{0})$$, 多项式m(x)可表示为<br>$$m(x) &#x3D; m^{k-1}x^{k-1}+ m^{k-2}x^{k-2} +……m^1x^1+ m^0x^0   $$———————————————————————— 式（1）</p>
+<p>用多项式g(x)的最高次幂R对应的XR 乘以m(x)，将得到式（2）<br>$$X^Rm(x) &#x3D; m^{k-1}x^{k+R-1}+ m^{k-2}x^{k+R-2} +……m^1x^{1+R}+ m^0x^0+R $$——————————————————– 式（2）</p>
+<p>将$$X^Rm(x)$$ 模2除以g(x)，得到多项式商为A(x),余数为r(x)，即：<br>$$A(x)g(x) &#x3D; X^Rm(x) +r(x) $$—————————————————————————————————–式（3）</p>
+<p>余数多项式r(x)可表示为<br>$$r(x) &#x3D; r^{R-1}x^{R-1}+ r^{R-2}x^{R-2} +……r^1x^1+ r^0x^0 $$————————————————————————————式（4）</p>
+<p>将式（2）和式（4）代入式（3）得<br>$$A(x)g(x) &#x3D; m^{k-1}x^{k+R-1}+ m^{k-2}x^{k+R-2} +……m^1x^{R+1}+ m^0x^0+R  + r^{R-1}x^{R-1}+ r^{R-2}x^{R-2} +……r^1x^1+ r^0x^0 $$  ——–式（5）</p>
+<p>式（5）对应的码组为K+R位，即：<br>N &#x3D; (mk-1+ mk-2 +……m1+ m0  + rR-1+ rR-2 +……r1+ r0) ————————————————————式（6）<br>从M到N就是CRC的编码过程mk-1+ mk-2 +……m1+ m0  为k位信息码；rR-1+ rR-2 +……r1+ r0为R位校验码。<br>在信息接收端，将接受到的K+R位码除以相同的多项式g(x),根据式（3）所产生的余数为0，则接受到的数据信息正确无误，否则则认为信息在传输过程中产生的误码。</p>
+<h3 id="三、bugku例题："><a href="#三、bugku例题：" class="headerlink" title="三、bugku例题："></a>三、bugku例题：</h3><p><img src="/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/3.png"></p>
+<p>zip压缩包以及帮大家撸下来了<br><a href="/images/123.zip">123.zip</a><br><br>解压下载后的文件，发现有68个压缩文件，并且每个压缩文件里都有一个4个字节大小的名为data.txt的txt文件，还有文本所对应的CRC32码，于是尝试用crc32碰撞还原出所有压缩包中的文件内容<br><img src="/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/22.png"><br>python3 脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">#coding:utf-8</span><br><span class="line">import zipfile</span><br><span class="line">import string</span><br><span class="line">import binascii</span><br><span class="line"></span><br><span class="line">def CrackCrc(crc):</span><br><span class="line">    for i in dic:</span><br><span class="line">        for j in dic:</span><br><span class="line">            for p in dic:</span><br><span class="line">                for q in dic:</span><br><span class="line">                    s = i + j + p + q</span><br><span class="line">                    if crc == (binascii.crc32(s.encode()) &amp; 0xffffffff):</span><br><span class="line">                        print (s)</span><br><span class="line">                        f.write(s)</span><br><span class="line">                        return</span><br><span class="line"></span><br><span class="line">def CrackZip():</span><br><span class="line">    for I in range(68):</span><br><span class="line">        file = &#x27;out&#x27; + str(I) + &#x27;.zip&#x27;</span><br><span class="line">        f = zipfile.ZipFile(file, &#x27;r&#x27;)</span><br><span class="line">        GetCrc = f.getinfo(&#x27;data.txt&#x27;)</span><br><span class="line">        crc = GetCrc.CRC</span><br><span class="line">        #以上3行为获取压缩包CRC32值的步骤</span><br><span class="line">        print (hex(crc))</span><br><span class="line">        CrackCrc(crc)</span><br><span class="line"></span><br><span class="line">dic = string.ascii_letters + string.digits + &#x27;+/=&#x27;</span><br><span class="line"></span><br><span class="line">f = open(&#x27;out.txt&#x27;, &#x27;w&#x27;)</span><br><span class="line">CrackZip()</span><br><span class="line">f.close()</span><br></pre></td></tr></table></figure>
+<p>然后out.txt文本是这样的,根据碰撞出内容的格式（末尾两个&#x3D;&#x3D;）推断这段数据是base64编码过的，先解码，根据解码结果中的flag.txt推断这可能是一个压缩包，同时根据fix the file and get the flag知需要修复文件<br><img src="/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/4.png"><br>将解码后的文件导入16进制编辑器（如010editor），观察数据，发现存在rar的文件尾C43D7B00400700，但缺少文件头，于是补上rar的文件头526172211A0700。</p>
+<p><img src="/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/5.png"><br><img src="/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/6.png"><br><strong>试了好久不会玩winhex 尴尬，最后发现是先填充0然后覆盖</strong><br>然后改后缀名拿到了这个包<br><a href="/images/out.rar">out.rar</a> flag在注释里<br><img src="/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/1.png"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%9C%A8%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E9%93%BE%E8%B7%AF%E5%B1%82%E6%9C%89%E4%B8%80%E7%AC%94%E5%B8%A6%E8%BF%87CRC%E6%A3%80%E9%AA%8C%EF%BC%8C%E6%84%9F%E8%A7%89%E8%BF%99%E4%B8%AA%E5%9C%B0%E6%96%B9%E5%BE%88%E5%AE%9E%E7%94%A8%EF%BC%8C%E4%B9%9F%E7%BB%8F%E5%B8%B8%E8%A7%81%E6%89%80%E4%BB%A5%E8%BF%98%E6%98%AF%E8%AE%A4%E7%9C%9F%E5%AF%B9%E5%BE%85%E4%BA%86%E4%B8%80%E4%B8%8B"><span class="toc-number">1.</span> <span class="toc-text">一、在计算机网络自顶向下链路层有一笔带过CRC检验，感觉这个地方很实用，也经常见所以还是认真对待了一下</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%8E%E4%B9%88%E6%A3%80%E9%AA%8C%EF%BC%9F%EF%BC%9A"><span class="toc-number">1.1.</span> <span class="toc-text">怎么检验？：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%95%B0%E5%AD%A6%E6%8E%A8%E7%90%86"><span class="toc-number">2.</span> <span class="toc-text">二、数学推理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81bugku%E4%BE%8B%E9%A2%98%EF%BC%9A"><span class="toc-number">3.</span> <span class="toc-text">三、bugku例题：</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/&text=CRC推导以及一道CRC32爆破例题"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/&title=CRC推导以及一道CRC32爆破例题"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/&is_video=false&description=CRC推导以及一道CRC32爆破例题"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=CRC推导以及一道CRC32爆破例题&body=Check out this article: http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/&title=CRC推导以及一道CRC32爆破例题"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/&title=CRC推导以及一道CRC32爆破例题"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/&title=CRC推导以及一道CRC32爆破例题"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/&title=CRC推导以及一道CRC32爆破例题"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/&name=CRC推导以及一道CRC32爆破例题&description=&lt;p&gt;[TOC]&lt;/p&gt;
+&lt;h3 id=&#34;一、在计算机网络自顶向下链路层有一笔带过CRC检验，感觉这个地方很实用，也经常见所以还是认真对待了一下&#34;&gt;&lt;a href=&#34;#一、在计算机网络自顶向下链路层有一笔带过CRC检验，感觉这个地方很实用，也经常见所以还是认真对待了一下&#34; class=&#34;headerlink&#34; title=&#34;一、在计算机网络自顶向下链路层有一笔带过CRC检验，感觉这个地方很实用，也经常见所以还是认真对待了一下&#34;&gt;&lt;/a&gt;一、在计算机网络自顶向下链路层有一笔带过CRC检验，感觉这个地方很实用，也经常见所以还是认真对待了一下&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;百度百科&lt;/strong&gt;：循环冗余校验(Cyclic Redundancy Check, CRC)是一种根据网络数据包或电脑文件等数据产生简短固定位数校验码的一种散列函数，主要用来检测或校验数据传输或者保存后可能出现的错误。它是利用除法及余数的原理来作错误侦测的&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/&t=CRC推导以及一道CRC32爆破例题"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

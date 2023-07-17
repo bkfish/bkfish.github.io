@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="本章还是比较肝的，说起虚拟内存想起了另外一个书《C++ primer plus》，大一寒假玩了一个月，唯独花了点时间看了这本书，印象最深的还是这本书讲了内存模型和名称空间，后悔啊大一上没看csapp，所以看的一脸懵逼，还没看懂，csapp这一章确实很精髓，曹神也和我聊过（Orz,曹神牛逼），看了csapp感觉其他所有的书都是在这个基础上的拓展，这样吸收其他书的知识就没有很高的门槛，对于内存这一块，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP又双叒叕来一遍之虚拟内存">
+<meta property="og:url" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="本章还是比较肝的，说起虚拟内存想起了另外一个书《C++ primer plus》，大一寒假玩了一个月，唯独花了点时间看了这本书，印象最深的还是这本书讲了内存模型和名称空间，后悔啊大一上没看csapp，所以看的一脸懵逼，还没看懂，csapp这一章确实很精髓，曹神也和我聊过（Orz,曹神牛逼），看了csapp感觉其他所有的书都是在这个基础上的拓展，这样吸收其他书的知识就没有很高的门槛，对于内存这一块，">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/1.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/2.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/3.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/1.png">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/4.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/6.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/7.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/8.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/2.png">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/10.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/11.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/12.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/13.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/14.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/15.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/16.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/17.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/18.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/19.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/20.webp">
+<meta property="og:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/21.webp">
+<meta property="article:published_time" content="2019-01-13T06:46:22.000Z">
+<meta property="article:modified_time" content="2020-11-24T04:49:32.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="虚拟内存">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/1.webp">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>CSAPP又双叒叕来一遍之虚拟内存</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2019/01/15/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/&text=CSAPP又双叒叕来一遍之虚拟内存"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/&title=CSAPP又双叒叕来一遍之虚拟内存"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/&is_video=false&description=CSAPP又双叒叕来一遍之虚拟内存"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=CSAPP又双叒叕来一遍之虚拟内存&body=Check out this article: http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/&title=CSAPP又双叒叕来一遍之虚拟内存"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/&title=CSAPP又双叒叕来一遍之虚拟内存"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/&title=CSAPP又双叒叕来一遍之虚拟内存"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/&title=CSAPP又双叒叕来一遍之虚拟内存"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/&name=CSAPP又双叒叕来一遍之虚拟内存&description=&lt;h4 id=&#34;本章还是比较肝的，说起虚拟内存想起了另外一个书《C-primer-plus》，大一寒假玩了一个月，唯独花了点时间看了这本书，印象最深的还是这本书讲了内存模型和名称空间，后悔啊大一上没看csapp，所以看的一脸懵逼，还没看懂，csapp这一章确实很精髓，曹神也和我聊过（Orz-曹神牛逼），看了csapp感觉其他所有的书都是在这个基础上的拓展，这样吸收其他书的知识就没有很高的门槛，对于内存这一块，印象比较深刻的还是《程序员的自我修养》，专门讲链接装载与库的一本书，没看csapp之前看那本书真的是一脸懵逼，看完csapp再看那本书还是收获非常大的。&#34;&gt;&lt;a href=&#34;#本章还是比较肝的，说起虚拟内存想起了另外一个书《C-primer-plus》，大一寒假玩了一个月，唯独花了点时间看了这本书，印象最深的还是这本书讲了内存模型和名称空间，后悔啊大一上没看csapp，所以看的一脸懵逼，还没看懂，csapp这一章确实很精髓，曹神也和我聊过（Orz-曹神牛逼），看了csapp感觉其他所有的书都是在这个基础上的拓展，这样吸收其他书的知识就没有很高的门槛，对于内存这一块，印象比较深刻的还是《程序员的自我修养》，专门讲链接装载与库的一本书，没看csapp之前看那本书真的是一脸懵逼，看完csapp再看那本书还是收获非常大的。&#34; class=&#34;headerlink&#34; title=&#34;本章还是比较肝的，说起虚拟内存想起了另外一个书《C++ primer plus》，大一寒假玩了一个月，唯独花了点时间看了这本书，印象最深的还是这本书讲了内存模型和名称空间，后悔啊大一上没看csapp，所以看的一脸懵逼，还没看懂，csapp这一章确实很精髓，曹神也和我聊过（Orz,曹神牛逼），看了csapp感觉其他所有的书都是在这个基础上的拓展，这样吸收其他书的知识就没有很高的门槛，对于内存这一块，印象比较深刻的还是《程序员的自我修养》，专门讲链接装载与库的一本书，没看csapp之前看那本书真的是一脸懵逼，看完csapp再看那本书还是收获非常大的。&#34;&gt;&lt;/a&gt;本章还是比较肝的，说起虚拟内存想起了另外一个书《C++ primer plus》，大一寒假玩了一个月，唯独花了点时间看了这本书，印象最深的还是这本书讲了内存模型和名称空间，后悔啊大一上没看csapp，所以看的一脸懵逼，还没看懂，csapp这一章确实很精髓，曹神也和我聊过（Orz,曹神牛逼），看了csapp感觉其他所有的书都是在这个基础上的拓展，这样吸收其他书的知识就没有很高的门槛，对于内存这一块，印象比较深刻的还是《程序员的自我修养》，专门讲链接装载与库的一本书，没看csapp之前看那本书真的是一脸懵逼，看完csapp再看那本书还是收获非常大的。&lt;/h4&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/&t=CSAPP又双叒叕来一遍之虚拟内存"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%AC%E7%AB%A0%E8%BF%98%E6%98%AF%E6%AF%94%E8%BE%83%E8%82%9D%E7%9A%84%EF%BC%8C%E8%AF%B4%E8%B5%B7%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E6%83%B3%E8%B5%B7%E4%BA%86%E5%8F%A6%E5%A4%96%E4%B8%80%E4%B8%AA%E4%B9%A6%E3%80%8AC-primer-plus%E3%80%8B%EF%BC%8C%E5%A4%A7%E4%B8%80%E5%AF%92%E5%81%87%E7%8E%A9%E4%BA%86%E4%B8%80%E4%B8%AA%E6%9C%88%EF%BC%8C%E5%94%AF%E7%8B%AC%E8%8A%B1%E4%BA%86%E7%82%B9%E6%97%B6%E9%97%B4%E7%9C%8B%E4%BA%86%E8%BF%99%E6%9C%AC%E4%B9%A6%EF%BC%8C%E5%8D%B0%E8%B1%A1%E6%9C%80%E6%B7%B1%E7%9A%84%E8%BF%98%E6%98%AF%E8%BF%99%E6%9C%AC%E4%B9%A6%E8%AE%B2%E4%BA%86%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E5%92%8C%E5%90%8D%E7%A7%B0%E7%A9%BA%E9%97%B4%EF%BC%8C%E5%90%8E%E6%82%94%E5%95%8A%E5%A4%A7%E4%B8%80%E4%B8%8A%E6%B2%A1%E7%9C%8Bcsapp%EF%BC%8C%E6%89%80%E4%BB%A5%E7%9C%8B%E7%9A%84%E4%B8%80%E8%84%B8%E6%87%B5%E9%80%BC%EF%BC%8C%E8%BF%98%E6%B2%A1%E7%9C%8B%E6%87%82%EF%BC%8Ccsapp%E8%BF%99%E4%B8%80%E7%AB%A0%E7%A1%AE%E5%AE%9E%E5%BE%88%E7%B2%BE%E9%AB%93%EF%BC%8C%E6%9B%B9%E7%A5%9E%E4%B9%9F%E5%92%8C%E6%88%91%E8%81%8A%E8%BF%87%EF%BC%88Orz-%E6%9B%B9%E7%A5%9E%E7%89%9B%E9%80%BC%EF%BC%89%EF%BC%8C%E7%9C%8B%E4%BA%86csapp%E6%84%9F%E8%A7%89%E5%85%B6%E4%BB%96%E6%89%80%E6%9C%89%E7%9A%84%E4%B9%A6%E9%83%BD%E6%98%AF%E5%9C%A8%E8%BF%99%E4%B8%AA%E5%9F%BA%E7%A1%80%E4%B8%8A%E7%9A%84%E6%8B%93%E5%B1%95%EF%BC%8C%E8%BF%99%E6%A0%B7%E5%90%B8%E6%94%B6%E5%85%B6%E4%BB%96%E4%B9%A6%E7%9A%84%E7%9F%A5%E8%AF%86%E5%B0%B1%E6%B2%A1%E6%9C%89%E5%BE%88%E9%AB%98%E7%9A%84%E9%97%A8%E6%A7%9B%EF%BC%8C%E5%AF%B9%E4%BA%8E%E5%86%85%E5%AD%98%E8%BF%99%E4%B8%80%E5%9D%97%EF%BC%8C%E5%8D%B0%E8%B1%A1%E6%AF%94%E8%BE%83%E6%B7%B1%E5%88%BB%E7%9A%84%E8%BF%98%E6%98%AF%E3%80%8A%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%E3%80%8B%EF%BC%8C%E4%B8%93%E9%97%A8%E8%AE%B2%E9%93%BE%E6%8E%A5%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93%E7%9A%84%E4%B8%80%E6%9C%AC%E4%B9%A6%EF%BC%8C%E6%B2%A1%E7%9C%8Bcsapp%E4%B9%8B%E5%89%8D%E7%9C%8B%E9%82%A3%E6%9C%AC%E4%B9%A6%E7%9C%9F%E7%9A%84%E6%98%AF%E4%B8%80%E8%84%B8%E6%87%B5%E9%80%BC%EF%BC%8C%E7%9C%8B%E5%AE%8Ccsapp%E5%86%8D%E7%9C%8B%E9%82%A3%E6%9C%AC%E4%B9%A6%E8%BF%98%E6%98%AF%E6%94%B6%E8%8E%B7%E9%9D%9E%E5%B8%B8%E5%A4%A7%E7%9A%84%E3%80%82"><span class="toc-number">1.</span> <span class="toc-text">本章还是比较肝的，说起虚拟内存想起了另外一个书《C++ primer plus》，大一寒假玩了一个月，唯独花了点时间看了这本书，印象最深的还是这本书讲了内存模型和名称空间，后悔啊大一上没看csapp，所以看的一脸懵逼，还没看懂，csapp这一章确实很精髓，曹神也和我聊过（Orz,曹神牛逼），看了csapp感觉其他所有的书都是在这个基础上的拓展，这样吸收其他书的知识就没有很高的门槛，对于内存这一块，印象比较深刻的还是《程序员的自我修养》，专门讲链接装载与库的一本书，没看csapp之前看那本书真的是一脸懵逼，看完csapp再看那本书还是收获非常大的。</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E7%89%A9%E7%90%86%E5%AF%BB%E5%9D%80%E5%92%8C%E8%99%9A%E6%8B%9F%E5%AF%BB%E5%9D%80"><span class="toc-number"></span> <span class="toc-text">1、物理寻址和虚拟寻址</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1%E3%80%81%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80-Physical-Address-PA-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%9A%84%E4%B8%BB%E5%AD%98%E8%A2%AB%E7%BB%84%E7%BB%87%E4%B8%BAM%E4%B8%AA%E8%BF%9E%E7%BB%AD%E7%9A%84%E5%AD%97%E8%8A%82%E5%A4%A7%E5%B0%8F%E7%9A%84%E5%8D%95%E5%85%83%E7%BB%84%E6%88%90%E7%9A%84%E6%95%B0%E7%BB%84%E3%80%82%E6%AF%8F%E4%B8%AA%E5%AD%97%E8%8A%82%E7%9A%84%E5%9C%B0%E5%9D%80%E5%8F%AB%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80-CPU%E8%AE%BF%E9%97%AE%E5%AD%98%E5%82%A8%E5%99%A8%E7%9A%84%E6%9C%80%E8%87%AA%E7%84%B6%E7%9A%84%E6%96%B9%E5%BC%8F%E4%BD%BF%E7%94%A8%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%EF%BC%8C%E8%BF%99%E7%A7%8D%E6%96%B9%E5%BC%8F%E7%A7%B0%E4%B8%BA%E7%89%A9%E7%90%86%E5%AF%BB%E5%9D%80%E3%80%82-%E6%97%A9%E6%9C%9F%E7%9A%84PC%EF%BC%8C%E6%95%B0%E5%AD%97%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86%E5%99%A8%EF%BC%8C%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BE%AE%E6%8E%A7%E5%88%B6%E5%99%A8%E4%BB%A5%E5%8F%8ACray%E8%B6%85%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%BF%E7%94%A8%E7%89%A9%E7%90%86%E5%AF%BB%E5%9D%80"><span class="toc-number">1.</span> <span class="toc-text">1.1、物理地址(Physical Address,PA):计算机系统的主存被组织为M个连续的字节大小的单元组成的数组。每个字节的地址叫物理地址.CPU访问存储器的最自然的方式使用物理地址，这种方式称为物理寻址。 早期的PC，数字信号处理器，嵌入式微控制器以及Cray超级计算机使用物理寻址</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2%E3%80%81%E7%8E%B0%E4%BB%A3%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%BF%E7%94%A8%E7%9A%84%E6%98%AF%E8%99%9A%E6%8B%9F%E5%AF%BB%E5%9D%80-virtual-addressing-%E7%9A%84%E5%AF%BB%E5%9D%80%E5%BD%A2%E5%BC%8F%E3%80%82"><span class="toc-number">2.</span> <span class="toc-text">1.2、现代处理器使用的是虚拟寻址(virtual addressing)的寻址形式。</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4"><span class="toc-number"></span> <span class="toc-text">2、地址空间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8%E4%BD%9C%E4%B8%BA%E7%BC%93%E5%AD%98%E7%9A%84%E5%B7%A5%E5%85%B7"><span class="toc-number"></span> <span class="toc-text">3、虚拟存储器作为缓存的工具</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1%E3%80%81DRAM%E7%BC%93%E5%AD%98%E7%9A%84%E7%BB%84%E7%BB%87%E7%BB%93%E6%9E%84"><span class="toc-number">1.</span> <span class="toc-text">3.1、DRAM缓存的组织结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2%E3%80%81%E9%A1%B5%E8%A1%A8"><span class="toc-number">2.</span> <span class="toc-text">3.2、页表</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3%E3%80%81%E9%A1%B5%E5%91%BD%E4%B8%AD"><span class="toc-number">3.</span> <span class="toc-text">3.3、页命中</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4%E3%80%81%E7%BC%BA%E9%A1%B5%E5%92%8B%E6%95%B4"><span class="toc-number">4.</span> <span class="toc-text">3.4、缺页咋整</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-5%E3%80%81%E5%88%86%E9%85%8D%E9%A1%B5%E9%9D%A2-%E5%8F%88%E6%98%AF%E5%B1%80%E9%83%A8%E6%80%A7%E6%8B%AF%E6%95%91%E4%BA%86%E6%88%91%E4%BB%AC"><span class="toc-number">5.</span> <span class="toc-text">3.5、分配页面&amp;&amp;又是局部性拯救了我们</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8%E4%BD%9C%E4%B8%BA%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E5%B7%A5%E5%85%B7"><span class="toc-number"></span> <span class="toc-text">4、虚拟存储器作为内存管理的工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%E3%80%81%E5%9C%B0%E5%9D%80%E7%BF%BB%E8%AF%91%EF%BC%8C%E5%8A%A0%E5%85%A5%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%EF%BC%8C%E5%A4%9A%E7%BA%A7%E9%A1%B5%E8%A1%A8%EF%BC%8C-%E6%A1%88%E4%BE%8B%E7%A0%94%E7%A9%B6%EF%BC%9AIntel-CoreI7%EF%BC%8C%E8%BF%99%E4%BA%9B%E4%B8%9C%E8%A5%BF%E5%A4%AA%E8%82%9D%E4%BA%86%EF%BC%8C%E6%80%BB%E7%BB%93%E4%B8%8D%E5%87%BA%E6%9D%A5%EF%BC%8COrz-%E5%B8%8C%E6%9C%9B%E6%84%9F%E5%85%B4%E8%B6%A3%E7%9A%84%E8%83%BD%E8%87%AA%E5%B7%B1%E8%AE%A4%E7%9C%9F%E7%9C%8B%E4%B8%8B%E5%8E%BB%EF%BC%8C%E5%9B%A0%E4%B8%BA%E8%BF%99%E9%87%8C%E5%A6%82%E6%9E%9C%E8%A6%81%E8%AF%A6%E8%AE%B2%E5%8F%AA%E8%83%BD%E6%8A%8A%E4%B9%A6%E6%89%AB%E6%8F%8F%E6%94%BE%E8%BF%99%E4%BA%86%EF%BC%8C%E4%B8%9C%E8%A5%BF%E5%A4%AA%E5%A4%9A%EF%BC%8C%E6%89%80%E4%BB%A5%E7%9B%B4%E6%8E%A5%E7%A7%91%E6%99%AE%E4%B8%80%E4%B8%8BLinux%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F"><span class="toc-number"></span> <span class="toc-text">5、地址翻译，加入高速缓存，多级页表， 案例研究：Intel CoreI7，这些东西太肝了，总结不出来，Orz,希望感兴趣的能自己认真看下去，因为这里如果要详讲只能把书扫描放这了，东西太多，所以直接科普一下Linux虚拟存储系统</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#5-1%E3%80%81%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8%E5%8C%BA%E5%9F%9F"><span class="toc-number">1.</span> <span class="toc-text">5.1、虚拟存储器区域</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-2%E3%80%81Linux%E7%BC%BA%E9%A1%B5%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="toc-number">2.</span> <span class="toc-text">5.2、Linux缺页异常处理</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6%E3%80%81%E5%AD%98%E5%82%A8%E5%99%A8%E6%98%A0%E5%B0%84"><span class="toc-number"></span> <span class="toc-text">6、存储器映射</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-1%E3%80%81%E5%85%B1%E4%BA%AB%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.</span> <span class="toc-text">6.1、共享对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2%E3%80%81%E5%86%8D%E7%9C%8Bfork%E5%87%BD%E6%95%B0"><span class="toc-number">2.</span> <span class="toc-text">6.2、再看fork函数</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7%E3%80%81%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%EF%BC%88what-is-malloc"><span class="toc-number"></span> <span class="toc-text">7、动态内存分配（what is malloc?</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#7-1%E3%80%81%E6%98%BE%E5%BC%8F%E5%88%86%E9%85%8D%EF%BC%9A%E7%A8%8B%E5%BA%8F%E8%B0%83%E7%94%A8malloc%E5%92%8Cfree%E5%87%BD%E6%95%B0"><span class="toc-number">1.</span> <span class="toc-text">7.1、显式分配：程序调用malloc和free函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-2%E3%80%81demo"><span class="toc-number">2.</span> <span class="toc-text">7.2、demo</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-3%E3%80%81%E9%85%8D%E5%99%A8%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-number">3.</span> <span class="toc-text">7.3、配器基础知识</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        CSAPP又双叒叕来一遍之虚拟内存
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-01-13T06:46:22.000Z" class="dt-published" itemprop="datePublished">2019-01-13</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/CSAPP/">CSAPP</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/" rel="tag">虚拟内存</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h4 id="本章还是比较肝的，说起虚拟内存想起了另外一个书《C-primer-plus》，大一寒假玩了一个月，唯独花了点时间看了这本书，印象最深的还是这本书讲了内存模型和名称空间，后悔啊大一上没看csapp，所以看的一脸懵逼，还没看懂，csapp这一章确实很精髓，曹神也和我聊过（Orz-曹神牛逼），看了csapp感觉其他所有的书都是在这个基础上的拓展，这样吸收其他书的知识就没有很高的门槛，对于内存这一块，印象比较深刻的还是《程序员的自我修养》，专门讲链接装载与库的一本书，没看csapp之前看那本书真的是一脸懵逼，看完csapp再看那本书还是收获非常大的。"><a href="#本章还是比较肝的，说起虚拟内存想起了另外一个书《C-primer-plus》，大一寒假玩了一个月，唯独花了点时间看了这本书，印象最深的还是这本书讲了内存模型和名称空间，后悔啊大一上没看csapp，所以看的一脸懵逼，还没看懂，csapp这一章确实很精髓，曹神也和我聊过（Orz-曹神牛逼），看了csapp感觉其他所有的书都是在这个基础上的拓展，这样吸收其他书的知识就没有很高的门槛，对于内存这一块，印象比较深刻的还是《程序员的自我修养》，专门讲链接装载与库的一本书，没看csapp之前看那本书真的是一脸懵逼，看完csapp再看那本书还是收获非常大的。" class="headerlink" title="本章还是比较肝的，说起虚拟内存想起了另外一个书《C++ primer plus》，大一寒假玩了一个月，唯独花了点时间看了这本书，印象最深的还是这本书讲了内存模型和名称空间，后悔啊大一上没看csapp，所以看的一脸懵逼，还没看懂，csapp这一章确实很精髓，曹神也和我聊过（Orz,曹神牛逼），看了csapp感觉其他所有的书都是在这个基础上的拓展，这样吸收其他书的知识就没有很高的门槛，对于内存这一块，印象比较深刻的还是《程序员的自我修养》，专门讲链接装载与库的一本书，没看csapp之前看那本书真的是一脸懵逼，看完csapp再看那本书还是收获非常大的。"></a>本章还是比较肝的，说起虚拟内存想起了另外一个书《C++ primer plus》，大一寒假玩了一个月，唯独花了点时间看了这本书，印象最深的还是这本书讲了内存模型和名称空间，后悔啊大一上没看csapp，所以看的一脸懵逼，还没看懂，csapp这一章确实很精髓，曹神也和我聊过（Orz,曹神牛逼），看了csapp感觉其他所有的书都是在这个基础上的拓展，这样吸收其他书的知识就没有很高的门槛，对于内存这一块，印象比较深刻的还是《程序员的自我修养》，专门讲链接装载与库的一本书，没看csapp之前看那本书真的是一脸懵逼，看完csapp再看那本书还是收获非常大的。</h4><span id="more"></span>
+
+
+<p><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/1.webp"><br>虚拟存储器又叫做虚拟内存，我们现在的操作系统普遍都支持了虚拟内存，这样做是因为我们同时运行着太多的程序了，如果不使用虚拟内存4G的内存空间很快就会被耗尽，而一旦没有了内存空间，其他程序就无法加载了。虚拟内存的出现就是为了解决这个问题，当一个程序开始运行的时候，其实是为每个程序单独创建了一个页表（这个以后讲），只将一部分放入内存中，以后根据实际的需要随时从硬盘中调入内容。当然虚拟内存不仅仅只有这个功能，我们的操作系统也是在内存中运行着的，虚拟内存同时还提供了一种保护，这样做其他进程就不会损坏掉系统的内存空间。</p>
+<h3 id="1、物理寻址和虚拟寻址"><a href="#1、物理寻址和虚拟寻址" class="headerlink" title="1、物理寻址和虚拟寻址"></a>1、物理寻址和虚拟寻址</h3><h4 id="1-1、物理地址-Physical-Address-PA-计算机系统的主存被组织为M个连续的字节大小的单元组成的数组。每个字节的地址叫物理地址-CPU访问存储器的最自然的方式使用物理地址，这种方式称为物理寻址。-早期的PC，数字信号处理器，嵌入式微控制器以及Cray超级计算机使用物理寻址"><a href="#1-1、物理地址-Physical-Address-PA-计算机系统的主存被组织为M个连续的字节大小的单元组成的数组。每个字节的地址叫物理地址-CPU访问存储器的最自然的方式使用物理地址，这种方式称为物理寻址。-早期的PC，数字信号处理器，嵌入式微控制器以及Cray超级计算机使用物理寻址" class="headerlink" title="1.1、物理地址(Physical Address,PA):计算机系统的主存被组织为M个连续的字节大小的单元组成的数组。每个字节的地址叫物理地址.CPU访问存储器的最自然的方式使用物理地址，这种方式称为物理寻址。 早期的PC，数字信号处理器，嵌入式微控制器以及Cray超级计算机使用物理寻址"></a>1.1、物理地址(Physical Address,PA):计算机系统的主存被组织为M个连续的字节大小的单元组成的数组。每个字节的地址叫物理地址.CPU访问存储器的最自然的方式使用物理地址，这种方式称为物理寻址。 早期的PC，数字信号处理器，嵌入式微控制器以及Cray超级计算机使用物理寻址</h4><p><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/2.webp"><br>主存的每个地址都是唯一的，第一个字节地址为0，接下来为2，以此类推。CPU使用这种访问方式就是物理寻址。上图所示就是CPU通过地址总线传递读取主存中4号地址开始处的内容并通过数据总线传送到CPU的寄存器中。</p>
+<h4 id="1-2、现代处理器使用的是虚拟寻址-virtual-addressing-的寻址形式。"><a href="#1-2、现代处理器使用的是虚拟寻址-virtual-addressing-的寻址形式。" class="headerlink" title="1.2、现代处理器使用的是虚拟寻址(virtual addressing)的寻址形式。"></a>1.2、现代处理器使用的是虚拟寻址(virtual addressing)的寻址形式。</h4><p>CPU芯片上有叫做存储器管理单元(Memory Management Unit,MMU)的专用硬件<br>使用虚拟寻址的时候，cpu先是生成一个虚拟地址：4100再经过地址翻译器，将4100翻译成物理地址。<br><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/3.webp"><br>我们知道对内存的访问要比硬盘的访问快10000倍，如果我们在内存中没有找到相应的内容（不命中），而需要到硬盘上找的话，我们必须要提供相对来说高效率的访问方式。这时候就创建了一个虚拟存储器，管理着磁盘，以每页的方式进行整合，每个页面的大小4kb-2mb不等，加上偏移量就成为了一个虚拟地址。比如4100，说明的就是页4编号，偏移100处的位置。这就比挨个挨个单独寻址要快的多。</p>
+<h3 id="2、地址空间"><a href="#2、地址空间" class="headerlink" title="2、地址空间"></a>2、地址空间</h3><p><code>地址空间(address space)</code>是一个非负整数<code>地址</code>的有序集合。</p>
+<ul>
+<li><p>如果地址空间中整数是连续的，我们说它是<code>线性地址空间(linear address space)</code>。</p>
+<ul>
+<li>为了简化讨论，我们总是假设使用线性地址空间。</li>
+</ul>
+</li>
+<li><p>在一个带虚拟存储器的系统中，CPU从一个有<code>N=2^n</code>个地址的<code>地址空间</code>中生成虚拟地址，这个地址空间称为<code>虚拟地址空间(virtual address space)</code>。</p>
+</li>
+<li><p>一个<code>地址空间</code>大小是由<strong>表示最大地址所需要的位数</strong>来描述的。</p>
+<ul>
+<li>如<code>N=2^n</code>个地址的虚拟地址空间叫做<code>n</code>位地址空间。</li>
+<li>现在操作系统支持<code>32位</code>或<code>64位</code>。</li>
+</ul>
+</li>
+<li><p>一个系统还有<code>物理地址空间</code>,它与系统中物理存储器的<code>M=2^m</code>(假设为2的幂)个字节相对应。</p>
+</li>
+</ul>
+<p><code>地址空间</code>的概念很重要，因为它区分了**数据对象(字节)<strong>和 它们的</strong>属性(地址)**。</p>
+<ul>
+<li>每个<code>字节(数据对象)</code>一般有<strong>多个</strong> 独立的<code>地址(属性)</code>。每个地址都选自<strong>不同</strong>的地址空间。  <ul>
+<li>比如一般来说。  <ul>
+<li><code>字节</code> 有一个在<code>虚拟地址空间</code>的<code>虚拟地址</code>。</li>
+<li>还有一个在<code>物理地址空间</code>的 <code>物理地址</code>。</li>
+<li>两个地址都能访问到这个<code>字节</code>。</li>
+</ul>
+</li>
+<li>类似现实世界的<strong>门牌号</strong>, 和<strong>经纬度</strong>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="3、虚拟存储器作为缓存的工具"><a href="#3、虚拟存储器作为缓存的工具" class="headerlink" title="3、虚拟存储器作为缓存的工具"></a>3、虚拟存储器作为缓存的工具</h3><p><code>虚拟存储器(VM)</code>被组织为一个存放在<strong>磁盘</strong>上的N个连续字节大小的单元组成的数组。（这是书上的原文，看了很久，其实没怎么看得懂，意会一波算了）</p>
+<ul>
+<li><p>每个字节都有一个唯一的<code>虚拟地址</code>，这个虚拟地址作为到数组的索引。</p>
+</li>
+<li><p><code>磁盘</code>上数组的内容被缓存到<code>主存</code>中。</p>
+<ul>
+<li>同存储器层次结构其他缓存一样，<code>磁盘</code>上的数据被分割称<code>块</code>。  <ul>
+<li>这些<code>块</code>作为<strong>磁盘和主存</strong>之间的传输单元。</li>
+<li><code>虚拟页(Virtual Page,VP)</code>就是这个<code>块</code>  <ul>
+<li>每个<code>虚拟页</code>大小为<code>P=2^p</code>字节。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>物理存储器</strong>被分割为<code>物理页</code>,大小也为<code>P</code>字节  <ul>
+<li>也被称为<code>页帧(page frame)</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>任何时候，<code>虚拟页</code>的集合都被分为3个不相交的<strong>子集</strong>。</p>
+<ul>
+<li><strong>未分配的</strong>:VM系统还未分配(或者创建)的页。未分配的<code>块</code>没有任何数据与之相关联。  <ul>
+<li>不占用磁盘空间</li>
+<li>通过<code>malloc</code>来分配</li>
+</ul>
+</li>
+<li><strong>缓存的</strong>：当前缓存在物理存储器的已分配页。</li>
+<li><strong>未缓存的</strong>:没有缓存在物理页面存储器中的已分配页。</li>
+</ul>
+</li>
+</ul>
+<p><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/1.png"></p>
+<h4 id="3-1、DRAM缓存的组织结构"><a href="#3-1、DRAM缓存的组织结构" class="headerlink" title="3.1、DRAM缓存的组织结构"></a>3.1、DRAM缓存的组织结构</h4><p>DRAM就是我们传统的8g,16g啥的内存。<br><code>DRAM</code>表示虚拟存储器系统的缓存，在主存中缓存<code>虚拟页</code>,有两个特点。</p>
+<ul>
+<li><code>DRAM</code>缓存不命中处罚十分严重。  <ul>
+<li>因为<code>磁盘</code>比<code>DRAM</code>慢100000多倍。</li>
+</ul>
+</li>
+<li><strong>访问一字节开销</strong>  <ul>
+<li>:从一个磁盘的一个扇区读取第一个字节的时间开销要比从该扇区中读连续的字节慢大约100000倍</li>
+</ul>
+</li>
+</ul>
+<p><code>DRAM</code>缓存的组织结构由这种<strong>巨大的不命中开销</strong>驱动。因此有以下特点。<br>(<strong>有些地方不是特别懂，之后看完第六章应该会好点</strong>)</p>
+<ul>
+<li><p><code>虚拟页</code>往往很大。</p>
+<ul>
+<li>4KB~2MB</li>
+<li>访问一字节开销的原因才要这么大。</li>
+</ul>
+</li>
+<li><p><code>DRAM</code>缓存是<code>全相联</code></p>
+<ul>
+<li>也就是： 任何<code>虚拟页</code>都能放在任何<code>物理页</code>中。</li>
+<li>原因在于<strong>大的不命中惩罚</strong></li>
+</ul>
+</li>
+<li><p>更精密的<strong>替换算法</strong></p>
+<ul>
+<li>替换错了虚拟页的惩罚很高。</li>
+</ul>
+</li>
+<li><p><code>DRAM</code>缓存总是<code>写回</code></p>
+<ul>
+<li>因为对磁盘的访问时间很长</li>
+<li>而不用<code>直写</code></li>
+</ul>
+</li>
+</ul>
+<h4 id="3-2、页表"><a href="#3-2、页表" class="headerlink" title="3.2、页表"></a>3.2、页表</h4><p>页表是一个存放在内存中的数据结构，MMU就是通过页表来完成虚拟地址到物理地址的转换。这个数据结构每一个条目称为PTE（Page Table Entry），由两部分组成：有效位和n位地址段。有效位如果是1，那么n位地址就指向已经在内存中缓存好了的地址；如果为0，地址为null的话表示为分配，地址指向磁盘上的虚拟内存（pagefile.sys）的话就是未缓存。我们来看一个典型的页表图：<br><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/4.webp"><br>虚拟页vp1,2,7,4当前被缓存在内存中，页表上有效位设置成1，分别用PTE1，2，4，7表示。VP0和VP5（PTE0、5）未被分配，VP3和VP6被分配并指向虚拟内存，但未被缓存。</p>
+<h4 id="3-3、页命中"><a href="#3-3、页命中" class="headerlink" title="3.3、页命中"></a>3.3、页命中</h4><p><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/6.webp"><br>当我们使用2100虚拟地址来访问虚拟页2的内容的时候，就是一个页命中。地址翻译将指向PTE2上，由于有效位1，地址翻译器MMU就知道VP2已经缓存在内存中了。就使用页表中保存的物理地址进行访问。</p>
+<h4 id="3-4、缺页咋整"><a href="#3-4、缺页咋整" class="headerlink" title="3.4、缺页咋整"></a>3.4、缺页咋整</h4><p>我们再来看看不命中，也就是缺页的情况，当CPU需要VP3的一个字时，初始化是这样的：<br><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/7.webp"><br>PTE3有效位是0，同时地址位指向了虚拟内存（pagefile.sys），就会触发缺页异常。异常处理程序会选择牺牲一个内存（DRAM）中的页，本例中选择的是内存中的PP3页的VP4，接下来内核就从虚拟内存中拷贝VP3到内存中的PP3，并使得PTE3指向内存中的PP3，形成如下：<br><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/8.webp"><br>vp4就成了牺牲页（不知道为什么想到了小三上位了 hhhhh<br><strong>页面交换</strong>:虚拟存储器出现早于高速缓存，按照习惯的说法块被叫做页。从虚拟内存到物理内存传送页的活动就叫做页面交换。</p>
+<h4 id="3-5、分配页面-又是局部性拯救了我们"><a href="#3-5、分配页面-又是局部性拯救了我们" class="headerlink" title="3.5、分配页面&amp;&amp;又是局部性拯救了我们"></a>3.5、分配页面&amp;&amp;又是局部性拯救了我们</h4><p>比如某个页面所指向地址为NULL，将这个地址指向磁盘某处，那么这就叫分配页面。此时虚拟页从未分配状态 变为 未缓存。</p>
+<p><code>虚拟存储器</code>工作的相当好，主要归功于老朋友<code>局部性(locality)</code></p>
+<p>尽管从头到尾的<strong>活动页面数量</strong>大于<strong>物理存储器</strong>大小。</p>
+<p>但是在局部内，程序往往在一个较小的<strong>活动页面集合</strong>工作</p>
+<ul>
+<li><p>这个<strong>集合</strong>叫做<code>工作集(working set)</code>或者叫<code>常驻集(resident set)</code></p>
+<ul>
+<li>初始载入开销比较大。</li>
+</ul>
+</li>
+<li><p>程序有良好的<code>时间局部性</code>，<code>虚拟存储器</code>都工作的相当好。</p>
+</li>
+<li><p>如果程序实在很烂，或者物理空间很小，<code>工作集</code>大于<code>物理存储器</code>大小。这种状态叫<code>颠簸(thrashing)</code>.  </p>
+<ul>
+<li>这时，页面不断换进换出。性能十分低。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4、虚拟存储器作为内存管理的工具"><a href="#4、虚拟存储器作为内存管理的工具" class="headerlink" title="4、虚拟存储器作为内存管理的工具"></a>4、虚拟存储器作为内存管理的工具</h3><p>实际上，操作系统为每个<strong>进程</strong>提供一个独立的<code>页表</code>。<br><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/2.png"></p>
+<p>因此，<code>VM</code>简化了<code>链接</code>和<code>加载</code>,<code>代码</code>和<code>数据共享</code>,以及应用程序的<code>存储器</code>分配。</p>
+<ul>
+<li><p><strong>简化链接</strong></p>
+<ul>
+<li><p>独立的空间地址意味着每个进程的存储器映像使用相同的格式。</p>
+<ul>
+<li>文本节总是从<code>0x08048000</code>(32位)处或<code>0x400000</code>(64位)处开始。</li>
+<li>然后是数据，bss节,栈。</li>
+</ul>
+</li>
+<li><p>一致性极大简化了<code>链接器</code>的设计和实现。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>简化加载</strong></p>
+<ul>
+<li><code>加载器</code>可以从不实际拷贝任何数据从磁盘到存储器。</li>
+<li>基本都是<strong>虚拟存储系统</strong>完成。</li>
+</ul>
+<blockquote>
+<p>将一组连续的<code>虚拟页</code>映射到任意一个文件中的任意位置的表示法称作<code>存储器映射</code>。Unix提供一个称为<code>mmap</code>的系统调用，允许程序自己做存储器映射。在9.8详细讲解。</p>
+</blockquote>
+</li>
+<li><p><strong>简化共享</strong></p>
+<ul>
+<li>独立地址空间为操作系统提供了一个管理用户进程和操作系统自身之间的一致<code>共享</code>机制.</li>
+<li>例子  <ul>
+<li>操作相同的操作系统内核代码</li>
+<li>C标准库的<code>printf</code>.</li>
+</ul>
+</li>
+<li>因此操作系统需要将<strong>不同进程</strong>的适当的虚拟页映射到<strong>相同</strong>的物理页面。  <ul>
+<li>多个进程共享这部分代码的一个拷贝。</li>
+<li>而不是每个进程都要加载单独的内核和C标准库的拷贝。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>简化存储器分配</strong>.</p>
+<ul>
+<li>即<code>虚拟页</code>连续(虚拟页还是单独的)，<code>物理页</code>可以不连续。使得分配更加容易。</li>
+</ul>
+</li>
+<li><p><strong>简化保护</strong>.</p>
+<ul>
+<li>我们可以通过为PTE添加额外的标识位提供对存储器的保护。</li>
+</ul>
+</li>
+</ul>
+<p><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9.webp"><br>通过新添加的三个标识位：SUP：内核or用户；READ:</p>
+<h3 id="5、地址翻译，加入高速缓存，多级页表，-案例研究：Intel-CoreI7，这些东西太肝了，总结不出来，Orz-希望感兴趣的能自己认真看下去，因为这里如果要详讲只能把书扫描放这了，东西太多，所以直接科普一下Linux虚拟存储系统"><a href="#5、地址翻译，加入高速缓存，多级页表，-案例研究：Intel-CoreI7，这些东西太肝了，总结不出来，Orz-希望感兴趣的能自己认真看下去，因为这里如果要详讲只能把书扫描放这了，东西太多，所以直接科普一下Linux虚拟存储系统" class="headerlink" title="5、地址翻译，加入高速缓存，多级页表， 案例研究：Intel CoreI7，这些东西太肝了，总结不出来，Orz,希望感兴趣的能自己认真看下去，因为这里如果要详讲只能把书扫描放这了，东西太多，所以直接科普一下Linux虚拟存储系统"></a>5、地址翻译，加入高速缓存，多级页表， 案例研究：Intel CoreI7，这些东西太肝了，总结不出来，Orz,希望感兴趣的能自己认真看下去，因为这里如果要详讲只能把书扫描放这了，东西太多，所以直接科普一下Linux虚拟存储系统</h3><p><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/10.webp"><br>一个单独的Linux系统进程虚拟存储主要分为：内核虚拟存储器和进程虚拟存储器。我们主要来讲一下内核虚拟存储器：由下往上是内核的代码和数据结构，是每个进程共享的数据结构和代码；再往上是一组连续的虚拟页面映射到相应的物理页面的物理存储器，大小同主存一样大，提供很方便访问物理页面的任何位置。最后是每个进程不同的是页表、task（mm）、内核栈等。</p>
+<h4 id="5-1、虚拟存储器区域"><a href="#5-1、虚拟存储器区域" class="headerlink" title="5.1、虚拟存储器区域"></a>5.1、虚拟存储器区域</h4><p>区域就是我们通常说的段，text、data、bss都是不同的区域，这些区域是被分为连续的片。每个虚拟页面都在不同的段中，不属于某个段的虚拟页面是不存在的，且不能被使用。我们来看看内核中的一个task数据结构（mm）：task_struct是位于内核虚拟存储器中对于每个进程的都不同的内核数据结构，包含运行该进程所需要的基本信息（PID、可执行文件名称、程序计数器等）。这个结构中有一个mm字段，指向的是mm_struct中的pgd和mmap，其中pgd是一级页表的基地址，mmap指向的是一个vm_area_structs的链表，每个该链表中的一个元素描述的是当前虚拟地址空间的一个段（text、data、bss等），当内核运行该进程的时候CR3寄存器就被放入了pgd。<br><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/11.webp"></p>
+<h4 id="5-2、Linux缺页异常处理"><a href="#5-2、Linux缺页异常处理" class="headerlink" title="5.2、Linux缺页异常处理"></a>5.2、Linux缺页异常处理</h4><p>我们将了解一些存储器区域划分的基础知识，并且介绍说mmap指向的是一个链表，这个链表中的每个元素都指向该进程的相应的段，其中vm_strat是段开始的地方，vm_end是段结束的地方。1&gt; 访问地址是否合法：缺页处理程序只需要将这个地址A与vm_area_struct链表中的每个元素的start和end数据比较，如果都没有的话，表示该地址不在相应的段中。就是一个段错误。2&gt; 保护异常：vm_area_struct中的vm_prot结构是包含了所有页面的读写权限，所以当对只有读权限的文本内容写入数据的时候，就会引发保护异常。<br><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/12.webp"><br>3&gt; 最后，正常缺页。也就是相应的页面不在物理内存的时候，缺页程序就会锁定一个牺牲页面，将它的内容与实际需要的内容交换过来，当缺页程序返回的时候就可以正常的访问了。</p>
+<h3 id="6、存储器映射"><a href="#6、存储器映射" class="headerlink" title="6、存储器映射"></a>6、存储器映射</h3><p>存储器映射是通过将磁盘上的一个文件与虚拟存储器中的一个区域关联起来的过程。</p>
+<h4 id="6-1、共享对象"><a href="#6-1、共享对象" class="headerlink" title="6.1、共享对象"></a>6.1、共享对象</h4><p>一个对象被映射到虚拟存储器的一个区域，这个区域要么是共享对象，要么是私有对象。如果一个进程A将一个共享对象映射X到了它的虚拟存储器中，那么对于也把这个共享对象X映射了的其他进程而言，进程A对共享对象X的任何读写操作都是可见的。下图是进程1和进程2映射了共享区域的图例：<br><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/13.webp"><br>私有区域：即使是私有区域在物理存储器上也是同一个区域，如下图进程1和进程2所映射的私有对象在物理存储器上只是一份拷贝。<br><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/14.webp"><br>每个对象都有唯一的一个文件名，在进程1的虚拟存储器中已经完成了私有对象到存储器的映射，进程2如果要映射这个区域只需要将页表条目指向已经映射好的物理存储器位置就行了。如上图所示，进程1和2将一个私有对象映射到了物理存储器的一个区域并共享这个私有对象。这个对象会被标记为只读，当其中一个进程2确实需要写这个区域的时候，就会引发一个保护故障，内核会在物理存储器中创建这个私有对象的一个拷贝，称为写时拷贝，更新页面条目使得进程1指向这个新的条目。然后把老对象修改为可写权限。这样当保护故障程序返回的时候，CPU重新执行写的操作就不会出错了。</p>
+<h4 id="6-2、再看fork函数"><a href="#6-2、再看fork函数" class="headerlink" title="6.2、再看fork函数"></a>6.2、再看fork函数</h4><p>当当前进程调用fork函数的时候，内核为新进程创建各种数据结构，并分配PID。为了给新进程创建一个虚拟存储器，它创建的当前进程的mm_struct、区域结构和页表的一个拷贝，内核为两个进程的每个页表标记为只读，并将诶个区域标记为私有的写时拷贝。这样当fork函数返回的时候，新进程的虚拟存储器和当前进程的虚拟存储器刚好相同。任何一个进程进行写操作的时候，才会创建新的页面。<br><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/15.webp"></p>
+<h3 id="7、动态内存分配（what-is-malloc"><a href="#7、动态内存分配（what-is-malloc" class="headerlink" title="7、动态内存分配（what is malloc?"></a>7、动态内存分配（what is malloc?</h3><p>动态存储器分配指的是在程序运行的时候分配额外的存储空间，分配器维护着虚拟存储器中的堆实现这种分配。<br><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/16.webp"><br>堆是紧跟着.bss段，并向上增长，内核维护着一个brk指针，指向堆的顶部。任何一个堆中的块要么是已分配的要么是空闲的。分配的方式分为两种：显式和隐式，我们接下来主要讲一下显示分配和实现一个分配器的基础知识，隐式分配指的其实是分配器回收空间，这个在分配器基础知识中有所讲解，就不再另外提出了：</p>
+<h4 id="7-1、显式分配：程序调用malloc和free函数"><a href="#7-1、显式分配：程序调用malloc和free函数" class="headerlink" title="7.1、显式分配：程序调用malloc和free函数"></a>7.1、显式分配：程序调用malloc和free函数</h4><p>经常直到我们的程序运行的时候，我们才知道某些数据结构的大小。这时候就必须显式的分配相应的存储空间。如下图所示：<br><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/17.webp"><br>使用malloc函数以具体的输入内容分配相应大小的存储空间，函数原型如下：<br><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/18.webp"><br>如果想要初始化存储器为0，可以使用calloc函数。想要改变已分配的大小可以使用realloc函数<br>释放是通过调用free函数来实现的：<br><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/19.webp"><br>ptr是指向一个已分配空间的起始位置</p>
+<h4 id="7-2、demo"><a href="#7-2、demo" class="headerlink" title="7.2、demo"></a>7.2、demo</h4><p><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/20.webp"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">（a）请求一个4字大小的块，malloc将分配好的空间的首地址返回给p1；</span><br><span class="line">（b）请求一个5字大小的块，由于使用的双字对其，所以填充了一个空闲块；</span><br><span class="line">（c）请求一个6字大小的块，返回给p3；</span><br><span class="line">（d）释放p2，调用后p2仍然指向原来的位置；</span><br><span class="line">（e）请求一个2字大小的块，在已经释放的p2处优先分配，然后返回指针p4</span><br></pre></td></tr></table></figure>
+<h4 id="7-3、配器基础知识"><a href="#7-3、配器基础知识" class="headerlink" title="7.3、配器基础知识"></a>7.3、配器基础知识</h4><p>分配器的目标主要是找到吞吐量和利用率的契合点，那么为什么需要隐式的分配，因为碎片的产生会降低存储空间的利用率<br><strong>碎片：内部和外部</strong><br>1&gt;内部碎片：我们上面讲到的（b）的情况，分配了一个额外的空闲块，实现双字对其；</p>
+<p>2&gt;外部碎片：(e)中如果请求7字大小的块，即使存储空间有这么大，还是不行</p>
+<p>当然，还有许多问题要思考，诸如：空闲块如何组织、如何分配新的块、怎么分割和合并块，这些技术都要求我们提供一种新的数据结构<br><img src="/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/21.webp"><br><strong>(更分配器更高级的骚操作以及垃圾回收，请自行看书吧)</strong></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%AC%E7%AB%A0%E8%BF%98%E6%98%AF%E6%AF%94%E8%BE%83%E8%82%9D%E7%9A%84%EF%BC%8C%E8%AF%B4%E8%B5%B7%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E6%83%B3%E8%B5%B7%E4%BA%86%E5%8F%A6%E5%A4%96%E4%B8%80%E4%B8%AA%E4%B9%A6%E3%80%8AC-primer-plus%E3%80%8B%EF%BC%8C%E5%A4%A7%E4%B8%80%E5%AF%92%E5%81%87%E7%8E%A9%E4%BA%86%E4%B8%80%E4%B8%AA%E6%9C%88%EF%BC%8C%E5%94%AF%E7%8B%AC%E8%8A%B1%E4%BA%86%E7%82%B9%E6%97%B6%E9%97%B4%E7%9C%8B%E4%BA%86%E8%BF%99%E6%9C%AC%E4%B9%A6%EF%BC%8C%E5%8D%B0%E8%B1%A1%E6%9C%80%E6%B7%B1%E7%9A%84%E8%BF%98%E6%98%AF%E8%BF%99%E6%9C%AC%E4%B9%A6%E8%AE%B2%E4%BA%86%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E5%92%8C%E5%90%8D%E7%A7%B0%E7%A9%BA%E9%97%B4%EF%BC%8C%E5%90%8E%E6%82%94%E5%95%8A%E5%A4%A7%E4%B8%80%E4%B8%8A%E6%B2%A1%E7%9C%8Bcsapp%EF%BC%8C%E6%89%80%E4%BB%A5%E7%9C%8B%E7%9A%84%E4%B8%80%E8%84%B8%E6%87%B5%E9%80%BC%EF%BC%8C%E8%BF%98%E6%B2%A1%E7%9C%8B%E6%87%82%EF%BC%8Ccsapp%E8%BF%99%E4%B8%80%E7%AB%A0%E7%A1%AE%E5%AE%9E%E5%BE%88%E7%B2%BE%E9%AB%93%EF%BC%8C%E6%9B%B9%E7%A5%9E%E4%B9%9F%E5%92%8C%E6%88%91%E8%81%8A%E8%BF%87%EF%BC%88Orz-%E6%9B%B9%E7%A5%9E%E7%89%9B%E9%80%BC%EF%BC%89%EF%BC%8C%E7%9C%8B%E4%BA%86csapp%E6%84%9F%E8%A7%89%E5%85%B6%E4%BB%96%E6%89%80%E6%9C%89%E7%9A%84%E4%B9%A6%E9%83%BD%E6%98%AF%E5%9C%A8%E8%BF%99%E4%B8%AA%E5%9F%BA%E7%A1%80%E4%B8%8A%E7%9A%84%E6%8B%93%E5%B1%95%EF%BC%8C%E8%BF%99%E6%A0%B7%E5%90%B8%E6%94%B6%E5%85%B6%E4%BB%96%E4%B9%A6%E7%9A%84%E7%9F%A5%E8%AF%86%E5%B0%B1%E6%B2%A1%E6%9C%89%E5%BE%88%E9%AB%98%E7%9A%84%E9%97%A8%E6%A7%9B%EF%BC%8C%E5%AF%B9%E4%BA%8E%E5%86%85%E5%AD%98%E8%BF%99%E4%B8%80%E5%9D%97%EF%BC%8C%E5%8D%B0%E8%B1%A1%E6%AF%94%E8%BE%83%E6%B7%B1%E5%88%BB%E7%9A%84%E8%BF%98%E6%98%AF%E3%80%8A%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%E3%80%8B%EF%BC%8C%E4%B8%93%E9%97%A8%E8%AE%B2%E9%93%BE%E6%8E%A5%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93%E7%9A%84%E4%B8%80%E6%9C%AC%E4%B9%A6%EF%BC%8C%E6%B2%A1%E7%9C%8Bcsapp%E4%B9%8B%E5%89%8D%E7%9C%8B%E9%82%A3%E6%9C%AC%E4%B9%A6%E7%9C%9F%E7%9A%84%E6%98%AF%E4%B8%80%E8%84%B8%E6%87%B5%E9%80%BC%EF%BC%8C%E7%9C%8B%E5%AE%8Ccsapp%E5%86%8D%E7%9C%8B%E9%82%A3%E6%9C%AC%E4%B9%A6%E8%BF%98%E6%98%AF%E6%94%B6%E8%8E%B7%E9%9D%9E%E5%B8%B8%E5%A4%A7%E7%9A%84%E3%80%82"><span class="toc-number">1.</span> <span class="toc-text">本章还是比较肝的，说起虚拟内存想起了另外一个书《C++ primer plus》，大一寒假玩了一个月，唯独花了点时间看了这本书，印象最深的还是这本书讲了内存模型和名称空间，后悔啊大一上没看csapp，所以看的一脸懵逼，还没看懂，csapp这一章确实很精髓，曹神也和我聊过（Orz,曹神牛逼），看了csapp感觉其他所有的书都是在这个基础上的拓展，这样吸收其他书的知识就没有很高的门槛，对于内存这一块，印象比较深刻的还是《程序员的自我修养》，专门讲链接装载与库的一本书，没看csapp之前看那本书真的是一脸懵逼，看完csapp再看那本书还是收获非常大的。</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E7%89%A9%E7%90%86%E5%AF%BB%E5%9D%80%E5%92%8C%E8%99%9A%E6%8B%9F%E5%AF%BB%E5%9D%80"><span class="toc-number"></span> <span class="toc-text">1、物理寻址和虚拟寻址</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1%E3%80%81%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80-Physical-Address-PA-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%9A%84%E4%B8%BB%E5%AD%98%E8%A2%AB%E7%BB%84%E7%BB%87%E4%B8%BAM%E4%B8%AA%E8%BF%9E%E7%BB%AD%E7%9A%84%E5%AD%97%E8%8A%82%E5%A4%A7%E5%B0%8F%E7%9A%84%E5%8D%95%E5%85%83%E7%BB%84%E6%88%90%E7%9A%84%E6%95%B0%E7%BB%84%E3%80%82%E6%AF%8F%E4%B8%AA%E5%AD%97%E8%8A%82%E7%9A%84%E5%9C%B0%E5%9D%80%E5%8F%AB%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80-CPU%E8%AE%BF%E9%97%AE%E5%AD%98%E5%82%A8%E5%99%A8%E7%9A%84%E6%9C%80%E8%87%AA%E7%84%B6%E7%9A%84%E6%96%B9%E5%BC%8F%E4%BD%BF%E7%94%A8%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%EF%BC%8C%E8%BF%99%E7%A7%8D%E6%96%B9%E5%BC%8F%E7%A7%B0%E4%B8%BA%E7%89%A9%E7%90%86%E5%AF%BB%E5%9D%80%E3%80%82-%E6%97%A9%E6%9C%9F%E7%9A%84PC%EF%BC%8C%E6%95%B0%E5%AD%97%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86%E5%99%A8%EF%BC%8C%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BE%AE%E6%8E%A7%E5%88%B6%E5%99%A8%E4%BB%A5%E5%8F%8ACray%E8%B6%85%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%BF%E7%94%A8%E7%89%A9%E7%90%86%E5%AF%BB%E5%9D%80"><span class="toc-number">1.</span> <span class="toc-text">1.1、物理地址(Physical Address,PA):计算机系统的主存被组织为M个连续的字节大小的单元组成的数组。每个字节的地址叫物理地址.CPU访问存储器的最自然的方式使用物理地址，这种方式称为物理寻址。 早期的PC，数字信号处理器，嵌入式微控制器以及Cray超级计算机使用物理寻址</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2%E3%80%81%E7%8E%B0%E4%BB%A3%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%BF%E7%94%A8%E7%9A%84%E6%98%AF%E8%99%9A%E6%8B%9F%E5%AF%BB%E5%9D%80-virtual-addressing-%E7%9A%84%E5%AF%BB%E5%9D%80%E5%BD%A2%E5%BC%8F%E3%80%82"><span class="toc-number">2.</span> <span class="toc-text">1.2、现代处理器使用的是虚拟寻址(virtual addressing)的寻址形式。</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4"><span class="toc-number"></span> <span class="toc-text">2、地址空间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8%E4%BD%9C%E4%B8%BA%E7%BC%93%E5%AD%98%E7%9A%84%E5%B7%A5%E5%85%B7"><span class="toc-number"></span> <span class="toc-text">3、虚拟存储器作为缓存的工具</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1%E3%80%81DRAM%E7%BC%93%E5%AD%98%E7%9A%84%E7%BB%84%E7%BB%87%E7%BB%93%E6%9E%84"><span class="toc-number">1.</span> <span class="toc-text">3.1、DRAM缓存的组织结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2%E3%80%81%E9%A1%B5%E8%A1%A8"><span class="toc-number">2.</span> <span class="toc-text">3.2、页表</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3%E3%80%81%E9%A1%B5%E5%91%BD%E4%B8%AD"><span class="toc-number">3.</span> <span class="toc-text">3.3、页命中</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4%E3%80%81%E7%BC%BA%E9%A1%B5%E5%92%8B%E6%95%B4"><span class="toc-number">4.</span> <span class="toc-text">3.4、缺页咋整</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-5%E3%80%81%E5%88%86%E9%85%8D%E9%A1%B5%E9%9D%A2-%E5%8F%88%E6%98%AF%E5%B1%80%E9%83%A8%E6%80%A7%E6%8B%AF%E6%95%91%E4%BA%86%E6%88%91%E4%BB%AC"><span class="toc-number">5.</span> <span class="toc-text">3.5、分配页面&amp;&amp;又是局部性拯救了我们</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8%E4%BD%9C%E4%B8%BA%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E5%B7%A5%E5%85%B7"><span class="toc-number"></span> <span class="toc-text">4、虚拟存储器作为内存管理的工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%E3%80%81%E5%9C%B0%E5%9D%80%E7%BF%BB%E8%AF%91%EF%BC%8C%E5%8A%A0%E5%85%A5%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%EF%BC%8C%E5%A4%9A%E7%BA%A7%E9%A1%B5%E8%A1%A8%EF%BC%8C-%E6%A1%88%E4%BE%8B%E7%A0%94%E7%A9%B6%EF%BC%9AIntel-CoreI7%EF%BC%8C%E8%BF%99%E4%BA%9B%E4%B8%9C%E8%A5%BF%E5%A4%AA%E8%82%9D%E4%BA%86%EF%BC%8C%E6%80%BB%E7%BB%93%E4%B8%8D%E5%87%BA%E6%9D%A5%EF%BC%8COrz-%E5%B8%8C%E6%9C%9B%E6%84%9F%E5%85%B4%E8%B6%A3%E7%9A%84%E8%83%BD%E8%87%AA%E5%B7%B1%E8%AE%A4%E7%9C%9F%E7%9C%8B%E4%B8%8B%E5%8E%BB%EF%BC%8C%E5%9B%A0%E4%B8%BA%E8%BF%99%E9%87%8C%E5%A6%82%E6%9E%9C%E8%A6%81%E8%AF%A6%E8%AE%B2%E5%8F%AA%E8%83%BD%E6%8A%8A%E4%B9%A6%E6%89%AB%E6%8F%8F%E6%94%BE%E8%BF%99%E4%BA%86%EF%BC%8C%E4%B8%9C%E8%A5%BF%E5%A4%AA%E5%A4%9A%EF%BC%8C%E6%89%80%E4%BB%A5%E7%9B%B4%E6%8E%A5%E7%A7%91%E6%99%AE%E4%B8%80%E4%B8%8BLinux%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F"><span class="toc-number"></span> <span class="toc-text">5、地址翻译，加入高速缓存，多级页表， 案例研究：Intel CoreI7，这些东西太肝了，总结不出来，Orz,希望感兴趣的能自己认真看下去，因为这里如果要详讲只能把书扫描放这了，东西太多，所以直接科普一下Linux虚拟存储系统</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#5-1%E3%80%81%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8%E5%8C%BA%E5%9F%9F"><span class="toc-number">1.</span> <span class="toc-text">5.1、虚拟存储器区域</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-2%E3%80%81Linux%E7%BC%BA%E9%A1%B5%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="toc-number">2.</span> <span class="toc-text">5.2、Linux缺页异常处理</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6%E3%80%81%E5%AD%98%E5%82%A8%E5%99%A8%E6%98%A0%E5%B0%84"><span class="toc-number"></span> <span class="toc-text">6、存储器映射</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-1%E3%80%81%E5%85%B1%E4%BA%AB%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.</span> <span class="toc-text">6.1、共享对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2%E3%80%81%E5%86%8D%E7%9C%8Bfork%E5%87%BD%E6%95%B0"><span class="toc-number">2.</span> <span class="toc-text">6.2、再看fork函数</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7%E3%80%81%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%EF%BC%88what-is-malloc"><span class="toc-number"></span> <span class="toc-text">7、动态内存分配（what is malloc?</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#7-1%E3%80%81%E6%98%BE%E5%BC%8F%E5%88%86%E9%85%8D%EF%BC%9A%E7%A8%8B%E5%BA%8F%E8%B0%83%E7%94%A8malloc%E5%92%8Cfree%E5%87%BD%E6%95%B0"><span class="toc-number">1.</span> <span class="toc-text">7.1、显式分配：程序调用malloc和free函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-2%E3%80%81demo"><span class="toc-number">2.</span> <span class="toc-text">7.2、demo</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-3%E3%80%81%E9%85%8D%E5%99%A8%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-number">3.</span> <span class="toc-text">7.3、配器基础知识</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/&text=CSAPP又双叒叕来一遍之虚拟内存"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/&title=CSAPP又双叒叕来一遍之虚拟内存"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/&is_video=false&description=CSAPP又双叒叕来一遍之虚拟内存"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=CSAPP又双叒叕来一遍之虚拟内存&body=Check out this article: http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/&title=CSAPP又双叒叕来一遍之虚拟内存"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/&title=CSAPP又双叒叕来一遍之虚拟内存"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/&title=CSAPP又双叒叕来一遍之虚拟内存"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/&title=CSAPP又双叒叕来一遍之虚拟内存"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/&name=CSAPP又双叒叕来一遍之虚拟内存&description=&lt;h4 id=&#34;本章还是比较肝的，说起虚拟内存想起了另外一个书《C-primer-plus》，大一寒假玩了一个月，唯独花了点时间看了这本书，印象最深的还是这本书讲了内存模型和名称空间，后悔啊大一上没看csapp，所以看的一脸懵逼，还没看懂，csapp这一章确实很精髓，曹神也和我聊过（Orz-曹神牛逼），看了csapp感觉其他所有的书都是在这个基础上的拓展，这样吸收其他书的知识就没有很高的门槛，对于内存这一块，印象比较深刻的还是《程序员的自我修养》，专门讲链接装载与库的一本书，没看csapp之前看那本书真的是一脸懵逼，看完csapp再看那本书还是收获非常大的。&#34;&gt;&lt;a href=&#34;#本章还是比较肝的，说起虚拟内存想起了另外一个书《C-primer-plus》，大一寒假玩了一个月，唯独花了点时间看了这本书，印象最深的还是这本书讲了内存模型和名称空间，后悔啊大一上没看csapp，所以看的一脸懵逼，还没看懂，csapp这一章确实很精髓，曹神也和我聊过（Orz-曹神牛逼），看了csapp感觉其他所有的书都是在这个基础上的拓展，这样吸收其他书的知识就没有很高的门槛，对于内存这一块，印象比较深刻的还是《程序员的自我修养》，专门讲链接装载与库的一本书，没看csapp之前看那本书真的是一脸懵逼，看完csapp再看那本书还是收获非常大的。&#34; class=&#34;headerlink&#34; title=&#34;本章还是比较肝的，说起虚拟内存想起了另外一个书《C++ primer plus》，大一寒假玩了一个月，唯独花了点时间看了这本书，印象最深的还是这本书讲了内存模型和名称空间，后悔啊大一上没看csapp，所以看的一脸懵逼，还没看懂，csapp这一章确实很精髓，曹神也和我聊过（Orz,曹神牛逼），看了csapp感觉其他所有的书都是在这个基础上的拓展，这样吸收其他书的知识就没有很高的门槛，对于内存这一块，印象比较深刻的还是《程序员的自我修养》，专门讲链接装载与库的一本书，没看csapp之前看那本书真的是一脸懵逼，看完csapp再看那本书还是收获非常大的。&#34;&gt;&lt;/a&gt;本章还是比较肝的，说起虚拟内存想起了另外一个书《C++ primer plus》，大一寒假玩了一个月，唯独花了点时间看了这本书，印象最深的还是这本书讲了内存模型和名称空间，后悔啊大一上没看csapp，所以看的一脸懵逼，还没看懂，csapp这一章确实很精髓，曹神也和我聊过（Orz,曹神牛逼），看了csapp感觉其他所有的书都是在这个基础上的拓展，这样吸收其他书的知识就没有很高的门槛，对于内存这一块，印象比较深刻的还是《程序员的自我修养》，专门讲链接装载与库的一本书，没看csapp之前看那本书真的是一脸懵逼，看完csapp再看那本书还是收获非常大的。&lt;/h4&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/01/13/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/&t=CSAPP又双叒叕来一遍之虚拟内存"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="重要声明本文涉及的所有漏洞已通知厂商并已修复，本人从未参与任何勒索犯罪等违法行为">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一次有趣的安全事故-背锅侠">
+<meta property="og:url" content="http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="重要声明本文涉及的所有漏洞已通知厂商并已修复，本人从未参与任何勒索犯罪等违法行为">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/1.jpg">
+<meta property="og:image" content="http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/2.png">
+<meta property="og:image" content="http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/1.png">
+<meta property="og:image" content="http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/3.png">
+<meta property="og:image" content="http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/5.png">
+<meta property="og:image" content="http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/6.png">
+<meta property="og:image" content="http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/2.jpg">
+<meta property="og:image" content="http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/8.png">
+<meta property="og:image" content="http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/11.png">
+<meta property="og:image" content="http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/9.png">
+<meta property="og:image" content="http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/3.jpg">
+<meta property="article:published_time" content="2020-03-20T16:23:08.000Z">
+<meta property="article:modified_time" content="2020-11-24T04:57:16.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="渗透">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/1.jpg">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>一次有趣的安全事故-背锅侠</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2020/04/07/pentest%E7%AC%94%E8%AE%B0/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2020/01/06/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/&text=一次有趣的安全事故-背锅侠"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/&title=一次有趣的安全事故-背锅侠"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/&is_video=false&description=一次有趣的安全事故-背锅侠"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=一次有趣的安全事故-背锅侠&body=Check out this article: http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/&title=一次有趣的安全事故-背锅侠"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/&title=一次有趣的安全事故-背锅侠"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/&title=一次有趣的安全事故-背锅侠"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/&title=一次有趣的安全事故-背锅侠"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/&name=一次有趣的安全事故-背锅侠&description=&lt;h2 id=&#34;重要声明&#34;&gt;&lt;a href=&#34;#重要声明&#34; class=&#34;headerlink&#34; title=&#34;重要声明&#34;&gt;&lt;/a&gt;重要声明&lt;/h2&gt;&lt;p&gt;本文涉及的所有漏洞已通知厂商并已修复，本人从未参与任何勒索犯罪等违法行为&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/&t=一次有趣的安全事故-背锅侠"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%87%8D%E8%A6%81%E5%A3%B0%E6%98%8E"><span class="toc-number">1.</span> <span class="toc-text">重要声明</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E5%9B%9E%E5%90%88-%E7%9B%B8%E9%81%87"><span class="toc-number">1.1.</span> <span class="toc-text">第一回合-相遇</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E5%9B%9E%E5%90%88-%E6%89%BE%E5%88%B0%E7%A0%B4%E7%BB%BD"><span class="toc-number">1.2.</span> <span class="toc-text">第二回合-找到破绽</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E5%9B%9E%E5%90%88-%E5%BC%B1%E4%B8%8D%E7%A6%81%E9%A3%8E"><span class="toc-number">1.3.</span> <span class="toc-text">第三回合-弱不禁风</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E5%9B%9E%E5%90%88-%E6%96%B0%E7%9A%84%E5%8F%91%E7%8E%B0"><span class="toc-number">1.4.</span> <span class="toc-text">第四回合-新的发现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E5%9B%9E%E5%90%88-%E4%BC%AA%E9%80%A0%E8%BA%AB%E4%BB%BD"><span class="toc-number">1.5.</span> <span class="toc-text">第五回合-伪造身份</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E5%9B%9E%E5%90%88-CTF%E7%9C%9F%E9%A6%99"><span class="toc-number">1.6.</span> <span class="toc-text">第六回合-CTF真香</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%83%E5%9B%9E%E5%90%88-gay%E7%89%B9%E8%A1%80%E5%84%BF"><span class="toc-number">1.7.</span> <span class="toc-text">第七回合-gay特血儿</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E5%85%AB%E5%9B%9E%E5%90%88-%E7%BB%88%E7%AB%A0%EF%BC%9F%EF%BC%9F"><span class="toc-number">1.8.</span> <span class="toc-text">第八回合-终章？？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B9%9D%E5%9B%9E%E5%90%88-%E8%83%8C%E9%94%85%E4%BE%A0%E4%B8%8A%E7%BA%BF"><span class="toc-number">1.9.</span> <span class="toc-text">第九回合-背锅侠上线</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E5%8D%81%E5%9B%9E%E5%90%88-%E7%9C%9F%E7%BB%93%E5%B1%80"><span class="toc-number">1.10.</span> <span class="toc-text">第十回合-真结局</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        一次有趣的安全事故-背锅侠
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-03-20T16:23:08.000Z" class="dt-published" itemprop="datePublished">2020-03-21</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">网络安全</a> › <a class="category-link" href="/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/%E6%B8%97%E9%80%8F/">渗透</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E6%B8%97%E9%80%8F/" rel="tag">渗透</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="重要声明"><a href="#重要声明" class="headerlink" title="重要声明"></a>重要声明</h2><p>本文涉及的所有漏洞已通知厂商并已修复，本人从未参与任何勒索犯罪等违法行为</p>
+<span id="more"></span>
+
+<p><img src="/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/1.jpg"></p>
+<h3 id="第一回合-相遇"><a href="#第一回合-相遇" class="headerlink" title="第一回合-相遇"></a>第一回合-相遇</h3><p>一个晴朗的夜晚，书鱼看不懂书，写不来代码，排位连跪，于是康了一康补天的src列表，翻了翻牌子找了到一个幸运站点（以下称为A站。<br>开始渗透，这是一个教育网，看起来挺大的，页面上测了测，注入点fuzz了一下没啥结果</p>
+<h3 id="第二回合-找到破绽"><a href="#第二回合-找到破绽" class="headerlink" title="第二回合-找到破绽"></a>第二回合-找到破绽</h3><p>然后开始了子域名，旁站等查询，发现了db.A站，居然只开了3306。这不是脱光了等我*** 。<br>于是爆破一梭子下去，root密码居然是弱密码<br>里面居然有260多万的用户信息，测试找一下密码为12345678的md5<code>25d55ad283aa400af464c76d713c07ad</code>的用户，挺多的，测试了一下到网站上-能正常登录<br><img src="/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/2.png"></p>
+<h3 id="第三回合-弱不禁风"><a href="#第三回合-弱不禁风" class="headerlink" title="第三回合-弱不禁风"></a>第三回合-弱不禁风</h3><p>拿到mysql找到了好多admin用户的密码md5-还行管理员没有弱口令没解密出来，现在有3个plan<br><code>plan A</code>:伪造一个admin数据(没错，admin真的可以为所欲为)<br>但是伪造admin因为是基于RBAC的权限管理，还嘚动其他的表<br><code>plan B</code>:直接修改管理员密码md5为25d55ad283aa400af464c76d713c07ad貌似很暴力-很爽。但是想了一下进入后台还要找其他方法getshell-并且这个网站非常弱（几百万人的网站居然如此弱），我查询的时候，网页就开始卡了，我担心进入后台看到不该看的，遇到不该遇到的东西，这个就当最后杀手锏吧<br><code>plan C</code>：mysql提权，先试了一下直接写木马，没有写权限，udf和mof就没敢玩了，百万级的站，真怕崩了背锅（背锅伏笔）<br>总的来说这个网站脆肉得一批</p>
+<h3 id="第四回合-新的发现"><a href="#第四回合-新的发现" class="headerlink" title="第四回合-新的发现"></a>第四回合-新的发现</h3><p>首先检查了一下这个子域名和ip和主站的ip是一样的，意味着是同一台服务器。于是查看了一下有没有一些其他的数据。<br>惊喜：发现了一个wordpress的整套数据库,那么有同学会问了，只有数据库，怎么知道站点在哪呢，或者说如何确定和主站同一站点呢，玩过wordpress的师傅知道wp_options里面有site相关的信息，包括url等，就很nice了<br><img src="/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/1.png"><br>这个站点和主站也还在一个服务器上</p>
+<h3 id="第五回合-伪造身份"><a href="#第五回合-伪造身份" class="headerlink" title="第五回合-伪造身份"></a>第五回合-伪造身份</h3><p>虽然有wordpress密码爆破的一些工具，但是还是先伪造一个密码为hello（md为5d41402abc4b2a76b9719d911017c592）的用户，这里有一个知识点，wordpress的密码虽然数据库里他们的带$等一些其他符号，但是直接md5值也是可以的<br><img src="/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/3.png"><br>尝试登录</p>
+<h3 id="第六回合-CTF真香"><a href="#第六回合-CTF真香" class="headerlink" title="第六回合-CTF真香"></a>第六回合-CTF真香</h3><p>于是拿着noname-hello登录站点<br><img src="/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/5.png"><br>居然这么高级，第一想法就是可能需要内网登录，回想起ctf-web入门的题目，改客户端ip，当时觉得没啥用，但是也是拿来测试一下<br><img src="/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/6.png"><br>wtf-真就可以了-CTF诚不欺我，有些知识学的时候觉得没啥用，但是用的时候就真香了-顺利到了后台</p>
+<h3 id="第七回合-gay特血儿"><a href="#第七回合-gay特血儿" class="headerlink" title="第七回合-gay特血儿"></a>第七回合-gay特血儿</h3><p>可能男人就是这样，没有getshell终不停止，就像那个女*****<br>再次声明：本文由于安全测试，所以在不影响服务的前提下增加了木马操作-测试结束后把一切危险痕迹删除了<br><img src="/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/2.jpg"><br>这里noname你要改成admin角色，数据库有admin权限真可以为所欲为，wp后台getshell还是非常简单的，在模板里动手，加一些马啥的<br><img src="/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/8.png"><br>然后<br><img src="/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/11.png"></p>
+<h3 id="第八回合-终章？？"><a href="#第八回合-终章？？" class="headerlink" title="第八回合-终章？？"></a>第八回合-终章？？</h3><p>getshell后因为网站毕竟脆弱，所以也没有进一步深入，毕竟也是几百万的数据，于是把上面的报告全部提交给补天平台了。然后删除了马，关闭了navicat，burp,navicat投入到我的小床，看似一切结束的，我等着第二天补天给我一些金币我兑换我看中的衣服~</p>
+<h3 id="第九回合-背锅侠上线"><a href="#第九回合-背锅侠上线" class="headerlink" title="第九回合-背锅侠上线"></a>第九回合-背锅侠上线</h3><p>于是第二天补天管理员找我，让我上去确定网站的数据异常是否于我有关？<br>我上去看了一下，wtf所有的数据都删除了，只剩下一张warning表<br><img src="/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/9.png"><br>大概意思是，敲诈0.06比特币，否则如果未来10天内没有收到付款，他们呢将公开数据库或以其他方式使用它们<br>本以为这玩意只有传说中有，真就遇上了呗，还是就隔了一个晚上，难不成是我客户端被劫持了？<br>于是我一五一十告诉了补天我的行为，尽量脱干净自己的问题-删除了和那个网站所有的关联。</p>
+<h3 id="第十回合-真结局"><a href="#第十回合-真结局" class="headerlink" title="第十回合-真结局"></a>第十回合-真结局</h3><p>补天那边也相信了我，毕竟我提交了报告，不会那么蠢再勒索一下，所以最后是我拿到了一笔币换了一件衣服-至于泄露了没，勒索成功了没，管他妈了，衣服还是挺喜欢的<br><img src="/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/3.jpg"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%87%8D%E8%A6%81%E5%A3%B0%E6%98%8E"><span class="toc-number">1.</span> <span class="toc-text">重要声明</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E5%9B%9E%E5%90%88-%E7%9B%B8%E9%81%87"><span class="toc-number">1.1.</span> <span class="toc-text">第一回合-相遇</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E5%9B%9E%E5%90%88-%E6%89%BE%E5%88%B0%E7%A0%B4%E7%BB%BD"><span class="toc-number">1.2.</span> <span class="toc-text">第二回合-找到破绽</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E5%9B%9E%E5%90%88-%E5%BC%B1%E4%B8%8D%E7%A6%81%E9%A3%8E"><span class="toc-number">1.3.</span> <span class="toc-text">第三回合-弱不禁风</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E5%9B%9E%E5%90%88-%E6%96%B0%E7%9A%84%E5%8F%91%E7%8E%B0"><span class="toc-number">1.4.</span> <span class="toc-text">第四回合-新的发现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E5%9B%9E%E5%90%88-%E4%BC%AA%E9%80%A0%E8%BA%AB%E4%BB%BD"><span class="toc-number">1.5.</span> <span class="toc-text">第五回合-伪造身份</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E5%9B%9E%E5%90%88-CTF%E7%9C%9F%E9%A6%99"><span class="toc-number">1.6.</span> <span class="toc-text">第六回合-CTF真香</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%83%E5%9B%9E%E5%90%88-gay%E7%89%B9%E8%A1%80%E5%84%BF"><span class="toc-number">1.7.</span> <span class="toc-text">第七回合-gay特血儿</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E5%85%AB%E5%9B%9E%E5%90%88-%E7%BB%88%E7%AB%A0%EF%BC%9F%EF%BC%9F"><span class="toc-number">1.8.</span> <span class="toc-text">第八回合-终章？？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B9%9D%E5%9B%9E%E5%90%88-%E8%83%8C%E9%94%85%E4%BE%A0%E4%B8%8A%E7%BA%BF"><span class="toc-number">1.9.</span> <span class="toc-text">第九回合-背锅侠上线</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E5%8D%81%E5%9B%9E%E5%90%88-%E7%9C%9F%E7%BB%93%E5%B1%80"><span class="toc-number">1.10.</span> <span class="toc-text">第十回合-真结局</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/&text=一次有趣的安全事故-背锅侠"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/&title=一次有趣的安全事故-背锅侠"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/&is_video=false&description=一次有趣的安全事故-背锅侠"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=一次有趣的安全事故-背锅侠&body=Check out this article: http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/&title=一次有趣的安全事故-背锅侠"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/&title=一次有趣的安全事故-背锅侠"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/&title=一次有趣的安全事故-背锅侠"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/&title=一次有趣的安全事故-背锅侠"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/&name=一次有趣的安全事故-背锅侠&description=&lt;h2 id=&#34;重要声明&#34;&gt;&lt;a href=&#34;#重要声明&#34; class=&#34;headerlink&#34; title=&#34;重要声明&#34;&gt;&lt;/a&gt;重要声明&lt;/h2&gt;&lt;p&gt;本文涉及的所有漏洞已通知厂商并已修复，本人从未参与任何勒索犯罪等违法行为&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2020/03/21/%E4%B8%80%E6%AC%A1%E6%9C%89%E8%B6%A3%E7%9A%84%E5%AE%89%E5%85%A8%E4%BA%8B%E6%95%85-%E8%83%8C%E9%94%85%E4%BE%A0/&t=一次有趣的安全事故-背锅侠"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

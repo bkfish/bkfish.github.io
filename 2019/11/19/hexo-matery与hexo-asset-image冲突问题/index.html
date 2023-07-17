@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="今天写博客的时候突然发生一件非常恶心的事情我个人用的是matery主题，然后图片用了hexo-asset-image插件一般来说流程是  配置_config.yml里面的post_asset_folder:false这个选项设置为true。 安装hexo-asset-image，运行hexo n “xxxx”来生成md博文时，&#x2F;source&#x2F;_posts文件夹内除了xxxx.m">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hexo-matery与hexo-asset-image冲突问题">
+<meta property="og:url" content="http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="今天写博客的时候突然发生一件非常恶心的事情我个人用的是matery主题，然后图片用了hexo-asset-image插件一般来说流程是  配置_config.yml里面的post_asset_folder:false这个选项设置为true。 安装hexo-asset-image，运行hexo n “xxxx”来生成md博文时，&#x2F;source&#x2F;_posts文件夹内除了xxxx.m">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/2.png">
+<meta property="og:image" content="http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/4.jpg">
+<meta property="og:image" content="http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/1.png">
+<meta property="og:image" content="http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/5.jpg">
+<meta property="article:published_time" content="2019-11-19T06:49:19.000Z">
+<meta property="article:modified_time" content="2020-11-24T04:50:18.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/2.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>hexo-matery与hexo-asset-image冲突问题</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2019/11/19/Kali%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2019/11/19/web%E5%B8%88%E5%82%85%E4%BB%AC%E7%9A%84%E5%8D%9A%E5%AE%A2%E6%94%B6%E9%9B%86/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/&text=hexo-matery与hexo-asset-image冲突问题"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/&title=hexo-matery与hexo-asset-image冲突问题"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/&is_video=false&description=hexo-matery与hexo-asset-image冲突问题"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=hexo-matery与hexo-asset-image冲突问题&body=Check out this article: http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/&title=hexo-matery与hexo-asset-image冲突问题"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/&title=hexo-matery与hexo-asset-image冲突问题"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/&title=hexo-matery与hexo-asset-image冲突问题"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/&title=hexo-matery与hexo-asset-image冲突问题"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/&name=hexo-matery与hexo-asset-image冲突问题&description=&lt;h3 id=&#34;今天写博客的时候突然发生一件非常恶心的事情&#34;&gt;&lt;a href=&#34;#今天写博客的时候突然发生一件非常恶心的事情&#34; class=&#34;headerlink&#34; title=&#34;今天写博客的时候突然发生一件非常恶心的事情&#34;&gt;&lt;/a&gt;今天写博客的时候突然发生一件非常恶心的事情&lt;/h3&gt;&lt;p&gt;我个人用的是matery主题，然后图片用了&lt;code&gt;hexo-asset-image&lt;/code&gt;插件&lt;br&gt;一般来说流程是&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;配置_config.yml里面的post_asset_folder:false这个选项设置为true。&lt;/li&gt;
+&lt;li&gt;安装hexo-asset-image，运行hexo n “xxxx”来生成md博文时，&amp;#x2F;source&amp;#x2F;_posts文件夹内除了xxxx.md文件还有一个同名的文件夹，把图片放入该文件夹。&lt;/li&gt;
+&lt;li&gt;使用&lt;code&gt;![](xxx.png)&lt;/code&gt;直接插入图片即可。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;可真实情况是&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/&t=hexo-matery与hexo-asset-image冲突问题"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%8A%E5%A4%A9%E5%86%99%E5%8D%9A%E5%AE%A2%E7%9A%84%E6%97%B6%E5%80%99%E7%AA%81%E7%84%B6%E5%8F%91%E7%94%9F%E4%B8%80%E4%BB%B6%E9%9D%9E%E5%B8%B8%E6%81%B6%E5%BF%83%E7%9A%84%E4%BA%8B%E6%83%85"><span class="toc-number">1.</span> <span class="toc-text">今天写博客的时候突然发生一件非常恶心的事情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%BB%E6%89%BE%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95"><span class="toc-number">2.</span> <span class="toc-text">寻找解决办法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E4%B8%8A%E8%AF%B4%E6%94%B9hexo-asset-image%E4%B8%AD%E7%9A%84%E6%BA%90%E7%A0%81"><span class="toc-number">2.1.</span> <span class="toc-text">网上说改hexo-asset-image中的源码</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%91%E7%9A%84%E5%8A%9E%E6%B3%95"><span class="toc-number">3.</span> <span class="toc-text">我的办法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%99%E8%84%9A%E6%9C%AC"><span class="toc-number">4.</span> <span class="toc-text">写脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%94%B9%E4%B9%8B%E5%89%8D%E8%AE%B0%E5%BE%97%E5%A4%87%E4%BB%BD%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%81"><span class="toc-number">5.</span> <span class="toc-text">改之前记得备份！！！！</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        hexo-matery与hexo-asset-image冲突问题
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-11-19T06:49:19.000Z" class="dt-published" itemprop="datePublished">2019-11-19</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/CTF/">CTF</a> › <a class="category-link" href="/categories/CTF/Web/">Web</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/CTF/" rel="tag">CTF</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h3 id="今天写博客的时候突然发生一件非常恶心的事情"><a href="#今天写博客的时候突然发生一件非常恶心的事情" class="headerlink" title="今天写博客的时候突然发生一件非常恶心的事情"></a>今天写博客的时候突然发生一件非常恶心的事情</h3><p>我个人用的是matery主题，然后图片用了<code>hexo-asset-image</code>插件<br>一般来说流程是</p>
+<ol>
+<li>配置_config.yml里面的post_asset_folder:false这个选项设置为true。</li>
+<li>安装hexo-asset-image，运行hexo n “xxxx”来生成md博文时，&#x2F;source&#x2F;_posts文件夹内除了xxxx.md文件还有一个同名的文件夹，把图片放入该文件夹。</li>
+<li>使用<code>![](xxx.png)</code>直接插入图片即可。</li>
+</ol>
+<p>可真实情况是</p>
+<span id="more"></span>
+
+
+
+
+<p><img src="/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/2.png" alt="img"></p>
+<p>生成图片的链接居然都变成了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/.io//1.png</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/4.jpg" alt="img"></p>
+<p>重新hexo-clean,hexo-g也是一样的如下，太惨了</p>
+<p><img src="/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/1.png" alt="img"></p>
+<h3 id="寻找解决办法"><a href="#寻找解决办法" class="headerlink" title="寻找解决办法"></a>寻找解决办法</h3><p>网上说原因是:</p>
+<p>由于hexo3版本后对很多插件支持有问题，hexo-asset-image插件在处理data.permalink链接时出现路径错误，把年月去掉了，导致最后生成的路径为%d&#x2F;xxx&#x2F;xxx需要对其做兼容处理。通过判断当前版本是否等于3的版本做不同的路径分割。<br>反正和matery主题冲突了-我专门用了一个干净的环境也是一样的。</p>
+<h4 id="网上说改hexo-asset-image中的源码"><a href="#网上说改hexo-asset-image中的源码" class="headerlink" title="网上说改hexo-asset-image中的源码"></a>网上说改hexo-asset-image中的源码</h4><p>改来改去确一直不生效，你说气不气</p>
+<p><img src="/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/5.jpg" alt="img"></p>
+<h3 id="我的办法"><a href="#我的办法" class="headerlink" title="我的办法"></a>我的办法</h3><p><del>这个插件中暑了，不如我们</del>嗯嗯，卸载这个插件<br><code>npm uninstall hexo-asset-image </code><br>看看会发生啥<br>其实总的来说是正常的，只是url重复了，比如<br>我在markdown中写<code>![](hexo-matery与hexo-asset-image冲突问题/5.jpg)</code><br>生成的url是<code>/hexo-matery与hexo-asset-image冲突问题/hexo-matery与hexo-asset-image冲突问题/5.jpg</code><br>!!!!居然重复了一遍<br>纠结怎么改插件，不如把所有的<code>![](&#123;文件夹名&#125;/x.jpg)</code>改成<code>![](x.jpg)</code>，虽然预览很恶心，但是hexo生成后没问题</p>
+<h3 id="写脚本"><a href="#写脚本" class="headerlink" title="写脚本"></a>写脚本</h3><p>emm，终于觉得没白学python,一般我自己之前写了2中插入图片的语法，一种是<code>![](&#123;文件夹名&#125;/x.jpg)</code>,一种是<code>src=&quot;&#123;文件夹啊名&#125;/xx.jpg&quot;</code>，所以通用脚本这样的</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -- coding:utf-8 </span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="comment">#filePath=&#x27;C:/Users/38138/Desktop/1&#x27;</span></span><br><span class="line">filePath=<span class="string">&#x27;C:/blog/source/_posts&#x27;</span></span><br><span class="line">count=<span class="number">1</span></span><br><span class="line"><span class="keyword">for</span> file <span class="keyword">in</span> os.listdir(filePath):</span><br><span class="line">    <span class="comment">#title=file[0:-3]</span></span><br><span class="line">    <span class="built_in">print</span>(file[-<span class="number">2</span>:])</span><br><span class="line">    <span class="keyword">if</span> file[-<span class="number">2</span>:]==<span class="string">&#x27;md&#x27;</span>:</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(os.path.join(filePath,file), <span class="string">&quot;r+&quot;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            <span class="built_in">print</span>(file)</span><br><span class="line">            old = f.read()</span><br><span class="line">            new_text=re.sub(<span class="string">&quot;!\\[[\\u4e00-\\u9fa5a-zA-Z0-9 \\-]*\\]\\([\\u4e00-\\u9fa5a-zA-Z0-9 \\-]*/&quot;</span>,<span class="string">&quot;![](&quot;</span>,old)</span><br><span class="line">            new_text1=re.sub(<span class="string">&quot;src=\&quot;[\\u4e00-\\u9fa5a-zA-Z\\-1-9 ]*/&quot;</span>,<span class="string">&quot;src=\&quot;&quot;</span>,new_text)</span><br><span class="line">            <span class="comment">#print(new_text1)</span></span><br><span class="line">            f.seek(<span class="number">0</span>)</span><br><span class="line">            f.truncate()</span><br><span class="line">            f.write(new_text1)</span><br><span class="line">        count+=<span class="number">1</span></span><br><span class="line"><span class="built_in">print</span>(count)</span><br></pre></td></tr></table></figure>
+
+<h3 id="改之前记得备份！！！！"><a href="#改之前记得备份！！！！" class="headerlink" title="改之前记得备份！！！！"></a>改之前记得备份！！！！</h3>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%8A%E5%A4%A9%E5%86%99%E5%8D%9A%E5%AE%A2%E7%9A%84%E6%97%B6%E5%80%99%E7%AA%81%E7%84%B6%E5%8F%91%E7%94%9F%E4%B8%80%E4%BB%B6%E9%9D%9E%E5%B8%B8%E6%81%B6%E5%BF%83%E7%9A%84%E4%BA%8B%E6%83%85"><span class="toc-number">1.</span> <span class="toc-text">今天写博客的时候突然发生一件非常恶心的事情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%BB%E6%89%BE%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95"><span class="toc-number">2.</span> <span class="toc-text">寻找解决办法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E4%B8%8A%E8%AF%B4%E6%94%B9hexo-asset-image%E4%B8%AD%E7%9A%84%E6%BA%90%E7%A0%81"><span class="toc-number">2.1.</span> <span class="toc-text">网上说改hexo-asset-image中的源码</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%91%E7%9A%84%E5%8A%9E%E6%B3%95"><span class="toc-number">3.</span> <span class="toc-text">我的办法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%99%E8%84%9A%E6%9C%AC"><span class="toc-number">4.</span> <span class="toc-text">写脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%94%B9%E4%B9%8B%E5%89%8D%E8%AE%B0%E5%BE%97%E5%A4%87%E4%BB%BD%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%81"><span class="toc-number">5.</span> <span class="toc-text">改之前记得备份！！！！</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/&text=hexo-matery与hexo-asset-image冲突问题"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/&title=hexo-matery与hexo-asset-image冲突问题"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/&is_video=false&description=hexo-matery与hexo-asset-image冲突问题"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=hexo-matery与hexo-asset-image冲突问题&body=Check out this article: http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/&title=hexo-matery与hexo-asset-image冲突问题"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/&title=hexo-matery与hexo-asset-image冲突问题"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/&title=hexo-matery与hexo-asset-image冲突问题"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/&title=hexo-matery与hexo-asset-image冲突问题"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/&name=hexo-matery与hexo-asset-image冲突问题&description=&lt;h3 id=&#34;今天写博客的时候突然发生一件非常恶心的事情&#34;&gt;&lt;a href=&#34;#今天写博客的时候突然发生一件非常恶心的事情&#34; class=&#34;headerlink&#34; title=&#34;今天写博客的时候突然发生一件非常恶心的事情&#34;&gt;&lt;/a&gt;今天写博客的时候突然发生一件非常恶心的事情&lt;/h3&gt;&lt;p&gt;我个人用的是matery主题，然后图片用了&lt;code&gt;hexo-asset-image&lt;/code&gt;插件&lt;br&gt;一般来说流程是&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;配置_config.yml里面的post_asset_folder:false这个选项设置为true。&lt;/li&gt;
+&lt;li&gt;安装hexo-asset-image，运行hexo n “xxxx”来生成md博文时，&amp;#x2F;source&amp;#x2F;_posts文件夹内除了xxxx.md文件还有一个同名的文件夹，把图片放入该文件夹。&lt;/li&gt;
+&lt;li&gt;使用&lt;code&gt;![](xxx.png)&lt;/code&gt;直接插入图片即可。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;可真实情况是&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/11/19/hexo-matery%E4%B8%8Ehexo-asset-image%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98/&t=hexo-matery与hexo-asset-image冲突问题"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

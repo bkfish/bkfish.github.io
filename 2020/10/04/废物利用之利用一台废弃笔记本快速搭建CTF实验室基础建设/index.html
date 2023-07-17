@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="国庆返校了，感觉这是最后一段时间在学校，发现实验室有一台废弃的笔记本(4G内存，240G固态，废物U),丢了怪可惜的，就用这个笔记本来搭建一套基础设施吧。最后成效是靶场和所有题目穿透出网">
+<meta property="og:type" content="article">
+<meta property="og:title" content="废物利用之利用一台废弃笔记本快速搭建CTF实验室基础建设">
+<meta property="og:url" content="http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="国庆返校了，感觉这是最后一段时间在学校，发现实验室有一台废弃的笔记本(4G内存，240G固态，废物U),丢了怪可惜的，就用这个笔记本来搭建一套基础设施吧。最后成效是靶场和所有题目穿透出网">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/1.png">
+<meta property="og:image" content="http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/2.png">
+<meta property="og:image" content="http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/3.png">
+<meta property="og:image" content="http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/4.png">
+<meta property="og:image" content="http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/5.png">
+<meta property="og:image" content="http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/6.png">
+<meta property="og:image" content="http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/7.png">
+<meta property="og:image" content="http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/8.png">
+<meta property="og:image" content="http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/9.png">
+<meta property="og:image" content="http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/10.png">
+<meta property="og:image" content="http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/11.png">
+<meta property="og:image" content="http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/12.png">
+<meta property="og:image" content="http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/13.png">
+<meta property="og:image" content="http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/14.png">
+<meta property="og:image" content="http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/15.png">
+<meta property="og:image" content="http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/16.png">
+<meta property="article:published_time" content="2020-10-04T13:50:53.000Z">
+<meta property="article:modified_time" content="2021-08-24T05:51:46.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="Asuri">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>废物利用之利用一台废弃笔记本快速搭建CTF实验室基础建设</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2020/12/01/Some-Tricks-Of-Symmetric-Cryptography/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2020/06/17/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/&text=废物利用之利用一台废弃笔记本快速搭建CTF实验室基础建设"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/&title=废物利用之利用一台废弃笔记本快速搭建CTF实验室基础建设"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/&is_video=false&description=废物利用之利用一台废弃笔记本快速搭建CTF实验室基础建设"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=废物利用之利用一台废弃笔记本快速搭建CTF实验室基础建设&body=Check out this article: http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/&title=废物利用之利用一台废弃笔记本快速搭建CTF实验室基础建设"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/&title=废物利用之利用一台废弃笔记本快速搭建CTF实验室基础建设"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/&title=废物利用之利用一台废弃笔记本快速搭建CTF实验室基础建设"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/&title=废物利用之利用一台废弃笔记本快速搭建CTF实验室基础建设"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/&name=废物利用之利用一台废弃笔记本快速搭建CTF实验室基础建设&description=&lt;p&gt;国庆返校了，感觉这是最后一段时间在学校，发现实验室有一台废弃的笔记本(4G内存，240G固态，废物U),丢了怪可惜的，就用这个笔记本来搭建一套基础设施吧。最后成效是靶场和所有题目穿透出网&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/&t=废物利用之利用一台废弃笔记本快速搭建CTF实验室基础建设"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%88%B6%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.</span> <span class="toc-text">一、制作系统</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81%E4%B8%8B%E8%BD%BD%E9%95%9C%E5%83%8F"><span class="toc-number">1.1.</span> <span class="toc-text">1、下载镜像</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E3%80%81%E5%88%B6%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.2.</span> <span class="toc-text">2 、制作系统</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%81%E5%AE%89%E8%A3%85%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.3.</span> <span class="toc-text">3、安装系统</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%E3%80%81%E9%81%87%E5%88%B0%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98"><span class="toc-number">1.4.</span> <span class="toc-text">4、遇到的一些问题</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%90%AD%E5%BB%BACTF%E5%B9%B3%E5%8F%B0"><span class="toc-number">2.</span> <span class="toc-text">二、搭建CTF平台</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E9%85%8D%E7%BD%AEfrp"><span class="toc-number">3.</span> <span class="toc-text">三、配置frp</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81%E5%B9%B3%E5%8F%B0%E6%98%A0%E5%B0%84"><span class="toc-number">3.1.</span> <span class="toc-text">1、平台映射</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81%E9%A2%98%E7%9B%AE%E6%98%A0%E5%B0%84%EF%BC%8C%E7%9B%AE%E5%89%8D%E5%A5%BD%E5%83%8F%E8%BF%98%E6%B2%A1%E6%9C%89%E5%85%A8%E7%AB%AF%E5%8F%A3%E6%98%A0%E5%B0%84%E7%9A%84%EF%BC%8C%E6%88%91%E6%83%B3%E7%9D%80%E6%8A%8A10001-10099%E7%9A%8499%E4%B8%AAip%E5%85%88%E6%98%A0%E5%B0%84"><span class="toc-number">3.2.</span> <span class="toc-text">2、题目映射，目前好像还没有全端口映射的，我想着把10001-10099的99个ip先映射</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%81%E6%88%91%E9%94%99%E4%BA%86%EF%BC%8C%E7%9C%9F%E5%8F%AF%E4%BB%A5%E5%A4%9A%E7%AB%AF%E5%8F%A3range%E6%98%A0%E5%B0%84"><span class="toc-number">3.3.</span> <span class="toc-text">3、我错了，真可以多端口range映射</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-%E3%80%81%E5%BF%AB%E9%80%9F%E5%BB%BA%E8%AE%BE%E5%85%B6%E4%BB%96%E6%9C%8D%E5%8A%A1"><span class="toc-number">4.</span> <span class="toc-text">四 、快速建设其他服务</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81%E5%86%85%E7%BD%91%E7%BD%91%E7%9B%98"><span class="toc-number">4.1.</span> <span class="toc-text">1、内网网盘</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81%E5%86%85%E7%BD%91hackmd"><span class="toc-number">4.2.</span> <span class="toc-text">2、内网hackmd</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%81%E5%86%85%E7%BD%91webug%E5%AE%89%E5%85%A8%E9%9D%B6%E5%9C%BA"><span class="toc-number">4.3.</span> <span class="toc-text">3、内网webug安全靶场</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%E3%80%81%E5%86%85%E7%BD%91DVWA"><span class="toc-number">4.4.</span> <span class="toc-text">4、内网DVWA</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5%E3%80%81awvs"><span class="toc-number">4.5.</span> <span class="toc-text">5、awvs</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6%E3%80%81w11scan"><span class="toc-number">4.6.</span> <span class="toc-text">6、w11scan</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7%E3%80%81sqli-labs"><span class="toc-number">4.7.</span> <span class="toc-text">7、sqli-labs</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8%E3%80%81upload-labs"><span class="toc-number">4.8.</span> <span class="toc-text">8、upload-labs</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9%E3%80%81bwapp"><span class="toc-number">4.9.</span> <span class="toc-text">9、bwapp</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#10%E3%80%81webgoat-8-0"><span class="toc-number">4.10.</span> <span class="toc-text">10、webgoat-8.0</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11%E3%80%81XSS%E9%9D%B6%E5%9C%BA"><span class="toc-number">4.11.</span> <span class="toc-text">11、XSS靶场</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#12%E3%80%81hexo%E5%AF%BC%E8%88%AA%E6%A0%8F"><span class="toc-number">4.12.</span> <span class="toc-text">12、hexo导航栏</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#13%E3%80%81hackmd"><span class="toc-number">4.13.</span> <span class="toc-text">13、hackmd</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        废物利用之利用一台废弃笔记本快速搭建CTF实验室基础建设
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-10-04T13:50:53.000Z" class="dt-published" itemprop="datePublished">2020-10-04</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/">计算机杂七杂八</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Asuri/" rel="tag">Asuri</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>国庆返校了，感觉这是最后一段时间在学校，发现实验室有一台废弃的笔记本(4G内存，240G固态，废物U),丢了怪可惜的，就用这个笔记本来搭建一套基础设施吧。最后成效是靶场和所有题目穿透出网</p>
+<span id="more"></span>
+
+<p><img src="/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/1.png"><br>内网服务有：共享网盘、共享协作文档、开源渗透靶场、sqlilabs、uploadlabs、xsslabs、w11scan基础指纹识别系统、awvs漏洞扫描系统等，反正白嫖开源项目就完了</p>
+<!-- toc -->
+
+<h3 id="一、制作系统"><a href="#一、制作系统" class="headerlink" title="一、制作系统"></a>一、制作系统</h3><p>必然是无图形界面的linux,安装也简单</p>
+<h4 id="1、下载镜像"><a href="#1、下载镜像" class="headerlink" title="1、下载镜像"></a>1、下载镜像</h4><p>我在<a target="_blank" rel="noopener" href="http://mirrors.ustc.edu.cn/ubuntu-releases/16.04/">http://mirrors.ustc.edu.cn/ubuntu-releases/16.04/</a>下载，下载ubuntu-16.04.7-server-amd64.is无图形界面就800m-900m</p>
+<h4 id="2-、制作系统"><a href="#2-、制作系统" class="headerlink" title="2 、制作系统"></a>2 、制作系统</h4><p>我直接使用软碟通制作启动盘，简单快捷<a target="_blank" rel="noopener" href="https://cn.ultraiso.net/xiazai.html">https://cn.ultraiso.net/xiazai.html</a>，写入硬盘映像即可</p>
+<h4 id="3、安装系统"><a href="#3、安装系统" class="headerlink" title="3、安装系统"></a>3、安装系统</h4><p>毕竟是废弃的笔记本，那就直接使用全磁盘安装</p>
+<h4 id="4、遇到的一些问题"><a href="#4、遇到的一些问题" class="headerlink" title="4、遇到的一些问题"></a>4、遇到的一些问题</h4><p>首先是网络问题，刚安装完的系统，为了在内网稳定还是需要配置稳定的ip<br>首先查看自己的网卡名字<code>ifconfig -a</code>,发现2个，一个是eno1 一个是lo,我们是要选择eno1来配置网络，修改<code>/etc/network/interfaces</code>，添加网络,这里路由器分配192.168.199.1段，我们给他192.168.199.136的ip</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># This file describes the network interfaces available on your system</span><br><span class="line"># and how to activate them. For more information, see interfaces(5).</span><br><span class="line"></span><br><span class="line">source /etc/network/interfaces.d/*</span><br><span class="line"></span><br><span class="line"># The loopback network interface</span><br><span class="line">auto eno1</span><br><span class="line">iface eno1 inet static</span><br><span class="line">address 192.168.199.136</span><br><span class="line">netmask 255.255.255.0</span><br><span class="line">gateway 192.168.199.1</span><br><span class="line">dns-nameservers 192.168.199.1</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>还需要修改dns,<code>/etc/resolv.conf </code>,指定网关就行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># Dynamic resolv.conf(5) file for glibc resolver(3) generated by resolvconf(8)</span><br><span class="line">nameserver 192.168.199.1</span><br><span class="line">#     DO NOT EDIT THIS FILE BY HAND -- YOUR CHANGES WILL BE OVERWRITTEN</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>然后更新网络配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo ifup eth0</span><br><span class="line">sudo ifdown eth0</span><br><span class="line">或者</span><br><span class="line">/etc/init.d/networking restart</span><br></pre></td></tr></table></figure>
+<p>修改语言</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">root@root:~#cat /etc/default/locale</span><br><span class="line">#  File generated by update-locale</span><br><span class="line">LANG=&quot;en_US.UTF-8&quot;</span><br><span class="line">LANGUAGE=&quot;en_US:en&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>然后就可以安装ssh，git</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">apt-get install openssh-server</span><br><span class="line">apt-get install ssh</span><br><span class="line">sudo apt install git</span><br></pre></td></tr></table></figure>
+<p>然后就可以使用xshell自己的笔记本连操作</p>
+<p>linux还需要设置一下关盖等不休眠不操作,总不可能让笔记本一直打开<br><code>vim /etc/systemd/logind.conf</code><br>核心配置为ignore</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">24	HandleLidSwitch=ignore</span><br><span class="line">25	HandleLidSwitchDocked=ignore</span><br></pre></td></tr></table></figure>
+
+<h3 id="二、搭建CTF平台"><a href="#二、搭建CTF平台" class="headerlink" title="二、搭建CTF平台"></a>二、搭建CTF平台</h3><p>我们选择的是<a target="_blank" rel="noopener" href="https://h1ve.dao.ge/">H1ve</a>在内网搭建，然后使用<a target="_blank" rel="noopener" href="https://github.com/fatedier/frp">frp</a>穿透服务</p>
+<p><img src="/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/2.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">安装最新的docker</span><br><span class="line">wget -qO- https://get.docker.com/ | sh</span><br><span class="line"></span><br><span class="line">安装完会有一个提示，按照提示去执行</span><br><span class="line">sudo usermod -aG docker ubuntu</span><br></pre></td></tr></table></figure>
+<p>命令执行完成之后，执行 docker verison 来查看是否安装完成。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo curl -L https://github.com/docker/compose/releases/download/1.25.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose</span><br><span class="line"></span><br><span class="line">sudo chmod +x /usr/local/bin/docker-compose</span><br></pre></td></tr></table></figure>
+<p>同样的，命令执行完成之后，执行 docker-compose verison 来查看是否安装完成。<br>换源</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/docker/daemon.json</span><br></pre></td></tr></table></figure>
+<p>将daemon.json的值改为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	&quot;registry-mirrors&quot;: [&quot;https://docker.mirrors.ustc.edu.cn&quot;,&quot;https://mirror.ccs.tencentyun.com&quot;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/joyny/p/10486739.html">（这里还是用一下阿里云申请的镜像快很多）</a><br>安装H1ve,这里改了改源码的ui，不重要</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">git clone https://github.com/D0g3-Lab/H1ve.git</span><br><span class="line">cd H1ve</span><br><span class="line">docker-compose -f single.yml up</span><br><span class="line">#常用docker命令</span><br><span class="line">启动服务：</span><br><span class="line">docker-compose -f single.yml up -d</span><br><span class="line">停止服务：</span><br><span class="line">docker-compose -f single.yml stop</span><br></pre></td></tr></table></figure>
+<h3 id="三、配置frp"><a href="#三、配置frp" class="headerlink" title="三、配置frp"></a>三、配置frp</h3><h4 id="1、平台映射"><a href="#1、平台映射" class="headerlink" title="1、平台映射"></a>1、平台映射</h4><p>我们内网是8000，也就找了一台学生机来穿透出去，选择穿透好处是迁移方便以及废弃笔记本虽然废弃，也比服务器性能好多了（学生机就是穷）。<br>我们也直接在内网服务器上配置frp客户端,这里平台和ssh都映射一下，方便配置<br>frpc.ini</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr = &#123;&#123;公网ip&#125;&#125;</span><br><span class="line">server_port = 7000</span><br><span class="line"></span><br><span class="line">[tcp]</span><br><span class="line">type = tcp</span><br><span class="line">local_ip = 127.0.0.1</span><br><span class="line">local_port = 8000</span><br><span class="line">remote_port = 8000</span><br><span class="line"></span><br><span class="line">[real_ssh]</span><br><span class="line">type = tcp</span><br><span class="line">local_ip = 127.0.0.1</span><br><span class="line">local_port = 22</span><br><span class="line">remote_port = 2222</span><br></pre></td></tr></table></figure>
+<p>公网只需要配置frps.ini</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">bind_port = 7000</span><br></pre></td></tr></table></figure>
+<p>先运行公网的，然后运行内网的frpc，公网就可以访问到</p>
+<h4 id="2、题目映射，目前好像还没有全端口映射的，我想着把10001-10099的99个ip先映射"><a href="#2、题目映射，目前好像还没有全端口映射的，我想着把10001-10099的99个ip先映射" class="headerlink" title="2、题目映射，目前好像还没有全端口映射的，我想着把10001-10099的99个ip先映射"></a>2、题目映射，目前好像还没有全端口映射的，我想着把10001-10099的99个ip先映射</h4><p>其实多写一些配置就行，这里用脚本<br><code>python build_frp.py  &gt; frpc.ini</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">print(&quot;[common]\nserver_addr = XXX.XX.XXX.XX\nserver_port = 7002\n&quot;)</span><br><span class="line">#print(&quot;[real_ssh]\ntype = tcp\nlocal_ip = 127.0.0.1\nlocal_port = 22\nremote_port = 2222\n&quot;)</span><br><span class="line">for i in range(1,10):</span><br><span class="line">	print(&quot;[ssh2&quot;+str(i)+&quot;]\ntype = tcp\nlocal_ip = 127.0.0.1\nlocal_port = 1000&quot;+str(i)+&quot;\nremote_port = 1000&quot;+str(i)+&quot;\n&quot;)</span><br><span class="line">for i in range(10,99):</span><br><span class="line">	print(&quot;[ssh2&quot;+str(i)+&quot;]\ntype = tcp\nlocal_ip = 127.0.0.1\nlocal_port = 100&quot;+str(i)+&quot;\nremote_port = 100&quot;+str(i)+&quot;\n&quot;)</span><br></pre></td></tr></table></figure>
+
+<h4 id="3、我错了，真可以多端口range映射"><a href="#3、我错了，真可以多端口range映射" class="headerlink" title="3、我错了，真可以多端口range映射"></a>3、我错了，真可以多端口range映射</h4><p>参阅<a target="_blank" rel="noopener" href="https://github.com/fatedier/frp#range-ports-mapping">https://github.com/fatedier/frp#range-ports-mapping</a><br>Proxy with names that start with range: will support mapping range ports.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># frpc.ini</span><br><span class="line">[range:test_tcp]</span><br><span class="line">type = tcp</span><br><span class="line">local_ip = 127.0.0.1</span><br><span class="line">local_port = 6000-6006,6007</span><br><span class="line">remote_port = 6000-6006,6007</span><br></pre></td></tr></table></figure>
+<p>frpc will generate 8 proxies like test_tcp_0, test_tcp_1, …, test_tcp_7.<br>顺便把22也映射一下备用</p>
+<h3 id="四-、快速建设其他服务"><a href="#四-、快速建设其他服务" class="headerlink" title="四 、快速建设其他服务"></a>四 、快速建设其他服务</h3><p>网盘这样的丢内网就行、就配置穿透了</p>
+<h4 id="1、内网网盘"><a href="#1、内网网盘" class="headerlink" title="1、内网网盘"></a>1、内网网盘</h4><p>共享一下文件资源等<br><code>docker run -d -p 1880:80 owncloud:10.0</code><br><img src="/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/3.png"></p>
+<h4 id="2、内网hackmd"><a href="#2、内网hackmd" class="headerlink" title="2、内网hackmd"></a>2、内网hackmd</h4><p>协作文档，下次在实验室打比赛啥的，或者记录一下内网文档啥的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/hackmdio/docker-hackmd.git</span><br><span class="line">cd docker-hackmd/</span><br><span class="line">docker-compose up</span><br></pre></td></tr></table></figure>
+<p>然后3000端口访问<br><img src="/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/4.png"></p>
+<h4 id="3、内网webug安全靶场"><a href="#3、内网webug安全靶场" class="headerlink" title="3、内网webug安全靶场"></a>3、内网webug安全靶场</h4><p>webug是一个简单靶场，开源免费用起来方便</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull area39/webug</span><br><span class="line">docker run -d -p 1882:80 area39/webug</span><br></pre></td></tr></table></figure>
+<p>默认密码<br>admin<br>admin<br><img src="/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/5.png"></p>
+<h4 id="4、内网DVWA"><a href="#4、内网DVWA" class="headerlink" title="4、内网DVWA"></a>4、内网DVWA</h4><p>DVWA靶场</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull vulnerables/web-dvwa</span><br><span class="line">docker run -d -p 1884:3443 vulnerables/web-dvwa</span><br></pre></td></tr></table></figure>
+<p>默认密码<br>admin<br>password<br><img src="/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/6.png"></p>
+<h4 id="5、awvs"><a href="#5、awvs" class="headerlink" title="5、awvs"></a>5、awvs</h4><p>awvs简单漏扫用起来方便</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull secfa/docker-awvs</span><br><span class="line">docker run -d -p 1881:3443 secfa/docker-awvs</span><br></pre></td></tr></table></figure>
+<p>默认用户密码<br>username: <a href="mailto:&#97;&#x64;&#109;&#x69;&#x6e;&#x40;&#97;&#100;&#109;&#x69;&#110;&#x2e;&#99;&#111;&#109;">&#97;&#x64;&#109;&#x69;&#x6e;&#x40;&#97;&#100;&#109;&#x69;&#110;&#x2e;&#99;&#111;&#109;</a><br>password: Admin123<br><img src="/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/7.png"></p>
+<h4 id="6、w11scan"><a href="#6、w11scan" class="headerlink" title="6、w11scan"></a>6、w11scan</h4><p><img src="/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/8.png"><br>w11scan是一个开源指纹识别系统，用起来也挺舒服</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull boyhack/w11scan</span><br><span class="line">docker run -d -p 1883:8000 boyhack/w11scan:latest</span><br></pre></td></tr></table></figure>
+<p>默认密码<br>admin<br>w11scan</p>
+<h4 id="7、sqli-labs"><a href="#7、sqli-labs" class="headerlink" title="7、sqli-labs"></a>7、sqli-labs</h4><p><img src="/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/9.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull acgpiano/sqli-labs</span><br><span class="line">docker run -d -p 1885:80 acgpiano/sqli-labs:latest</span><br></pre></td></tr></table></figure>
+
+<h4 id="8、upload-labs"><a href="#8、upload-labs" class="headerlink" title="8、upload-labs"></a>8、upload-labs</h4><p><img src="/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/10.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull c0ny1/upload-labs  </span><br><span class="line">docker run -d -p 1886:80 c0ny1/upload-labs</span><br></pre></td></tr></table></figure>
+
+<h4 id="9、bwapp"><a href="#9、bwapp" class="headerlink" title="9、bwapp"></a>9、bwapp</h4><p><img src="/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/11.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull raesene/bwapp</span><br><span class="line">docker run -d -p 1887:80 raesene/bwapp</span><br></pre></td></tr></table></figure>
+<p>默认账号密码<br>bee bug</p>
+<h4 id="10、webgoat-8-0"><a href="#10、webgoat-8-0" class="headerlink" title="10、webgoat-8.0"></a>10、webgoat-8.0</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull webgoat/webgoat-8.0</span><br><span class="line">docker run -d -p 1888:80 webgoat/webgoat-8.0</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/12.png"></p>
+<h4 id="11、XSS靶场"><a href="#11、XSS靶场" class="headerlink" title="11、XSS靶场"></a>11、XSS靶场</h4><p>先去这里拉下来<br><a target="_blank" rel="noopener" href="https://github.com/c0ny1/vulstudy">https://github.com/c0ny1/vulstudy</a><br>里面有几个目录，这里xss用这2个，都有dockerfile自己进去build然后run就行<br><img src="/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/13.png"><br>xssed<br><img src="/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/14.png"><br>XSS-challenge-tour<br><img src="/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/15.png"></p>
+<h4 id="12、hexo导航栏"><a href="#12、hexo导航栏" class="headerlink" title="12、hexo导航栏"></a>12、hexo导航栏</h4><p>随着靶场多了，还是整一个内网门户的样子</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name hexo -p 4000:4000 -v hexo:/usr/hexo wangcaitao/hexo:1.0.0-alpine</span><br></pre></td></tr></table></figure>
+<p>docker inspect 10b6cac876a8查看挂载盘,大概就是为了不需要每次拷贝文件，让服务器和docker的默认文件夹同步一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&quot;Mounts&quot;: [</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;Type&quot;: &quot;volume&quot;,</span><br><span class="line">        &quot;Name&quot;: &quot;hexo&quot;,</span><br><span class="line">        &quot;Source&quot;: &quot;/var/lib/docker/volumes/hexo/_data&quot;,</span><br><span class="line">        &quot;Destination&quot;: &quot;/usr/hexo&quot;,</span><br><span class="line">        &quot;Driver&quot;: &quot;local&quot;,</span><br><span class="line">        &quot;Mode&quot;: &quot;z&quot;,</span><br><span class="line">        &quot;RW&quot;: true,</span><br><span class="line">        &quot;Propagation&quot;: &quot;&quot;</span><br><span class="line">    &#125;</span><br><span class="line">],</span><br></pre></td></tr></table></figure>
+<p>找到那个<code>/var/lib/docker/volumes/hexo/_data</code>文件夹然后，每次修改里面的文件<br>然后命令执行就行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@asuri:# docker exec -it 10b6cac876a8 hexo clean</span><br><span class="line">root@asuri:# docker exec -it 10b6cac876a8 hexo g</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/16.png"></p>
+<h4 id="13、hackmd"><a href="#13、hackmd" class="headerlink" title="13、hackmd"></a>13、hackmd</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">version: &quot;3&quot;</span><br><span class="line">services:</span><br><span class="line">  database:</span><br><span class="line">    image: postgres:11.6-alpine</span><br><span class="line">    environment:</span><br><span class="line">      - POSTGRES_USER=codimd</span><br><span class="line">      - POSTGRES_PASSWORD=change_password</span><br><span class="line">      - POSTGRES_DB=codimd</span><br><span class="line">    volumes:</span><br><span class="line">      - &quot;database-data:/var/lib/postgresql/data&quot;</span><br><span class="line">    restart: always</span><br><span class="line">  codimd:</span><br><span class="line">    image: hackmdio/hackmd:2.4.1</span><br><span class="line">    environment:</span><br><span class="line">      - CMD_DB_URL=postgres://codimd:change_password@database/codimd</span><br><span class="line">      - CMD_USECDN=false</span><br><span class="line">    depends_on:</span><br><span class="line">      - database</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;3000:3000&quot;</span><br><span class="line">    volumes:</span><br><span class="line">      - upload-data:/home/hackmd/app/public/uploads</span><br><span class="line">    restart: always</span><br><span class="line">volumes:</span><br><span class="line">  database-data: &#123;&#125;</span><br><span class="line">  upload-data: &#123;&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>复制上面的配置并另存为 docker-compose.yml放在文件夹里<br>修改你的数据库用户名和密码（默认不安全）<br>docker-compose up -d<br><code>http://localhost:3000</code></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%88%B6%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.</span> <span class="toc-text">一、制作系统</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81%E4%B8%8B%E8%BD%BD%E9%95%9C%E5%83%8F"><span class="toc-number">1.1.</span> <span class="toc-text">1、下载镜像</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E3%80%81%E5%88%B6%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.2.</span> <span class="toc-text">2 、制作系统</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%81%E5%AE%89%E8%A3%85%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.3.</span> <span class="toc-text">3、安装系统</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%E3%80%81%E9%81%87%E5%88%B0%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98"><span class="toc-number">1.4.</span> <span class="toc-text">4、遇到的一些问题</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%90%AD%E5%BB%BACTF%E5%B9%B3%E5%8F%B0"><span class="toc-number">2.</span> <span class="toc-text">二、搭建CTF平台</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E9%85%8D%E7%BD%AEfrp"><span class="toc-number">3.</span> <span class="toc-text">三、配置frp</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81%E5%B9%B3%E5%8F%B0%E6%98%A0%E5%B0%84"><span class="toc-number">3.1.</span> <span class="toc-text">1、平台映射</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81%E9%A2%98%E7%9B%AE%E6%98%A0%E5%B0%84%EF%BC%8C%E7%9B%AE%E5%89%8D%E5%A5%BD%E5%83%8F%E8%BF%98%E6%B2%A1%E6%9C%89%E5%85%A8%E7%AB%AF%E5%8F%A3%E6%98%A0%E5%B0%84%E7%9A%84%EF%BC%8C%E6%88%91%E6%83%B3%E7%9D%80%E6%8A%8A10001-10099%E7%9A%8499%E4%B8%AAip%E5%85%88%E6%98%A0%E5%B0%84"><span class="toc-number">3.2.</span> <span class="toc-text">2、题目映射，目前好像还没有全端口映射的，我想着把10001-10099的99个ip先映射</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%81%E6%88%91%E9%94%99%E4%BA%86%EF%BC%8C%E7%9C%9F%E5%8F%AF%E4%BB%A5%E5%A4%9A%E7%AB%AF%E5%8F%A3range%E6%98%A0%E5%B0%84"><span class="toc-number">3.3.</span> <span class="toc-text">3、我错了，真可以多端口range映射</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-%E3%80%81%E5%BF%AB%E9%80%9F%E5%BB%BA%E8%AE%BE%E5%85%B6%E4%BB%96%E6%9C%8D%E5%8A%A1"><span class="toc-number">4.</span> <span class="toc-text">四 、快速建设其他服务</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81%E5%86%85%E7%BD%91%E7%BD%91%E7%9B%98"><span class="toc-number">4.1.</span> <span class="toc-text">1、内网网盘</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81%E5%86%85%E7%BD%91hackmd"><span class="toc-number">4.2.</span> <span class="toc-text">2、内网hackmd</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%81%E5%86%85%E7%BD%91webug%E5%AE%89%E5%85%A8%E9%9D%B6%E5%9C%BA"><span class="toc-number">4.3.</span> <span class="toc-text">3、内网webug安全靶场</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%E3%80%81%E5%86%85%E7%BD%91DVWA"><span class="toc-number">4.4.</span> <span class="toc-text">4、内网DVWA</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5%E3%80%81awvs"><span class="toc-number">4.5.</span> <span class="toc-text">5、awvs</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6%E3%80%81w11scan"><span class="toc-number">4.6.</span> <span class="toc-text">6、w11scan</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7%E3%80%81sqli-labs"><span class="toc-number">4.7.</span> <span class="toc-text">7、sqli-labs</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8%E3%80%81upload-labs"><span class="toc-number">4.8.</span> <span class="toc-text">8、upload-labs</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9%E3%80%81bwapp"><span class="toc-number">4.9.</span> <span class="toc-text">9、bwapp</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#10%E3%80%81webgoat-8-0"><span class="toc-number">4.10.</span> <span class="toc-text">10、webgoat-8.0</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11%E3%80%81XSS%E9%9D%B6%E5%9C%BA"><span class="toc-number">4.11.</span> <span class="toc-text">11、XSS靶场</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#12%E3%80%81hexo%E5%AF%BC%E8%88%AA%E6%A0%8F"><span class="toc-number">4.12.</span> <span class="toc-text">12、hexo导航栏</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#13%E3%80%81hackmd"><span class="toc-number">4.13.</span> <span class="toc-text">13、hackmd</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/&text=废物利用之利用一台废弃笔记本快速搭建CTF实验室基础建设"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/&title=废物利用之利用一台废弃笔记本快速搭建CTF实验室基础建设"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/&is_video=false&description=废物利用之利用一台废弃笔记本快速搭建CTF实验室基础建设"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=废物利用之利用一台废弃笔记本快速搭建CTF实验室基础建设&body=Check out this article: http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/&title=废物利用之利用一台废弃笔记本快速搭建CTF实验室基础建设"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/&title=废物利用之利用一台废弃笔记本快速搭建CTF实验室基础建设"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/&title=废物利用之利用一台废弃笔记本快速搭建CTF实验室基础建设"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/&title=废物利用之利用一台废弃笔记本快速搭建CTF实验室基础建设"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/&name=废物利用之利用一台废弃笔记本快速搭建CTF实验室基础建设&description=&lt;p&gt;国庆返校了，感觉这是最后一段时间在学校，发现实验室有一台废弃的笔记本(4G内存，240G固态，废物U),丢了怪可惜的，就用这个笔记本来搭建一套基础设施吧。最后成效是靶场和所有题目穿透出网&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2020/10/04/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/&t=废物利用之利用一台废弃笔记本快速搭建CTF实验室基础建设"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

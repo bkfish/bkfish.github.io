@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="一、RSA介绍RSA 加密算法是一种非对称加密算法。在公开密钥加密和电子商业中 RSA 被广泛使用。RSA 是 1977 年由罗纳德 · 李维斯特（Ron Rivest）、阿迪 · 萨莫尔（Adi Shamir）和伦纳德 · 阿德曼（Leonard Adleman）一起提出的。RSA 就是他们三人姓氏开头字母拼在一起组成的。RSA 算法的可靠性由极大整数因数分解的难度决定。换言之，对一极大整数做因">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RSA证明">
+<meta property="og:url" content="http://example.com/2018/12/31/RSA%E8%AF%81%E6%98%8E/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="一、RSA介绍RSA 加密算法是一种非对称加密算法。在公开密钥加密和电子商业中 RSA 被广泛使用。RSA 是 1977 年由罗纳德 · 李维斯特（Ron Rivest）、阿迪 · 萨莫尔（Adi Shamir）和伦纳德 · 阿德曼（Leonard Adleman）一起提出的。RSA 就是他们三人姓氏开头字母拼在一起组成的。RSA 算法的可靠性由极大整数因数分解的难度决定。换言之，对一极大整数做因">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2018-12-31T02:48:42.000Z">
+<meta property="article:modified_time" content="2020-11-24T04:52:26.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="RSA">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>RSA证明</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2018/12/28/ubuntu%E4%B8%ADDocker%E7%9A%84%E5%AE%89%E8%A3%85-%E9%81%87%E5%88%B0%E7%9A%84%E5%9D%91-%E7%AE%80%E5%8D%95%E5%91%BD%E4%BB%A4/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2018/12/31/RSA%E8%AF%81%E6%98%8E/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2018/12/31/RSA%E8%AF%81%E6%98%8E/&text=RSA证明"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2018/12/31/RSA%E8%AF%81%E6%98%8E/&title=RSA证明"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2018/12/31/RSA%E8%AF%81%E6%98%8E/&is_video=false&description=RSA证明"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=RSA证明&body=Check out this article: http://example.com/2018/12/31/RSA%E8%AF%81%E6%98%8E/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2018/12/31/RSA%E8%AF%81%E6%98%8E/&title=RSA证明"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2018/12/31/RSA%E8%AF%81%E6%98%8E/&title=RSA证明"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2018/12/31/RSA%E8%AF%81%E6%98%8E/&title=RSA证明"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2018/12/31/RSA%E8%AF%81%E6%98%8E/&title=RSA证明"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2018/12/31/RSA%E8%AF%81%E6%98%8E/&name=RSA证明&description=&lt;h3 id=&#34;一、RSA介绍&#34;&gt;&lt;a href=&#34;#一、RSA介绍&#34; class=&#34;headerlink&#34; title=&#34;一、RSA介绍&#34;&gt;&lt;/a&gt;一、RSA介绍&lt;/h3&gt;&lt;p&gt;RSA 加密算法是一种非对称加密算法。在公开密钥加密和电子商业中 RSA 被广泛使用。RSA 是 1977 年由罗纳德 · 李维斯特（Ron Rivest）、阿迪 · 萨莫尔（Adi Shamir）和伦纳德 · 阿德曼（Leonard Adleman）一起提出的。RSA 就是他们三人姓氏开头字母拼在一起组成的。&lt;br&gt;RSA 算法的可靠性由极大整数因数分解的难度决定。换言之，对一极大整数做因数分解愈困难，RSA 算法愈可靠。假如有人找到一种快速因数分解的算法的话，那么用 RSA 加密的信息的可靠性就肯定会极度下降。但找到这样的算法的可能性是非常小的。如今，只有短的 RSA 密钥才可能被强力方式解破。到 2017 年为止，还没有任何可靠的攻击 RSA 算法的方式。&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2018/12/31/RSA%E8%AF%81%E6%98%8E/&t=RSA证明"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81RSA%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">一、RSA介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%B7%B2%E7%9F%A5%E6%9D%A1%E4%BB%B6"><span class="toc-number">2.</span> <span class="toc-text">二、已知条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E8%AF%81%E6%98%8E%E8%BF%87%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">三、证明过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E5%85%B3%E4%BA%8E%E5%85%B1%E6%A8%A1%E6%94%BB%E5%87%BB%E8%84%9A%E6%9C%AC%EF%BC%88%E5%85%B6%E4%BB%96%E7%9A%84%E8%84%9A%E6%9C%AC%E8%A6%81%E6%B1%82%E5%AE%89%E4%B8%80%E5%A0%86%E5%A5%87%E6%80%AA%E7%9A%84%E5%8C%85%EF%BC%8C%E5%9C%A8win10%E8%BF%98%E8%A3%85%E4%B8%8D%E4%B8%8A%EF%BC%8C%E8%BF%99%E9%87%8C%E8%B4%B4%E4%B8%80%E4%B8%AA%E9%87%8E%E7%94%9F%E7%9A%84%E5%85%B1%E6%A8%A1%E6%94%BB%E5%87%BB%E8%84%9A%E6%9C%AC"><span class="toc-number">4.</span> <span class="toc-text">四、关于共模攻击脚本（其他的脚本要求安一堆奇怪的包，在win10还装不上，这里贴一个野生的共模攻击脚本</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        RSA证明
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-12-31T02:48:42.000Z" class="dt-published" itemprop="datePublished">2018-12-31</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Crypto/">Crypto</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/RSA/" rel="tag">RSA</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h3 id="一、RSA介绍"><a href="#一、RSA介绍" class="headerlink" title="一、RSA介绍"></a>一、RSA介绍</h3><p>RSA 加密算法是一种非对称加密算法。在公开密钥加密和电子商业中 RSA 被广泛使用。RSA 是 1977 年由罗纳德 · 李维斯特（Ron Rivest）、阿迪 · 萨莫尔（Adi Shamir）和伦纳德 · 阿德曼（Leonard Adleman）一起提出的。RSA 就是他们三人姓氏开头字母拼在一起组成的。<br>RSA 算法的可靠性由极大整数因数分解的难度决定。换言之，对一极大整数做因数分解愈困难，RSA 算法愈可靠。假如有人找到一种快速因数分解的算法的话，那么用 RSA 加密的信息的可靠性就肯定会极度下降。但找到这样的算法的可能性是非常小的。如今，只有短的 RSA 密钥才可能被强力方式解破。到 2017 年为止，还没有任何可靠的攻击 RSA 算法的方式。</p>
+<span id="more"></span>
+
+
+<h3 id="二、已知条件"><a href="#二、已知条件" class="headerlink" title="二、已知条件"></a>二、已知条件</h3><p>RSA的加密规则：$ \color{blue}{m^e \equiv c\pmod n}$<br>RSA的解密规则：$\color{red}{c^d \equiv m\pmod n}$</p>
+<p>约束条件及规则说明：</p>
+<ol>
+<li>m为明文字符，c为密文字符</li>
+<li>m为0到n-1之间的数值</li>
+<li>n&#x3D;pq，p,q为素数</li>
+<li>φ(n)&#x3D;(p-1)*(q-1) [根据欧拉定理]</li>
+<li>e与φ(n)互素</li>
+<li>$ ed \equiv 1\pmod {φ(n)}$</li>
+<li>欧拉公式$m^φ(n) \equiv 1\pmod n$</li>
+</ol>
+<p>要根据加密规则，数论及欧拉定理，来证明解密公式正确性：$\color{red}{c^d \equiv m\pmod n}$</p>
+<h3 id="三、证明过程"><a href="#三、证明过程" class="headerlink" title="三、证明过程"></a>三、证明过程</h3><p><strong>step1</strong>、根据加密规则公式$ \color{blue}{m^e \equiv c\pmod n}$<br>可以得出 $$c&#x3D;m^e-kn$$<br><strong>step2</strong>、 将C带入解密公式，得到<br>$$(m^e-kn)^d \equiv m\pmod n$$<br><strong>step3</strong>、左边的展开中，除了第一项以外，其他项都与n相乘过，所以可以直接忽略左边括号中的kn项目，即：<br>$$m^{ed} \equiv m\pmod n$$<br><strong>step4</strong>、因为 $ed\equiv1 \pmod {φ(n)}$ 即：<br> $$ed&#x3D;hφ(n)+1$$<br><strong>step5</strong>、上述结论代入step3的公式，得到<br>$$m^{hφ(n)+1} \equiv m \pmod n $$<br><strong>step6</strong>、分情况讨论<br>6.1 、<strong>m与n互质</strong>（如果你已经忘了m和n是什么了，请往前再看一遍）<br>根据欧拉定理$m^φ(n) \equiv 1\pmod n$ 得到 $m^{φ(n)}&#x3D;kn+1$<br>然后左右两边分别h次方得到(kn+1)的h次方还是kn+1只不过这里的k变了：<br>$$(m^{φ(n)})^h&#x3D;kn+1$$<br>然后左右两边乘以m即得到$$m^{hφ(n)+1} \equiv m \pmod n $$<br>6.2 、<strong>m与n不互质</strong><br>此时，由于n等于质数p和q的乘积，所以m必然等于kp或kq。<br>以 m &#x3D; kp为例，这时k与q必然互质。如果k与q 不为互质关系，则k&#x3D;tq, m&#x3D; tqp&#x3D;tn, 但是按照RSA规范，m∈(0…n−1) m\in(0…n-1)m∈(0…n−1), m &lt; n的，所以k与q肯定是互质关系的。由于k与q互质，p与q互质，kp与q肯定互质，则根据欧拉定理，下面的式子成立：<br>$$\Large (kp)^{ q-1} \equiv 1\pmod q$$<br>进一步扩展，可得：<br>$$ \Large [(kp)^{ q-1}]^{h(p-1)}\times kp \equiv kp\pmod q$$<br>即<br>$$\Large (kp)^{ed} \equiv kp\pmod q$$<br>进一步改写成等式：<br>$$\Large (kp)^{ed} &#x3D; kp+tq$$<br>显然，t能被p整除， 即t&#x3D;t’p,可以得出<br>$$\Large (kp)^{ed} &#x3D; kp+t’pq$$</p>
+<p>因为m&#x3D;kp, n&#x3D;pq, 最后得出<br>$$\Large m^{ed} \equiv m\pmod n$$<br>解密公式得到完全证明。</p>
+<h3 id="四、关于共模攻击脚本（其他的脚本要求安一堆奇怪的包，在win10还装不上，这里贴一个野生的共模攻击脚本"><a href="#四、关于共模攻击脚本（其他的脚本要求安一堆奇怪的包，在win10还装不上，这里贴一个野生的共模攻击脚本" class="headerlink" title="四、关于共模攻击脚本（其他的脚本要求安一堆奇怪的包，在win10还装不上，这里贴一个野生的共模攻击脚本"></a>四、关于共模攻击脚本（其他的脚本要求安一堆奇怪的包，在win10还装不上，这里贴一个野生的共模攻击脚本</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"># coding=utf-8</span><br><span class="line">import sys</span><br><span class="line">sys.setrecursionlimit(10000000)</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line">选择相同的模 n 加密相同的信息 m</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">helpstr = &#x27;&#x27;&#x27;</span><br><span class="line">usage:</span><br><span class="line">    c1 = m ^ e1 % n</span><br><span class="line">    c2 = m ^ e2 % n</span><br><span class="line">&#x27;&#x27;&#x27;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def egcd(a, b):</span><br><span class="line">    if a == 0:</span><br><span class="line">        return (b, 0, 1)</span><br><span class="line">    else:</span><br><span class="line">        g, y, x = egcd(b % a, a)</span><br><span class="line">        return (g, x - (b // a) * y, y)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def modinv(a, m):</span><br><span class="line">    g, x, y = egcd(a, m)</span><br><span class="line">    if g != 1:</span><br><span class="line">        raise Exception(&#x27;modular inverse does not exist&#x27;)</span><br><span class="line">    else:</span><br><span class="line">        return x % m</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def main():</span><br><span class="line">    print(helpstr)</span><br><span class="line">    n = int(input(&quot;input n: &quot;))</span><br><span class="line">    c1 = int(input(&quot;input c1: &quot;))</span><br><span class="line">    c2 = int(input(&quot;input c2: &quot;))</span><br><span class="line">    e1 = int(input(&quot;input e1: &quot;))</span><br><span class="line">    e2 = int(input(&quot;input e2: &quot;))</span><br><span class="line">    s = egcd(e1, e2)</span><br><span class="line">    s1 = s[1]</span><br><span class="line">    s2 = s[2]</span><br><span class="line">    # 求模反元素</span><br><span class="line">    if s1 &lt; 0:</span><br><span class="line">        s1 = - s1</span><br><span class="line">        c1 = modinv(c1, n)</span><br><span class="line">    elif s2 &lt; 0:</span><br><span class="line">        s2 = - s2</span><br><span class="line">        c2 = modinv(c2, n)</span><br><span class="line">    m = (c1**s1)*(c2**s2) % n</span><br><span class="line">    print(m)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">if __name__ == &#x27;__main__&#x27;:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<p>分解模数脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"># 分解模数n</span><br><span class="line">def rsa_moder(n):</span><br><span class="line">    base = 2</span><br><span class="line">    while base &lt; n:</span><br><span class="line">        if n % base == 0:</span><br><span class="line">            return base, n // base</span><br><span class="line">        base += 1</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># 求欧拉函数f(n)</span><br><span class="line">def rsa_get_euler(prime1, prime2):</span><br><span class="line">    return (prime1 - 1) * (prime2 - 1)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># 求私钥</span><br><span class="line">def rsa_get_key(e, euler):</span><br><span class="line">    k = 1</span><br><span class="line">    while True:</span><br><span class="line">        if (((euler * k) + 1) % e) == 0:</span><br><span class="line">            return (euler * k + 1) // e</span><br><span class="line">        k += 1</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># 根据n,e计算d(或根据n,d计算e)</span><br><span class="line">def get_rsa_e_d(n, e=None, d=None):</span><br><span class="line">    if e is None and d is None:</span><br><span class="line">        return</span><br><span class="line"></span><br><span class="line">    arg = e</span><br><span class="line">    if arg is None:</span><br><span class="line">        arg = d</span><br><span class="line"></span><br><span class="line">    primes = rsa_moder(n)</span><br><span class="line">    p = primes[0]</span><br><span class="line">    q = primes[1]</span><br><span class="line"></span><br><span class="line">    d = rsa_get_key(arg, rsa_get_euler(p, q))</span><br><span class="line"></span><br><span class="line">    return d</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def test():</span><br><span class="line">    str_fmt = &#x27;n: &#123;:&lt;10&#125; e: &#123;:&lt;10&#125; d: &#123;:&lt;10&#125;&#x27;</span><br><span class="line"></span><br><span class="line">    # 导入rsa库</span><br><span class="line">    import rsa as rsa</span><br><span class="line">    key = rsa.newkeys(24)</span><br><span class="line"></span><br><span class="line">    # 产生rsa密钥对</span><br><span class="line">    if isinstance(key[1], rsa.PrivateKey):</span><br><span class="line">        print(str_fmt.format(key[1].n, key[1].e, key[1].d))</span><br><span class="line"></span><br><span class="line">    # 解密</span><br><span class="line">    n = 14666299</span><br><span class="line">    d = 2101153</span><br><span class="line">    e = get_rsa_e_d(n, None, d)</span><br><span class="line">    print(str_fmt.format(n, e, d))</span><br><span class="line"></span><br><span class="line">    n = 12748507</span><br><span class="line">    e = 65537</span><br><span class="line">    d = get_rsa_e_d(n, e, None)</span><br><span class="line">    print(str_fmt.format(n, e, d))</span><br><span class="line"></span><br><span class="line">if __name__ == &#x27;__main__&#x27;:</span><br><span class="line">    test()</span><br></pre></td></tr></table></figure>
+
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81RSA%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">一、RSA介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%B7%B2%E7%9F%A5%E6%9D%A1%E4%BB%B6"><span class="toc-number">2.</span> <span class="toc-text">二、已知条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E8%AF%81%E6%98%8E%E8%BF%87%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">三、证明过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E5%85%B3%E4%BA%8E%E5%85%B1%E6%A8%A1%E6%94%BB%E5%87%BB%E8%84%9A%E6%9C%AC%EF%BC%88%E5%85%B6%E4%BB%96%E7%9A%84%E8%84%9A%E6%9C%AC%E8%A6%81%E6%B1%82%E5%AE%89%E4%B8%80%E5%A0%86%E5%A5%87%E6%80%AA%E7%9A%84%E5%8C%85%EF%BC%8C%E5%9C%A8win10%E8%BF%98%E8%A3%85%E4%B8%8D%E4%B8%8A%EF%BC%8C%E8%BF%99%E9%87%8C%E8%B4%B4%E4%B8%80%E4%B8%AA%E9%87%8E%E7%94%9F%E7%9A%84%E5%85%B1%E6%A8%A1%E6%94%BB%E5%87%BB%E8%84%9A%E6%9C%AC"><span class="toc-number">4.</span> <span class="toc-text">四、关于共模攻击脚本（其他的脚本要求安一堆奇怪的包，在win10还装不上，这里贴一个野生的共模攻击脚本</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2018/12/31/RSA%E8%AF%81%E6%98%8E/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2018/12/31/RSA%E8%AF%81%E6%98%8E/&text=RSA证明"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2018/12/31/RSA%E8%AF%81%E6%98%8E/&title=RSA证明"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2018/12/31/RSA%E8%AF%81%E6%98%8E/&is_video=false&description=RSA证明"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=RSA证明&body=Check out this article: http://example.com/2018/12/31/RSA%E8%AF%81%E6%98%8E/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2018/12/31/RSA%E8%AF%81%E6%98%8E/&title=RSA证明"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2018/12/31/RSA%E8%AF%81%E6%98%8E/&title=RSA证明"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2018/12/31/RSA%E8%AF%81%E6%98%8E/&title=RSA证明"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2018/12/31/RSA%E8%AF%81%E6%98%8E/&title=RSA证明"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2018/12/31/RSA%E8%AF%81%E6%98%8E/&name=RSA证明&description=&lt;h3 id=&#34;一、RSA介绍&#34;&gt;&lt;a href=&#34;#一、RSA介绍&#34; class=&#34;headerlink&#34; title=&#34;一、RSA介绍&#34;&gt;&lt;/a&gt;一、RSA介绍&lt;/h3&gt;&lt;p&gt;RSA 加密算法是一种非对称加密算法。在公开密钥加密和电子商业中 RSA 被广泛使用。RSA 是 1977 年由罗纳德 · 李维斯特（Ron Rivest）、阿迪 · 萨莫尔（Adi Shamir）和伦纳德 · 阿德曼（Leonard Adleman）一起提出的。RSA 就是他们三人姓氏开头字母拼在一起组成的。&lt;br&gt;RSA 算法的可靠性由极大整数因数分解的难度决定。换言之，对一极大整数做因数分解愈困难，RSA 算法愈可靠。假如有人找到一种快速因数分解的算法的话，那么用 RSA 加密的信息的可靠性就肯定会极度下降。但找到这样的算法的可能性是非常小的。如今，只有短的 RSA 密钥才可能被强力方式解破。到 2017 年为止，还没有任何可靠的攻击 RSA 算法的方式。&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2018/12/31/RSA%E8%AF%81%E6%98%8E/&t=RSA证明"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

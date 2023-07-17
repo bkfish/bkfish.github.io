@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="一、概述：这篇文章主要是讨论无线网络和移动网络即我们一般所说的WiFi和手机网络.主要分为4个部分第一部分引言主要大致的描述一下无线网络和移动网络的特点以及和有限网络的区别第二部分讨论WiFi第三部分讨论蜂窝网络.由于有线网络和和无线网络的最大区别在于无线网络可以移动而且需要保持网络的连接第四部分会讨论无线网络的移动管理.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机网络自顶向下-无线网络和移动网络">
+<meta property="og:url" content="http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="一、概述：这篇文章主要是讨论无线网络和移动网络即我们一般所说的WiFi和手机网络.主要分为4个部分第一部分引言主要大致的描述一下无线网络和移动网络的特点以及和有限网络的区别第二部分讨论WiFi第三部分讨论蜂窝网络.由于有线网络和和无线网络的最大区别在于无线网络可以移动而且需要保持网络的连接第四部分会讨论无线网络的移动管理.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/1.png">
+<meta property="og:image" content="http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/2.png">
+<meta property="og:image" content="http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/3.png">
+<meta property="og:image" content="http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/4.png">
+<meta property="og:image" content="http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/5.png">
+<meta property="og:image" content="http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/6.png">
+<meta property="og:image" content="http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/7.png">
+<meta property="og:image" content="http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/8.png">
+<meta property="og:image" content="http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/9.png">
+<meta property="og:image" content="http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/10.png">
+<meta property="og:image" content="http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/11.png">
+<meta property="og:image" content="http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/daotu.png">
+<meta property="article:published_time" content="2019-03-18T11:45:05.000Z">
+<meta property="article:modified_time" content="2020-11-24T04:55:12.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>计算机网络自顶向下-无线网络和移动网络</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E5%A4%9A%E5%AA%92%E4%BD%93%E7%BD%91%E7%BB%9C/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2019/03/15/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/&text=计算机网络自顶向下-无线网络和移动网络"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/&title=计算机网络自顶向下-无线网络和移动网络"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/&is_video=false&description=计算机网络自顶向下-无线网络和移动网络"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=计算机网络自顶向下-无线网络和移动网络&body=Check out this article: http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/&title=计算机网络自顶向下-无线网络和移动网络"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/&title=计算机网络自顶向下-无线网络和移动网络"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/&title=计算机网络自顶向下-无线网络和移动网络"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/&title=计算机网络自顶向下-无线网络和移动网络"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/&name=计算机网络自顶向下-无线网络和移动网络&description=&lt;h3 id=&#34;一、概述：&#34;&gt;&lt;a href=&#34;#一、概述：&#34; class=&#34;headerlink&#34; title=&#34;一、概述：&#34;&gt;&lt;/a&gt;一、概述：&lt;/h3&gt;&lt;p&gt;这篇文章主要是讨论无线网络和移动网络即我们一般所说的WiFi和手机网络.主要分为4个部分&lt;br&gt;第一部分引言主要大致的描述一下无线网络和移动网络的特点以及和有限网络的区别&lt;br&gt;第二部分讨论WiFi&lt;br&gt;第三部分讨论蜂窝网络.由于有线网络和和无线网络的最大区别在于无线网络可以移动而且需要保持网络的连接&lt;br&gt;第四部分会讨论无线网络的移动管理.&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/&t=计算机网络自顶向下-无线网络和移动网络"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%A6%82%E8%BF%B0%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">一、概述：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%8D%E8%AF%8D%E7%AE%80%E4%BB%8B%EF%BC%9A"><span class="toc-number">1.1.</span> <span class="toc-text">名词简介：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%97%A0%E7%BA%BF%E9%93%BE%E8%B7%AF%E5%92%8C%E7%BD%91%E7%BB%9C%E7%89%B9%E5%BE%81"><span class="toc-number">2.</span> <span class="toc-text">二、无线链路和网络特征</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1%E3%80%81%E4%B8%8E%E6%9C%89%E9%99%90%E9%93%BE%E8%B7%AF%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">2.1.</span> <span class="toc-text">2.1、与有限链路的区别</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2%E3%80%81%E4%BC%9A%E4%BA%A7%E7%94%9F%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">2.2.</span> <span class="toc-text">2.2、会产生的问题</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81Wifi-802-11%E6%97%A0%E7%BA%BFLAN"><span class="toc-number">3.</span> <span class="toc-text">三、Wifi(802.11无线LAN)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1%E3%80%81%E5%88%86%E7%B1%BB"><span class="toc-number">3.1.</span> <span class="toc-text">3.1、分类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2%E3%80%81%E7%BB%84%E6%88%90"><span class="toc-number">3.2.</span> <span class="toc-text">3.2、组成</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3%E3%80%81%E4%BF%A1%E9%81%93%E4%B8%8E%E5%85%B3%E8%81%94"><span class="toc-number">3.3.</span> <span class="toc-text">3.3、信道与关联</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4%E3%80%81MAC%E5%8D%8F%E8%AE%AE"><span class="toc-number">3.4.</span> <span class="toc-text">3.4、MAC协议</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-5%E3%80%81%E5%B8%A7%E7%BB%93%E6%9E%84"><span class="toc-number">3.5.</span> <span class="toc-text">3.5、帧结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-6%E3%80%81%E9%AB%98%E7%BA%A7%E7%89%B9%E8%89%B2"><span class="toc-number">3.6.</span> <span class="toc-text">3.6、高级特色</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E8%9C%82%E7%AA%9D%E5%9B%A0%E7%89%B9%E7%BD%91"><span class="toc-number">4.</span> <span class="toc-text">四、蜂窝因特网</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1%E3%80%812G"><span class="toc-number">4.1.</span> <span class="toc-text">4.1、2G</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2%E3%80%813G"><span class="toc-number">4.2.</span> <span class="toc-text">4.2、3G</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94%E3%80%81802-15%E5%8D%8F%E8%AE%AE"><span class="toc-number">5.</span> <span class="toc-text">五、802.15协议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E5%90%8E%E7%BB%99%E4%B8%80%E5%BC%A0%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE"><span class="toc-number">6.</span> <span class="toc-text">最后给一张思维导图</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        计算机网络自顶向下-无线网络和移动网络
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-03-18T11:45:05.000Z" class="dt-published" itemprop="datePublished">2019-03-18</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/">计算机网络自顶向下</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag">计算机网络</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h3 id="一、概述："><a href="#一、概述：" class="headerlink" title="一、概述："></a>一、概述：</h3><p>这篇文章主要是讨论无线网络和移动网络即我们一般所说的WiFi和手机网络.主要分为4个部分<br>第一部分引言主要大致的描述一下无线网络和移动网络的特点以及和有限网络的区别<br>第二部分讨论WiFi<br>第三部分讨论蜂窝网络.由于有线网络和和无线网络的最大区别在于无线网络可以移动而且需要保持网络的连接<br>第四部分会讨论无线网络的移动管理.</p>
+<span id="more"></span>
+
+
+<h4 id="名词简介："><a href="#名词简介：" class="headerlink" title="名词简介："></a>名词简介：</h4><ol>
+<li>无线主机（wireless host）。端系统。</li>
+<li>无线链路（wireless communication link）。主机连接基站或另一台主机。</li>
+<li>基站（base station）。主机和基站关联：主机位于基站的无线通信覆盖范围，且主机使用基站中继和更大的网络的数据。例如，蜂窝网中的 蜂窝塔（cell tower），Wifi中的接入点（access point）。</li>
+<li>网络基础设施。与主机通信的更大的网络。</li>
+</ol>
+<p>与基站关联的主机以基础设施模式（infrastructure mode）运行，传统网络服务（地址分配、路由选择）通过基站提供给主机。自组织网络（ad hoc network）中，主机不与基站相连，主机本身提供这些服务。<br>无线网络类型。标准：无线网分组跨越的无线跳、是否有基础设施。 </p>
+<ol>
+<li>单跳、基于基础设施。802.11、3G蜂窝网等。</li>
+<li>单跳、无基础设施。蓝牙、自组织模式的802.11</li>
+<li>多跳、基于基础设施。结点通过无线结点中继通信，连接到基站，如无线网状网络。</li>
+<li>多跳、无基础设施。移动自组织网络，包括车载自组织网络。</li>
+</ol>
+<h3 id="二、无线链路和网络特征"><a href="#二、无线链路和网络特征" class="headerlink" title="二、无线链路和网络特征"></a>二、无线链路和网络特征</h3><h4 id="2-1、与有限链路的区别"><a href="#2-1、与有限链路的区别" class="headerlink" title="2.1、与有限链路的区别"></a>2.1、与有限链路的区别</h4><p>无线链路和有限链路最主要的区别如下:</p>
+<ol>
+<li>递减的信号强度:随着阻碍物和距离的增加,信号的强度会有相当大的损失</li>
+<li>来自其他源的干扰:无线信号会被其他源的无线信号干扰到,比如电磁炉</li>
+<li>多径传播:同一个信号可能会经过多种物质的反射从而在不同时间点传播的同一接收点中.</li>
+</ol>
+<h4 id="2-2、会产生的问题"><a href="#2-2、会产生的问题" class="headerlink" title="2.2、会产生的问题"></a>2.2、会产生的问题</h4><p>由于信号的减弱和障碍物的作用,所以无线链路通信会产生一些有线链路所没有的问题</p>
+<ol>
+<li>信噪比SNR:即信号和噪音的比值,用于衡量信号的优劣,值越高代表信号越好,相反,若太低,则表明噪声太多,信号质量差</li>
+<li>比特差错率BER:在无线链路的特性决定了传输的数据容易出现比特差错,BER用于衡量这一参数</li>
+<li>隐藏终端问题:基站是需要多路访问协议即MAC协议来控制多个无线主机向此基站发送的数据,通常采用CSMA(码多分址),其原理已经介绍过了,主要就是将每一个比特乘以一个特殊的编码在接收端再次解码,通过不同的无线站点分配不同的编码以解决碰撞的问题.原理如下图:</li>
+</ol>
+<p><img src="/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/1.png"><br>而无线链路的情况不同于有线链路,它很有可能是检测不到其他无线主机正在想基站发送数据的,比如其中一台无线主机被大山挡住,导致另一台主机不能接收到此主机正在发送数据的信号,再比如说,随着位置的增加,可能会有基站可以接受到两台无线主机信号而两台无线主机之间不能接受到彼此的信号的情况.这就被称为隐藏终端问题.如下图:<br><img src="/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/2.png"></p>
+<h3 id="三、Wifi-802-11无线LAN"><a href="#三、Wifi-802-11无线LAN" class="headerlink" title="三、Wifi(802.11无线LAN)"></a>三、Wifi(802.11无线LAN)</h3><h4 id="3-1、分类"><a href="#3-1、分类" class="headerlink" title="3.1、分类"></a>3.1、分类</h4><p>无线网络所使用的WiFi协议有许多种,他们分别有不同的频率范围和传输速度,如以下三种协议<br><img src="/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/3.png"></p>
+<h4 id="3-2、组成"><a href="#3-2、组成" class="headerlink" title="3.2、组成"></a>3.2、组成</h4><p>无线网络主要由两部分组成,一是基本服务集BSS,包括无线站点和接入点AP,他们都具有唯一的MAC地址,二是分组交换机,BSS就是通过分组交换机与因特网连接.如下图:</p>
+<p><img src="/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/4.png"></p>
+<h4 id="3-3、信道与关联"><a href="#3-3、信道与关联" class="headerlink" title="3.3、信道与关联"></a>3.3、信道与关联</h4><p>那么无线站点是如何通过上图中的体系结构连接如互联网的呢?<br>每个基本服务集BSS都拥有一个SSID,用于唯一标识,WiFi协议信道的频率可以分为11个部分,他们互相之间有重叠,只有1,6,11号信道之间是完全没有重叠的,所以可以在一个物理网络中使用三个信道,每个基站都有自己的信号范围,那么我们定义WiFi丛林的概念,即无线站点在任意物质可以接收到多个基站所发出的信号,那么在这种情况之下,无线站点如何同基站关联的?<br>主要有两种方法:</p>
+<ol>
+<li>被动扫描:每个接入点AP都会周期性的发送信标帧,信标帧中包括该AP的SSID和MAC地址,无线站点为了关联AP,就会扫描11 个信道,然后选择一个与之关联</li>
+<li>主动扫描:无线主机会向所有在其范围内的AP广播探测帧,AP接收到探测帧后会发送探测响应帧给无线站点,然后无线站点和AP关联</li>
+</ol>
+<p><img src="/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/5.png"></p>
+<h4 id="3-4、MAC协议"><a href="#3-4、MAC协议" class="headerlink" title="3.4、MAC协议"></a>3.4、MAC协议</h4><p>我们在无线链路可能会遇到的问题中已经描述过隐藏终端问题,WiFi有时如何解决碰撞和处理隐藏终端问题的呢?<br> WiFi所使用的MAC协议叫做CSMA&#x2F;CA,CSMA即是载波侦听,其原理同以前讲述的一样,他会检测其他无线站点是否正在发送数据,如果是则停止传输,知道信道空闲.但是和以前不同的是,CA是碰撞避免,而不是CD碰转检测,因为CD完全不适用于无线链路,其一,两个无线站点之间如果需要互相检测到对方的发送信号所需的成本太大,其二,即使可以互相检测到信号,也会因为隐藏终端问题导致大量的重传.</p>
+<p>碰撞避免CA的原理是:</p>
+<ol>
+<li>在发送信号之前,即侦听到信道空闲时,会在一个分布式帧间间隔DIFS的短时间后发送数据帧.</li>
+<li>若信道繁忙,会选取一个随机回退值,每当侦听到信道空闲时此回退值就会减小,信道繁忙则会冻结回退值,当回退值为0时,发送数据帧</li>
+<li>发送数据帧并等待确认,目的地则会在等待一个被称为短帧间间隔SIFS的短时间后发送确认帧.</li>
+<li>如果源收到确认帧,表示被正确接收了,需要发送其他帧会从第二部开始.如果未收到确认,进入第二部的回退阶段,并从更大的范围选取回退值</li>
+</ol>
+<p><img src="/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/6.png"><br> 而为了解决隐藏终端问题,在上述的基础上,源会在传输数据帧之前发送一个请求发送控制帧RTS,其中包含了此次传输需要的总时间,目的地在接收到RTS后等待SIFS的短时间,会广播一个允许发送控制帧CTS,CTS的目的是给发送方明确的发送许可及禁止其他无线站点在预约的时间内发送数据帧,但是这种处理方式会消耗信道资源,所以只有需要交换长数据时才会使用.<br><img src="/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/7.png"></p>
+<h4 id="3-5、帧结构"><a href="#3-5、帧结构" class="headerlink" title="3.5、帧结构"></a>3.5、帧结构</h4><p>802.11协议(WiFi)所使用的帧的结构如下图所示:<br><img src="/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/8.png"></p>
+<ol>
+<li>帧控制:包含许多子字段,类型和子类型用于区分管理,RTS,CTS,ACK和数据帧,WEP用于知识是否加密,to,from定义不同地址字段的含义等等,不做具体描述</li>
+<li>持续期:表示预约信道的时间,即在上文中描述的如何处理隐藏终端问题的预约时间</li>
+<li>地址一:源MAC地址</li>
+<li>地址二:接收该帧的设备的MAC地址</li>
+<li>地址三:AP所连的交换机的MAC地址,是基本服务集BSS和因特网连接的关键</li>
+<li>序号控制:用于区分帧的重传和新的发送</li>
+<li>地址四:用于自组织间的MAC地址</li>
+<li>有效载荷:存放数据</li>
+<li>CRC:循环冗余检测字段</li>
+</ol>
+<h4 id="3-6、高级特色"><a href="#3-6、高级特色" class="headerlink" title="3.6、高级特色"></a>3.6、高级特色</h4><p> 802.11协议可以实现一些高级的功能,比如速率适应,无线站点会要求越来越多的带宽,知道接入点AP说”够了”,功率管理可以让无线 站点向接入点AP发送一个帧以设置一个定时器,无线站点进入睡眠模式,知道接入点在发送下一个信标帧时,唤醒该节点.</p>
+<h3 id="四、蜂窝因特网"><a href="#四、蜂窝因特网" class="headerlink" title="四、蜂窝因特网"></a>四、蜂窝因特网</h3><h4 id="4-1、2G"><a href="#4-1、2G" class="headerlink" title="4.1、2G"></a>4.1、2G</h4><p>以下是2G网络的组成,统称为GSM蜂窝网体系:<br><img src="/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/9.png"></p>
+<ol>
+<li>基站控制器BSC:连接几十个基站,执行寻呼,移动用户的切换</li>
+<li>移动交换中心MSC:用于用户鉴别和账户管理,一级呼叫建立和切换</li>
+<li>网关MSC:与更大的网络相连</li>
+</ol>
+<h4 id="4-2、3G"><a href="#4-2、3G" class="headerlink" title="4.2、3G"></a>4.2、3G</h4><p><img src="/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/10.png"><br>在2G的基础上,将BSC换为了RNC,并添加了一些新设备</p>
+<h3 id="五、802-15协议"><a href="#五、802-15协议" class="headerlink" title="五、802.15协议"></a>五、802.15协议</h3><p>除了WiFi和蜂窝网络之外,还有其他的无线网络,这里只做极其简单的介绍,</p>
+<ol>
+<li>蓝牙:使用802.15.1协议,以TDM方式工作于无需2.4GHz无线电波段,存在主设备和从设备之分,使用自组织模式,形成一个皮可网.</li>
+</ol>
+<p><img src="/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/11.png"></p>
+<ol start="2">
+<li>ZigBee:多个简化功能设备在单个全功能设备控制下运行.</li>
+</ol>
+<h3 id="最后给一张思维导图"><a href="#最后给一张思维导图" class="headerlink" title="最后给一张思维导图"></a>最后给一张思维导图</h3><p><img src="/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/daotu.png"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%A6%82%E8%BF%B0%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">一、概述：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%8D%E8%AF%8D%E7%AE%80%E4%BB%8B%EF%BC%9A"><span class="toc-number">1.1.</span> <span class="toc-text">名词简介：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%97%A0%E7%BA%BF%E9%93%BE%E8%B7%AF%E5%92%8C%E7%BD%91%E7%BB%9C%E7%89%B9%E5%BE%81"><span class="toc-number">2.</span> <span class="toc-text">二、无线链路和网络特征</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1%E3%80%81%E4%B8%8E%E6%9C%89%E9%99%90%E9%93%BE%E8%B7%AF%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">2.1.</span> <span class="toc-text">2.1、与有限链路的区别</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2%E3%80%81%E4%BC%9A%E4%BA%A7%E7%94%9F%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">2.2.</span> <span class="toc-text">2.2、会产生的问题</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81Wifi-802-11%E6%97%A0%E7%BA%BFLAN"><span class="toc-number">3.</span> <span class="toc-text">三、Wifi(802.11无线LAN)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1%E3%80%81%E5%88%86%E7%B1%BB"><span class="toc-number">3.1.</span> <span class="toc-text">3.1、分类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2%E3%80%81%E7%BB%84%E6%88%90"><span class="toc-number">3.2.</span> <span class="toc-text">3.2、组成</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3%E3%80%81%E4%BF%A1%E9%81%93%E4%B8%8E%E5%85%B3%E8%81%94"><span class="toc-number">3.3.</span> <span class="toc-text">3.3、信道与关联</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4%E3%80%81MAC%E5%8D%8F%E8%AE%AE"><span class="toc-number">3.4.</span> <span class="toc-text">3.4、MAC协议</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-5%E3%80%81%E5%B8%A7%E7%BB%93%E6%9E%84"><span class="toc-number">3.5.</span> <span class="toc-text">3.5、帧结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-6%E3%80%81%E9%AB%98%E7%BA%A7%E7%89%B9%E8%89%B2"><span class="toc-number">3.6.</span> <span class="toc-text">3.6、高级特色</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E8%9C%82%E7%AA%9D%E5%9B%A0%E7%89%B9%E7%BD%91"><span class="toc-number">4.</span> <span class="toc-text">四、蜂窝因特网</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1%E3%80%812G"><span class="toc-number">4.1.</span> <span class="toc-text">4.1、2G</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2%E3%80%813G"><span class="toc-number">4.2.</span> <span class="toc-text">4.2、3G</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94%E3%80%81802-15%E5%8D%8F%E8%AE%AE"><span class="toc-number">5.</span> <span class="toc-text">五、802.15协议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E5%90%8E%E7%BB%99%E4%B8%80%E5%BC%A0%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE"><span class="toc-number">6.</span> <span class="toc-text">最后给一张思维导图</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/&text=计算机网络自顶向下-无线网络和移动网络"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/&title=计算机网络自顶向下-无线网络和移动网络"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/&is_video=false&description=计算机网络自顶向下-无线网络和移动网络"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=计算机网络自顶向下-无线网络和移动网络&body=Check out this article: http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/&title=计算机网络自顶向下-无线网络和移动网络"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/&title=计算机网络自顶向下-无线网络和移动网络"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/&title=计算机网络自顶向下-无线网络和移动网络"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/&title=计算机网络自顶向下-无线网络和移动网络"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/&name=计算机网络自顶向下-无线网络和移动网络&description=&lt;h3 id=&#34;一、概述：&#34;&gt;&lt;a href=&#34;#一、概述：&#34; class=&#34;headerlink&#34; title=&#34;一、概述：&#34;&gt;&lt;/a&gt;一、概述：&lt;/h3&gt;&lt;p&gt;这篇文章主要是讨论无线网络和移动网络即我们一般所说的WiFi和手机网络.主要分为4个部分&lt;br&gt;第一部分引言主要大致的描述一下无线网络和移动网络的特点以及和有限网络的区别&lt;br&gt;第二部分讨论WiFi&lt;br&gt;第三部分讨论蜂窝网络.由于有线网络和和无线网络的最大区别在于无线网络可以移动而且需要保持网络的连接&lt;br&gt;第四部分会讨论无线网络的移动管理.&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/03/18/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/&t=计算机网络自顶向下-无线网络和移动网络"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

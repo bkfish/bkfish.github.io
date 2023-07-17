@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="先教科书一波（“千万别被吓到”），教科书上关于多进程和多线程解释为1进程是资源分配的最小单位，线程是CPU调度的最小单位 据说这句话拿去考试,改卷老师一定会给高分，但是还是嘚深入了解一下">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多线程和多进程的暧昧缠绵">
+<meta property="og:url" content="http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="先教科书一波（“千万别被吓到”），教科书上关于多进程和多线程解释为1进程是资源分配的最小单位，线程是CPU调度的最小单位 据说这句话拿去考试,改卷老师一定会给高分，但是还是嘚深入了解一下">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/duibi.jpg">
+<meta property="og:image" content="http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/1.jpg">
+<meta property="og:image" content="http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/2.jpg">
+<meta property="og:image" content="http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/3.jpg">
+<meta property="og:image" content="http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/4.jpg">
+<meta property="og:image" content="http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/5.jpg">
+<meta property="og:image" content="http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/6.jpg">
+<meta property="og:image" content="http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/7.jpg">
+<meta property="og:image" content="http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/8.jpg">
+<meta property="og:image" content="http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/9.jpg">
+<meta property="og:image" content="http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/10.jpg">
+<meta property="article:published_time" content="2018-12-03T15:01:18.000Z">
+<meta property="article:modified_time" content="2020-11-24T04:54:16.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="进程&amp;&amp;线程">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/duibi.jpg">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>多线程和多进程的暧昧缠绵</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2000/02/13/%E9%9D%A2%E7%BB%8F%E7%A7%AF%E7%B4%AF/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/&text=多线程和多进程的暧昧缠绵"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/&title=多线程和多进程的暧昧缠绵"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/&is_video=false&description=多线程和多进程的暧昧缠绵"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=多线程和多进程的暧昧缠绵&body=Check out this article: http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/&title=多线程和多进程的暧昧缠绵"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/&title=多线程和多进程的暧昧缠绵"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/&title=多线程和多进程的暧昧缠绵"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/&title=多线程和多进程的暧昧缠绵"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/&name=多线程和多进程的暧昧缠绵&description=&lt;h4 id=&#34;先教科书一波（“千万别被吓到”），教科书上关于多进程和多线程解释为&#34;&gt;&lt;a href=&#34;#先教科书一波（“千万别被吓到”），教科书上关于多进程和多线程解释为&#34; class=&#34;headerlink&#34; title=&#34;先教科书一波（“千万别被吓到”），教科书上关于多进程和多线程解释为&#34;&gt;&lt;/a&gt;先教科书一波（“千万别被吓到”），教科书上关于多进程和多线程解释为&lt;/h4&gt;&lt;figure class=&#34;highlight plaintext&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;进程是资源分配的最小单位，线程是CPU调度的最小单位&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;据说这句话拿去考试,改卷老师一定会给高分，但是还是嘚深入了解一下&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/&t=多线程和多进程的暧昧缠绵"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%88%E6%95%99%E7%A7%91%E4%B9%A6%E4%B8%80%E6%B3%A2%EF%BC%88%E2%80%9C%E5%8D%83%E4%B8%87%E5%88%AB%E8%A2%AB%E5%90%93%E5%88%B0%E2%80%9D%EF%BC%89%EF%BC%8C%E6%95%99%E7%A7%91%E4%B9%A6%E4%B8%8A%E5%85%B3%E4%BA%8E%E5%A4%9A%E8%BF%9B%E7%A8%8B%E5%92%8C%E5%A4%9A%E7%BA%BF%E7%A8%8B%E8%A7%A3%E9%87%8A%E4%B8%BA"><span class="toc-number">1.</span> <span class="toc-text">先教科书一波（“千万别被吓到”），教科书上关于多进程和多线程解释为</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%AE%9A%E4%B9%89%EF%BC%9A"><span class="toc-number">2.</span> <span class="toc-text">线程的定义：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F%E7%B1%BB%E6%AF%94%EF%BC%9A"><span class="toc-number">3.</span> <span class="toc-text">线程的工作方式类比：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%AE%9A%E4%B9%89%EF%BC%9A"><span class="toc-number">4.</span> <span class="toc-text">进程的定义：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%87%E9%82%B9%E9%82%B9%E7%9A%84%E8%AE%B2%E4%B8%80%E4%B8%8B%E5%8C%BA%E5%88%AB%EF%BC%88%E5%A6%82%E6%9E%9C%E4%BD%A0%E5%9B%B0%E4%BA%86%EF%BC%8C%E8%AF%B7%E7%9B%B4%E6%8E%A5%E8%B7%B3%E8%87%B3%E5%9B%BE%E8%A7%A3%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B%EF%BC%89"><span class="toc-number">5.</span> <span class="toc-text">文邹邹的讲一下区别（如果你困了，请直接跳至图解进程线程）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%8D%E9%85%8D%E4%B8%8A%E4%B8%80%E5%BC%A0%E5%9B%BE%E6%9D%A5%E5%AF%B9%E6%AF%94%E4%B8%80%E4%B8%8B"><span class="toc-number">6.</span> <span class="toc-text">再配上一张图来对比一下</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%89%E8%B6%A3%E7%9A%84%E5%9B%BE%E8%A7%A3%E4%B8%80%E6%B3%A2%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E7%9A%84%E7%BA%BF%E7%A8%8B%E4%B8%8E%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="toc-number">7.</span> <span class="toc-text">有趣的图解一波程序执行的线程与进程的概念</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        多线程和多进程的暧昧缠绵
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-12-03T15:01:18.000Z" class="dt-published" itemprop="datePublished">2018-12-03</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/">计算机杂七杂八</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E8%BF%9B%E7%A8%8B-%E7%BA%BF%E7%A8%8B/" rel="tag">进程&&线程</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h4 id="先教科书一波（“千万别被吓到”），教科书上关于多进程和多线程解释为"><a href="#先教科书一波（“千万别被吓到”），教科书上关于多进程和多线程解释为" class="headerlink" title="先教科书一波（“千万别被吓到”），教科书上关于多进程和多线程解释为"></a>先教科书一波（“千万别被吓到”），教科书上关于多进程和多线程解释为</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">进程是资源分配的最小单位，线程是CPU调度的最小单位</span><br></pre></td></tr></table></figure>
+<p>据说这句话拿去考试,改卷老师一定会给高分，但是还是嘚深入了解一下</p>
+<span id="more"></span>
+
+
+<h4 id="线程的定义："><a href="#线程的定义：" class="headerlink" title="线程的定义："></a>线程的定义：</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">线程是操作系统能够进行运算调度的最小单位。它被包含在进程之中，是进程中的实际运作单位。</span><br><span class="line">一条线程指的是进程中一个单一顺序的控制流，一个进程中可以并发多个线程，</span><br><span class="line">每条线程并行执行不同的任务。一个线程是一个execution context（执行上下文）</span><br><span class="line">即一个cpu执行时所需要的一串指令。</span><br></pre></td></tr></table></figure>
+<h4 id="线程的工作方式类比："><a href="#线程的工作方式类比：" class="headerlink" title="线程的工作方式类比："></a>线程的工作方式类比：</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">假设你正在读一本书，没有读完，你想休息一下，但是你想在回来时恢复到当时读的具体进度。</span><br><span class="line">有一个方法就是记下页数、行数与字数这三个数值，这些数值就是execution context。</span><br><span class="line">如果你的室友在你休息的时候，使用相同的方法读这本书。</span><br><span class="line">你和她只需要这三个数字记下来就可以在交替的时间共同阅读这本书了。</span><br><span class="line">线程的工作方式与此类似。CPU会给你一个在同一时间能够做多个运算的幻觉，实际上它在每个运算上只花了极少的时间，</span><br><span class="line">本质上CPU同一时刻只干了一件事。它能这样做就是因为它有每个运算的execution context。</span><br><span class="line">就像你能够和你朋友共享同一本书一样，多任务也能共享同一块CPU。</span><br></pre></td></tr></table></figure>
+<h4 id="进程的定义："><a href="#进程的定义：" class="headerlink" title="进程的定义："></a>进程的定义：</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">一个程序的执行实例就是一个进程。每一个进程提供执行程序所需的所有资源。（进程本质上是资源的集合）</span><br><span class="line">一个进程有一个虚拟的地址空间、可执行的代码、操作系统的接口、安全的上下文（记录启动该进程的用户和权限等等）</span><br><span class="line">唯一的进程ID、环境变量、优先级类、最小和最大的工作空间（内存空间），还要有至少一个线程。</span><br><span class="line">每一个进程启动时都会最先产生一个线程，即主线程。然后主线程会再创建其他的子线程。</span><br></pre></td></tr></table></figure>
+<h4 id="文邹邹的讲一下区别（如果你困了，请直接跳至图解进程线程）"><a href="#文邹邹的讲一下区别（如果你困了，请直接跳至图解进程线程）" class="headerlink" title="文邹邹的讲一下区别（如果你困了，请直接跳至图解进程线程）"></a>文邹邹的讲一下区别（如果你困了，请直接跳至图解进程线程）</h4><ul>
+<li>同一个进程中的线程共享同一内存空间，但是进程之间是独立的。</li>
+<li>同一个进程中的所有线程的数据是共享的（进程通讯），进程之间的数据是独立的。</li>
+<li>对主线程的修改可能会影响其他线程的行为，但是父进程的修改（除了删除以外）不会影响其他子进程。</li>
+<li>线程是一个上下文的执行指令，而进程则是与运算相关的一簇资源。</li>
+<li>同一个进程的线程之间可以直接通信，但是进程之间的交流需要借助中间代理来实现。</li>
+<li>创建新的线程很容易，但是创建新的进程需要对父进程做一次复制。</li>
+<li>一个线程可以操作同一进程的其他线程，但是进程只能操作其子进程。</li>
+<li>线程启动速度快，进程启动速度慢（但是两者运行速度没有可比性）。</li>
+</ul>
+<h4 id="再配上一张图来对比一下"><a href="#再配上一张图来对比一下" class="headerlink" title="再配上一张图来对比一下"></a>再配上一张图来对比一下</h4><p><img src="/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/duibi.jpg"></p>
+<h4 id="有趣的图解一波程序执行的线程与进程的概念"><a href="#有趣的图解一波程序执行的线程与进程的概念" class="headerlink" title="有趣的图解一波程序执行的线程与进程的概念"></a>有趣的图解一波程序执行的线程与进程的概念</h4><ol>
+<li>计算机的核心是CPU，它承担了所有的计算任务。它就像一座工厂，时刻在运行。<br><img src="/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/1.jpg"></li>
+<li>假定工厂的电力有限，一次只能供给一个车间使用。也就是说，一个车间开工的时候，<br>其他车间都必须停工。背后的含义就是，单个CPU一次只能运行一个任务。<br><img src="/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/2.jpg"></li>
+<li>进程就好比工厂的车间，它代表CPU所能处理的单个任务。任一时刻，CPU总是运行一个进程<br>其他进程处于非运行状态.<br><img src="/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/3.jpg"></li>
+<li>一个车间里，可以有很多工人。他们协同完成一个任务。<br><img src="/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/4.jpg"></li>
+<li>线程就好比车间里的工人。一个进程可以包括多个线程。<br><img src="/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/5.jpg"></li>
+<li>车间的空间是工人们共享的，比如许多房间是每个工人都可以进出的。<br>这象征一个进程的内存空间是共享的，每个线程都可以使用这些共享内存。<br><img src="/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/6.jpg"></li>
+<li>可是，每间房间的大小不同，有些房间最多只能容纳一个人，比如厕所。里面有人的时候<br>其他人就不能进去了。这代表一个线程使用某些共享内存时，其他线程必须等它结束，才能使用这一块内存<br><img src="/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/7.jpg"></li>
+<li>一个防止他人进入的简单方法，就是门口加一把锁。先到的人锁上门，后到的人看到上锁，就在门口排队<br>等锁打开再进去。这就叫”互斥锁”（Mutual exclusion，缩写 Mutex），防止多个线程同时读写某一块内存区域。<br><img src="/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/8.jpg"></li>
+<li>还有些房间，可以同时容纳n个人，比如厨房。也就是说，如果人数大于n，多出来的人只能在外面等着。<br>这好比某些内存区域，只能供给固定数目的线程使用。<br><img src="/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/9.jpg"></li>
+<li>这时的解决方法，就是在门口挂n把钥匙。进去的人就取一把钥匙，出来时再把钥匙挂回原处。<br>后到的人发现钥匙架空了，就知道必须在门口排队等着了。这种做法叫做”信号量”（Semaphore）<br>用来保证多个线程不会互相冲突。<br>不难看出，mutex是semaphore的一种特殊情况（n&#x3D;1时）。也就是说，完全可以用后者替代前者。<br>但是，因为mutex较为简单，且效率高，所以在必须保证资源独占的情况下，还是采用这种设计。<br><img src="/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/10.jpg"></li>
+</ol>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%88%E6%95%99%E7%A7%91%E4%B9%A6%E4%B8%80%E6%B3%A2%EF%BC%88%E2%80%9C%E5%8D%83%E4%B8%87%E5%88%AB%E8%A2%AB%E5%90%93%E5%88%B0%E2%80%9D%EF%BC%89%EF%BC%8C%E6%95%99%E7%A7%91%E4%B9%A6%E4%B8%8A%E5%85%B3%E4%BA%8E%E5%A4%9A%E8%BF%9B%E7%A8%8B%E5%92%8C%E5%A4%9A%E7%BA%BF%E7%A8%8B%E8%A7%A3%E9%87%8A%E4%B8%BA"><span class="toc-number">1.</span> <span class="toc-text">先教科书一波（“千万别被吓到”），教科书上关于多进程和多线程解释为</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%AE%9A%E4%B9%89%EF%BC%9A"><span class="toc-number">2.</span> <span class="toc-text">线程的定义：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F%E7%B1%BB%E6%AF%94%EF%BC%9A"><span class="toc-number">3.</span> <span class="toc-text">线程的工作方式类比：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%AE%9A%E4%B9%89%EF%BC%9A"><span class="toc-number">4.</span> <span class="toc-text">进程的定义：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%87%E9%82%B9%E9%82%B9%E7%9A%84%E8%AE%B2%E4%B8%80%E4%B8%8B%E5%8C%BA%E5%88%AB%EF%BC%88%E5%A6%82%E6%9E%9C%E4%BD%A0%E5%9B%B0%E4%BA%86%EF%BC%8C%E8%AF%B7%E7%9B%B4%E6%8E%A5%E8%B7%B3%E8%87%B3%E5%9B%BE%E8%A7%A3%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B%EF%BC%89"><span class="toc-number">5.</span> <span class="toc-text">文邹邹的讲一下区别（如果你困了，请直接跳至图解进程线程）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%8D%E9%85%8D%E4%B8%8A%E4%B8%80%E5%BC%A0%E5%9B%BE%E6%9D%A5%E5%AF%B9%E6%AF%94%E4%B8%80%E4%B8%8B"><span class="toc-number">6.</span> <span class="toc-text">再配上一张图来对比一下</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%89%E8%B6%A3%E7%9A%84%E5%9B%BE%E8%A7%A3%E4%B8%80%E6%B3%A2%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E7%9A%84%E7%BA%BF%E7%A8%8B%E4%B8%8E%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="toc-number">7.</span> <span class="toc-text">有趣的图解一波程序执行的线程与进程的概念</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/&text=多线程和多进程的暧昧缠绵"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/&title=多线程和多进程的暧昧缠绵"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/&is_video=false&description=多线程和多进程的暧昧缠绵"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=多线程和多进程的暧昧缠绵&body=Check out this article: http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/&title=多线程和多进程的暧昧缠绵"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/&title=多线程和多进程的暧昧缠绵"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/&title=多线程和多进程的暧昧缠绵"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/&title=多线程和多进程的暧昧缠绵"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/&name=多线程和多进程的暧昧缠绵&description=&lt;h4 id=&#34;先教科书一波（“千万别被吓到”），教科书上关于多进程和多线程解释为&#34;&gt;&lt;a href=&#34;#先教科书一波（“千万别被吓到”），教科书上关于多进程和多线程解释为&#34; class=&#34;headerlink&#34; title=&#34;先教科书一波（“千万别被吓到”），教科书上关于多进程和多线程解释为&#34;&gt;&lt;/a&gt;先教科书一波（“千万别被吓到”），教科书上关于多进程和多线程解释为&lt;/h4&gt;&lt;figure class=&#34;highlight plaintext&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;进程是资源分配的最小单位，线程是CPU调度的最小单位&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;据说这句话拿去考试,改卷老师一定会给高分，但是还是嘚深入了解一下&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/&t=多线程和多进程的暧昧缠绵"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

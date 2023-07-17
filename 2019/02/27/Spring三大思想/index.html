@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="一、DI(依赖注入)和IOC(控制反转)Spring的三大思想为DI(依赖注入)，IOC(控制反转)，AOP（面向切面编程）。既然在学Spring就认真学一些思想，而不是仅仅停留在复制粘贴CURD的层面，这也许就是码农的自我修养吧。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring三大思想">
+<meta property="og:url" content="http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="一、DI(依赖注入)和IOC(控制反转)Spring的三大思想为DI(依赖注入)，IOC(控制反转)，AOP（面向切面编程）。既然在学Spring就认真学一些思想，而不是仅仅停留在复制粘贴CURD的层面，这也许就是码农的自我修养吧。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/3.jpg">
+<meta property="og:image" content="http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/2.jpg">
+<meta property="og:image" content="http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/1.png">
+<meta property="og:image" content="http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/2.png">
+<meta property="og:image" content="http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/1.gif">
+<meta property="article:published_time" content="2019-02-27T05:40:40.000Z">
+<meta property="article:modified_time" content="2020-11-24T04:52:36.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="Spring Boot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/3.jpg">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Spring三大思想</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2019/03/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E5%BA%94%E7%94%A8%E5%B1%82%E5%8F%8A%E4%B9%A6%E5%90%8E%E5%A5%97%E6%8E%A5%E5%AD%97%E7%BC%96%E7%A8%8B%E7%BB%83%E4%B9%A0%E5%8F%82%E8%80%83/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2019/02/26/Spring-Boot%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/&text=Spring三大思想"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/&title=Spring三大思想"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/&is_video=false&description=Spring三大思想"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Spring三大思想&body=Check out this article: http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/&title=Spring三大思想"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/&title=Spring三大思想"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/&title=Spring三大思想"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/&title=Spring三大思想"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/&name=Spring三大思想&description=&lt;h3 id=&#34;一、DI-依赖注入-和IOC-控制反转&#34;&gt;&lt;a href=&#34;#一、DI-依赖注入-和IOC-控制反转&#34; class=&#34;headerlink&#34; title=&#34;一、DI(依赖注入)和IOC(控制反转)&#34;&gt;&lt;/a&gt;一、DI(依赖注入)和IOC(控制反转)&lt;/h3&gt;&lt;p&gt;Spring的三大思想为DI(依赖注入)，IOC(控制反转)，AOP（面向切面编程）。既然在学Spring就认真学一些思想，而不是仅仅停留在复制粘贴CURD的层面，这也许就是码农的自我修养吧。&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/&t=Spring三大思想"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81DI-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5-%E5%92%8CIOC-%E6%8E%A7%E5%88%B6%E5%8F%8D%E8%BD%AC"><span class="toc-number">1.</span> <span class="toc-text">一、DI(依赖注入)和IOC(控制反转)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1%E3%80%81%E4%B8%87%E7%89%A9%E5%88%9D%E5%A7%8B"><span class="toc-number">1.1.</span> <span class="toc-text">1.1、万物初始</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2%E3%80%81%E6%8E%A7%E5%88%B6%E5%8F%8D%E8%BD%AC%E5%92%8C%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%EF%BC%88%E6%AD%A3%E7%BB%8F%E8%84%B8%EF%BC%89"><span class="toc-number">1.2.</span> <span class="toc-text">1.2、控制反转和依赖注入（正经脸）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81AOP%EF%BC%88%E9%9D%A2%E5%90%91%E5%88%87%E9%9D%A2%E7%BC%96%E7%A8%8B%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">二、AOP（面向切面编程）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1%E3%80%81%E9%9D%A2%E5%90%91%E5%88%87%E9%9D%A2%E6%98%AF%E9%9D%A2%E5%90%91%E5%95%A5%E7%8E%A9%E6%84%8F%EF%BC%9A"><span class="toc-number">2.1.</span> <span class="toc-text">2.1、面向切面是面向啥玩意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2%E3%80%81Spring%E7%9A%84AOP%E5%85%B7%E4%BD%93%E6%A6%82%E5%BF%B5%EF%BC%88%E6%AF%94%E8%BE%83%E7%A1%AC%E6%A0%B8%EF%BC%89"><span class="toc-number">2.2.</span> <span class="toc-text">2.2、Spring的AOP具体概念（比较硬核）</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Spring三大思想
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-02-27T05:40:40.000Z" class="dt-published" itemprop="datePublished">2019-02-27</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E9%9B%81%E5%84%BF%E5%87%A0%E5%BA%A6%E6%81%8B%E5%BC%80%E5%8F%91-%E6%84%BF%E5%BE%97%E4%B8%80%E7%AB%99%E5%85%A5%E4%B8%87%E5%AE%B6/">雁儿几度恋开发-愿得一站入万家</a> › <a class="category-link" href="/categories/%E9%9B%81%E5%84%BF%E5%87%A0%E5%BA%A6%E6%81%8B%E5%BC%80%E5%8F%91-%E6%84%BF%E5%BE%97%E4%B8%80%E7%AB%99%E5%85%A5%E4%B8%87%E5%AE%B6/Spring-boot/">Spring boot</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h3 id="一、DI-依赖注入-和IOC-控制反转"><a href="#一、DI-依赖注入-和IOC-控制反转" class="headerlink" title="一、DI(依赖注入)和IOC(控制反转)"></a>一、DI(依赖注入)和IOC(控制反转)</h3><p>Spring的三大思想为DI(依赖注入)，IOC(控制反转)，AOP（面向切面编程）。既然在学Spring就认真学一些思想，而不是仅仅停留在复制粘贴CURD的层面，这也许就是码农的自我修养吧。</p>
+<span id="more"></span>
+
+
+<h4 id="1-1、万物初始"><a href="#1-1、万物初始" class="headerlink" title="1.1、万物初始"></a>1.1、万物初始</h4><p>既然大家都没有女朋友，那今天书鱼教教大家怎么找女朋友吧。<br>假如你有了一个女朋友，，，，类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public class GirlFriend&#123;</span><br><span class="line">    String name; //有名字</span><br><span class="line">    Face face;</span><br><span class="line">    Head head; //有头有脸的意思</span><br><span class="line">    ....... //其他一堆优点</span><br><span class="line">    GirlFriend(String name)</span><br><span class="line">    &#123;</span><br><span class="line">        this.name=name;</span><br><span class="line">    &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>那么现在你是一个成功人士，即将走上人生巅峰，是不是还有一 点小激动呢</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public class Person&#123;</span><br><span class="line">    Person()&#123;</span><br><span class="line">    //给你女朋友加属性</span><br><span class="line">    GirlFriend girlFriend=new GirlFriend(&quot;迪丽热巴&quot;); </span><br><span class="line">    Car car=new Car(&quot;兰博基尼&quot;);</span><br><span class="line">    House house=new House(&quot;海景套房&quot;); //有车有房</span><br><span class="line">    &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<img src="3.jpg" width="400" hegiht="200" align=center />
+<!--more-->
+现在你要出生啦啦啦
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Person you;</span><br><span class="line">//当你需要你女朋友的时候你可以这样</span><br><span class="line">you.girlFriend;</span><br><span class="line">//比如当别人问你女朋友谁啊，你可以回答</span><br><span class="line">printf(&quot;%s&quot;,you.girlFriend.name);</span><br></pre></td></tr></table></figure>
+
+<p>直到一天，你和你女朋友的缘分尽了，经历一段痛心肺腑的分手诀别后，你找到了新的女朋友雏田小姐姐，当然这个时候将会有数百句渣男，臭鸡蛋扑面而来，但是，嘻嘻，你还是要更新你女朋友的名字。那么你要怎么做呢？<br>你要把Person类里GirlFriend的构造参数改一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GirlFriend girlFriend=new GirlFriend(&quot;日向雏田&quot;);</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/2.jpg"><br>这个时候你会发现你是全世界最成功的人士，但是<strong>等等</strong>你可能忽略了一个问题，因为你换女朋友，你自己的类<strong>改变了</strong>(person类改变了)，你不再是那个打娘胎里出来的那个单纯的Person,而是人工改造后的你，这样的你是没有灵魂的，这是因为，你依赖于你女盆友（<strong>Person类依赖于GirlFriend</strong>）,这样你和你女朋友的耦合性太强了（<strong>Person类和GirlFriend耦合性强</strong>），那么依赖注入就是为了解决一下这个问题。</p>
+<h4 id="1-2、控制反转和依赖注入（正经脸）"><a href="#1-2、控制反转和依赖注入（正经脸）" class="headerlink" title="1.2、控制反转和依赖注入（正经脸）"></a>1.2、控制反转和依赖注入（正经脸）</h4><p>以下来自百度百科</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">控制反转（Inversion of Control，缩写为IoC），是面向对象编程中的一种设计原则，</span><br><span class="line">可以用来减低计算机代码之间的耦合度。其中最常见的方式叫做依赖注入（Dependency </span><br><span class="line">Injection，简称DI。通过控制反转，对象在被创建的时候，由一个调控系统内所有对象</span><br><span class="line">的外界实体，将其所依赖的对象的引用传递给它。也可以说，依赖被注入到对象中。</span><br></pre></td></tr></table></figure>
+<p>是不是很晕，听不懂，如果你懂了，请直接跳过本博客，如果没看懂，请继续听我吹逼。<br>其实意思还是很简单的，就是为了解除Person和GirlFriend的耦合，在修改GirlFriend.name的同时不修改Person类，能不能做到呢，答案是肯定的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">class Person&#123;</span><br><span class="line">  GirlFriend girlFriend;</span><br><span class="line">  Person(GirlFriend girlFriend)&#123;</span><br><span class="line"> this.girlFriend = girlFriend;</span><br><span class="line">&#125;;</span><br><span class="line"> .........</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样就算你要天天换女朋友，又能保持自己的灵魂，你只要</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GirlFriend girlFriend=new GirlFriend(&quot;日向雏田&quot;);</span><br><span class="line">Person you= new Person(girlFriend);</span><br></pre></td></tr></table></figure>
+<p>字面意思就是将你女朋友注入到你中（为什么听起来优点别扭），这是通过构造函数依赖注入,而依赖注入有3种方式<br>分别为<strong>构造方法注入</strong>，<strong>setter注入</strong>，<strong>基于注解的注入</strong>。<br>思想和构造方法注入是一致的，比如<br><strong>setter函数注入</strong>：<br>其实也就是在Person中另外写一个函数来替代构造函数，然后在new person够调用这个函数。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">class Person&#123;</span><br><span class="line">  GirlFriend girlFriend;</span><br><span class="line">  SetGirlFriend(GirlFriend girlFriend)&#123;</span><br><span class="line"> this.girlFriend = girlFriend;</span><br><span class="line">&#125;;</span><br><span class="line">&#125;</span><br><span class="line">Person you=new Person();</span><br><span class="line">GirlFriend girlFriend=new GirlFriend(&quot;日向雏田&quot;);</span><br><span class="line">you.SetGirlFriend(girlFriend)</span><br></pre></td></tr></table></figure>
+<p><strong>基于注解的注入</strong>：<br>注解我看来就是为了加快人生进步发展（为了让后人偷懒），而定义的一些约定注释，提高我们的编程体验。<br>看一看spring有哪些关于注入的注解</p>
+<ol>
+<li>@Component注解：表明当前类为一个组件（bean）</li>
+<li>@Value注解：为bean注入值</li>
+<li>@Autowired注解 ：为bean注入其他bean（byType方式）</li>
+<li>@Qualifier注解：与Autowired注解联用实现byName方式注入</li>
+<li>@Resource注解：这个不是Spring提供的注解，这个是jdk提供的注解，要求jdk版本1.6以上，这个注解可以实现Autowired和Resource的功能。当直接注解@Resource时起到Autowired功能（byType），当加上参数@Resource（name&#x3D;”“）的时候，起到@Autowired和@Qualifier联合使用的功能（byName）</li>
+</ol>
+<p>当你能看到这里的时候，自然就会去学习注解的详细使用，这里只唠唠思维，就不展开。</p>
+<p><strong>控制反转</strong>名字由来：<br>对象A获得依赖对象B的过程,由主动行为变为了被动行为，控制权颠倒过来了，这就是“控制反转”这个名称的由来，其实就是通过IoC容器来关联这些对象类。这样对象与对象之间就通过IoC容器进行联系，但对象与对象之间并没有什么直接联系。在上面例子中，就是可以新建一个工厂类，专门生产女朋友的，然后你要什么女朋友通过调用女朋友工厂生产后再注入。<br><img src="/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/1.png"></p>
+<h3 id="二、AOP（面向切面编程）"><a href="#二、AOP（面向切面编程）" class="headerlink" title="二、AOP（面向切面编程）"></a>二、AOP（面向切面编程）</h3><p>先来一个官方书面表述：<br>AOP（Aspect Oriented Programming）意为：面向切面编程，通过预编译方式和运行期动态代理实现程序功能的统一维护的一种技术。AOP是OOP的延续，是软件开发中的一个热点，也是Spring框架中的一个重要内容（Spring核心之一），是函数式编程的一种衍生范型。利用AOP可以对业务逻辑的各个部分进行隔离，从而使得业务逻辑各部分之间的耦合度降低，提高程序的可重用性，同时提高了开发的效率。<br>（反正我第一遍是看不懂的）</p>
+<h4 id="2-1、面向切面是面向啥玩意："><a href="#2-1、面向切面是面向啥玩意：" class="headerlink" title="2.1、面向切面是面向啥玩意："></a>2.1、面向切面是面向啥玩意：</h4><p>我们先抛开Spring对于AOP的事件机制，单纯说一说面向切面编程，切面其实就是一些切面性问题的受力点，也叫横切性问题即<strong>和主业务逻辑无关，散落四方的一些方法</strong>。比如日志记录，效率检查，时间记录等等。<br>比如再次回到女朋友问题，假如一位情场高手打算出一本泡妞宝典，所以打算在每个女朋友追求到手后记录下经验，然后写入宝典，现在需求就是在确认关系上添加记录经验,所以现在是这样的：</p>
+<p>认识女朋友1—&gt;相遇—&gt;追求—&gt;<font color=red size=4 >确认关系</font>—&gt;分手<br>认识女朋友2—&gt;相遇—&gt;追求—&gt;<font color=red size=4 >确认关系</font>—&gt;分手<br>认识女朋友3—&gt;相遇—&gt;追求—&gt;<font color=red size=4 >确认关系</font>—&gt;分手<br>认识女朋友4—&gt;相遇—&gt;追求—&gt;<font color=red size=4 >确认关系</font>—&gt;分手<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;|👇|<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;|总结经验|</p>
+<p>再回到AOP编程思想中，由于总结经验对于每一场恋爱的主线没有直接关系，最多是人品问题（天地良心，我个人不是这样水性杨花的），所以可以把确认关系当一个<strong>切面</strong>，而横切的问题就是总结经验。在编程上，如果每个业务的横切问题单独编程就会产生大量的垃圾代码，所以采用AOP能够在编程上可以大大减少你的时间</p>
+<h4 id="2-2、Spring的AOP具体概念（比较硬核）"><a href="#2-2、Spring的AOP具体概念（比较硬核）" class="headerlink" title="2.2、Spring的AOP具体概念（比较硬核）"></a>2.2、Spring的AOP具体概念（比较硬核）</h4><p><strong>这里还是先给出一个比较专业的概念定义：</strong></p>
+<ol>
+<li>Aspect（切面）： Aspect 声明类似于 Java 中的类声明，在 Aspect 中会包含着一些 Pointcut 以及相应的 Advice。</li>
+<li>Joint point（连接点）：表示在程序中明确定义的点，典型的包括方法调用，对类成员的访问以及异常处理程序块的执行等等，它自身还可以嵌套其它 joint point。</li>
+<li>Pointcut（切点）：表示一组 joint point，这些 joint point 或是通过逻辑关系组合起来，或是通过通配、正则表达式等方式集中起来，它定义了相应的 Advice 将要发生的地方。</li>
+<li>Advice（增强）：Advice 定义了在 Pointcut 里面定义的程序点具体要做的操作，它通过 before、after 和 around 来区别是在每个 joint point 之前、之后还是代替执行的代码。</li>
+<li>Target（目标对象）：织入 Advice 的目标对象.。<br>Weaving（织入）：将 Aspect 和其他对象连接起来, 并创建 Adviced object 的过程</li>
+</ol>
+<p>（放弃吧，光看是看不懂的，去撸代码吧）<br><img src="/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/2.png"><br>本文只想通过简单的例子讲讲思想，具体代码就不涉及了，感兴趣可以另学，另外本文旨在于学习，本人从未参与里面任何事件逻辑，感谢迪丽热巴和雏田小姐姐的友情赞助照片。</p>
+<p><img src="/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/1.gif"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81DI-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5-%E5%92%8CIOC-%E6%8E%A7%E5%88%B6%E5%8F%8D%E8%BD%AC"><span class="toc-number">1.</span> <span class="toc-text">一、DI(依赖注入)和IOC(控制反转)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1%E3%80%81%E4%B8%87%E7%89%A9%E5%88%9D%E5%A7%8B"><span class="toc-number">1.1.</span> <span class="toc-text">1.1、万物初始</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2%E3%80%81%E6%8E%A7%E5%88%B6%E5%8F%8D%E8%BD%AC%E5%92%8C%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%EF%BC%88%E6%AD%A3%E7%BB%8F%E8%84%B8%EF%BC%89"><span class="toc-number">1.2.</span> <span class="toc-text">1.2、控制反转和依赖注入（正经脸）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81AOP%EF%BC%88%E9%9D%A2%E5%90%91%E5%88%87%E9%9D%A2%E7%BC%96%E7%A8%8B%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">二、AOP（面向切面编程）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1%E3%80%81%E9%9D%A2%E5%90%91%E5%88%87%E9%9D%A2%E6%98%AF%E9%9D%A2%E5%90%91%E5%95%A5%E7%8E%A9%E6%84%8F%EF%BC%9A"><span class="toc-number">2.1.</span> <span class="toc-text">2.1、面向切面是面向啥玩意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2%E3%80%81Spring%E7%9A%84AOP%E5%85%B7%E4%BD%93%E6%A6%82%E5%BF%B5%EF%BC%88%E6%AF%94%E8%BE%83%E7%A1%AC%E6%A0%B8%EF%BC%89"><span class="toc-number">2.2.</span> <span class="toc-text">2.2、Spring的AOP具体概念（比较硬核）</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/&text=Spring三大思想"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/&title=Spring三大思想"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/&is_video=false&description=Spring三大思想"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Spring三大思想&body=Check out this article: http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/&title=Spring三大思想"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/&title=Spring三大思想"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/&title=Spring三大思想"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/&title=Spring三大思想"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/&name=Spring三大思想&description=&lt;h3 id=&#34;一、DI-依赖注入-和IOC-控制反转&#34;&gt;&lt;a href=&#34;#一、DI-依赖注入-和IOC-控制反转&#34; class=&#34;headerlink&#34; title=&#34;一、DI(依赖注入)和IOC(控制反转)&#34;&gt;&lt;/a&gt;一、DI(依赖注入)和IOC(控制反转)&lt;/h3&gt;&lt;p&gt;Spring的三大思想为DI(依赖注入)，IOC(控制反转)，AOP（面向切面编程）。既然在学Spring就认真学一些思想，而不是仅仅停留在复制粘贴CURD的层面，这也许就是码农的自我修养吧。&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/02/27/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/&t=Spring三大思想"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

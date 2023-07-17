@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="之前一直会碰到拼二维码什么的，总是浪费很多时间最近看到一个大师傅的一个想法，通过图片的修改时间来拼图Orz主要是os模块对文件的操作">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python拼图">
+<meta property="og:url" content="http://example.com/2019/09/21/Python%E6%8B%BC%E5%9B%BE/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="之前一直会碰到拼二维码什么的，总是浪费很多时间最近看到一个大师傅的一个想法，通过图片的修改时间来拼图Orz主要是os模块对文件的操作">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/1.png">
+<meta property="og:image" content="http://example.com/2.png">
+<meta property="article:published_time" content="2019-09-20T16:07:28.000Z">
+<meta property="article:modified_time" content="2020-11-24T04:52:10.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Python拼图</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2019/10/03/PHP%E6%96%87%E6%A1%A3%E7%9A%84%E4%B8%80%E4%BA%9B%E7%AC%94%E8%AE%B0/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2019/09/18/%E4%BB%8Eret2libc%E4%B8%AD%E5%AD%A6%E4%B9%A0GOT%E8%A1%A8%E5%92%8CPLT%E8%A1%A8%E4%BB%A5%E5%8F%8A%E5%8A%A8%E6%80%81%E8%AE%A1%E7%AE%97%E5%81%8F%E7%A7%BB/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/09/21/Python%E6%8B%BC%E5%9B%BE/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/09/21/Python%E6%8B%BC%E5%9B%BE/&text=Python拼图"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/09/21/Python%E6%8B%BC%E5%9B%BE/&title=Python拼图"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/09/21/Python%E6%8B%BC%E5%9B%BE/&is_video=false&description=Python拼图"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Python拼图&body=Check out this article: http://example.com/2019/09/21/Python%E6%8B%BC%E5%9B%BE/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/09/21/Python%E6%8B%BC%E5%9B%BE/&title=Python拼图"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/09/21/Python%E6%8B%BC%E5%9B%BE/&title=Python拼图"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/09/21/Python%E6%8B%BC%E5%9B%BE/&title=Python拼图"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/09/21/Python%E6%8B%BC%E5%9B%BE/&title=Python拼图"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/09/21/Python%E6%8B%BC%E5%9B%BE/&name=Python拼图&description=&lt;h3 id=&#34;之前一直会碰到拼二维码什么的，总是浪费很多时间最近看到一个大师傅的一个想法，通过图片的修改时间来拼图Orz&#34;&gt;&lt;a href=&#34;#之前一直会碰到拼二维码什么的，总是浪费很多时间最近看到一个大师傅的一个想法，通过图片的修改时间来拼图Orz&#34; class=&#34;headerlink&#34; title=&#34;之前一直会碰到拼二维码什么的，总是浪费很多时间最近看到一个大师傅的一个想法，通过图片的修改时间来拼图Orz&#34;&gt;&lt;/a&gt;之前一直会碰到拼二维码什么的，总是浪费很多时间最近看到一个大师傅的一个想法，通过图片的修改时间来拼图Orz&lt;/h3&gt;&lt;p&gt;主要是os模块对文件的操作&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/09/21/Python%E6%8B%BC%E5%9B%BE/&t=Python拼图"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B9%8B%E5%89%8D%E4%B8%80%E7%9B%B4%E4%BC%9A%E7%A2%B0%E5%88%B0%E6%8B%BC%E4%BA%8C%E7%BB%B4%E7%A0%81%E4%BB%80%E4%B9%88%E7%9A%84%EF%BC%8C%E6%80%BB%E6%98%AF%E6%B5%AA%E8%B4%B9%E5%BE%88%E5%A4%9A%E6%97%B6%E9%97%B4%E6%9C%80%E8%BF%91%E7%9C%8B%E5%88%B0%E4%B8%80%E4%B8%AA%E5%A4%A7%E5%B8%88%E5%82%85%E7%9A%84%E4%B8%80%E4%B8%AA%E6%83%B3%E6%B3%95%EF%BC%8C%E9%80%9A%E8%BF%87%E5%9B%BE%E7%89%87%E7%9A%84%E4%BF%AE%E6%94%B9%E6%97%B6%E9%97%B4%E6%9D%A5%E6%8B%BC%E5%9B%BEOrz"><span class="toc-number">1.</span> <span class="toc-text">之前一直会碰到拼二维码什么的，总是浪费很多时间最近看到一个大师傅的一个想法，通过图片的修改时间来拼图Orz</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2019121"><span class="toc-number">2.</span> <span class="toc-text">2019121</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Python拼图
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-09-20T16:07:28.000Z" class="dt-published" itemprop="datePublished">2019-09-21</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Misc/">Misc</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Python/" rel="tag">Python</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h3 id="之前一直会碰到拼二维码什么的，总是浪费很多时间最近看到一个大师傅的一个想法，通过图片的修改时间来拼图Orz"><a href="#之前一直会碰到拼二维码什么的，总是浪费很多时间最近看到一个大师傅的一个想法，通过图片的修改时间来拼图Orz" class="headerlink" title="之前一直会碰到拼二维码什么的，总是浪费很多时间最近看到一个大师傅的一个想法，通过图片的修改时间来拼图Orz"></a>之前一直会碰到拼二维码什么的，总是浪费很多时间最近看到一个大师傅的一个想法，通过图片的修改时间来拼图Orz</h3><p>主要是os模块对文件的操作</p>
+<span id="more"></span>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line">file=<span class="string">&#x27;1.mp4&#x27;</span></span><br><span class="line">os.path.getatime(file)   <span class="comment">#输出最近访问时间1318921018.0</span></span><br><span class="line">os.path.getctime(file)   <span class="comment">#输出文件创建时间</span></span><br><span class="line">os.path.getmtime(file)   <span class="comment">#输出最近修改时间</span></span><br><span class="line">time.gmtime(os.path.getmtime(file))   <span class="comment">#以struct_time形式输出最近修改时间</span></span><br><span class="line">os.path.getsize(file)    <span class="comment">#输出文件大小（字节为单位）</span></span><br><span class="line">os.path.abspath(file)    <span class="comment">#输出绝对路径&#x27;/Volumes/Leopard/Users/Caroline/Desktop/1.mp4&#x27;</span></span><br><span class="line">os.path.normpath(file)   <span class="comment">#输出&#x27;/Volumes/Leopard/Users/Caroline/Desktop/1.mp4&#x27;</span></span><br></pre></td></tr></table></figure>
+<!--more-->
+<p>比如说这样一大堆的拼图<br><img src="/1.png"><br>手动拼肯定人都要没了，基于时间考虑就是默认认为图片碎片生成的时间是有规律的，从上往下，由左至右<br>我们利用<code>os.path.getmtime(file)   #输出最近修改时间</code>即可快速完成</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># coding=utf-8</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line">path = <span class="string">&quot;./all/&quot;</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_file_list</span>(<span class="params">file_path</span>):</span><br><span class="line">    dir_list = os.listdir(file_path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> dir_list:</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        dir_list = <span class="built_in">sorted</span>(dir_list,  key=<span class="keyword">lambda</span> x: os.path.getmtime(os.path.join(file_path, x)))</span><br><span class="line">        <span class="built_in">print</span>(dir_list)</span><br><span class="line">        <span class="keyword">return</span> dir_list</span><br><span class="line">list_im = get_file_list(path)</span><br><span class="line">column = <span class="number">6</span></span><br><span class="line">row_num = <span class="number">6</span></span><br><span class="line">width = <span class="number">51</span></span><br><span class="line">height = <span class="number">51</span></span><br><span class="line">imgs = [Image.<span class="built_in">open</span>(path+i) <span class="keyword">for</span> i <span class="keyword">in</span> list_im]</span><br><span class="line">target = Image.new(<span class="string">&#x27;RGB&#x27;</span>, (width*column, height*row_num))</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(list_im)):</span><br><span class="line">    <span class="keyword">if</span> i % column == <span class="number">0</span>:</span><br><span class="line">        end = <span class="built_in">len</span>(list_im) <span class="keyword">if</span> i + column &gt; <span class="built_in">len</span>(list_im) <span class="keyword">else</span> i + column </span><br><span class="line">        <span class="keyword">for</span> col, image <span class="keyword">in</span> <span class="built_in">enumerate</span>(imgs[i:i+column]):</span><br><span class="line">            target.paste(image, (width*col, height*(i//column), </span><br><span class="line">                                 width*(col + <span class="number">1</span>), height*(i//column + <span class="number">1</span>)))   </span><br><span class="line">target.show()</span><br></pre></td></tr></table></figure>
+<p><img src="/2.png"><br>Orz</p>
+<h3 id="2019121"><a href="#2019121" class="headerlink" title="2019121"></a>2019121</h3><p>又出现了，这回要自己改一下长度和后缀，容易改乱了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line">path = <span class="string">&quot;./result/&quot;</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_file_list</span>(<span class="params">file_path</span>):</span><br><span class="line">    dir_list = os.listdir(file_path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> dir_list:</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        dir_list = <span class="built_in">sorted</span>(dir_list,  key=<span class="keyword">lambda</span> x: os.path.getmtime(os.path.join(file_path, x)))</span><br><span class="line">        <span class="built_in">print</span>(dir_list)</span><br><span class="line">        <span class="keyword">return</span> dir_list</span><br><span class="line"></span><br><span class="line">list_im = get_file_list(path)</span><br><span class="line">column = <span class="number">6</span></span><br><span class="line">row_num = <span class="number">6</span></span><br><span class="line">width = <span class="number">134</span></span><br><span class="line">height = <span class="number">134</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> list_im:</span><br><span class="line">	os.rename(path+i,path+i+<span class="string">&#x27;.png&#x27;</span>)</span><br><span class="line">	img = Image.<span class="built_in">open</span>(path+i+<span class="string">&#x27;.png&#x27;</span>)</span><br><span class="line">	out = img.resize((width, height),Image.ANTIALIAS)</span><br><span class="line">	os.remove(path+i+<span class="string">&#x27;.png&#x27;</span>)</span><br><span class="line">	out.save(path+i+<span class="string">&#x27;.png&#x27;</span>, <span class="string">&#x27;png&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">imgs = [Image.<span class="built_in">open</span>(path+i+<span class="string">&#x27;.png&#x27;</span>) <span class="keyword">for</span> i <span class="keyword">in</span> list_im]</span><br><span class="line">target = Image.new(<span class="string">&#x27;RGB&#x27;</span>, (width*column, height*row_num))</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(list_im)):</span><br><span class="line">    <span class="keyword">if</span> i % column == <span class="number">0</span>:</span><br><span class="line">        end = <span class="built_in">len</span>(list_im) <span class="keyword">if</span> i + column &gt; <span class="built_in">len</span>(list_im) <span class="keyword">else</span> i + column </span><br><span class="line">        <span class="keyword">for</span> col, image <span class="keyword">in</span> <span class="built_in">enumerate</span>(imgs[i:i+column]):</span><br><span class="line">            target.paste(image, (width*col, height*(i//column), </span><br><span class="line">                                 width*(col + <span class="number">1</span>), height*(i//column + <span class="number">1</span>)))   </span><br><span class="line"></span><br><span class="line">target.show()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B9%8B%E5%89%8D%E4%B8%80%E7%9B%B4%E4%BC%9A%E7%A2%B0%E5%88%B0%E6%8B%BC%E4%BA%8C%E7%BB%B4%E7%A0%81%E4%BB%80%E4%B9%88%E7%9A%84%EF%BC%8C%E6%80%BB%E6%98%AF%E6%B5%AA%E8%B4%B9%E5%BE%88%E5%A4%9A%E6%97%B6%E9%97%B4%E6%9C%80%E8%BF%91%E7%9C%8B%E5%88%B0%E4%B8%80%E4%B8%AA%E5%A4%A7%E5%B8%88%E5%82%85%E7%9A%84%E4%B8%80%E4%B8%AA%E6%83%B3%E6%B3%95%EF%BC%8C%E9%80%9A%E8%BF%87%E5%9B%BE%E7%89%87%E7%9A%84%E4%BF%AE%E6%94%B9%E6%97%B6%E9%97%B4%E6%9D%A5%E6%8B%BC%E5%9B%BEOrz"><span class="toc-number">1.</span> <span class="toc-text">之前一直会碰到拼二维码什么的，总是浪费很多时间最近看到一个大师傅的一个想法，通过图片的修改时间来拼图Orz</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2019121"><span class="toc-number">2.</span> <span class="toc-text">2019121</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/09/21/Python%E6%8B%BC%E5%9B%BE/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/09/21/Python%E6%8B%BC%E5%9B%BE/&text=Python拼图"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/09/21/Python%E6%8B%BC%E5%9B%BE/&title=Python拼图"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/09/21/Python%E6%8B%BC%E5%9B%BE/&is_video=false&description=Python拼图"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Python拼图&body=Check out this article: http://example.com/2019/09/21/Python%E6%8B%BC%E5%9B%BE/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/09/21/Python%E6%8B%BC%E5%9B%BE/&title=Python拼图"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/09/21/Python%E6%8B%BC%E5%9B%BE/&title=Python拼图"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/09/21/Python%E6%8B%BC%E5%9B%BE/&title=Python拼图"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/09/21/Python%E6%8B%BC%E5%9B%BE/&title=Python拼图"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/09/21/Python%E6%8B%BC%E5%9B%BE/&name=Python拼图&description=&lt;h3 id=&#34;之前一直会碰到拼二维码什么的，总是浪费很多时间最近看到一个大师傅的一个想法，通过图片的修改时间来拼图Orz&#34;&gt;&lt;a href=&#34;#之前一直会碰到拼二维码什么的，总是浪费很多时间最近看到一个大师傅的一个想法，通过图片的修改时间来拼图Orz&#34; class=&#34;headerlink&#34; title=&#34;之前一直会碰到拼二维码什么的，总是浪费很多时间最近看到一个大师傅的一个想法，通过图片的修改时间来拼图Orz&#34;&gt;&lt;/a&gt;之前一直会碰到拼二维码什么的，总是浪费很多时间最近看到一个大师傅的一个想法，通过图片的修改时间来拼图Orz&lt;/h3&gt;&lt;p&gt;主要是os模块对文件的操作&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/09/21/Python%E6%8B%BC%E5%9B%BE/&t=Python拼图"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

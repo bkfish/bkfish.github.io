@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="说在前面的一些废话，如果你困了，请直接跳至正文刚入学就买的这本《深入理解计算机系统》。一年多来，学学停停，但是永远记住了第一章第二段的第二句话12如果你全力投身学习本书的概念，完全理解底层计算机系统以及它对应用程序的影响那么你会走向为数不多的“大牛”的道路">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP又双叒叕来一遍之计算机系统漫游">
+<meta property="og:url" content="http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="说在前面的一些废话，如果你困了，请直接跳至正文刚入学就买的这本《深入理解计算机系统》。一年多来，学学停停，但是永远记住了第一章第二段的第二句话12如果你全力投身学习本书的概念，完全理解底层计算机系统以及它对应用程序的影响那么你会走向为数不多的“大牛”的道路">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/huibian.jpg">
+<meta property="og:image" content="http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/1-4.jpg">
+<meta property="og:image" content="http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/1-9.png">
+<meta property="og:image" content="http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/chouxiang.jpg">
+<meta property="og:image" content="http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/1-13.png">
+<meta property="article:published_time" content="2018-12-03T15:47:13.000Z">
+<meta property="article:modified_time" content="2020-11-24T04:49:36.000Z">
+<meta property="article:author" content="Bkfish">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/huibian.jpg">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>CSAPP又双叒叕来一遍之计算机系统漫游</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2018/12/06/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2018/12/03/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%9A%A7%E6%98%A7%E7%BC%A0%E7%BB%B5/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/&text=CSAPP又双叒叕来一遍之计算机系统漫游"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/&title=CSAPP又双叒叕来一遍之计算机系统漫游"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/&is_video=false&description=CSAPP又双叒叕来一遍之计算机系统漫游"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=CSAPP又双叒叕来一遍之计算机系统漫游&body=Check out this article: http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/&title=CSAPP又双叒叕来一遍之计算机系统漫游"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/&title=CSAPP又双叒叕来一遍之计算机系统漫游"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/&title=CSAPP又双叒叕来一遍之计算机系统漫游"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/&title=CSAPP又双叒叕来一遍之计算机系统漫游"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/&name=CSAPP又双叒叕来一遍之计算机系统漫游&description=&lt;h2 id=&#34;说在前面的一些废话，如果你困了，请直接跳至正文&#34;&gt;&lt;a href=&#34;#说在前面的一些废话，如果你困了，请直接跳至正文&#34; class=&#34;headerlink&#34; title=&#34;说在前面的一些废话，如果你困了，请直接跳至正文&#34;&gt;&lt;/a&gt;说在前面的一些废话，如果你困了，请直接跳至正文&lt;/h2&gt;&lt;h5 id=&#34;刚入学就买的这本《深入理解计算机系统》。一年多来，学学停停，但是永远记住了第一章第二段的第二句话&#34;&gt;&lt;a href=&#34;#刚入学就买的这本《深入理解计算机系统》。一年多来，学学停停，但是永远记住了第一章第二段的第二句话&#34; class=&#34;headerlink&#34; title=&#34;刚入学就买的这本《深入理解计算机系统》。一年多来，学学停停，但是永远记住了第一章第二段的第二句话&#34;&gt;&lt;/a&gt;刚入学就买的这本《深入理解计算机系统》。一年多来，学学停停，但是永远记住了第一章第二段的第二句话&lt;/h5&gt;&lt;figure class=&#34;highlight plaintext&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;如果你全力投身学习本书的概念，完全理解底层计算机系统以及它对应用程序的影响&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;那么你会走向为数不多的“大牛”的道路&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/&t=CSAPP又双叒叕来一遍之计算机系统漫游"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%B4%E5%9C%A8%E5%89%8D%E9%9D%A2%E7%9A%84%E4%B8%80%E4%BA%9B%E5%BA%9F%E8%AF%9D%EF%BC%8C%E5%A6%82%E6%9E%9C%E4%BD%A0%E5%9B%B0%E4%BA%86%EF%BC%8C%E8%AF%B7%E7%9B%B4%E6%8E%A5%E8%B7%B3%E8%87%B3%E6%AD%A3%E6%96%87"><span class="toc-number">1.</span> <span class="toc-text">说在前面的一些废话，如果你困了，请直接跳至正文</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%88%9A%E5%85%A5%E5%AD%A6%E5%B0%B1%E4%B9%B0%E7%9A%84%E8%BF%99%E6%9C%AC%E3%80%8A%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E3%80%8B%E3%80%82%E4%B8%80%E5%B9%B4%E5%A4%9A%E6%9D%A5%EF%BC%8C%E5%AD%A6%E5%AD%A6%E5%81%9C%E5%81%9C%EF%BC%8C%E4%BD%86%E6%98%AF%E6%B0%B8%E8%BF%9C%E8%AE%B0%E4%BD%8F%E4%BA%86%E7%AC%AC%E4%B8%80%E7%AB%A0%E7%AC%AC%E4%BA%8C%E6%AE%B5%E7%9A%84%E7%AC%AC%E4%BA%8C%E5%8F%A5%E8%AF%9D"><span class="toc-number">1.0.0.1.</span> <span class="toc-text">刚入学就买的这本《深入理解计算机系统》。一年多来，学学停停，但是永远记住了第一章第二段的第二句话</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%A5%BD%E4%B8%80%E4%B8%AA%E5%A4%A7%E7%89%9B%E7%9A%84%E9%81%93%E8%B7%AF%EF%BC%8C%E5%AF%B9%E4%BA%8E%E7%83%AD%E7%88%B1%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E4%BA%BA%E6%9D%A5%E8%AF%B4%E7%9A%84%E2%80%9C%E5%A4%A7%E7%89%9B%E7%9A%84%E9%81%93%E8%B7%AF%E2%80%9D-%E5%92%8C-%E7%88%B1%E5%A5%BD%E9%92%B1%E8%B4%A2%E7%9A%84%E4%BA%BA%E7%9A%84%E2%80%9C%E5%AF%8C%E5%A9%86%E5%8C%85%E5%85%BB%E8%B7%AF%E2%80%9D%EF%BC%88%E6%88%96%E8%80%85%E6%98%AF%E5%AF%8C%E8%90%9D%E8%8E%89%EF%BC%89%E5%9C%B0%E4%BD%8D%E7%9B%B8%E5%90%8C"><span class="toc-number">1.0.0.2.</span> <span class="toc-text">好一个大牛的道路，对于热爱计算机的人来说的“大牛的道路” 和 爱好钱财的人的“富婆包养路”（或者是富萝莉）地位相同</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%86%E6%98%AF%E5%BE%80%E6%98%94%E4%B8%8D%E5%8F%AF%E5%BF%86%EF%BC%8C%E5%88%87%E8%AE%B0%E4%B8%8D%E8%A6%81%E5%86%8D%E6%B5%AA%E8%B4%B9%E8%87%AA%E5%B7%B1%E7%9A%84%E9%9D%92%E6%98%A5%E5%92%8C%E5%85%83%E6%B0%94%E3%80%82"><span class="toc-number">1.0.1.</span> <span class="toc-text">但是往昔不可忆，切记不要再浪费自己的青春和元气。</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%80%E4%BB%A5%E9%87%8D%E6%95%B4%E6%97%97%E9%BC%93%EF%BC%8C%E8%BF%99%E5%9B%9E%E6%83%B3%E8%AE%A4%E7%9C%9F%E6%80%BB%E7%BB%93%E4%B8%80%E4%B8%8B%EF%BC%88%E6%84%9F%E8%A8%80%E7%BB%93%E6%9D%9F%EF%BC%8C%E7%96%AF%E7%8B%82%E6%9A%97%E7%A4%BA%E2%99%82%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">所以重整旗鼓，这回想认真总结一下（感言结束，疯狂暗示♂）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%88%86%E6%9E%90hello-c%E7%9A%84%E4%BE%8B%E5%AD%90%EF%BC%8C%E4%BB%8E%E5%85%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%88%86%E6%9E%90%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="toc-number">2.1.</span> <span class="toc-text">一、分析hello.c的例子，从其生命周期分析系统的执行过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E8%BF%99%E5%9B%9B%E4%B8%AA%E9%98%B6%E6%AE%B5%E7%9A%84%E7%A8%8B%E5%BA%8F-%E9%A2%84%E5%A4%84%E7%90%86%E5%99%A8%E3%80%81%E7%BC%96%E8%AF%91%E5%99%A8%E3%80%81%E6%B1%87%E7%BC%96%E5%99%A8%E3%80%81%E9%93%BE%E6%8E%A5%E5%99%A8-%E4%B8%80%E8%B5%B7%E6%9E%84%E6%88%90%E4%BA%86%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F-compilation-system"><span class="toc-number">2.1.1.</span> <span class="toc-text">执行这四个阶段的程序(预处理器、编译器、汇编器、链接器)一起构成了编译系统(compilation system).</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E4%BF%A1%E6%81%AF%E5%B0%B1%E6%98%AF%E4%BD%8D-%E4%B8%8A%E4%B8%8B%E6%96%87"><span class="toc-number">2.2.</span> <span class="toc-text">二、信息就是位+上下文</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90"><span class="toc-number">2.3.</span> <span class="toc-text">三、系统的硬件组成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E5%AD%98%E5%82%A8%E8%AE%BE%E5%A4%87%E5%BD%A2%E6%88%90%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84"><span class="toc-number">2.4.</span> <span class="toc-text">四、存储设备形成层次结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E7%BA%BF%E7%A8%8B%E8%BF%9B%E7%A8%8B%EF%BC%8C%E5%8D%95%E7%8B%AC%E5%88%86%E7%A6%BB%E5%86%99%E4%BA%86%E4%B8%AA%E5%8D%9A%E5%AE%A2%EF%BC%8C%E8%BF%99%E9%87%8C%E4%B8%8D%E9%87%8D%E5%A4%8D"><span class="toc-number">2.5.</span> <span class="toc-text">五、线程进程，单独分离写了个博客，这里不重复</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%AD%E6%8A%BD%E8%B1%A1%E7%9A%84%E9%87%8D%E8%A6%81%E6%80%A7"><span class="toc-number">2.6.</span> <span class="toc-text">六、计算机系统中抽象的重要性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98"><span class="toc-number">2.7.</span> <span class="toc-text">七、虚拟内存</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E6%98%AF%E4%B8%80%E4%B8%AA%E6%8A%BD%E8%B1%A1%E6%A6%82%E5%BF%B5%EF%BC%8C%E5%AE%83%E4%B8%BA%E6%AF%8F%E4%B8%AA%E8%BF%9B%E7%A8%8B%E6%8F%90%E4%BE%9B%E4%BA%86%E4%B8%80%E4%B8%AA%E5%81%87%E8%B1%A1%EF%BC%8C%E5%8D%B3%E6%AF%8F%E4%B8%AA%E8%BF%9B%E7%A8%8B%E9%83%BD%E5%9C%A8%E7%8B%AC%E5%8D%A0%E5%9C%B0%E4%BD%BF%E7%94%A8%E4%B8%BB%E5%AD%98%E3%80%82"><span class="toc-number">2.7.1.</span> <span class="toc-text">虚拟内存是一个抽象概念，它为每个进程提供了一个假象，即每个进程都在独占地使用主存。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AF%8F%E4%B8%AA%E8%BF%9B%E7%A8%8B%E7%9C%8B%E5%88%B0%E7%9A%84%E5%86%85%E5%AD%98%E9%83%BD%E6%98%AF%E4%B8%80%E8%87%B4%E7%9A%84%EF%BC%8C%E7%A7%B0%E4%B8%BA%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E3%80%82%E5%9C%A8linux%E4%B8%AD%EF%BC%8C%E8%BF%9B%E7%A8%8B%E7%9A%84%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%A6%82%E4%B8%8B%E5%9B%BE"><span class="toc-number">2.7.2.</span> <span class="toc-text">每个进程看到的内存都是一致的，称为虚拟地址空间。在linux中，进程的虚拟地址空间如下图</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A%E7%94%B1%E4%BA%8E%E6%9C%AC%E7%AB%A0%E5%8F%AA%E6%98%AF%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%BC%AB%E6%B8%B8%EF%BC%8C%E6%95%85%E5%8F%AA%E9%98%90%E9%87%8A%E4%BA%86%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E5%A4%A7%E6%A6%82%EF%BC%8C%E5%85%B7%E4%BD%93%E7%BB%86%E8%8A%82%E5%90%8E%E9%9D%A2%E7%AB%A0%E8%8A%82%EF%BC%8C%E6%85%A2%E6%85%A2%E5%B1%95%E5%BC%80"><span class="toc-number">2.8.</span> <span class="toc-text">总结：由于本章只是计算机漫游，故只阐释了计算机的大概，具体细节后面章节，慢慢展开</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        CSAPP又双叒叕来一遍之计算机系统漫游
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-12-03T15:47:13.000Z" class="dt-published" itemprop="datePublished">2018-12-03</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/CSAPP/">CSAPP</a>
+    </div>
+
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="说在前面的一些废话，如果你困了，请直接跳至正文"><a href="#说在前面的一些废话，如果你困了，请直接跳至正文" class="headerlink" title="说在前面的一些废话，如果你困了，请直接跳至正文"></a>说在前面的一些废话，如果你困了，请直接跳至正文</h2><h5 id="刚入学就买的这本《深入理解计算机系统》。一年多来，学学停停，但是永远记住了第一章第二段的第二句话"><a href="#刚入学就买的这本《深入理解计算机系统》。一年多来，学学停停，但是永远记住了第一章第二段的第二句话" class="headerlink" title="刚入学就买的这本《深入理解计算机系统》。一年多来，学学停停，但是永远记住了第一章第二段的第二句话"></a>刚入学就买的这本《深入理解计算机系统》。一年多来，学学停停，但是永远记住了第一章第二段的第二句话</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">如果你全力投身学习本书的概念，完全理解底层计算机系统以及它对应用程序的影响</span><br><span class="line">那么你会走向为数不多的“大牛”的道路</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h5 id="好一个大牛的道路，对于热爱计算机的人来说的“大牛的道路”-和-爱好钱财的人的“富婆包养路”（或者是富萝莉）地位相同"><a href="#好一个大牛的道路，对于热爱计算机的人来说的“大牛的道路”-和-爱好钱财的人的“富婆包养路”（或者是富萝莉）地位相同" class="headerlink" title="好一个大牛的道路，对于热爱计算机的人来说的“大牛的道路” 和 爱好钱财的人的“富婆包养路”（或者是富萝莉）地位相同"></a>好一个大牛的道路，对于热爱计算机的人来说的“大牛的道路” 和 爱好钱财的人的“富婆包养路”（或者是富萝莉）地位相同</h5><p>在这句话的驱动下（多少人和我一样啊），这本书是我花费最多时间和精力去啃的专业书籍<br>这本书确实无敌到能让一个完全不懂的孩童般见识到了计算机专业广阔无垠、波澜壮阔的海洋。<br>惭愧的是自己完全没有达到大牛们啃完后通彻计算机系统的境界<br>即便是如此我还是受益匪浅，CSAPP无愧为计算机专业的神书！<br>如今我已经大二，按理说是踌躇满志的时候，我却满是遗憾，遗憾自己大一后半学期的固步自封，<br>浪费了那么多宝贵的青春年华在毫无意义的事物上，追求短暂的愉悦却荒芜了年华。</p>
+<h4 id="但是往昔不可忆，切记不要再浪费自己的青春和元气。"><a href="#但是往昔不可忆，切记不要再浪费自己的青春和元气。" class="headerlink" title="但是往昔不可忆，切记不要再浪费自己的青春和元气。"></a>但是往昔不可忆，切记不要再浪费自己的青春和元气。</h4><h2 id="所以重整旗鼓，这回想认真总结一下（感言结束，疯狂暗示♂）"><a href="#所以重整旗鼓，这回想认真总结一下（感言结束，疯狂暗示♂）" class="headerlink" title="所以重整旗鼓，这回想认真总结一下（感言结束，疯狂暗示♂）"></a>所以重整旗鼓，这回想认真总结一下（感言结束，疯狂暗示♂）</h2><h3 id="一、分析hello-c的例子，从其生命周期分析系统的执行过程"><a href="#一、分析hello-c的例子，从其生命周期分析系统的执行过程" class="headerlink" title="一、分析hello.c的例子，从其生命周期分析系统的执行过程"></a>一、分析hello.c的例子，从其生命周期分析系统的执行过程</h3><p>hello.c 源代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">   printf(&quot;hello world&quot;);</span><br><span class="line">   return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>在Unix系统上,从源文件到目标文件的转化是由编译器驱动程序完成的:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">unix&gt;gcc -o hello hello.c</span><br></pre></td></tr></table></figure>
+<p><img src="/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/huibian.jpg"></p>
+<h4 id="执行这四个阶段的程序-预处理器、编译器、汇编器、链接器-一起构成了编译系统-compilation-system"><a href="#执行这四个阶段的程序-预处理器、编译器、汇编器、链接器-一起构成了编译系统-compilation-system" class="headerlink" title="执行这四个阶段的程序(预处理器、编译器、汇编器、链接器)一起构成了编译系统(compilation system)."></a>执行这四个阶段的程序(预处理器、编译器、汇编器、链接器)一起构成了编译系统(compilation system).</h4><ol>
+<li>预处理阶段:也就是对程序进行预处理。C程序中特指“”#“”包含的库文件。预处理器将库文件直接导入到源代码中，<br>此例就是将头文件“stdio.h”导入到源程序中，生成hello.i源代码。</li>
+<li>编译阶段:编译器(ccl)将文本文件hello.i翻译成文本文件hello.s,它包含一个汇编语言程序.</li>
+<li>汇编阶段: 将汇编语言转化为机器指令,生成二进制文件——hello.o。</li>
+<li>链接阶段.目标文件合并到我们的hello.o程序中,链接器就处理这种合并.得到hello文件,一个可执行目标文件,可以被加载到内存中,由系统执行.</li>
+</ol>
+<h3 id="二、信息就是位-上下文"><a href="#二、信息就是位-上下文" class="headerlink" title="二、信息就是位+上下文"></a>二、信息就是位+上下文</h3><p>源程序实际上就是由一个值0和1组成的位(bit)序列,8个位被组织成一组,称为字节.每个字节表示程序中某个文本字符.<br>大部分现代系统都是有ASCII标准表示文本字符,只由ASCII字符构成的文件称为文本文件,所有其他文件都称为二进制文件<br>系统中所有的信息—–包括磁盘文件、存储器中的程序、存储器中存放的用户数据以及网络上传送的数据,都是由一串位表示的.区分不同数据对象的唯一方法是我们读到这些数据对象时的上下文.比如:在不同的上下文中,一个同样的字节序列可能表示一个整数、浮点数、字符串或者机器指令. </p>
+<h3 id="三、系统的硬件组成"><a href="#三、系统的硬件组成" class="headerlink" title="三、系统的硬件组成"></a>三、系统的硬件组成</h3><p><img src="/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/1-4.jpg"><br><strong>CPU</strong>:中央处理单元 &ensp; <strong>ALU</strong>:算术&#x2F;逻辑单元 &ensp;<strong>PC</strong>:程序计数器 &ensp;<strong>USB</strong>:通用串行总线</p>
+<ul>
+<li>总线贯穿整个系统的是一组电子管道,称做总线,它携带信息字节并负责在各个部件间传递.</li>
+<li>I&#x2F;O设备:输入&#x2F;输出(I&#x2F;O)设备是系统与外部世界的联系通道</li>
+<li>主存:主存是一个临时存储设备,在处理器执行程序时,用来存放程序和程序处理的数据.</li>
+<li>处理器:中央处理单元(CPU),简称处理器,是解释(或执行)存储在主存中指令的引擎.<br>处理器的核心是一个字长的存储设备(或寄存器),称为程序计数器(PC).</li>
+</ul>
+<h3 id="四、存储设备形成层次结构"><a href="#四、存储设备形成层次结构" class="headerlink" title="四、存储设备形成层次结构"></a>四、存储设备形成层次结构</h3><p>存储器层次结构的主要思想是一层上的存储器作为低一层存储器的高速缓存.<br><img src="/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/1-9.png"></p>
+<h3 id="五、线程进程，单独分离写了个博客，这里不重复"><a href="#五、线程进程，单独分离写了个博客，这里不重复" class="headerlink" title="五、线程进程，单独分离写了个博客，这里不重复"></a>五、线程进程，单独分离写了个博客，这里不重复</h3><h3 id="六、计算机系统中抽象的重要性"><a href="#六、计算机系统中抽象的重要性" class="headerlink" title="六、计算机系统中抽象的重要性"></a>六、计算机系统中抽象的重要性</h3><ul>
+<li>文件是对I&#x2F;O的抽象</li>
+<li>虚拟存储器是对程序存储器的抽象.</li>
+<li>进程是对一个正在运行的程序的抽象.</li>
+<li>虚拟机,它提供对整个计算机(操作系统,处理器和程序)的抽象.</li>
+</ul>
+<p><img src="/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/chouxiang.jpg"></p>
+<h3 id="七、虚拟内存"><a href="#七、虚拟内存" class="headerlink" title="七、虚拟内存"></a>七、虚拟内存</h3><h4 id="虚拟内存是一个抽象概念，它为每个进程提供了一个假象，即每个进程都在独占地使用主存。"><a href="#虚拟内存是一个抽象概念，它为每个进程提供了一个假象，即每个进程都在独占地使用主存。" class="headerlink" title="虚拟内存是一个抽象概念，它为每个进程提供了一个假象，即每个进程都在独占地使用主存。"></a>虚拟内存是一个抽象概念，它为每个进程提供了一个假象，即每个进程都在独占地使用主存。</h4><h4 id="每个进程看到的内存都是一致的，称为虚拟地址空间。在linux中，进程的虚拟地址空间如下图"><a href="#每个进程看到的内存都是一致的，称为虚拟地址空间。在linux中，进程的虚拟地址空间如下图" class="headerlink" title="每个进程看到的内存都是一致的，称为虚拟地址空间。在linux中，进程的虚拟地址空间如下图"></a>每个进程看到的内存都是一致的，称为虚拟地址空间。在linux中，进程的虚拟地址空间如下图</h4><p><img src="/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/1-13.png"></p>
+<ul>
+<li><p>程序代码和数据：对于所有进程来说，代码从一固定地址开始，紧接和C全局变量相对应的数据位置。第七章研究链接和加载时，学到更多有关地址空间的内容。</p>
+</li>
+<li><p>堆 ：代码和数据区紧随着运行时堆。代码和数据区是在进程一开始就被规定了大小，与此不同，调用malloc和free时堆动态的扩展和收缩。第9章学习管理虚拟存储器时，详细研究。</p>
+</li>
+<li><p>共享库：地址空间的中间部分存放C标准库和数学库这样共享库代码和数据的区域。共享库概念非常强大，相当难懂。第七章详解。</p>
+</li>
+<li><p>栈: 用户虚拟地址顶部的是用户栈，编译器用它来实现函数调用。和堆一样，在执行时动态的扩展和收缩。第三章详解。</p>
+</li>
+<li><p>内核虚拟内存。 内核总是驻留在内存中，是操作系统一部分。</p>
+</li>
+</ul>
+<h3 id="总结：由于本章只是计算机漫游，故只阐释了计算机的大概，具体细节后面章节，慢慢展开"><a href="#总结：由于本章只是计算机漫游，故只阐释了计算机的大概，具体细节后面章节，慢慢展开" class="headerlink" title="总结：由于本章只是计算机漫游，故只阐释了计算机的大概，具体细节后面章节，慢慢展开"></a>总结：由于本章只是计算机漫游，故只阐释了计算机的大概，具体细节后面章节，慢慢展开</h3>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%B4%E5%9C%A8%E5%89%8D%E9%9D%A2%E7%9A%84%E4%B8%80%E4%BA%9B%E5%BA%9F%E8%AF%9D%EF%BC%8C%E5%A6%82%E6%9E%9C%E4%BD%A0%E5%9B%B0%E4%BA%86%EF%BC%8C%E8%AF%B7%E7%9B%B4%E6%8E%A5%E8%B7%B3%E8%87%B3%E6%AD%A3%E6%96%87"><span class="toc-number">1.</span> <span class="toc-text">说在前面的一些废话，如果你困了，请直接跳至正文</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%88%9A%E5%85%A5%E5%AD%A6%E5%B0%B1%E4%B9%B0%E7%9A%84%E8%BF%99%E6%9C%AC%E3%80%8A%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E3%80%8B%E3%80%82%E4%B8%80%E5%B9%B4%E5%A4%9A%E6%9D%A5%EF%BC%8C%E5%AD%A6%E5%AD%A6%E5%81%9C%E5%81%9C%EF%BC%8C%E4%BD%86%E6%98%AF%E6%B0%B8%E8%BF%9C%E8%AE%B0%E4%BD%8F%E4%BA%86%E7%AC%AC%E4%B8%80%E7%AB%A0%E7%AC%AC%E4%BA%8C%E6%AE%B5%E7%9A%84%E7%AC%AC%E4%BA%8C%E5%8F%A5%E8%AF%9D"><span class="toc-number">1.0.0.1.</span> <span class="toc-text">刚入学就买的这本《深入理解计算机系统》。一年多来，学学停停，但是永远记住了第一章第二段的第二句话</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%A5%BD%E4%B8%80%E4%B8%AA%E5%A4%A7%E7%89%9B%E7%9A%84%E9%81%93%E8%B7%AF%EF%BC%8C%E5%AF%B9%E4%BA%8E%E7%83%AD%E7%88%B1%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E4%BA%BA%E6%9D%A5%E8%AF%B4%E7%9A%84%E2%80%9C%E5%A4%A7%E7%89%9B%E7%9A%84%E9%81%93%E8%B7%AF%E2%80%9D-%E5%92%8C-%E7%88%B1%E5%A5%BD%E9%92%B1%E8%B4%A2%E7%9A%84%E4%BA%BA%E7%9A%84%E2%80%9C%E5%AF%8C%E5%A9%86%E5%8C%85%E5%85%BB%E8%B7%AF%E2%80%9D%EF%BC%88%E6%88%96%E8%80%85%E6%98%AF%E5%AF%8C%E8%90%9D%E8%8E%89%EF%BC%89%E5%9C%B0%E4%BD%8D%E7%9B%B8%E5%90%8C"><span class="toc-number">1.0.0.2.</span> <span class="toc-text">好一个大牛的道路，对于热爱计算机的人来说的“大牛的道路” 和 爱好钱财的人的“富婆包养路”（或者是富萝莉）地位相同</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%86%E6%98%AF%E5%BE%80%E6%98%94%E4%B8%8D%E5%8F%AF%E5%BF%86%EF%BC%8C%E5%88%87%E8%AE%B0%E4%B8%8D%E8%A6%81%E5%86%8D%E6%B5%AA%E8%B4%B9%E8%87%AA%E5%B7%B1%E7%9A%84%E9%9D%92%E6%98%A5%E5%92%8C%E5%85%83%E6%B0%94%E3%80%82"><span class="toc-number">1.0.1.</span> <span class="toc-text">但是往昔不可忆，切记不要再浪费自己的青春和元气。</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%80%E4%BB%A5%E9%87%8D%E6%95%B4%E6%97%97%E9%BC%93%EF%BC%8C%E8%BF%99%E5%9B%9E%E6%83%B3%E8%AE%A4%E7%9C%9F%E6%80%BB%E7%BB%93%E4%B8%80%E4%B8%8B%EF%BC%88%E6%84%9F%E8%A8%80%E7%BB%93%E6%9D%9F%EF%BC%8C%E7%96%AF%E7%8B%82%E6%9A%97%E7%A4%BA%E2%99%82%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">所以重整旗鼓，这回想认真总结一下（感言结束，疯狂暗示♂）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%88%86%E6%9E%90hello-c%E7%9A%84%E4%BE%8B%E5%AD%90%EF%BC%8C%E4%BB%8E%E5%85%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%88%86%E6%9E%90%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="toc-number">2.1.</span> <span class="toc-text">一、分析hello.c的例子，从其生命周期分析系统的执行过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E8%BF%99%E5%9B%9B%E4%B8%AA%E9%98%B6%E6%AE%B5%E7%9A%84%E7%A8%8B%E5%BA%8F-%E9%A2%84%E5%A4%84%E7%90%86%E5%99%A8%E3%80%81%E7%BC%96%E8%AF%91%E5%99%A8%E3%80%81%E6%B1%87%E7%BC%96%E5%99%A8%E3%80%81%E9%93%BE%E6%8E%A5%E5%99%A8-%E4%B8%80%E8%B5%B7%E6%9E%84%E6%88%90%E4%BA%86%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F-compilation-system"><span class="toc-number">2.1.1.</span> <span class="toc-text">执行这四个阶段的程序(预处理器、编译器、汇编器、链接器)一起构成了编译系统(compilation system).</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E4%BF%A1%E6%81%AF%E5%B0%B1%E6%98%AF%E4%BD%8D-%E4%B8%8A%E4%B8%8B%E6%96%87"><span class="toc-number">2.2.</span> <span class="toc-text">二、信息就是位+上下文</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90"><span class="toc-number">2.3.</span> <span class="toc-text">三、系统的硬件组成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E5%AD%98%E5%82%A8%E8%AE%BE%E5%A4%87%E5%BD%A2%E6%88%90%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84"><span class="toc-number">2.4.</span> <span class="toc-text">四、存储设备形成层次结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E7%BA%BF%E7%A8%8B%E8%BF%9B%E7%A8%8B%EF%BC%8C%E5%8D%95%E7%8B%AC%E5%88%86%E7%A6%BB%E5%86%99%E4%BA%86%E4%B8%AA%E5%8D%9A%E5%AE%A2%EF%BC%8C%E8%BF%99%E9%87%8C%E4%B8%8D%E9%87%8D%E5%A4%8D"><span class="toc-number">2.5.</span> <span class="toc-text">五、线程进程，单独分离写了个博客，这里不重复</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%AD%E6%8A%BD%E8%B1%A1%E7%9A%84%E9%87%8D%E8%A6%81%E6%80%A7"><span class="toc-number">2.6.</span> <span class="toc-text">六、计算机系统中抽象的重要性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98"><span class="toc-number">2.7.</span> <span class="toc-text">七、虚拟内存</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E6%98%AF%E4%B8%80%E4%B8%AA%E6%8A%BD%E8%B1%A1%E6%A6%82%E5%BF%B5%EF%BC%8C%E5%AE%83%E4%B8%BA%E6%AF%8F%E4%B8%AA%E8%BF%9B%E7%A8%8B%E6%8F%90%E4%BE%9B%E4%BA%86%E4%B8%80%E4%B8%AA%E5%81%87%E8%B1%A1%EF%BC%8C%E5%8D%B3%E6%AF%8F%E4%B8%AA%E8%BF%9B%E7%A8%8B%E9%83%BD%E5%9C%A8%E7%8B%AC%E5%8D%A0%E5%9C%B0%E4%BD%BF%E7%94%A8%E4%B8%BB%E5%AD%98%E3%80%82"><span class="toc-number">2.7.1.</span> <span class="toc-text">虚拟内存是一个抽象概念，它为每个进程提供了一个假象，即每个进程都在独占地使用主存。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AF%8F%E4%B8%AA%E8%BF%9B%E7%A8%8B%E7%9C%8B%E5%88%B0%E7%9A%84%E5%86%85%E5%AD%98%E9%83%BD%E6%98%AF%E4%B8%80%E8%87%B4%E7%9A%84%EF%BC%8C%E7%A7%B0%E4%B8%BA%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E3%80%82%E5%9C%A8linux%E4%B8%AD%EF%BC%8C%E8%BF%9B%E7%A8%8B%E7%9A%84%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%A6%82%E4%B8%8B%E5%9B%BE"><span class="toc-number">2.7.2.</span> <span class="toc-text">每个进程看到的内存都是一致的，称为虚拟地址空间。在linux中，进程的虚拟地址空间如下图</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A%E7%94%B1%E4%BA%8E%E6%9C%AC%E7%AB%A0%E5%8F%AA%E6%98%AF%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%BC%AB%E6%B8%B8%EF%BC%8C%E6%95%85%E5%8F%AA%E9%98%90%E9%87%8A%E4%BA%86%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E5%A4%A7%E6%A6%82%EF%BC%8C%E5%85%B7%E4%BD%93%E7%BB%86%E8%8A%82%E5%90%8E%E9%9D%A2%E7%AB%A0%E8%8A%82%EF%BC%8C%E6%85%A2%E6%85%A2%E5%B1%95%E5%BC%80"><span class="toc-number">2.8.</span> <span class="toc-text">总结：由于本章只是计算机漫游，故只阐释了计算机的大概，具体细节后面章节，慢慢展开</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/&text=CSAPP又双叒叕来一遍之计算机系统漫游"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/&title=CSAPP又双叒叕来一遍之计算机系统漫游"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/&is_video=false&description=CSAPP又双叒叕来一遍之计算机系统漫游"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=CSAPP又双叒叕来一遍之计算机系统漫游&body=Check out this article: http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/&title=CSAPP又双叒叕来一遍之计算机系统漫游"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/&title=CSAPP又双叒叕来一遍之计算机系统漫游"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/&title=CSAPP又双叒叕来一遍之计算机系统漫游"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/&title=CSAPP又双叒叕来一遍之计算机系统漫游"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/&name=CSAPP又双叒叕来一遍之计算机系统漫游&description=&lt;h2 id=&#34;说在前面的一些废话，如果你困了，请直接跳至正文&#34;&gt;&lt;a href=&#34;#说在前面的一些废话，如果你困了，请直接跳至正文&#34; class=&#34;headerlink&#34; title=&#34;说在前面的一些废话，如果你困了，请直接跳至正文&#34;&gt;&lt;/a&gt;说在前面的一些废话，如果你困了，请直接跳至正文&lt;/h2&gt;&lt;h5 id=&#34;刚入学就买的这本《深入理解计算机系统》。一年多来，学学停停，但是永远记住了第一章第二段的第二句话&#34;&gt;&lt;a href=&#34;#刚入学就买的这本《深入理解计算机系统》。一年多来，学学停停，但是永远记住了第一章第二段的第二句话&#34; class=&#34;headerlink&#34; title=&#34;刚入学就买的这本《深入理解计算机系统》。一年多来，学学停停，但是永远记住了第一章第二段的第二句话&#34;&gt;&lt;/a&gt;刚入学就买的这本《深入理解计算机系统》。一年多来，学学停停，但是永远记住了第一章第二段的第二句话&lt;/h5&gt;&lt;figure class=&#34;highlight plaintext&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;如果你全力投身学习本书的概念，完全理解底层计算机系统以及它对应用程序的影响&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;那么你会走向为数不多的“大牛”的道路&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2018/12/03/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8/&t=CSAPP又双叒叕来一遍之计算机系统漫游"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

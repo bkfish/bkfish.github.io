@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="一、下载安装（Qt是什么就不用我说了 自行百度咯1. 官网下载开始我以为下载qtcreator就是下载了qt,然后发现居然下载qtcreator只是一个空壳，下载qt自带一个qtceator,折腾了老半天，嘤嘤嘤，所以下面地址是直接下载qt的http:&#x2F;&#x2F;download.qt.io&#x2F;official_releases&#x2F;qt&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Qt环境搭建以及自动打包">
+<meta property="og:url" content="http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="一、下载安装（Qt是什么就不用我说了 自行百度咯1. 官网下载开始我以为下载qtcreator就是下载了qt,然后发现居然下载qtcreator只是一个空壳，下载qt自带一个qtceator,折腾了老半天，嘤嘤嘤，所以下面地址是直接下载qt的http:&#x2F;&#x2F;download.qt.io&#x2F;official_releases&#x2F;qt&#x2F;">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/3.png">
+<meta property="og:image" content="http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/1.png">
+<meta property="og:image" content="http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/2.png">
+<meta property="og:image" content="http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/4.png">
+<meta property="og:image" content="http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/5.png">
+<meta property="og:image" content="http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/6.png">
+<meta property="og:image" content="http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/7.png">
+<meta property="og:image" content="http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/8.png">
+<meta property="og:image" content="http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/9.png">
+<meta property="og:image" content="http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/10.png">
+<meta property="og:image" content="http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/11.png">
+<meta property="og:image" content="http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/12.png">
+<meta property="og:image" content="http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/13.png">
+<meta property="article:published_time" content="2019-01-01T18:50:53.000Z">
+<meta property="article:modified_time" content="2020-11-24T04:52:18.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="Qt">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/3.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Qt环境搭建以及自动打包</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2019/01/05/%E6%B3%A2%E5%85%B0%E5%BC%8F%E4%B8%8E%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2018/12/31/RSA%E8%AF%81%E6%98%8E/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/&text=Qt环境搭建以及自动打包"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/&title=Qt环境搭建以及自动打包"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/&is_video=false&description=Qt环境搭建以及自动打包"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Qt环境搭建以及自动打包&body=Check out this article: http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/&title=Qt环境搭建以及自动打包"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/&title=Qt环境搭建以及自动打包"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/&title=Qt环境搭建以及自动打包"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/&title=Qt环境搭建以及自动打包"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/&name=Qt环境搭建以及自动打包&description=&lt;h3 id=&#34;一、下载安装（Qt是什么就不用我说了-自行百度咯&#34;&gt;&lt;a href=&#34;#一、下载安装（Qt是什么就不用我说了-自行百度咯&#34; class=&#34;headerlink&#34; title=&#34;一、下载安装（Qt是什么就不用我说了 自行百度咯&#34;&gt;&lt;/a&gt;一、下载安装（Qt是什么就不用我说了 自行百度咯&lt;/h3&gt;&lt;h4 id=&#34;1-官网下载&#34;&gt;&lt;a href=&#34;#1-官网下载&#34; class=&#34;headerlink&#34; title=&#34;1. 官网下载&#34;&gt;&lt;/a&gt;1. 官网下载&lt;/h4&gt;&lt;p&gt;开始我以为下载qtcreator就是下载了qt,然后发现居然下载qtcreator只是一个空壳，下载qt自带一个qtceator,折腾了老半天，嘤嘤嘤，所以下面地址是直接下载qt的&lt;br&gt;&lt;a href=&#34;http://download.qt.io/official_releases/qt/&#34;&gt;http://download.qt.io/official_releases&amp;#x2F;qt&amp;#x2F;&lt;/a&gt;&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/&t=Qt环境搭建以及自动打包"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85%EF%BC%88Qt%E6%98%AF%E4%BB%80%E4%B9%88%E5%B0%B1%E4%B8%8D%E7%94%A8%E6%88%91%E8%AF%B4%E4%BA%86-%E8%87%AA%E8%A1%8C%E7%99%BE%E5%BA%A6%E5%92%AF"><span class="toc-number">1.</span> <span class="toc-text">一、下载安装（Qt是什么就不用我说了 自行百度咯</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%AE%98%E7%BD%91%E4%B8%8B%E8%BD%BD"><span class="toc-number">1.1.</span> <span class="toc-text">1. 官网下载</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%AE%89%E8%A3%85"><span class="toc-number">1.2.</span> <span class="toc-text">2. 安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E4%B8%80%E4%BA%9B%E5%B0%8F%E5%B0%8F%E7%9A%84%E8%AE%BE%E7%BD%AE"><span class="toc-number">1.3.</span> <span class="toc-text">3.一些小小的设置</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E7%BC%96%E8%AF%91%E4%B8%80%E4%B8%AAHello-Kitty"><span class="toc-number">2.</span> <span class="toc-text">二、编译一个Hello Kitty</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%96%B0%E5%BB%BA%E4%B8%80%E4%B8%AA%E9%A1%B9%E7%9B%AE"><span class="toc-number">2.1.</span> <span class="toc-text">1. 新建一个项目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E9%A1%B9%E7%9B%AE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84"><span class="toc-number">2.2.</span> <span class="toc-text">2. 项目文件结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-Design"><span class="toc-number">2.3.</span> <span class="toc-text">3.Design</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E7%BC%96%E8%AF%91%E4%BB%A5%E5%8F%8A%E6%89%93%E5%8C%85"><span class="toc-number">3.</span> <span class="toc-text">三、编译以及打包</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E7%BC%96%E8%AF%91%EF%BC%8C%E9%80%89%E6%8B%A9Qt-5-9-0-MinGW-32bit-%E4%B8%8D%E6%98%AF%E5%BC%BA%E5%88%B6%EF%BC%8C%E5%8F%AF%E8%87%AA%E9%80%89-%EF%BC%8C%E4%B8%BA%E4%BA%86%E6%89%93%E5%8C%85%E6%89%80%E4%BB%A5%E9%80%89%E6%8B%A9Release"><span class="toc-number">3.1.</span> <span class="toc-text">1. 编译，选择Qt 5.9.0 MinGW 32bit(不是强制，可自选)，为了打包所以选择Release</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85"><span class="toc-number">3.2.</span> <span class="toc-text">2. 自动打包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%8F%AF%E8%83%BD%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">3.3.</span> <span class="toc-text">3.可能遇到的问题</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Qt环境搭建以及自动打包
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-01-01T18:50:53.000Z" class="dt-published" itemprop="datePublished">2019-01-02</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E9%9B%81%E5%84%BF%E5%87%A0%E5%BA%A6%E6%81%8B%E5%BC%80%E5%8F%91-%E6%84%BF%E5%BE%97%E4%B8%80%E7%AB%99%E5%85%A5%E4%B8%87%E5%AE%B6/">雁儿几度恋开发-愿得一站入万家</a> › <a class="category-link" href="/categories/%E9%9B%81%E5%84%BF%E5%87%A0%E5%BA%A6%E6%81%8B%E5%BC%80%E5%8F%91-%E6%84%BF%E5%BE%97%E4%B8%80%E7%AB%99%E5%85%A5%E4%B8%87%E5%AE%B6/Qt/">Qt</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Qt/" rel="tag">Qt</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h3 id="一、下载安装（Qt是什么就不用我说了-自行百度咯"><a href="#一、下载安装（Qt是什么就不用我说了-自行百度咯" class="headerlink" title="一、下载安装（Qt是什么就不用我说了 自行百度咯"></a>一、下载安装（Qt是什么就不用我说了 自行百度咯</h3><h4 id="1-官网下载"><a href="#1-官网下载" class="headerlink" title="1. 官网下载"></a>1. 官网下载</h4><p>开始我以为下载qtcreator就是下载了qt,然后发现居然下载qtcreator只是一个空壳，下载qt自带一个qtceator,折腾了老半天，嘤嘤嘤，所以下面地址是直接下载qt的<br><a target="_blank" rel="noopener" href="http://download.qt.io/official_releases/qt/">http://download.qt.io/official_releases&#x2F;qt&#x2F;</a></p>
+<span id="more"></span>
+
+
+<p>我下载的是qt-opensource-windows-x86-5.9.0.exe<br><img src="/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/3.png"></p>
+<h4 id="2-安装"><a href="#2-安装" class="headerlink" title="2. 安装"></a>2. 安装</h4><p>一路安装下去，此地无账号可以注册一个，为免费的开源版本<br><img src="/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/1.png"><br>组件的选择，按需求下，以下是根据《Qt 5.9 C++开发指南》实例下载，这本书还是不错的<br><img src="/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/2.png"></p>
+<h4 id="3-一些小小的设置"><a href="#3-一些小小的设置" class="headerlink" title="3.一些小小的设置"></a>3.一些小小的设置</h4><p>设置部分都在Tools-&gt;options，里面有基本上所有的设置包括中文，但是非常不建议中文（你试试就知道了<br>在buiud&amp;run里面可以看到现在的编辑器，当前主要在使用Qt 5.9.0 MinGW 32bit<br><img src="/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/4.png"><br>字体风格啥的就自己去瞅瞅就行了</p>
+<h3 id="二、编译一个Hello-Kitty"><a href="#二、编译一个Hello-Kitty" class="headerlink" title="二、编译一个Hello Kitty"></a>二、编译一个Hello Kitty</h3><h4 id="1-新建一个项目"><a href="#1-新建一个项目" class="headerlink" title="1. 新建一个项目"></a>1. 新建一个项目</h4><p>选择左上角的FIle-&gt;New File or Project<br>这里选择第一个即可<br><img src="/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/5.png"><br>然后Kit可以随意选择一个或者多个，会自动检测qt已经具备的Kit,当然全选也可以，反正玩玩而已<br><img src="/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/6.png"></p>
+<h4 id="2-项目文件结构"><a href="#2-项目文件结构" class="headerlink" title="2. 项目文件结构"></a>2. 项目文件结构</h4><p><img src="/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/7.png"><br>总结一下常见文件目录的作用</p>
+<ol>
+<li>Headers<br>指定项目中所有的头文件。</li>
+<li>FORMS<br>指定UI文件在编译前被uic处理。所有的构建这些UI文件所需的依赖、头文件和源文件都会自动被添加到项目中。</li>
+<li>CONFIG<br>指定编译器选项和项目配置，值由qmake内部识别并具有特殊意义。</li>
+<li>LIBS<br>指定链接到项目中的库列表。如果使用Unix -l (library) 和 -L (library path) 标志，在Windows上qmake正确处理库（也就是说，将库的完整路径传递给链接器），库必须存在，qmake会寻找-l指定的库所在的目录。</li>
+<li>SOURCES<br>指定项目中所有源文件。</li>
+</ol>
+<h4 id="3-Design"><a href="#3-Design" class="headerlink" title="3.Design"></a>3.Design</h4><p>qtcreator具备可视化编辑ui,双击mainwindow.ui即进入左侧任务栏中的Design<br>在左侧拉一个Display Widgets-&gt;Label 进去即可<br><img src="/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/8.png"></p>
+<h3 id="三、编译以及打包"><a href="#三、编译以及打包" class="headerlink" title="三、编译以及打包"></a>三、编译以及打包</h3><h4 id="1-编译，选择Qt-5-9-0-MinGW-32bit-不是强制，可自选-，为了打包所以选择Release"><a href="#1-编译，选择Qt-5-9-0-MinGW-32bit-不是强制，可自选-，为了打包所以选择Release" class="headerlink" title="1. 编译，选择Qt 5.9.0 MinGW 32bit(不是强制，可自选)，为了打包所以选择Release"></a>1. 编译，选择Qt 5.9.0 MinGW 32bit(不是强制，可自选)，为了打包所以选择Release</h4><p><img src="/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/9.png"><br>点击第二个（非debug,即可编译运行，然后会在源代码的文件夹出现一个build-XX的文件目录<br><img src="/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/10.png"><br>找到里面的release-&gt;hello.exe 双击运行会提示少一大堆.dll,所以要打包</p>
+<h4 id="2-自动打包"><a href="#2-自动打包" class="headerlink" title="2. 自动打包"></a>2. 自动打包</h4><p>Qt 官方开发环境使用的动态链接库方式，在发布生成的exe程序时，需要复制一大堆 dll，如果自己去复制dll，很可能丢三落四，导致exe在别的电脑里无法正常运行。<br>因此 Qt 官方开发环境里自带了一个工具：windeployqt.exe。<br>这个工具在该编译器所在的bin目录下，是一个终端操作工具<br><img src="/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/11.png"><br>你只需要把release目录下的hello.exe复制到bin目录下 cmd输入 windeployqt.exe hello.exe即可，但是这个会导致你的bin目录非常恶心<br>所以直接，新建一个目录，里面放一个从Releasee复制出来的hello.exe,cmd切到hello.exe目录下然后（只要一个hello.exe即可）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;你自己的Qt安装路径&#125;\Qt\5.9\mingw53_32\bin\windeployqt.exe hello.exe</span><br></pre></td></tr></table></figure>
+<p>或者先把该编译器的bin目录放在环境变量中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">windeployqt.exe hello.exe</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/12.png"><br>然后hello.exe 文件夹下会出现一堆依赖文件，即可帮助你运行hello.exe<br><img src="/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/13.png"></p>
+<h4 id="3-可能遇到的问题"><a href="#3-可能遇到的问题" class="headerlink" title="3.可能遇到的问题"></a>3.可能遇到的问题</h4><p>windeployqt.exe的作用其实也就是简单把项目需要的的dll从bin目录下复制出来，所以如果在打包之后运行还提示缺少了什么.dll文件，直接去编译器的bin目录下复制过来即可。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85%EF%BC%88Qt%E6%98%AF%E4%BB%80%E4%B9%88%E5%B0%B1%E4%B8%8D%E7%94%A8%E6%88%91%E8%AF%B4%E4%BA%86-%E8%87%AA%E8%A1%8C%E7%99%BE%E5%BA%A6%E5%92%AF"><span class="toc-number">1.</span> <span class="toc-text">一、下载安装（Qt是什么就不用我说了 自行百度咯</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%AE%98%E7%BD%91%E4%B8%8B%E8%BD%BD"><span class="toc-number">1.1.</span> <span class="toc-text">1. 官网下载</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%AE%89%E8%A3%85"><span class="toc-number">1.2.</span> <span class="toc-text">2. 安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E4%B8%80%E4%BA%9B%E5%B0%8F%E5%B0%8F%E7%9A%84%E8%AE%BE%E7%BD%AE"><span class="toc-number">1.3.</span> <span class="toc-text">3.一些小小的设置</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E7%BC%96%E8%AF%91%E4%B8%80%E4%B8%AAHello-Kitty"><span class="toc-number">2.</span> <span class="toc-text">二、编译一个Hello Kitty</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%96%B0%E5%BB%BA%E4%B8%80%E4%B8%AA%E9%A1%B9%E7%9B%AE"><span class="toc-number">2.1.</span> <span class="toc-text">1. 新建一个项目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E9%A1%B9%E7%9B%AE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84"><span class="toc-number">2.2.</span> <span class="toc-text">2. 项目文件结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-Design"><span class="toc-number">2.3.</span> <span class="toc-text">3.Design</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E7%BC%96%E8%AF%91%E4%BB%A5%E5%8F%8A%E6%89%93%E5%8C%85"><span class="toc-number">3.</span> <span class="toc-text">三、编译以及打包</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E7%BC%96%E8%AF%91%EF%BC%8C%E9%80%89%E6%8B%A9Qt-5-9-0-MinGW-32bit-%E4%B8%8D%E6%98%AF%E5%BC%BA%E5%88%B6%EF%BC%8C%E5%8F%AF%E8%87%AA%E9%80%89-%EF%BC%8C%E4%B8%BA%E4%BA%86%E6%89%93%E5%8C%85%E6%89%80%E4%BB%A5%E9%80%89%E6%8B%A9Release"><span class="toc-number">3.1.</span> <span class="toc-text">1. 编译，选择Qt 5.9.0 MinGW 32bit(不是强制，可自选)，为了打包所以选择Release</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85"><span class="toc-number">3.2.</span> <span class="toc-text">2. 自动打包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%8F%AF%E8%83%BD%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">3.3.</span> <span class="toc-text">3.可能遇到的问题</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/&text=Qt环境搭建以及自动打包"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/&title=Qt环境搭建以及自动打包"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/&is_video=false&description=Qt环境搭建以及自动打包"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Qt环境搭建以及自动打包&body=Check out this article: http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/&title=Qt环境搭建以及自动打包"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/&title=Qt环境搭建以及自动打包"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/&title=Qt环境搭建以及自动打包"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/&title=Qt环境搭建以及自动打包"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/&name=Qt环境搭建以及自动打包&description=&lt;h3 id=&#34;一、下载安装（Qt是什么就不用我说了-自行百度咯&#34;&gt;&lt;a href=&#34;#一、下载安装（Qt是什么就不用我说了-自行百度咯&#34; class=&#34;headerlink&#34; title=&#34;一、下载安装（Qt是什么就不用我说了 自行百度咯&#34;&gt;&lt;/a&gt;一、下载安装（Qt是什么就不用我说了 自行百度咯&lt;/h3&gt;&lt;h4 id=&#34;1-官网下载&#34;&gt;&lt;a href=&#34;#1-官网下载&#34; class=&#34;headerlink&#34; title=&#34;1. 官网下载&#34;&gt;&lt;/a&gt;1. 官网下载&lt;/h4&gt;&lt;p&gt;开始我以为下载qtcreator就是下载了qt,然后发现居然下载qtcreator只是一个空壳，下载qt自带一个qtceator,折腾了老半天，嘤嘤嘤，所以下面地址是直接下载qt的&lt;br&gt;&lt;a href=&#34;http://download.qt.io/official_releases/qt/&#34;&gt;http://download.qt.io/official_releases&amp;#x2F;qt&amp;#x2F;&lt;/a&gt;&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/01/02/Qt%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85/&t=Qt环境搭建以及自动打包"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

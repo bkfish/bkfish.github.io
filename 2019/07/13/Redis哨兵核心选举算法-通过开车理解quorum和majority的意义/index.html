@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="楔子：刚好在整Redis缓存高可用，阿汤哥的一句话Redis哨兵集群只有2个节点无法正常工作把俺给说晕了，网上也没找到比较通俗易懂的文章,所以自己理解了一下哨兵选举算法，为啥两个结点就是一个死局？。才疏学浅有错误的地方还望指出，多多包涵一、类比开车举报算法1.1、假如kitty萌新来到了一个不允许开车的世界,人们互相监督其他人是不是在开车，最开始大家都没有证据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis哨兵核心选举算法-通过开车理解quorum和majority的意义">
+<meta property="og:url" content="http://example.com/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="楔子：刚好在整Redis缓存高可用，阿汤哥的一句话Redis哨兵集群只有2个节点无法正常工作把俺给说晕了，网上也没找到比较通俗易懂的文章,所以自己理解了一下哨兵选举算法，为啥两个结点就是一个死局？。才疏学浅有错误的地方还望指出，多多包涵一、类比开车举报算法1.1、假如kitty萌新来到了一个不允许开车的世界,人们互相监督其他人是不是在开车，最开始大家都没有证据">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/1.jpg">
+<meta property="og:image" content="http://example.com/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/4.jpg">
+<meta property="article:published_time" content="2019-07-12T21:37:46.000Z">
+<meta property="article:modified_time" content="2020-11-24T04:52:22.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="Redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/1.jpg">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Redis哨兵核心选举算法-通过开车理解quorum和majority的意义</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2019/07/13/php%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2019/06/24/postgreSQL%E5%86%85%E6%A0%B8%E5%88%86%E6%9E%90-%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85%E5%92%8C%E8%B0%83%E8%AF%95/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/&text=Redis哨兵核心选举算法-通过开车理解quorum和majority的意义"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/&title=Redis哨兵核心选举算法-通过开车理解quorum和majority的意义"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/&is_video=false&description=Redis哨兵核心选举算法-通过开车理解quorum和majority的意义"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Redis哨兵核心选举算法-通过开车理解quorum和majority的意义&body=Check out this article: http://example.com/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/&title=Redis哨兵核心选举算法-通过开车理解quorum和majority的意义"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/&title=Redis哨兵核心选举算法-通过开车理解quorum和majority的意义"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/&title=Redis哨兵核心选举算法-通过开车理解quorum和majority的意义"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/&title=Redis哨兵核心选举算法-通过开车理解quorum和majority的意义"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/&name=Redis哨兵核心选举算法-通过开车理解quorum和majority的意义&description=&lt;h4 id=&#34;楔子：刚好在整Redis缓存高可用，阿汤哥的一句话Redis哨兵集群只有2个节点无法正常工作把俺给说晕了，网上也没找到比较通俗易懂的文章-所以自己理解了一下哨兵选举算法，为啥两个结点就是一个死局？。才疏学浅有错误的地方还望指出，多多包涵&#34;&gt;&lt;a href=&#34;#楔子：刚好在整Redis缓存高可用，阿汤哥的一句话Redis哨兵集群只有2个节点无法正常工作把俺给说晕了，网上也没找到比较通俗易懂的文章-所以自己理解了一下哨兵选举算法，为啥两个结点就是一个死局？。才疏学浅有错误的地方还望指出，多多包涵&#34; class=&#34;headerlink&#34; title=&#34;楔子：刚好在整Redis缓存高可用，阿汤哥的一句话Redis哨兵集群只有2个节点无法正常工作把俺给说晕了，网上也没找到比较通俗易懂的文章,所以自己理解了一下哨兵选举算法，为啥两个结点就是一个死局？。才疏学浅有错误的地方还望指出，多多包涵&#34;&gt;&lt;/a&gt;楔子：刚好在整Redis缓存高可用，阿汤哥的一句话&lt;code&gt;Redis哨兵集群只有2个节点无法正常工作&lt;/code&gt;把俺给说晕了，网上也没找到比较通俗易懂的文章,所以自己理解了一下哨兵选举算法，为啥两个结点就是一个死局？。才疏学浅有错误的地方还望指出，多多包涵&lt;/h4&gt;&lt;h3 id=&#34;一、类比开车举报算法&#34;&gt;&lt;a href=&#34;#一、类比开车举报算法&#34; class=&#34;headerlink&#34; title=&#34;一、类比开车举报算法&#34;&gt;&lt;/a&gt;一、类比开车举报算法&lt;/h3&gt;&lt;h4 id=&#34;1-1、假如kitty萌新来到了一个不允许开车的世界-人们互相监督其他人是不是在开车，最开始大家都没有证据&#34;&gt;&lt;a href=&#34;#1-1、假如kitty萌新来到了一个不允许开车的世界-人们互相监督其他人是不是在开车，最开始大家都没有证据&#34; class=&#34;headerlink&#34; title=&#34;1.1、假如kitty萌新来到了一个不允许开车的世界,人们互相监督其他人是不是在开车，最开始大家都没有证据&#34;&gt;&lt;/a&gt;1.1、假如kitty萌新来到了一个不允许开车的世界,人们互相监督其他人是不是在开车，最开始大家都没有证据&lt;/h4&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/&t=Redis哨兵核心选举算法-通过开车理解quorum和majority的意义"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A5%94%E5%AD%90%EF%BC%9A%E5%88%9A%E5%A5%BD%E5%9C%A8%E6%95%B4Redis%E7%BC%93%E5%AD%98%E9%AB%98%E5%8F%AF%E7%94%A8%EF%BC%8C%E9%98%BF%E6%B1%A4%E5%93%A5%E7%9A%84%E4%B8%80%E5%8F%A5%E8%AF%9DRedis%E5%93%A8%E5%85%B5%E9%9B%86%E7%BE%A4%E5%8F%AA%E6%9C%892%E4%B8%AA%E8%8A%82%E7%82%B9%E6%97%A0%E6%B3%95%E6%AD%A3%E5%B8%B8%E5%B7%A5%E4%BD%9C%E6%8A%8A%E4%BF%BA%E7%BB%99%E8%AF%B4%E6%99%95%E4%BA%86%EF%BC%8C%E7%BD%91%E4%B8%8A%E4%B9%9F%E6%B2%A1%E6%89%BE%E5%88%B0%E6%AF%94%E8%BE%83%E9%80%9A%E4%BF%97%E6%98%93%E6%87%82%E7%9A%84%E6%96%87%E7%AB%A0-%E6%89%80%E4%BB%A5%E8%87%AA%E5%B7%B1%E7%90%86%E8%A7%A3%E4%BA%86%E4%B8%80%E4%B8%8B%E5%93%A8%E5%85%B5%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95%EF%BC%8C%E4%B8%BA%E5%95%A5%E4%B8%A4%E4%B8%AA%E7%BB%93%E7%82%B9%E5%B0%B1%E6%98%AF%E4%B8%80%E4%B8%AA%E6%AD%BB%E5%B1%80%EF%BC%9F%E3%80%82%E6%89%8D%E7%96%8F%E5%AD%A6%E6%B5%85%E6%9C%89%E9%94%99%E8%AF%AF%E7%9A%84%E5%9C%B0%E6%96%B9%E8%BF%98%E6%9C%9B%E6%8C%87%E5%87%BA%EF%BC%8C%E5%A4%9A%E5%A4%9A%E5%8C%85%E6%B6%B5"><span class="toc-number">1.</span> <span class="toc-text">楔子：刚好在整Redis缓存高可用，阿汤哥的一句话Redis哨兵集群只有2个节点无法正常工作把俺给说晕了，网上也没找到比较通俗易懂的文章,所以自己理解了一下哨兵选举算法，为啥两个结点就是一个死局？。才疏学浅有错误的地方还望指出，多多包涵</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E7%B1%BB%E6%AF%94%E5%BC%80%E8%BD%A6%E4%B8%BE%E6%8A%A5%E7%AE%97%E6%B3%95"><span class="toc-number"></span> <span class="toc-text">一、类比开车举报算法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1%E3%80%81%E5%81%87%E5%A6%82kitty%E8%90%8C%E6%96%B0%E6%9D%A5%E5%88%B0%E4%BA%86%E4%B8%80%E4%B8%AA%E4%B8%8D%E5%85%81%E8%AE%B8%E5%BC%80%E8%BD%A6%E7%9A%84%E4%B8%96%E7%95%8C-%E4%BA%BA%E4%BB%AC%E4%BA%92%E7%9B%B8%E7%9B%91%E7%9D%A3%E5%85%B6%E4%BB%96%E4%BA%BA%E6%98%AF%E4%B8%8D%E6%98%AF%E5%9C%A8%E5%BC%80%E8%BD%A6%EF%BC%8C%E6%9C%80%E5%BC%80%E5%A7%8B%E5%A4%A7%E5%AE%B6%E9%83%BD%E6%B2%A1%E6%9C%89%E8%AF%81%E6%8D%AE"><span class="toc-number">1.</span> <span class="toc-text">1.1、假如kitty萌新来到了一个不允许开车的世界,人们互相监督其他人是不是在开车，最开始大家都没有证据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2%E3%80%81%E6%89%80%E4%BB%A5%E7%8E%B0%E5%9C%A8%E6%A8%A1%E6%8B%9F%E4%B8%A4%E4%B8%AA%E5%9C%BA%E6%99%AF"><span class="toc-number">2.</span> <span class="toc-text">1.2、所以现在模拟两个场景</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF1%E3%80%81%E8%BF%99%E4%B8%AA%E4%B8%96%E7%95%8C%E5%8F%AA%E6%9C%89%E4%B8%A4%E4%B8%AA%E4%BA%BA%EF%BC%8CA%E4%B8%BE%E6%8A%A5B%E5%BC%80%E8%BD%A6%E6%98%AF%E5%90%A6%E6%9C%89%E6%95%88"><span class="toc-number">2.1.</span> <span class="toc-text">场景1、这个世界只有两个人，A举报B开车是否有效</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF2%E3%80%81%E5%81%87%E5%A6%82%E8%BF%99%E4%B8%AA%E4%B8%96%E7%95%8C%E6%9C%89%E4%B8%89%E4%B8%AA%E4%BA%BA%EF%BC%8CA-B-C%E4%B8%AD%E6%9C%89%E4%BA%BA%E4%B8%BE%E6%8A%A5%E4%BA%86C%E5%BC%80%E8%BD%A6-%E5%B9%B6%E4%B8%94A-B%E9%83%BD%E6%84%BF%E6%84%8F%E5%B0%86C%E6%8A%95%E7%A5%A8%E5%85%A5%E7%8B%B1"><span class="toc-number">2.2.</span> <span class="toc-text">场景2、假如这个世界有三个人，A,B,C中有人举报了C开车,并且A,B都愿意将C投票入狱</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%88%E4%BB%A5%E4%B8%8A%E5%88%99%E6%98%AF%E7%BB%8F%E5%85%B8%E7%9A%84Redis%E4%B8%89%E8%8A%82%E7%82%B9%E5%93%A8%E5%85%B5%E9%9B%86%E7%BE%A4"><span class="toc-number">3.</span> <span class="toc-text">（以上则是经典的Redis三节点哨兵集群</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90%EF%BC%88%E4%B8%A5%E8%82%83%E8%84%B8"><span class="toc-number"></span> <span class="toc-text">二、Redis哨兵核心选举算法分析（严肃脸</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1%E3%80%81%E5%93%A8%E5%85%B5%E7%9A%84%E4%B8%BB%E8%A6%81%E5%8A%9F%E8%83%BD%E5%A6%82%E4%B8%8B"><span class="toc-number">1.</span> <span class="toc-text">2.1、哨兵的主要功能如下</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2%E3%80%81Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86"><span class="toc-number">2.</span> <span class="toc-text">2.2、Redis哨兵核心知识</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%813%EF%BC%9Asdown%E5%92%8Codown%E4%B8%A4%E7%A7%8D%E5%AE%95%E6%9C%BA"><span class="toc-number">3.</span> <span class="toc-text">2、3：sdown和odown两种宕机</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4%E3%80%81quorum%E5%92%8Cmajority"><span class="toc-number">4.</span> <span class="toc-text">2.4、quorum和majority</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-5%E3%80%81%E4%B8%BB%E5%A4%87%E5%88%87%E6%8D%A2%E5%B7%A5%E4%BD%9C"><span class="toc-number">5.</span> <span class="toc-text">2.5、主备切换工作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E5%9B%9E%E7%AD%94%E9%98%BF%E6%B1%A4%E5%93%A5%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88Redis%E5%93%A8%E5%85%B5%E9%9B%86%E7%BE%A4%E5%8F%AA%E6%9C%892%E4%B8%AA%E8%8A%82%E7%82%B9%E6%97%A0%E6%B3%95%E6%AD%A3%E5%B8%B8%E5%B7%A5%E4%BD%9C%EF%BC%9F"><span class="toc-number">6.</span> <span class="toc-text">问题回答阿汤哥：为什么Redis哨兵集群只有2个节点无法正常工作？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ps-%E4%BB%8ERedis%E7%BB%8F%E5%85%B8%E4%B8%89%E8%8A%82%E7%82%B9%E5%93%A8%E5%85%B5%E9%9B%86%E7%BE%A4%E7%9C%8B%E5%BE%97%E5%87%BA%E6%9D%A5%EF%BC%8C%E6%9C%80%E5%B0%913%E4%B8%AA%E4%BA%BA%E6%89%8D%E6%8B%A5%E6%9C%89%E7%BB%B4%E6%8C%81%E8%A7%84%E7%9F%A9%E7%9A%84%E5%9F%BA%E7%A1%80%EF%BC%8C%E5%A6%82%E6%9E%9C%E6%9C%80%E5%90%8E%E5%8F%AA%E5%89%A9%E4%B8%8B2%E4%B8%AA%E4%BA%BA%EF%BC%8C%E9%82%A3%E4%B9%88%E8%A7%84%E5%88%99%E7%B3%BB%E7%BB%9F%E5%BF%85%E5%AE%9A%E5%B4%A9%E5%A1%8C"><span class="toc-number">7.</span> <span class="toc-text">ps:从Redis经典三节点哨兵集群看得出来，最少3个人才拥有维持规矩的基础，如果最后只剩下2个人，那么规则系统必定崩塌</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Redis哨兵核心选举算法-通过开车理解quorum和majority的意义
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-07-12T21:37:46.000Z" class="dt-published" itemprop="datePublished">2019-07-13</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Redis/">Redis</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Redis/" rel="tag">Redis</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h4 id="楔子：刚好在整Redis缓存高可用，阿汤哥的一句话Redis哨兵集群只有2个节点无法正常工作把俺给说晕了，网上也没找到比较通俗易懂的文章-所以自己理解了一下哨兵选举算法，为啥两个结点就是一个死局？。才疏学浅有错误的地方还望指出，多多包涵"><a href="#楔子：刚好在整Redis缓存高可用，阿汤哥的一句话Redis哨兵集群只有2个节点无法正常工作把俺给说晕了，网上也没找到比较通俗易懂的文章-所以自己理解了一下哨兵选举算法，为啥两个结点就是一个死局？。才疏学浅有错误的地方还望指出，多多包涵" class="headerlink" title="楔子：刚好在整Redis缓存高可用，阿汤哥的一句话Redis哨兵集群只有2个节点无法正常工作把俺给说晕了，网上也没找到比较通俗易懂的文章,所以自己理解了一下哨兵选举算法，为啥两个结点就是一个死局？。才疏学浅有错误的地方还望指出，多多包涵"></a>楔子：刚好在整Redis缓存高可用，阿汤哥的一句话<code>Redis哨兵集群只有2个节点无法正常工作</code>把俺给说晕了，网上也没找到比较通俗易懂的文章,所以自己理解了一下哨兵选举算法，为啥两个结点就是一个死局？。才疏学浅有错误的地方还望指出，多多包涵</h4><h3 id="一、类比开车举报算法"><a href="#一、类比开车举报算法" class="headerlink" title="一、类比开车举报算法"></a>一、类比开车举报算法</h3><h4 id="1-1、假如kitty萌新来到了一个不允许开车的世界-人们互相监督其他人是不是在开车，最开始大家都没有证据"><a href="#1-1、假如kitty萌新来到了一个不允许开车的世界-人们互相监督其他人是不是在开车，最开始大家都没有证据" class="headerlink" title="1.1、假如kitty萌新来到了一个不允许开车的世界,人们互相监督其他人是不是在开车，最开始大家都没有证据"></a>1.1、假如kitty萌新来到了一个不允许开车的世界,人们互相监督其他人是不是在开车，最开始大家都没有证据</h4><span id="more"></span>
+
+
+<p><img src="/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/1.jpg"></p>
+<p>假如一旦确认为了周某开车了，并且有了证据，那么我们将对这个老司机判刑，但是还是需要人民在法院投票确定是否周某犯了开车罪，所有人民同时拥有举报和投票的权利，但是如果你被举报，你将剥夺投票自己是否入刑的权利（总不能说我认为我没开车嘛<br><img src="/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/4.jpg"></p>
+<p>当然，我们假设这个世界只要有人民指出一个人在开车我们就可以说有证据了，就可以交往法院裁决，由人民投票，假如这个世界有n个人.<br><code>那么问题来了，多少个人举报才算有证据，多少人投票同意判刑周某才能入狱</code><br>于是这个世界的老大在《不允许开车法》中写入一下几条<br>（首先给出一些定义，n表示世界总人数，quorum代表举报周某开车的人数，majority代表大多数人-可以理解为这个值代表了大多数人民的选择-在n确定的时候为定值）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1、首先quorum一定要大于等于1</span><br><span class="line">2、如果quorum&lt;majority，那么法院投票同意入刑的人要多于majority才能入刑</span><br><span class="line">3、如果quorum&gt;=majority, 那么需要法院投票同意入刑的人要多于quorum才能入刑</span><br><span class="line">4、majority取值如下:</span><br><span class="line">n= 2，majority=2</span><br><span class="line">n= 3，majority=2</span><br><span class="line">n= 4，majority=2</span><br><span class="line">n= 5，majority=3</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<p>我们来讨论一下这三条<br>1、第一条肯定是没问题的，必须要有人举报才能送温暖嘛<br>2、第二条意思就是如果是少数人举报周某开车，那么需要大多数人投票入刑才能生效、<br>3、第三条就是如果举报的人数已经多与了国家的majority都认为周某开车，那么仅仅是majority投票法院是不够的，可能是因为入刑生效是严肃的，具体细节去问那个世界的扛把子<br>4、这个算法其实类似于(n+1)&#x2F;2向下取整,但是除了2个人的时候，法律就是法律吧。</p>
+<h4 id="1-2、所以现在模拟两个场景"><a href="#1-2、所以现在模拟两个场景" class="headerlink" title="1.2、所以现在模拟两个场景"></a>1.2、所以现在模拟两个场景</h4><h5 id="场景1、这个世界只有两个人，A举报B开车是否有效"><a href="#场景1、这个世界只有两个人，A举报B开车是否有效" class="headerlink" title="场景1、这个世界只有两个人，A举报B开车是否有效"></a>场景1、这个世界只有两个人，A举报B开车是否有效</h5><p>分析：</p>
+<ul>
+<li>这个环境中n&#x3D;2,majority&#x3D;2,quorum&#x3D;1（世界人数2，根据法律majority人数为2，只有A一个人举报了B所以quorum&#x3D;1</li>
+<li>因为quorum&gt;0,所以举报生效</li>
+<li>根据规则<code>quorum&lt;majority</code>,所以需要majority（2）个人投票有罪</li>
+<li>但是现在只有A一个人拥有投票权限，所以无效</li>
+</ul>
+<h5 id="场景2、假如这个世界有三个人，A-B-C中有人举报了C开车-并且A-B都愿意将C投票入狱"><a href="#场景2、假如这个世界有三个人，A-B-C中有人举报了C开车-并且A-B都愿意将C投票入狱" class="headerlink" title="场景2、假如这个世界有三个人，A,B,C中有人举报了C开车,并且A,B都愿意将C投票入狱"></a>场景2、假如这个世界有三个人，A,B,C中有人举报了C开车,并且A,B都愿意将C投票入狱</h5><p>分析1：假如A,B中有一个人举报了C</p>
+<ul>
+<li>这个环境中n&#x3D;3,majority&#x3D;2,quorum&#x3D;1（世界人数2，根据法律majority人数为2，有一个人举报了C所以quorum&#x3D;1</li>
+<li>因为quorum&gt;0,所以举报生效</li>
+<li>根据规则<code>quorum&lt;majority</code>,所以需要majority（2）个人投票有罪</li>
+<li>现在有A，B两个个人拥有投票权限，所以投票有效</li>
+</ul>
+<p>分析2：假如A,B中两个人都举报了C</p>
+<ul>
+<li>这个环境中n&#x3D;3,majority&#x3D;2,quorum&#x3D;2（世界人数2，根据法律majority人数为2，两个人都举报了C所以quorum&#x3D;1</li>
+<li>因为quorum&gt;0,所以举报生效</li>
+<li>根据规则<code>quorum&gt;=majority</code>,所以需要quorum（2）个人投票有罪</li>
+<li>现在有A，B两个个人拥有投票权限，所以投票有效</li>
+</ul>
+<h4 id="（以上则是经典的Redis三节点哨兵集群"><a href="#（以上则是经典的Redis三节点哨兵集群" class="headerlink" title="（以上则是经典的Redis三节点哨兵集群"></a>（以上则是经典的Redis三节点哨兵集群</h4><h3 id="二、Redis哨兵核心选举算法分析（严肃脸"><a href="#二、Redis哨兵核心选举算法分析（严肃脸" class="headerlink" title="二、Redis哨兵核心选举算法分析（严肃脸"></a>二、Redis哨兵核心选举算法分析（严肃脸</h3><p>这个需要先了解Redis主从架构，如果您还不熟悉，可以先移步<a target="_blank" rel="noopener" href="https://kit4y.github.io/2019/07/11/Redis%E4%B8%BB%E4%BB%8E%E6%9E%B6%E6%9E%84%E4%BB%A5%E5%8F%8Avm-centOS-7-minimal%E7%89%88%E6%9C%AC%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE%E5%B0%8F%E8%AE%B0/">Redis主从架构以及vm-centOS-7-minimal版本网络配置小记</a></p>
+<h4 id="2-1、哨兵的主要功能如下"><a href="#2-1、哨兵的主要功能如下" class="headerlink" title="2.1、哨兵的主要功能如下"></a>2.1、哨兵的主要功能如下</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">（1）集群监控，负责监控redis master和slave进程是否正常工作</span><br><span class="line"></span><br><span class="line">（2）消息通知，如果某个redis实例有故障，那么哨兵负责发送消息作为报警通知给管理员</span><br><span class="line"></span><br><span class="line">（3）故障转移，如果master node挂掉了，会自动转移到slave node上</span><br><span class="line"></span><br><span class="line">（4）配置中心，如果故障转移发生了，通知client客户端新的master地址</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2、Redis哨兵核心知识"><a href="#2-2、Redis哨兵核心知识" class="headerlink" title="2.2、Redis哨兵核心知识"></a>2.2、Redis哨兵核心知识</h4><p>（1）哨兵至少需要3个实例，来保证自己的健壮性</p>
+<p>（2）哨兵 + redis主从的部署架构，是不会保证数据零丢失的，只能保证redis集群的高可用性</p>
+<p>（3）对于哨兵 + redis主从这种复杂的部署架构，尽量在测试环境和生产环境，都进行充足的测试和演练</p>
+<h4 id="2、3：sdown和odown两种宕机"><a href="#2、3：sdown和odown两种宕机" class="headerlink" title="2、3：sdown和odown两种宕机"></a>2、3：sdown和odown两种宕机</h4><p>sdown和odown两种失败状态</p>
+<p>sdown是主观宕机，就一个哨兵如果自己觉得一个master宕机了，那么就是主观宕机 。</p>
+<p>odown是客观宕机，如果quorum数量的哨兵都觉得一个master宕机了，那么就是客观宕机 。<br>sdown达成的条件很简单，如果一个哨兵ping一个master，超过了is-master-down-after-milliseconds指定的毫秒数之后，就主观认为master宕机 。</p>
+<p>sdown到odown转换的条件很简单，如果一个哨兵在指定时间内，收到了quorum指定数量的其他哨兵也认为那个master是sdown了，那么就认为是odown了，客观认为master宕机 。</p>
+<p>在这里宕机可以类比于上面的开车了</p>
+<h4 id="2-4、quorum和majority"><a href="#2-4、quorum和majority" class="headerlink" title="2.4、quorum和majority"></a>2.4、quorum和majority</h4><p>算法中的核心参数，如果看了上面的类比就很容易理解，quorum表示认为某机子宕机的哨兵数量（举报开车的人数），majority表示授权进行主从切换的最少的哨兵数量（最少投票入刑的人数） 。</p>
+<h4 id="2-5、主备切换工作"><a href="#2-5、主备切换工作" class="headerlink" title="2.5、主备切换工作"></a>2.5、主备切换工作</h4><p>1、首先至少一个哨兵认为某机宕机了<br>2、如果quorum &lt; majority，那么最少majority个哨兵授权就可以执行切换<br>3、如果quorum &gt;&#x3D; majority，那么必须quorum数量的哨兵都授权才能执行切换<br>4、majority取值如下:<br>n&#x3D; 2，majority&#x3D;2<br>n&#x3D; 3，majority&#x3D;2<br>n&#x3D; 4，majority&#x3D;2<br>n&#x3D; 5，majority&#x3D;3<br>你会发现这个规则和上面的开车判断<code>一模一样</code></p>
+<h4 id="问题回答阿汤哥：为什么Redis哨兵集群只有2个节点无法正常工作？"><a href="#问题回答阿汤哥：为什么Redis哨兵集群只有2个节点无法正常工作？" class="headerlink" title="问题回答阿汤哥：为什么Redis哨兵集群只有2个节点无法正常工作？"></a>问题回答阿汤哥：为什么Redis哨兵集群只有2个节点无法正常工作？</h4><p>和场景1一模一样，A哨兵，举报了B机</p>
+<ul>
+<li>这个环境中n&#x3D;2,majority&#x3D;2,quorum&#x3D;1（2机子，根据规定majority为2，只有A举报了B所以quorum&#x3D;1</li>
+<li>因为quorum&gt;0,所以举报生效</li>
+<li>根据规则<code>quorum&lt;majority</code>,所以需要majority（2）授权</li>
+<li>但是现在只有A台机拥有授权权限，所以无效</li>
+</ul>
+<p>那么为什么三台以上就行呢，自己看场景2吧。</p>
+<h4 id="ps-从Redis经典三节点哨兵集群看得出来，最少3个人才拥有维持规矩的基础，如果最后只剩下2个人，那么规则系统必定崩塌"><a href="#ps-从Redis经典三节点哨兵集群看得出来，最少3个人才拥有维持规矩的基础，如果最后只剩下2个人，那么规则系统必定崩塌" class="headerlink" title="ps:从Redis经典三节点哨兵集群看得出来，最少3个人才拥有维持规矩的基础，如果最后只剩下2个人，那么规则系统必定崩塌"></a>ps:从Redis经典三节点哨兵集群看得出来，最少3个人才拥有维持规矩的基础，如果最后只剩下2个人，那么规则系统必定崩塌</h4>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A5%94%E5%AD%90%EF%BC%9A%E5%88%9A%E5%A5%BD%E5%9C%A8%E6%95%B4Redis%E7%BC%93%E5%AD%98%E9%AB%98%E5%8F%AF%E7%94%A8%EF%BC%8C%E9%98%BF%E6%B1%A4%E5%93%A5%E7%9A%84%E4%B8%80%E5%8F%A5%E8%AF%9DRedis%E5%93%A8%E5%85%B5%E9%9B%86%E7%BE%A4%E5%8F%AA%E6%9C%892%E4%B8%AA%E8%8A%82%E7%82%B9%E6%97%A0%E6%B3%95%E6%AD%A3%E5%B8%B8%E5%B7%A5%E4%BD%9C%E6%8A%8A%E4%BF%BA%E7%BB%99%E8%AF%B4%E6%99%95%E4%BA%86%EF%BC%8C%E7%BD%91%E4%B8%8A%E4%B9%9F%E6%B2%A1%E6%89%BE%E5%88%B0%E6%AF%94%E8%BE%83%E9%80%9A%E4%BF%97%E6%98%93%E6%87%82%E7%9A%84%E6%96%87%E7%AB%A0-%E6%89%80%E4%BB%A5%E8%87%AA%E5%B7%B1%E7%90%86%E8%A7%A3%E4%BA%86%E4%B8%80%E4%B8%8B%E5%93%A8%E5%85%B5%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95%EF%BC%8C%E4%B8%BA%E5%95%A5%E4%B8%A4%E4%B8%AA%E7%BB%93%E7%82%B9%E5%B0%B1%E6%98%AF%E4%B8%80%E4%B8%AA%E6%AD%BB%E5%B1%80%EF%BC%9F%E3%80%82%E6%89%8D%E7%96%8F%E5%AD%A6%E6%B5%85%E6%9C%89%E9%94%99%E8%AF%AF%E7%9A%84%E5%9C%B0%E6%96%B9%E8%BF%98%E6%9C%9B%E6%8C%87%E5%87%BA%EF%BC%8C%E5%A4%9A%E5%A4%9A%E5%8C%85%E6%B6%B5"><span class="toc-number">1.</span> <span class="toc-text">楔子：刚好在整Redis缓存高可用，阿汤哥的一句话Redis哨兵集群只有2个节点无法正常工作把俺给说晕了，网上也没找到比较通俗易懂的文章,所以自己理解了一下哨兵选举算法，为啥两个结点就是一个死局？。才疏学浅有错误的地方还望指出，多多包涵</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E7%B1%BB%E6%AF%94%E5%BC%80%E8%BD%A6%E4%B8%BE%E6%8A%A5%E7%AE%97%E6%B3%95"><span class="toc-number"></span> <span class="toc-text">一、类比开车举报算法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1%E3%80%81%E5%81%87%E5%A6%82kitty%E8%90%8C%E6%96%B0%E6%9D%A5%E5%88%B0%E4%BA%86%E4%B8%80%E4%B8%AA%E4%B8%8D%E5%85%81%E8%AE%B8%E5%BC%80%E8%BD%A6%E7%9A%84%E4%B8%96%E7%95%8C-%E4%BA%BA%E4%BB%AC%E4%BA%92%E7%9B%B8%E7%9B%91%E7%9D%A3%E5%85%B6%E4%BB%96%E4%BA%BA%E6%98%AF%E4%B8%8D%E6%98%AF%E5%9C%A8%E5%BC%80%E8%BD%A6%EF%BC%8C%E6%9C%80%E5%BC%80%E5%A7%8B%E5%A4%A7%E5%AE%B6%E9%83%BD%E6%B2%A1%E6%9C%89%E8%AF%81%E6%8D%AE"><span class="toc-number">1.</span> <span class="toc-text">1.1、假如kitty萌新来到了一个不允许开车的世界,人们互相监督其他人是不是在开车，最开始大家都没有证据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2%E3%80%81%E6%89%80%E4%BB%A5%E7%8E%B0%E5%9C%A8%E6%A8%A1%E6%8B%9F%E4%B8%A4%E4%B8%AA%E5%9C%BA%E6%99%AF"><span class="toc-number">2.</span> <span class="toc-text">1.2、所以现在模拟两个场景</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF1%E3%80%81%E8%BF%99%E4%B8%AA%E4%B8%96%E7%95%8C%E5%8F%AA%E6%9C%89%E4%B8%A4%E4%B8%AA%E4%BA%BA%EF%BC%8CA%E4%B8%BE%E6%8A%A5B%E5%BC%80%E8%BD%A6%E6%98%AF%E5%90%A6%E6%9C%89%E6%95%88"><span class="toc-number">2.1.</span> <span class="toc-text">场景1、这个世界只有两个人，A举报B开车是否有效</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF2%E3%80%81%E5%81%87%E5%A6%82%E8%BF%99%E4%B8%AA%E4%B8%96%E7%95%8C%E6%9C%89%E4%B8%89%E4%B8%AA%E4%BA%BA%EF%BC%8CA-B-C%E4%B8%AD%E6%9C%89%E4%BA%BA%E4%B8%BE%E6%8A%A5%E4%BA%86C%E5%BC%80%E8%BD%A6-%E5%B9%B6%E4%B8%94A-B%E9%83%BD%E6%84%BF%E6%84%8F%E5%B0%86C%E6%8A%95%E7%A5%A8%E5%85%A5%E7%8B%B1"><span class="toc-number">2.2.</span> <span class="toc-text">场景2、假如这个世界有三个人，A,B,C中有人举报了C开车,并且A,B都愿意将C投票入狱</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%88%E4%BB%A5%E4%B8%8A%E5%88%99%E6%98%AF%E7%BB%8F%E5%85%B8%E7%9A%84Redis%E4%B8%89%E8%8A%82%E7%82%B9%E5%93%A8%E5%85%B5%E9%9B%86%E7%BE%A4"><span class="toc-number">3.</span> <span class="toc-text">（以上则是经典的Redis三节点哨兵集群</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90%EF%BC%88%E4%B8%A5%E8%82%83%E8%84%B8"><span class="toc-number"></span> <span class="toc-text">二、Redis哨兵核心选举算法分析（严肃脸</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1%E3%80%81%E5%93%A8%E5%85%B5%E7%9A%84%E4%B8%BB%E8%A6%81%E5%8A%9F%E8%83%BD%E5%A6%82%E4%B8%8B"><span class="toc-number">1.</span> <span class="toc-text">2.1、哨兵的主要功能如下</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2%E3%80%81Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86"><span class="toc-number">2.</span> <span class="toc-text">2.2、Redis哨兵核心知识</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%813%EF%BC%9Asdown%E5%92%8Codown%E4%B8%A4%E7%A7%8D%E5%AE%95%E6%9C%BA"><span class="toc-number">3.</span> <span class="toc-text">2、3：sdown和odown两种宕机</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4%E3%80%81quorum%E5%92%8Cmajority"><span class="toc-number">4.</span> <span class="toc-text">2.4、quorum和majority</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-5%E3%80%81%E4%B8%BB%E5%A4%87%E5%88%87%E6%8D%A2%E5%B7%A5%E4%BD%9C"><span class="toc-number">5.</span> <span class="toc-text">2.5、主备切换工作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E5%9B%9E%E7%AD%94%E9%98%BF%E6%B1%A4%E5%93%A5%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88Redis%E5%93%A8%E5%85%B5%E9%9B%86%E7%BE%A4%E5%8F%AA%E6%9C%892%E4%B8%AA%E8%8A%82%E7%82%B9%E6%97%A0%E6%B3%95%E6%AD%A3%E5%B8%B8%E5%B7%A5%E4%BD%9C%EF%BC%9F"><span class="toc-number">6.</span> <span class="toc-text">问题回答阿汤哥：为什么Redis哨兵集群只有2个节点无法正常工作？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ps-%E4%BB%8ERedis%E7%BB%8F%E5%85%B8%E4%B8%89%E8%8A%82%E7%82%B9%E5%93%A8%E5%85%B5%E9%9B%86%E7%BE%A4%E7%9C%8B%E5%BE%97%E5%87%BA%E6%9D%A5%EF%BC%8C%E6%9C%80%E5%B0%913%E4%B8%AA%E4%BA%BA%E6%89%8D%E6%8B%A5%E6%9C%89%E7%BB%B4%E6%8C%81%E8%A7%84%E7%9F%A9%E7%9A%84%E5%9F%BA%E7%A1%80%EF%BC%8C%E5%A6%82%E6%9E%9C%E6%9C%80%E5%90%8E%E5%8F%AA%E5%89%A9%E4%B8%8B2%E4%B8%AA%E4%BA%BA%EF%BC%8C%E9%82%A3%E4%B9%88%E8%A7%84%E5%88%99%E7%B3%BB%E7%BB%9F%E5%BF%85%E5%AE%9A%E5%B4%A9%E5%A1%8C"><span class="toc-number">7.</span> <span class="toc-text">ps:从Redis经典三节点哨兵集群看得出来，最少3个人才拥有维持规矩的基础，如果最后只剩下2个人，那么规则系统必定崩塌</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/&text=Redis哨兵核心选举算法-通过开车理解quorum和majority的意义"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/&title=Redis哨兵核心选举算法-通过开车理解quorum和majority的意义"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/&is_video=false&description=Redis哨兵核心选举算法-通过开车理解quorum和majority的意义"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Redis哨兵核心选举算法-通过开车理解quorum和majority的意义&body=Check out this article: http://example.com/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/&title=Redis哨兵核心选举算法-通过开车理解quorum和majority的意义"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/&title=Redis哨兵核心选举算法-通过开车理解quorum和majority的意义"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/&title=Redis哨兵核心选举算法-通过开车理解quorum和majority的意义"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/&title=Redis哨兵核心选举算法-通过开车理解quorum和majority的意义"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/&name=Redis哨兵核心选举算法-通过开车理解quorum和majority的意义&description=&lt;h4 id=&#34;楔子：刚好在整Redis缓存高可用，阿汤哥的一句话Redis哨兵集群只有2个节点无法正常工作把俺给说晕了，网上也没找到比较通俗易懂的文章-所以自己理解了一下哨兵选举算法，为啥两个结点就是一个死局？。才疏学浅有错误的地方还望指出，多多包涵&#34;&gt;&lt;a href=&#34;#楔子：刚好在整Redis缓存高可用，阿汤哥的一句话Redis哨兵集群只有2个节点无法正常工作把俺给说晕了，网上也没找到比较通俗易懂的文章-所以自己理解了一下哨兵选举算法，为啥两个结点就是一个死局？。才疏学浅有错误的地方还望指出，多多包涵&#34; class=&#34;headerlink&#34; title=&#34;楔子：刚好在整Redis缓存高可用，阿汤哥的一句话Redis哨兵集群只有2个节点无法正常工作把俺给说晕了，网上也没找到比较通俗易懂的文章,所以自己理解了一下哨兵选举算法，为啥两个结点就是一个死局？。才疏学浅有错误的地方还望指出，多多包涵&#34;&gt;&lt;/a&gt;楔子：刚好在整Redis缓存高可用，阿汤哥的一句话&lt;code&gt;Redis哨兵集群只有2个节点无法正常工作&lt;/code&gt;把俺给说晕了，网上也没找到比较通俗易懂的文章,所以自己理解了一下哨兵选举算法，为啥两个结点就是一个死局？。才疏学浅有错误的地方还望指出，多多包涵&lt;/h4&gt;&lt;h3 id=&#34;一、类比开车举报算法&#34;&gt;&lt;a href=&#34;#一、类比开车举报算法&#34; class=&#34;headerlink&#34; title=&#34;一、类比开车举报算法&#34;&gt;&lt;/a&gt;一、类比开车举报算法&lt;/h3&gt;&lt;h4 id=&#34;1-1、假如kitty萌新来到了一个不允许开车的世界-人们互相监督其他人是不是在开车，最开始大家都没有证据&#34;&gt;&lt;a href=&#34;#1-1、假如kitty萌新来到了一个不允许开车的世界-人们互相监督其他人是不是在开车，最开始大家都没有证据&#34; class=&#34;headerlink&#34; title=&#34;1.1、假如kitty萌新来到了一个不允许开车的世界,人们互相监督其他人是不是在开车，最开始大家都没有证据&#34;&gt;&lt;/a&gt;1.1、假如kitty萌新来到了一个不允许开车的世界,人们互相监督其他人是不是在开车，最开始大家都没有证据&lt;/h4&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/07/13/Redis%E5%93%A8%E5%85%B5%E6%A0%B8%E5%BF%83%E9%80%89%E4%B8%BE%E7%AE%97%E6%B3%95-%E9%80%9A%E8%BF%87%E5%BC%80%E8%BD%A6%E7%90%86%E8%A7%A3quorum%E5%92%8Cmajority%E7%9A%84%E6%84%8F%E4%B9%89/&t=Redis哨兵核心选举算法-通过开车理解quorum和majority的意义"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

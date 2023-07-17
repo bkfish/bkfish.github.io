@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="一、链路层提供的服务1、成帧。在每个网络层数据报经链路传送之前，几乎所有链路层协议都要将其用链路层帧封装起来。2、链路接入。媒体访问控制(Medium Access Control, MAC)协议规定了帧在链路上传输的规则。3、可靠交付。保证无差错地经链路层移动每个网络层数据报。4、差错检测和纠正。当帧中的一个比特作为1传输时，接收方结点中的链路层硬件可能不正确地将其判断为0，反之亦然。这种比特差">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机网络自顶向下-链路层">
+<meta property="og:url" content="http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/index.html">
+<meta property="og:site_name" content="书鱼">
+<meta property="og:description" content="一、链路层提供的服务1、成帧。在每个网络层数据报经链路传送之前，几乎所有链路层协议都要将其用链路层帧封装起来。2、链路接入。媒体访问控制(Medium Access Control, MAC)协议规定了帧在链路上传输的规则。3、可靠交付。保证无差错地经链路层移动每个网络层数据报。4、差错检测和纠正。当帧中的一个比特作为1传输时，接收方结点中的链路层硬件可能不正确地将其判断为0，反之亦然。这种比特差">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/1.webp">
+<meta property="og:image" content="http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/2.webp">
+<meta property="og:image" content="http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/3.webp">
+<meta property="article:published_time" content="2019-03-15T04:59:51.000Z">
+<meta property="article:modified_time" content="2020-11-24T04:55:26.000Z">
+<meta property="article:author" content="Bkfish">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/1.webp">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>计算机网络自顶向下-链路层</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-Web%E7%BD%91%E9%A1%B5%E8%AF%B7%E6%B1%82%E8%BF%87%E7%A8%8B/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2019/03/13/%E4%BB%8E%E4%B8%80%E6%AC%A1%E5%88%A0%E9%99%A4%E5%B8%A6%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%96%87%E4%BB%B6%E5%90%8D%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E5%AD%A6%E4%B9%A0Linux%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9inode/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/&text=计算机网络自顶向下-链路层"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/&title=计算机网络自顶向下-链路层"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/&is_video=false&description=计算机网络自顶向下-链路层"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=计算机网络自顶向下-链路层&body=Check out this article: http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/&title=计算机网络自顶向下-链路层"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/&title=计算机网络自顶向下-链路层"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/&title=计算机网络自顶向下-链路层"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/&title=计算机网络自顶向下-链路层"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/&name=计算机网络自顶向下-链路层&description=&lt;h3 id=&#34;一、链路层提供的服务&#34;&gt;&lt;a href=&#34;#一、链路层提供的服务&#34; class=&#34;headerlink&#34; title=&#34;一、链路层提供的服务&#34;&gt;&lt;/a&gt;一、链路层提供的服务&lt;/h3&gt;&lt;p&gt;1、成帧。在每个网络层数据报经链路传送之前，几乎所有链路层协议都要将其用链路层帧封装起来。&lt;br&gt;2、链路接入。媒体访问控制(Medium Access Control, MAC)协议规定了帧在链路上传输的规则。&lt;br&gt;3、可靠交付。保证无差错地经链路层移动每个网络层数据报。&lt;br&gt;4、差错检测和纠正。当帧中的一个比特作为1传输时，接收方结点中的链路层硬件可能不正确地将其判断为0，反之亦然。这种比特差错是由信号衰减和电磁噪声导致的。&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/&t=计算机网络自顶向下-链路层"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E9%93%BE%E8%B7%AF%E5%B1%82%E6%8F%90%E4%BE%9B%E7%9A%84%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.</span> <span class="toc-text">一、链路层提供的服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%B7%AE%E9%94%99%E6%A3%80%E6%B5%8B%E5%92%8C%E7%BA%A0%E6%AD%A3%E6%8A%80%E6%9C%AF"><span class="toc-number">2.</span> <span class="toc-text">二、差错检测和纠正技术</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1%E3%80%81%E4%B8%89%E7%A7%8D%E6%A3%80%E6%B5%8B%E5%B7%AE%E9%94%99%E7%9A%84%E6%8A%80%E6%9C%AF%EF%BC%9A"><span class="toc-number">2.1.</span> <span class="toc-text">2.1、三种检测差错的技术：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2%E3%80%81%E4%B8%A4%E7%A7%8D%E7%B1%BB%E5%9E%8B%E7%9A%84%E7%BD%91%E7%BB%9C%E9%93%BE%E8%B7%AF"><span class="toc-number">2.2.</span> <span class="toc-text">2.2、两种类型的网络链路</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%A4%9A%E8%B7%AF%E8%AE%BF%E9%97%AE%E9%97%AE%E9%A2%98"><span class="toc-number">3.</span> <span class="toc-text">三、多路访问问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E9%93%BE%E8%B7%AF%E5%B1%82%E5%9C%B0%E5%9D%80"><span class="toc-number">4.</span> <span class="toc-text">四、链路层地址</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1%E3%80%81%E5%9C%B0%E5%9D%80%E8%A7%A3%E6%9E%90%E5%8D%8F%E8%AE%AE-Address-Resolution-Protocol-ARP"><span class="toc-number">4.1.</span> <span class="toc-text">4.1、地址解析协议(Address Resolution Protocol, ARP)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2%E3%80%81%E4%BB%A5%E5%A4%AA%E7%BD%91"><span class="toc-number">4.2.</span> <span class="toc-text">4.2、以太网</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-3%E3%80%81%E9%93%BE%E8%B7%AF%E5%B1%82%E4%BA%A4%E6%8D%A2%E6%9C%BA"><span class="toc-number">4.3.</span> <span class="toc-text">4.3、链路层交换机</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-4%E3%80%81%E9%93%BE%E8%B7%AF%E5%B1%82%E4%BA%A4%E6%8D%A2%E6%9C%BA%E7%9A%84%E8%87%AA%E5%AD%A6%E4%B9%A0"><span class="toc-number">4.4.</span> <span class="toc-text">4.4、链路层交换机的自学习</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-5%E3%80%81%E9%93%BE%E8%B7%AF%E5%B1%82%E4%BA%A4%E6%8D%A2%E6%9C%BA%E5%92%8C%E8%B7%AF%E7%94%B1%E5%99%A8%E7%9A%84%E6%AF%94%E8%BE%83"><span class="toc-number">4.5.</span> <span class="toc-text">4.5、链路层交换机和路由器的比较</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-6%E3%80%81%E8%99%9A%E6%8B%9F%E5%B1%80%E5%9F%9F%E7%BD%91"><span class="toc-number">4.6.</span> <span class="toc-text">4.6、虚拟局域网</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BB%A5%E5%A4%AA%E7%BD%91VLAN%E5%B8%A7"><span class="toc-number">4.6.1.</span> <span class="toc-text">以太网VLAN帧</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        计算机网络自顶向下-链路层
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Bkfish</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-03-15T04:59:51.000Z" class="dt-published" itemprop="datePublished">2019-03-15</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/">计算机网络自顶向下</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag">计算机网络</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h3 id="一、链路层提供的服务"><a href="#一、链路层提供的服务" class="headerlink" title="一、链路层提供的服务"></a>一、链路层提供的服务</h3><p>1、成帧。在每个网络层数据报经链路传送之前，几乎所有链路层协议都要将其用链路层帧封装起来。<br>2、链路接入。媒体访问控制(Medium Access Control, MAC)协议规定了帧在链路上传输的规则。<br>3、可靠交付。保证无差错地经链路层移动每个网络层数据报。<br>4、差错检测和纠正。当帧中的一个比特作为1传输时，接收方结点中的链路层硬件可能不正确地将其判断为0，反之亦然。这种比特差错是由信号衰减和电磁噪声导致的。</p>
+<span id="more"></span>
+
+
+<h3 id="二、差错检测和纠正技术"><a href="#二、差错检测和纠正技术" class="headerlink" title="二、差错检测和纠正技术"></a>二、差错检测和纠正技术</h3><p>差错检测和纠错技术越复杂，导致的开销就越大，这就是意味着需要更多的计算量及更多的差错检测和纠错比特。</p>
+<h4 id="2-1、三种检测差错的技术："><a href="#2-1、三种检测差错的技术：" class="headerlink" title="2.1、三种检测差错的技术："></a>2.1、三种检测差错的技术：</h4><ol>
+<li>奇偶校验（一维奇偶校验十分简单，但未检出差错的几率较高；二维奇偶校验可检测差错，还可以纠正差错）</li>
+<li>检验和方法（与运输层的检验和方法类似）</li>
+<li>循环冗余检测(Cyclic Redundancy Check, CRC)</li>
+</ol>
+<h4 id="2-2、两种类型的网络链路"><a href="#2-2、两种类型的网络链路" class="headerlink" title="2.2、两种类型的网络链路"></a>2.2、两种类型的网络链路</h4><p>1、点对点链路。由链路一端的单个发送方和链路另一端的单个接收方组成。许多链路层协议都为点对点链路设计，如点对点协议(point-to-point protocol, PPP)和高级数据链路控制(high-level data link control, HDLC)协议。<br>2、广播链路。能够让多个发送和接收结点都连接到相同的、单一的、共享的广播信道上。广播信道通常用于局域网中。</p>
+<h3 id="三、多路访问问题"><a href="#三、多路访问问题" class="headerlink" title="三、多路访问问题"></a>三、多路访问问题</h3><p>协调多个发送&#x2F;接收点对一个共享广播信道的访问，避免碰撞，有如下几种协议：<br>    （1）信道划分协议：时分、频分、码分等，采用时分多路复用(TDM)和频分多路复用(FDM)<br>    （2）随机接入协议：碰撞后，重发该帧前等待一个随机时延，有以下几种(时隙ALOHA,ALOHA,载波侦听多路访问(CSMA)具有碰撞检测的载波侦听多路访问(CSMA&#x2F;CD))<br>    例如CSMA载波侦听多路访问协议，节点在传播前先侦听信道，直到检测到一小段时间内没有信号传输，然后再开始传输，如果检测到碰撞就停止传输，继续侦听。<br>    （3）轮流协议：【1】轮询协议，有一个主节点，轮询每个节点    【2】令牌传递协议，无主节点<br>1、信道划分协议。采用时分多路复用(TDM)和频分多路复用(FDM)，在所有共享信道的结点之间划分广播信道带宽的技术。<br>2、随机接入协议。一个传输结点总是以信道的全部速率进行发送、当有碰撞时，涉及碰撞的每个结点反复地重发它的帧(也就是分组)，到该帧无碰撞地通过为止。在重发涉及碰撞的帧之前，会等待一个随机时延。涉及碰撞的每个结点独立地选择随机时延。随机接入协议又有以下几种：</p>
+<h3 id="四、链路层地址"><a href="#四、链路层地址" class="headerlink" title="四、链路层地址"></a>四、链路层地址</h3><p>为什么我们在网络层和链路层都需要地址呢？</p>
+<ol>
+<li>局域网是为任意网络层协议而设计，而不只是用于IP和因特网。</li>
+<li>如果适配器使用网络层地址而不是MAC地址，网络层地址必须存储在适配器的RAM中，并且在每次适配器移动(或加电)时要重新配置。</li>
+</ol>
+<p>主机和路由器中的适配器(即网络接口)具有链路层地址。要注意的是，链路层交换机没有链路层地址，因为它的任务是在主机与路由器之间承载数据报，它透明地执行该项任务，主机或路由器不必明确地将帧寻址到其间的交换机。<br>链路层地址有几种不同的称呼：<br>1、LAN地址<br>2、物理地址<br>3、MAC地址<br>大多数局域网，MAC地址长度为6字节。尽管MAC地址被设计为永久，但可以做到用软件改变一块适配器的MAC地址。没有两块适配器具有相同的MAC地址。</p>
+<h4 id="4-1、地址解析协议-Address-Resolution-Protocol-ARP"><a href="#4-1、地址解析协议-Address-Resolution-Protocol-ARP" class="headerlink" title="4.1、地址解析协议(Address Resolution Protocol, ARP)"></a>4.1、地址解析协议(Address Resolution Protocol, ARP)</h4><p>ARP将一个IP地址解析为一个MAC地址。在很多方面它和DNS类似，DNS将主机名解析为IP地址。<br>它们之间的重要区别是：<strong>DNS为在因特网中任何地方的主机解析主机名，而ARP只为在同一个子网上的主机和路由器接口解析IP地址。</strong><br>每台主机或路由器在其内存中有一个ARP表，包含IP地址到MAC地址的映射关系。如果一台主机要发送一个数据报到子网中的另一台主机，发送方需要获得给定IP地址的目的主机的MAC地址，如果发送方ARP表具有该目的结点的表项，这个任务很容易完成了如果没有，发送方会向它的适配器传递一个ARP查询分组，并且指示适配器应该用MAC广播地址(即FF-FF-FF-FF-FF-FF)来发送这个分组。</p>
+<p>ARP协议需要注意的两件事<br>1、查询ARP报文是在广播帧中发送的，而响应ARP报文在一个标准帧中发送<br>2、ARP是即插即用的，意思是一个ARP表是自动建立的，它不需要系统管理员来配置。并且如果某主机与子网断开连接，它的表项最终会从留在子网中的结点的表中删除掉。</p>
+<h4 id="4-2、以太网"><a href="#4-2、以太网" class="headerlink" title="4.2、以太网"></a>4.2、以太网</h4><p>以太网帧结构<br><img src="/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/1.webp"></p>
+<ol>
+<li>前同步码(8字节)。前同步码的前7个字节值都为10101010，最后一个字节为10101011。前7个字节用于“唤醒”接收适配器，并且将它们的时钟和发送方的时钟同步。</li>
+<li>目的地址(6字节)。目的适配器的MAC地址。</li>
+<li>源地址(6字节)。源适配器的MAC地址。</li>
+<li>类型(2字节)。该字段允许以太网复用多种网络层协议。要记住主机能够使用除了IP以外的其他网络层协议。</li>
+<li>数据(46~1500字节)。承载IP数据报。以太网最大传输单元(MTU)为1500字节，如果超过1500字节，主机必须将该数据报分片。数据字段的最小长度为46字节，少于则被填充到46字节。</li>
+<li>CRC(4字节)。循环冗余检测字段，检测帧是否引入了差错。<br>所以以太网技术都向网络层提供无连接服务。即适配器A向适配器B发送数据报时不需要先与适配器B“握手”。这种无连接服务类似于IP的第三层数据报服务和UDP的第四层无连接服务。</li>
+</ol>
+<h4 id="4-3、链路层交换机"><a href="#4-3、链路层交换机" class="headerlink" title="4.3、链路层交换机"></a>4.3、链路层交换机</h4><p>交换机的过滤和转发<br>1、过滤是决定一个帧应该转发到某个接口还是应当将其丢弃<br>2、转发是决定一个帧应该被导向哪个接口，并把该帧移动到那些接口</p>
+<p>链路层交换机的过滤和转发功能借助于交换机表。转发分组基于MAC地址。</p>
+<h4 id="4-4、链路层交换机的自学习"><a href="#4-4、链路层交换机的自学习" class="headerlink" title="4.4、链路层交换机的自学习"></a>4.4、链路层交换机的自学习</h4><p>1、交换机表初始为空<br>2、当在每个接口接收到的每个入帧，该交换机在其表中存储：（1）在该帧源地址字段中的MAC地址（2）该帧到达的接口（3）当前时间。<br>3、如果在一段时间内，交换机没有接收到以该地址作为源地址的帧，就在表中删除这个地址。<br>链路层交换机是全双工的，任何交换机接口能够同时发送和接收。</p>
+<h4 id="4-5、链路层交换机和路由器的比较"><a href="#4-5、链路层交换机和路由器的比较" class="headerlink" title="4.5、链路层交换机和路由器的比较"></a>4.5、链路层交换机和路由器的比较</h4><p>1、交换机<br>优点：<br>（1）即插即用<br>（2）相对高的分组过滤和转发速率<br>缺点：<br>（1）为了防止广播帧的循环，交换网络的活跃拓扑限制为一棵生成树<br>（2）一个大型交换网络要求在主机和路由器中有大的ARP表，这将生成可观的ARP流量和处理量<br>（3）对广播风暴不提供任何保护措施，如果某主机出了故障并传输出没完没了的以太网广播帧流，该交换机将转发所有这些帧，使得整个以太网崩溃<br>2、路由器<br>优点：<br>（1）网络寻址通常是分层次的(不像MAC寻址是扁平的)。即使网络中存在冗余路径时，分组通常也不会通过路由器循环。所以，分组不会被限制到一棵生成树上，并可以使用源和目的地之间的最佳路径。因为没有生成树的限制，所以它们允许以丰富的拓扑结构构件因特网，如包括欧洲和北美之间的多条活跃链路<br>（2）对第二层的广播风暴提供了防火墙保护<br>缺点：<br>（1）不是即插即用<br>（2）对每个分组的处理时间通常比交换机更长</p>
+<p><img src="/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/2.webp"></p>
+<h4 id="4-6、虚拟局域网"><a href="#4-6、虚拟局域网" class="headerlink" title="4.6、虚拟局域网"></a>4.6、虚拟局域网</h4><p>上述的局域网有三个缺点<br>1、缺乏流量隔离<br>2、交换机的无效使用<br>3、不方便管理用户</p>
+<p>支持VLAN的交换机允许经一个单一的物理局域网基础设施定义多个虚拟局域网。在一个VLAN内的主机彼此通信，仿佛它们与交换机相连。</p>
+<h5 id="以太网VLAN帧"><a href="#以太网VLAN帧" class="headerlink" title="以太网VLAN帧"></a>以太网VLAN帧</h5><p><img src="/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/3.webp"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E9%93%BE%E8%B7%AF%E5%B1%82%E6%8F%90%E4%BE%9B%E7%9A%84%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.</span> <span class="toc-text">一、链路层提供的服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%B7%AE%E9%94%99%E6%A3%80%E6%B5%8B%E5%92%8C%E7%BA%A0%E6%AD%A3%E6%8A%80%E6%9C%AF"><span class="toc-number">2.</span> <span class="toc-text">二、差错检测和纠正技术</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1%E3%80%81%E4%B8%89%E7%A7%8D%E6%A3%80%E6%B5%8B%E5%B7%AE%E9%94%99%E7%9A%84%E6%8A%80%E6%9C%AF%EF%BC%9A"><span class="toc-number">2.1.</span> <span class="toc-text">2.1、三种检测差错的技术：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2%E3%80%81%E4%B8%A4%E7%A7%8D%E7%B1%BB%E5%9E%8B%E7%9A%84%E7%BD%91%E7%BB%9C%E9%93%BE%E8%B7%AF"><span class="toc-number">2.2.</span> <span class="toc-text">2.2、两种类型的网络链路</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%A4%9A%E8%B7%AF%E8%AE%BF%E9%97%AE%E9%97%AE%E9%A2%98"><span class="toc-number">3.</span> <span class="toc-text">三、多路访问问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E9%93%BE%E8%B7%AF%E5%B1%82%E5%9C%B0%E5%9D%80"><span class="toc-number">4.</span> <span class="toc-text">四、链路层地址</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1%E3%80%81%E5%9C%B0%E5%9D%80%E8%A7%A3%E6%9E%90%E5%8D%8F%E8%AE%AE-Address-Resolution-Protocol-ARP"><span class="toc-number">4.1.</span> <span class="toc-text">4.1、地址解析协议(Address Resolution Protocol, ARP)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2%E3%80%81%E4%BB%A5%E5%A4%AA%E7%BD%91"><span class="toc-number">4.2.</span> <span class="toc-text">4.2、以太网</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-3%E3%80%81%E9%93%BE%E8%B7%AF%E5%B1%82%E4%BA%A4%E6%8D%A2%E6%9C%BA"><span class="toc-number">4.3.</span> <span class="toc-text">4.3、链路层交换机</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-4%E3%80%81%E9%93%BE%E8%B7%AF%E5%B1%82%E4%BA%A4%E6%8D%A2%E6%9C%BA%E7%9A%84%E8%87%AA%E5%AD%A6%E4%B9%A0"><span class="toc-number">4.4.</span> <span class="toc-text">4.4、链路层交换机的自学习</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-5%E3%80%81%E9%93%BE%E8%B7%AF%E5%B1%82%E4%BA%A4%E6%8D%A2%E6%9C%BA%E5%92%8C%E8%B7%AF%E7%94%B1%E5%99%A8%E7%9A%84%E6%AF%94%E8%BE%83"><span class="toc-number">4.5.</span> <span class="toc-text">4.5、链路层交换机和路由器的比较</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-6%E3%80%81%E8%99%9A%E6%8B%9F%E5%B1%80%E5%9F%9F%E7%BD%91"><span class="toc-number">4.6.</span> <span class="toc-text">4.6、虚拟局域网</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BB%A5%E5%A4%AA%E7%BD%91VLAN%E5%B8%A7"><span class="toc-number">4.6.1.</span> <span class="toc-text">以太网VLAN帧</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/&text=计算机网络自顶向下-链路层"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/&title=计算机网络自顶向下-链路层"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/&is_video=false&description=计算机网络自顶向下-链路层"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=计算机网络自顶向下-链路层&body=Check out this article: http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/&title=计算机网络自顶向下-链路层"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/&title=计算机网络自顶向下-链路层"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/&title=计算机网络自顶向下-链路层"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/&title=计算机网络自顶向下-链路层"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/&name=计算机网络自顶向下-链路层&description=&lt;h3 id=&#34;一、链路层提供的服务&#34;&gt;&lt;a href=&#34;#一、链路层提供的服务&#34; class=&#34;headerlink&#34; title=&#34;一、链路层提供的服务&#34;&gt;&lt;/a&gt;一、链路层提供的服务&lt;/h3&gt;&lt;p&gt;1、成帧。在每个网络层数据报经链路传送之前，几乎所有链路层协议都要将其用链路层帧封装起来。&lt;br&gt;2、链路接入。媒体访问控制(Medium Access Control, MAC)协议规定了帧在链路上传输的规则。&lt;br&gt;3、可靠交付。保证无差错地经链路层移动每个网络层数据报。&lt;br&gt;4、差错检测和纠正。当帧中的一个比特作为1传输时，接收方结点中的链路层硬件可能不正确地将其判断为0，反之亦然。这种比特差错是由信号衰减和电磁噪声导致的。&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2019/03/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E9%93%BE%E8%B7%AF%E5%B1%82/&t=计算机网络自顶向下-链路层"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    Bkfish
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
