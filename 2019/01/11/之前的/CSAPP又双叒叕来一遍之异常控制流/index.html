@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>CSAPP又双叒叕来一遍之异常控制流</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">CSAPP又双叒叕来一遍之异常控制流</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2019/01/11/%E4%B9%8B%E5%89%8D%E7%9A%84/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">CSAPP又双叒叕来一遍之异常控制流</h1>
+          
+            <div class="article-meta">2019-01-11</div>
+          
+        </div>
+        <article class="markdown">
+          <h4 id="小声bb-几天没更博客了，这几天真的过得和狗一样，怪也只能怪自己太把自己高看了以为两天写课设绰绰有余，其实只是一个小萌新，在达成48小时从零开始写完数据结构课设的同时完成了两天两夜不睡的新成就，昨天验收结束睡了一觉，终于有时间看书了，CSAPP本来觉得看完了，但是翻了翻发现还是很多知识点之前跳过了，罪过罪过，劝告大家一句话“能够完整的看完一本书是一个人受过高等教育的体现”，希望之后的经典书能整本认真看完。"><a href="#小声bb-几天没更博客了，这几天真的过得和狗一样，怪也只能怪自己太把自己高看了以为两天写课设绰绰有余，其实只是一个小萌新，在达成48小时从零开始写完数据结构课设的同时完成了两天两夜不睡的新成就，昨天验收结束睡了一觉，终于有时间看书了，CSAPP本来觉得看完了，但是翻了翻发现还是很多知识点之前跳过了，罪过罪过，劝告大家一句话“能够完整的看完一本书是一个人受过高等教育的体现”，希望之后的经典书能整本认真看完。" class="headerlink" title="小声bb,几天没更博客了，这几天真的过得和狗一样，怪也只能怪自己太把自己高看了以为两天写课设绰绰有余，其实只是一个小萌新，在达成48小时从零开始写完数据结构课设的同时完成了两天两夜不睡的新成就，昨天验收结束睡了一觉，终于有时间看书了，CSAPP本来觉得看完了，但是翻了翻发现还是很多知识点之前跳过了，罪过罪过，劝告大家一句话“能够完整的看完一本书是一个人受过高等教育的体现”，希望之后的经典书能整本认真看完。"></a>小声bb,几天没更博客了，这几天真的过得和狗一样，怪也只能怪自己太把自己高看了以为两天写课设绰绰有余，其实只是一个小萌新，在达成48小时从零开始写完数据结构课设的同时完成了两天两夜不睡的新成就，昨天验收结束睡了一觉，终于有时间看书了，CSAPP本来觉得看完了，但是翻了翻发现还是很多知识点之前跳过了，罪过罪过，劝告大家一句话“能够完整的看完一本书是一个人受过高等教育的体现”，希望之后的经典书能整本认真看完。</h4><span id="more"></span>
+
+
+<h3 id="异常控制流这章个人感觉精华除了异常外，讲进程的真的精髓"><a href="#异常控制流这章个人感觉精华除了异常外，讲进程的真的精髓" class="headerlink" title="异常控制流这章个人感觉精华除了异常外，讲进程的真的精髓"></a>异常控制流这章个人感觉精华除了异常外，讲进程的真的精髓</h3><p><img src="/2019/01/11/%E4%B9%8B%E5%89%8D%E7%9A%84/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/1.webp"></p>
+<h3 id="1、异常控制流（Exceptional-Contro-Flow）处理过程"><a href="#1、异常控制流（Exceptional-Contro-Flow）处理过程" class="headerlink" title="1、异常控制流（Exceptional Contro Flow）处理过程"></a>1、异常控制流（Exceptional Contro Flow）处理过程</h3><p><img src="/2019/01/11/%E4%B9%8B%E5%89%8D%E7%9A%84/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/2.webp"><br>这一过程如上图所示，应用程序本来在执行Icur指令，但是有些事件（定时器信号、算术溢出等）会使得处理器的状态发生变化，这时候处理器会通过一张异常跳转表，进行跳转到专门的异常处理程序中，异常处理程序执行完任务以后：可能返回当前正在执行指令、返回当前下一条指令或者终止被中断的程序。</p>
+<h4 id="1-1、异常表-异常表基地址"><a href="#1-1、异常表-异常表基地址" class="headerlink" title="1.1、异常表&amp;&amp;异常表基地址"></a>1.1、异常表&amp;&amp;异常表基地址</h4><p><img src="/2019/01/11/%E4%B9%8B%E5%89%8D%E7%9A%84/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/3.webp"><br>系统中可能出现的异常都被分配了一个唯一的非负整数的异常号（exception number)，而异常表储存异常号对应的一个异常处理程序<br><img src="/2019/01/11/%E4%B9%8B%E5%89%8D%E7%9A%84/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/4.webp"><br>当你本机发生一个异常后，你只能拿到这个异常的异常号，你要触发一个异常的处理，你要拿到该异常处理程序的地址，所以通过异常表基址寄存器+异常号获得异常表的数据而执行异常处理。</p>
+<h4 id="1-2、四大异常分类"><a href="#1-2、四大异常分类" class="headerlink" title="1.2、四大异常分类"></a>1.2、四大异常分类</h4><p><img src="/2019/01/11/%E4%B9%8B%E5%89%8D%E7%9A%84/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/5.webp"></p>
+<h5 id="（1）中断"><a href="#（1）中断" class="headerlink" title="（1）中断"></a>（1）中断</h5><p><img src="/2019/01/11/%E4%B9%8B%E5%89%8D%E7%9A%84/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/6.webp"><br>中断：是异步发生的，来自处理外部的I&#x2F;O设备信号的结果.（设备信号之后会详讲<br>实例：当手机播放器在公放音乐的时候，你突然打开某大游戏可能音乐暂时卡住，大概一瞬间后歌曲继续播放，当然大家手机tql，时间太短，感觉不到。（可能我讲的有问题，可能只是突出穷买不起好手机吧，嘤嘤嘤</p>
+<h5 id="（2）陷阱和系统调用"><a href="#（2）陷阱和系统调用" class="headerlink" title="（2）陷阱和系统调用"></a>（2）陷阱和系统调用</h5><p><img src="/2019/01/11/%E4%B9%8B%E5%89%8D%E7%9A%84/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/7.webp"><br>实现系统调用，在用户程序和内核之间提供一个像函数调用一样的接口。<br>（csapp原书上的实例）比如要读一个文件的内容（read），这些内核服务受到控制的访问，处理器提供的是syscall n指令来响应用户的请求，导致一个陷阱异常，这个异常程序对参数解码并调用内核程序。这个异常处理程序运行在内核模式中。</p>
+<h5 id="（3）故障"><a href="#（3）故障" class="headerlink" title="（3）故障"></a>（3）故障</h5><p><img src="/2019/01/11/%E4%B9%8B%E5%89%8D%E7%9A%84/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/8.webp"><br>故障发生时，处理器将控制转移到故障处理程序中，由故障处理程序修正错误。如果能够修正就返回当前指令重新执行，如果不能修正就返回到内核的abort中。<br>（csapp原书上的实例）缺页异常，当指令使用一个虚拟地址，但是该地址对应的物理地址在内存中找不到，所以必须从磁盘中取出，就会发生故障。<br>#####（4）终止<br>通常是由一些硬件引起的不可恢复的致命错误<br>直接返回到abort中，终止该应用程序。</p>
+<h4 id="2、进程"><a href="#2、进程" class="headerlink" title="2、进程"></a>2、进程</h4><p>之前写过线程与进程的暧昧缠绵，但是只是从功能上讲，为了友好些有很多沙雕图，也没有讲那么详细对于进程最经典的定义就是一个执行中的程序实例。进程是一个伟大的魔术师，她提供给每个运行的程序一种假象，好像每个程序都在独占处理器和地址空间。其实主要思想就是逻辑控制流和私有地址空间。</p>
+<h5 id="2-1、进程控制流"><a href="#2-1、进程控制流" class="headerlink" title="2.1、进程控制流"></a>2.1、进程控制流</h5><p><img src="/2019/01/11/%E4%B9%8B%E5%89%8D%E7%9A%84/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/9.webp"><br>上图是一个运行了三个进程A、B、C的系统，处理器的控制流分成了3个，每一个进程1个。随着时间的增加，进程A先运行了一小段（①），然后进程B运行直到结束（②），随后进程C运行了一小段（③）后切换到进程A运行直到A结束（④），最后切换到进程C运行直到结束（⑤）。这样一来每个进程执行它的流的一部分，然后被抢占。由于CPU总是毫秒级别的转移我们什么都不会察觉到。就提供了一种每个程序独占的假象。<br>时间片：进程A执行它控制流的一部分的每个时间片段，就叫时间片。</p>
+<h5 id="2-2、私有地址空间"><a href="#2-2、私有地址空间" class="headerlink" title="2.2、私有地址空间"></a>2.2、私有地址空间</h5><p><img src="/2019/01/11/%E4%B9%8B%E5%89%8D%E7%9A%84/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/10.webp"><br>这张图放过很多次了，在内存那章会详细讲<br>这个私有的地址空间最上部是内核保留的，最下部是预留给用户程序的。代码始终是从0x08048000处开始（32位系统）。</p>
+<h5 id="2-3、用户模式和内核模式"><a href="#2-3、用户模式和内核模式" class="headerlink" title="2.3、用户模式和内核模式"></a>2.3、用户模式和内核模式</h5><p>处理器为了安全起见，不至于损坏操作系统，必须限制一个应用程序可执行指令能访问的地址空间范围。就发明了两种模式用户模式和内核模式，其中内核模式（上帝模式）有最高的访问权限，甚至可以停止处理器、改变模式位，或者发起一个I&#x2F;O操作，处理器使用一个寄存器当作模式位，描述当前进程的特权。进程只有当中断、故障或者陷入系统调用时，才会将模式位设置成上帝模式，得到内核访问权限，其他情况下都始终在用户权限中，就能够保证系统的绝对安全。</p>
+<h5 id="2-4、上下文切换机制"><a href="#2-4、上下文切换机制" class="headerlink" title="2.4、上下文切换机制"></a>2.4、上下文切换机制</h5><p><img src="/2019/01/11/%E4%B9%8B%E5%89%8D%E7%9A%84/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/11.webp"><br>内核中有一个专门的调度程序，当从进程A切换到进程B的时候，内核调度器为每个进程保存一个上下文状态（运行环境保存）：包含程序计数器、用户栈、状态寄存器等，然后切换到另外一个进程处开始执行。<br>当内核代表用户执行系统调用的时候，就会发生上下文切换，如上图所示，当进程A调用read函数的时候，内核代表进程A开始执行系统调用读取磁盘上的文件，这需要耗费相对很长的时间，处理器这时候不会闲着什么都不做，而是开始一种上下文切换机制，切换到进程B开始执行。当B在用户模式下执行了一段时间，磁盘读取完文件以后发送一个中断信号，将执行进程B到进程A的上下文切换，将控制权返回给进程A系统调用read指令后面的那条指令，继续执行进程A。（注：在切换的临界时间内核模式其实也执行了B一个小段时间）</p>
+<h4 id="3、Linux自己写写关于进程的demo"><a href="#3、Linux自己写写关于进程的demo" class="headerlink" title="3、Linux自己写写关于进程的demo"></a>3、Linux自己写写关于进程的demo</h4><h5 id="3-1、fork（）函数来创建一个新进程"><a href="#3-1、fork（）函数来创建一个新进程" class="headerlink" title="3.1、fork（）函数来创建一个新进程"></a>3.1、fork（）函数来创建一个新进程</h5><p><strong>关于fock函数的巴拉巴拉，如果你困了，请跳过这一大串文字，直接看书上两个demo吧</strong><br>我们使用fork（）函数通过系统调用创建一个与原来进程几乎完全相同的进程，除了PID不同外，子进程可以读写父进程中打开的任何文件。一个进程调用fork（）函数后，系统先给新的进程分配资源，例如存储数据和代码的空间。然后把原来的进程的所有值都复制到新的新进程中，只有少数值与原来的进程的值不同。相当于克隆了一个自己。fork函数有一个特别的地方，虽然只被调用一次，却能返回两次。(fock()函数第一次返回是在父进程中，返回的是子进程的PID；一次是在子进程中，返回的是0；因为PID总是非零，返回值为0就说明在子进程中执行了。用来区分，另外Linux下Fock函数定义在unistd.h 中)<br>希望大家自己敲一敲，就算活动活动手指，当作一种运动吧<br><strong>fock函数demo1</strong><br><img src="/2019/01/11/%E4%B9%8B%E5%89%8D%E7%9A%84/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/1.png"><br>（结果出现原因、x在父子进程中是单独成立的，当调用pid &#x3D; Fork（）；的时候，第一次返回的是进程的子ID，由于不为0，所以继续执行main函数中的printf，打印输出x &#x3D; 0；第二次就在子进程中执行了，返回的pid为0表示在子进程中执行，由于两个进程有相对独立的地址空间，子进程得到的只是父进程的一个拷贝，所以x的初始值仍然是1，输出的结果就是x&#x3D;2了。（至于为啥都输出在屏幕上了，是因为这两个进程共享已经被打开的stdout文件，子进程是继承父进程的，因此输出也是指向屏幕的）<br><strong>在csapp516页上一个有意思的题目，询问下面的的输出值，想了好久，我现在直接输出了，你也可以认真想想贼有意思</strong><br><img src="/2019/01/11/%E4%B9%8B%E5%89%8D%E7%9A%84/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/2.png"><br><strong>fock函数demo2,这个图能感受到fock函数</strong><br><img src="/2019/01/11/%E4%B9%8B%E5%89%8D%E7%9A%84/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/12.webp"></p>
+<h5 id="3-2、waitpid函数-sleep函数-pause函数，execve函数等感兴趣的单独查看，这里就不展开了"><a href="#3-2、waitpid函数-sleep函数-pause函数，execve函数等感兴趣的单独查看，这里就不展开了" class="headerlink" title="3.2、waitpid函数,sleep函数,pause函数，execve函数等感兴趣的单独查看，这里就不展开了"></a>3.2、waitpid函数,sleep函数,pause函数，execve函数等感兴趣的单独查看，这里就不展开了</h5><h4 id="4、信号"><a href="#4、信号" class="headerlink" title="4、信号"></a>4、信号</h4><h5 id="4-1、定义"><a href="#4-1、定义" class="headerlink" title="4.1、定义"></a>4.1、定义</h5><p>信号是一种更高层次的软件形式的异常，它允许进程中断其他进程。一个信号就是一个消息，我们列出Linux系统上30个不同种类的信号：正在运行的前台子进程，当键入ctrl-c，发送序号2（SIGINT）；当一个进程发送信号9（SIGKILL）就会强制终止另外一个进程；当子进程终止时，就会发送信号17（SIGCHILD）给父进程。<br><img src="/2019/01/11/%E4%B9%8B%E5%89%8D%E7%9A%84/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/13.webp"></p>
+<h5 id="4-2、举个例子（实战还是比概念看起来爽啊"><a href="#4-2、举个例子（实战还是比概念看起来爽啊" class="headerlink" title="4.2、举个例子（实战还是比概念看起来爽啊"></a>4.2、举个例子（实战还是比概念看起来爽啊</h5><p><img src="/2019/01/11/%E4%B9%8B%E5%89%8D%E7%9A%84/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/14.webp"><br>（ps用来查看所有进程，在windows是-netstat ano）<br>1&gt; 使用&#x2F;bin&#x2F;kill程序发送信号(使用完整路径)<br>发送9号（SIGKILL）信号给进程6279终止该进程，如果使用-6279就是该进程组的所有进程；</p>
+<h5 id="4-3、你看到这里应该也累了，信号后面的知识看的不是很懂，如果你真的感兴趣，希望你能自己去看书吧"><a href="#4-3、你看到这里应该也累了，信号后面的知识看的不是很懂，如果你真的感兴趣，希望你能自己去看书吧" class="headerlink" title="4.3、你看到这里应该也累了，信号后面的知识看的不是很懂，如果你真的感兴趣，希望你能自己去看书吧"></a>4.3、你看到这里应该也累了，信号后面的知识看的不是很懂，如果你真的感兴趣，希望你能自己去看书吧</h5><p>（另外书上配套了很多优秀的例子和实验，由于本人才疏学浅，就不把自己的结果展示怕误人子弟，非常安利大家去感受大师的魅力</p>
+
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

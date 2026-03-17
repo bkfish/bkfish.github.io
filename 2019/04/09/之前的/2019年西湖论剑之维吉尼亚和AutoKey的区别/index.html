@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>2019年西湖论剑之维吉尼亚和AutoKey的区别</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">2019年西湖论剑之维吉尼亚和AutoKey的区别</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2019/04/09/%E4%B9%8B%E5%89%8D%E7%9A%84/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">2019年西湖论剑之维吉尼亚和AutoKey的区别</h1>
+          
+            <div class="article-meta">2019-04-09</div>
+          
+        </div>
+        <article class="markdown">
+          <h3 id="奇怪的TTL"><a href="#奇怪的TTL" class="headerlink" title="奇怪的TTL"></a>奇怪的TTL</h3><p>题目描述：<br>我们截获了一些IP数据报，发现报文头中的TTL值特别可疑，怀疑是通信方嵌入了数据到TTL，我们将这些TTL值提取了出来，你能看出什么端倪吗？</p>
+<span id="more"></span>
+
+
+<h4 id="1、数据整理"><a href="#1、数据整理" class="headerlink" title="1、数据整理"></a>1、数据整理</h4><p>附件中给了个文件,发现ttl.txt中的ttl只有4个值63,127,191,255，写出他们的二进制表示后发现只有最高两位不同，把前两位提取出来，然后十六进制转字符串，发现所有字符串都是1<del>9,a</del>f之间,然后自然考虑这是又是十六进制，然后写入文件中。发现写出来的16进制数开头是ffd8,打开是这样的</p>
+<!--more-->
+<p><img src="/2019/04/09/%E4%B9%8B%E5%89%8D%E7%9A%84/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/2.jpg"></p>
+<p>万物皆可binwalk 放在linux下binwalk分离到6张残图</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">foremost 或者binwalk -e</span><br></pre></td></tr></table></figure>
+<p>得到</p>
+<p><img src="/2019/04/09/%E4%B9%8B%E5%89%8D%E7%9A%84/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/3.png"><br><img src="/2019/04/09/%E4%B9%8B%E5%89%8D%E7%9A%84/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/4.png"></p>
+<p>扫描得到</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">key:AutomaticKey cipher:fftu&#123;2028mb39927wn1f96o6e12z03j58002p&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="2、然后开始入坑"><a href="#2、然后开始入坑" class="headerlink" title="2、然后开始入坑"></a>2、然后开始入坑</h4><p>一开始以为是维吉尼亚加密，这里解释一下维吉尼亚加密<br>维吉尼亚密码(Vigenère Cipher)是在单一恺撒密码的基础上扩展出多表代换密码，根据密钥(当密钥长度小于明文长度时可以循环使用)来决定用哪一行的密表来进行替换，以此来对抗字频统计<br><img src="/2019/04/09/%E4%B9%8B%E5%89%8D%E7%9A%84/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/1.webp"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">明文：THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG</span><br><span class="line">密钥(循环使用)：CULTURE</span><br><span class="line">加密过程：如果第一行为明文字母，第一列为密钥字母，那么明文字母&#x27;T&#x27;列和密钥字母&#x27;C&#x27;行的交点就是密文字母&#x27;V&#x27;，以此类推。</span><br><span class="line">密文：VBP JOZGM VCHQE JQR UNGGW QPPK NYI NUKR XFK</span><br></pre></td></tr></table></figure>
+<p>然后拿着本题的密钥和密文去解密，得到答案然后gg<br><img src="/2019/04/09/%E4%B9%8B%E5%89%8D%E7%9A%84/2019%E5%B9%B4%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B9%8B%E7%BB%B4%E5%90%89%E5%B0%BC%E4%BA%9A%E5%92%8CAutoKey%E7%9A%84%E5%8C%BA%E5%88%AB/5.png"> 其实是AutoKey Cipher，人家在题目里都提示了，只能怪自己太死脑筋和孤陋寡闻</p>
+<h4 id="3、啥·是AutoKey-Cipher"><a href="#3、啥·是AutoKey-Cipher" class="headerlink" title="3、啥·是AutoKey Cipher"></a>3、啥·是AutoKey Cipher</h4><p>其实原理和维吉尼亚基本一致的，但是维吉尼亚当密钥长度小于明文，将会循环使用密钥，而Autokey Cipher当密钥长度不足时，将会开始使用明文的第一个字母开始附加在密钥上。<br>在本题的体现是密钥12位，而密文中字母有14哥所以最后两个需要拿f l 替换<br><a target="_blank" rel="noopener" href="https://www.wishingstarmoye.com/ctf/autokey">AutoKey Cipher在线加解密</a></p>
+<h4 id="4、使用Python3解密"><a href="#4、使用Python3解密" class="headerlink" title="4、使用Python3解密"></a>4、使用Python3解密</h4><h5 id="AutoKey-Cipher"><a href="#AutoKey-Cipher" class="headerlink" title="AutoKey Cipher"></a>AutoKey Cipher</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; from pycipher import Autokey</span><br><span class="line">&gt;&gt;&gt; Autokey(&#x27;AutomaticKey&#x27;).decipher(&#x27;fftu&#123;2028mb39927wn1f96o6e12z03j58002p&#125;&#x27;)</span><br><span class="line">&#x27;FLAGABDFDEABEE&#x27;</span><br><span class="line">&gt;&gt;&gt; Autokey(&#x27;AutomaticKey&#x27;).encipher(&#x27;FLAGABDFDEABEE&#x27;)</span><br><span class="line">&#x27;FFTUMBWNFOEZJP&#x27;</span><br></pre></td></tr></table></figure>
+<h6 id="Vigenere"><a href="#Vigenere" class="headerlink" title="Vigenere"></a>Vigenere</h6><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt;from pycipher import Vigenere</span><br><span class="line">&gt;&gt;&gt;Vigenere(&#x27;CULTURE&#x27;).encipher(&#x27;THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG&#x27;)</span><br><span class="line">&#x27;VBPJOZGMVCHQEJQRUNGGWQPPKNYINUKRXFK&#x27;</span><br><span class="line">&gt;&gt;&gt;Vigenere(&#x27;CULTURE&#x27;).decipher(&#x27;VBPJOZGMVCHQEJQRUNGGWQPPKNYINUKRXFK&#x27;</span><br><span class="line">&#x27;THEQUICKBROWNFOXJUMPSOVERTHELAZYDOG&#x27;</span><br></pre></td></tr></table></figure>
+
+
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>web师傅们的博客收集</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">web师傅们的博客收集</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2019/11/19/%E4%B9%8B%E5%89%8D%E7%9A%84/web%E5%B8%88%E5%82%85%E4%BB%AC%E7%9A%84%E5%8D%9A%E5%AE%A2%E6%94%B6%E9%9B%86/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">web师傅们的博客收集</h1>
+          
+            <div class="article-meta">2019-11-19</div>
+          
+        </div>
+        <article class="markdown">
+          <p><a target="_blank" rel="noopener" href="https://huai.pub/">坏男孩</a></p>
+<span id="more"></span>
+
+
+<p><a target="_blank" rel="noopener" href="https://skysec.top/">Sky’s blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhzhdoai.github.io/tags/CTF/">PaperTiger’s blog</a></p>
+<p><a target="_blank" rel="noopener" href="http://github.mrkaixin.computer/2019/06/05/BUUCTF%E5%81%9A%E9%A2%98%E7%AC%94%E8%AE%B0/#toc-heading-17">BUUCTF的wp(随时弃坑) | Mrkaixin自留地</a></p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/3085">ctf中常见的PHP漏洞小结 - 先知社区</a></p>
+<p><a target="_blank" rel="noopener" href="https://yinwc.github.io/2018/09/28/Dmsj/">代码审计练习 · Ywc’s blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.zhaoj.in/">赵 – 为心中的美好而战</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/stepone4ward/article/details/100088959">SUCTF2019 web部分赛题复盘 - stepone4ward的博客 - CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://x1ct34m.github.io/">X1cT34m’s BLOG |</a></p>
+<p><a target="_blank" rel="noopener" href="http://momomoxiaoxi.com/">小西的博客 | Xiaoxi’s Blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://r3kapig.com/">r3kapig | United Team of Eur3kA and FlappyPig</a></p>
+<p><a target="_blank" rel="noopener" href="https://changochen.github.io/about.html">Yongheng Chen (Ne0) | Good defense requires a detailed knowledge of offense.</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.rois.io/">ROIS Blog - Hack for fun</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.attacker.cc/">云袭2001’s blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://xiaodaozhi.com/">小刀志</a></p>
+<p><a target="_blank" rel="noopener" href="https://j00ru.vexillium.org/">j00ru&#x2F;&#x2F;vx tech blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://improsec.com/tech-blog?author=5c0d78274ae237a297e3f992">TECH BLOG — Improsec | improving security</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.alex-ionescu.com/">Alex Ionescu’s Blog – Windows Internals, Thoughts on Security, and Reverse Engineering</a></p>
+<p><a target="_blank" rel="noopener" href="https://susers.github.io/">SUS</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.seebug.org/appdir/CmsEasy">Vulnerability Component - CmsEasy - Knownsec Seebug Vulnerability Platform</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.ctfwp.com/articals/2019unctf.html">2019UNCTF · CTF Writeup</a></p>
+<p><a target="_blank" rel="noopener" href="https://4o4notfound.org/">404 Not Found</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.leavesongs.com/">首页 | 离别歌</a></p>
+<p><a target="_blank" rel="noopener" href="http://pupiles.com/">Pupiles blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.k0rz3n.com/">K0rz3n’s Blog | Shell-is-Only-the-Beginning</a></p>
+<p><a target="_blank" rel="noopener" href="http://blog.lnyas.xyz/">Lnyassss – 太阳太阳给我们带来七色光彩</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.zuozuovera.com/links.html">Links - 薇拉航线</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cdxy.me/">Home - cdxy</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.louys.net.cn/">louys-代码审计入门中</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.xmsec.cc/">Blog | xmsec - 陌小生</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.1aq.com/about.html">关于我们 - 网络尖刀（1AQ TEAM）团队1aq.com</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.virzz.com/">Index - Virink’s Blog</a></p>
+<p><a target="_blank" rel="noopener" href="http://blog.neargle.com/">Nearg1e - Web Develop&amp;Security &#x2F; 安全研究 &#x2F; 漏洞挖掘 &#x2F; 安全开发 &#x2F; Pyer &#x2F; Anime</a></p>
+<p><a target="_blank" rel="noopener" href="https://thief.one/">nmask’s Blog - 风陵渡口</a></p>
+<p><a target="_blank" rel="noopener" href="http://maya66.net.cn/">江水</a></p>
+<p><a target="_blank" rel="noopener" href="https://tom0li.github.io/">tom0li – Web sec RFID pentest Researcher</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.hackingarticles.in/ctf-challenges-walkthrough/">CTF挑战-黑客文章</a></p>
+<p><a target="_blank" rel="noopener" href="https://byqiyou.github.io/#indexCard">七友’s Blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.bertramc.cn/about.html">关于 | berTrAM’s Blog</a></p>
+<p><a target="_blank" rel="noopener" href="http://hurricane618.me/">风之栖息地|hurricane618’s blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://2kb.me/">2kb.ME | 两颗币</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.northity.com/">N0rth3ty’s Blog</a></p>
+<p><a target="_blank" rel="noopener" href="http://p0desta.com/about/">About me | p0desta’s blog | WEB安全、代码审计、安全开发、20届毕业本科生</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.webbaozi.com/">baozi’s Blog | 我还想再试一次</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.lorexxar.cn/">LoRexxar’s Blog</a></p>
+<p><a target="_blank" rel="noopener" href="http://atum.li/">Atum</a></p>
+<p><a target="_blank" rel="noopener" href="https://bestwing.me/">Swing’Blog 有恨无人省</a></p>
+<p><a target="_blank" rel="noopener" href="http://f1sh.site/">Blog of f1sh – Try Hard.</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jgeek.cn/other">0x584A</a></p>
+<p><a target="_blank" rel="noopener" href="https://m3lon.github.io/">m3lon</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jgeek.cn/">0x584A</a></p>
+<p><a target="_blank" rel="noopener" href="https://darkeyer.github.io/">Mr.R的博客 | By Blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.sqlsec.com/">国光</a></p>
+<p><a target="_blank" rel="noopener" href="http://cauc.me/about/">about | Yiruma</a></p>
+<p><a target="_blank" rel="noopener" href="https://seaii-blog.com/">Seaii’s Blog</a></p>
+<p><a target="_blank" rel="noopener" href="http://p0desta.com/">p0desta’s blog | WEB安全、代码审计、安全开发、20届毕业本科生</a></p>
+<p><a target="_blank" rel="noopener" href="https://daolgts.github.io/">道萝岗特森’s Blog</a></p>
+<p><a target="_blank" rel="noopener" href="http://v0w.top/">V0W’s Blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://evi0s.com/">evi0s’ Blog - path of heart &amp; passion for code</a></p>
+<p><a target="_blank" rel="noopener" href="http://homura.cc/blog/">Homura’s Blog</a></p>
+<p><a target="_blank" rel="noopener" href="http://mozhucy.cn/">MozhuCY’s blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://meizjm3i.github.io/">梅子酒の笔记本 ]</a></p>
+<p><a target="_blank" rel="noopener" href="http://blog.5am3.com/">丶诺熙丨5am3</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.sari3l.com/">Learning Man</a></p>
+<p><a target="_blank" rel="noopener" href="https://p0sec.net/">p0’s blog | 破 - 关注网络安全</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wfzWebSecuity/">tr1ple - 博客园</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.kkzevip.com/">MoR03r’s Blog</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.lovei.org/">腹黑’s Blog</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.ttk7.cn/">天堂空气</a></p>
+<p><a target="_blank" rel="noopener" href="http://mang0.me/archis/f7c9beed/">2018反思总结 | Mang0 的成长之路 | Mang0 | 网络安全 | 安全技术 | CTF|WEB 安全 | 数据科学安全</a></p>
+<p><a target="_blank" rel="noopener" href="http://ph0rse.me/">Ph0rse’s Blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://timeshu.github.io/archives/">归档 | Time</a></p>
+<p><a target="_blank" rel="noopener" href="https://sherlocz.github.io/About_Me/">渗透测试面试总结 | Sriracha :)</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.smi1e.top/">Smi1e |</a></p>
+<p><a target="_blank" rel="noopener" href="http://admintony.com/">AdminTony’s Blog - 专注于渗透测试|信息安全|网络攻防对抗等领域</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.codemonster.cn/">打代码的怪兽 CodeMonster</a></p>
+<p><a target="_blank" rel="noopener" href="http://flag0.com/">GetFlag’s Blog</a></p>
+<p><a target="_blank" rel="noopener" href="http://yulige.top/">郁离歌丶的博客 – 远去的梦想与荣光。</a></p>
+<p><a target="_blank" rel="noopener" href="http://blog.thecosmos.cn/">Cosmos‘s blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://southseast.cc/">境界的彼方</a></p>
+<p><a target="_blank" rel="noopener" href="https://greyd0g.github.io/">greyd0g’ blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://brucetg.github.io/">Brucetg’s Blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://hpdoger.cn/">Hpdoger</a></p>
+<p><a target="_blank" rel="noopener" href="http://adm1n.design/">Hu3sky’s blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.kingkk.com/">Kingkk’s Blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://mochazz.github.io/archives/">归档 | Mochazz’s blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://love-sg.me/">SG’s Blog</a></p>
+<p><a target="_blank" rel="noopener" href="http://yugod.xmutsec.com/">yuf1sher’s blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.addon.pub/">Yokeen’s blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://p0rz9.github.io/">JAVA审计P0rZ9’s blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://kctf.github.io/">kn0ck’s blog | 一群CTF爱好者</a></p>
+<p><a target="_blank" rel="noopener" href="https://geeeez.github.io/">geez博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.hexlt.org/">Hexman的自习室</a></p>
+<p><a target="_blank" rel="noopener" href="https://only-free.github.io/">only_free blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.hexlt.org/archives/120.html">娱乐渗透某黑阔站 - Hexman的自习室</a></p>
+<p><a target="_blank" rel="noopener" href="https://marblue.me/">Marblue’s World</a></p>
+<p><a target="_blank" rel="noopener" href="https://jayl1n.github.io/">Jayl1n’s Blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://rj45mp.github.io/">Rj45’s blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://altman.vip/">Page 1 | Altm4nz</a></p>
+<p><a target="_blank" rel="noopener" href="https://evoa.me/">evoA’s Blog - eval A</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.virtua1.cn/#">Virtua1の日常 - Hack for fun.Enjoy coding.</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.red/">Light Cube – 愿用自己的力量，为这个世界增添一份色彩。</a></p>
+<p><a target="_blank" rel="noopener" href="https://1oid.github.io/">一步一世界</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.szfszf.top/">JrXnm</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.se7ensec.cn/">Se7en’s Blog|Learn and live</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/leixiao-">淚笑 - 博客园</a></p>
+<p><a target="_blank" rel="noopener" href="https://wywwzjj.top/">wywwzjj’s Blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://xi4or0uji.github.io/">Xi4or0uji</a></p>
+<p><a target="_blank" rel="noopener" href="https://boluochuixue.top/">菠萝吹雪’s Studio</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.zeddyu.info/">Zedd’s Blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://250.ac.cn/">惊蛰 | Let life be beautiful like summer flowers and death like autumn leaves.</a></p>
+<p><a target="_blank" rel="noopener" href="https://r1dd1er.top/">R1dd1er’s blogs</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.cloudyu.me/">云屿’s Blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://tiaonmmn.github.io/">Tiaonmmn’s Littile House</a></p>
+<p><a target="_blank" rel="noopener" href="http://song-of-icesnow.cn/">Mr_Song – 我想要很多，我所知甚少。</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/kagari/">kagi| - 博客园</a></p>
+
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

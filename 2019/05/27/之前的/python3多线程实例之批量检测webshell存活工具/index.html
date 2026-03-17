@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>python3多线程实例之批量检测webshell存活工具</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">python3多线程实例之批量检测webshell存活工具</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2019/05/27/%E4%B9%8B%E5%89%8D%E7%9A%84/python3%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%AE%9E%E4%BE%8B%E4%B9%8B%E6%89%B9%E9%87%8F%E6%A3%80%E6%B5%8Bwebshell%E5%AD%98%E6%B4%BB%E5%B7%A5%E5%85%B7/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">python3多线程实例之批量检测webshell存活工具</h1>
+          
+            <div class="article-meta">2019-05-27</div>
+          
+        </div>
+        <article class="markdown">
+          <h3 id="楔子"><a href="#楔子" class="headerlink" title="楔子"></a>楔子</h3><p>前两天的强网杯，有个题目叫高明的黑客，核心任务就是从3000多个php文件中找到存活的webshell,大概每个php文件有几十个post,get的点，头天晚上跑了一晚上，自己太菜了，很多东西忘了考虑，结束后拿多线程跑了一下很快就出来了，所以记录一下教训吧，碰到需要大量人力，时间的脚本，应该先尽量优化，而不是跑了半天发现很慢再来改快一点，以此循环，黄花菜都凉了，果然犹豫就会败北</p>
+<span id="more"></span>
+
+
+<h3 id="一、python3多线程"><a href="#一、python3多线程" class="headerlink" title="一、python3多线程"></a>一、python3多线程</h3><h4 id="1-1、Python3-线程中常用的两个模块为："><a href="#1-1、Python3-线程中常用的两个模块为：" class="headerlink" title="1.1、Python3 线程中常用的两个模块为："></a>1.1、Python3 线程中常用的两个模块为：</h4><ul>
+<li>_thread</li>
+<li>threading</li>
+</ul>
+<h4 id="1-2、thread-模块已被废弃。用户可以使用-threading-模块代替。所以，在-Python3-中不能再使用”thread”-模块。为了兼容性，Python3-将-thread-重命名为-“-thread”。使用起来也很简单"><a href="#1-2、thread-模块已被废弃。用户可以使用-threading-模块代替。所以，在-Python3-中不能再使用”thread”-模块。为了兼容性，Python3-将-thread-重命名为-“-thread”。使用起来也很简单" class="headerlink" title="1.2、thread 模块已被废弃。用户可以使用 threading 模块代替。所以，在 Python3 中不能再使用”thread” 模块。为了兼容性，Python3 将 thread 重命名为 “_thread”。使用起来也很简单"></a>1.2、thread 模块已被废弃。用户可以使用 threading 模块代替。所以，在 Python3 中不能再使用”thread” 模块。为了兼容性，Python3 将 thread 重命名为 “_thread”。使用起来也很简单</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_thread.start_new_thread ( function, args[, kwargs] )</span><br></pre></td></tr></table></figure>
+<p>一个实例</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> _thread</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="comment"># 为线程定义一个函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">print_time</span>(<span class="params"> threadName, delay</span>):</span><br><span class="line">   count = <span class="number">0</span></span><br><span class="line">   <span class="keyword">while</span> count &lt; <span class="number">5</span>:</span><br><span class="line">      time.sleep(delay)</span><br><span class="line">      count += <span class="number">1</span></span><br><span class="line">      <span class="built_in">print</span> (<span class="string">&quot;%s: %s&quot;</span> % ( threadName, time.ctime(time.time()) ))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建两个线程</span></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">   _thread.start_new_thread( print_time, (<span class="string">&quot;Thread-1&quot;</span>, <span class="number">2</span>, ) )</span><br><span class="line">   _thread.start_new_thread( print_time, (<span class="string">&quot;Thread-2&quot;</span>, <span class="number">4</span>, ) )</span><br><span class="line"><span class="keyword">except</span>:</span><br><span class="line">   <span class="built_in">print</span> (<span class="string">&quot;Error: 无法启动线程&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">   <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<h4 id="1-3、-thread-提供了低级别的、原始的线程以及一个简单的锁，它相比于-threading-模块的功能还是比较有限的。"><a href="#1-3、-thread-提供了低级别的、原始的线程以及一个简单的锁，它相比于-threading-模块的功能还是比较有限的。" class="headerlink" title="1.3、_thread 提供了低级别的、原始的线程以及一个简单的锁，它相比于 threading 模块的功能还是比较有限的。"></a>1.3、_thread 提供了低级别的、原始的线程以及一个简单的锁，它相比于 threading 模块的功能还是比较有限的。</h4><h5 id="Thread类提供了以下方法"><a href="#Thread类提供了以下方法" class="headerlink" title="Thread类提供了以下方法:"></a>Thread类提供了以下方法:</h5><ul>
+<li>threading.currentThread(): 返回当前的线程变量。</li>
+<li>threading.enumerate(): 返回一个包含正在运行的线程的list</li>
+<li>threading.activeCount(): 返回正在运行的线程数量，与len(threading.enumerate())有相同的结果。</li>
+</ul>
+<h5 id="除了使用方法外，线程模块同样提供了Thread类来处理线程，Thread类提供了以下方法"><a href="#除了使用方法外，线程模块同样提供了Thread类来处理线程，Thread类提供了以下方法" class="headerlink" title="除了使用方法外，线程模块同样提供了Thread类来处理线程，Thread类提供了以下方法:"></a>除了使用方法外，线程模块同样提供了Thread类来处理线程，Thread类提供了以下方法:</h5><ul>
+<li>run(): 用以表示线程活动的方法。</li>
+<li>start():启动线程活动。</li>
+<li><code>join([time]):</code> 等待至线程中止。这阻塞调用线程直至线程的join() 方法被调用中止-正常退出或者抛出未处理的异常-或者是可选的超时发生。</li>
+<li>isAlive(): 返回线程是否活动的。</li>
+<li>getName(): 返回线程名。</li>
+<li>setName(): 设置线程名。</li>
+</ul>
+<h4 id="1-4、最普通的使用多线程的方法"><a href="#1-4、最普通的使用多线程的方法" class="headerlink" title="1.4、最普通的使用多线程的方法"></a>1.4、最普通的使用多线程的方法</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">thread_job</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;This is Thread_job,number is %s&#x27;</span>% threading.current_thread())</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    added_thread=threading.Thread(target=thread_job)</span><br><span class="line">    added_thread.start()</span><br><span class="line">    <span class="built_in">print</span>(threading.active_count())</span><br><span class="line">    <span class="built_in">print</span>(threading.<span class="built_in">enumerate</span>())</span><br><span class="line">    <span class="built_in">print</span>(threading.current_thread())</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<h4 id="1-5、使用join，和queue"><a href="#1-5、使用join，和queue" class="headerlink" title="1.5、使用join，和queue"></a>1.5、使用join，和queue</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">from</span> queue <span class="keyword">import</span> Queue</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">job</span>(<span class="params">l,q</span>):</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(l)):</span><br><span class="line">        l[i]=l[i]**<span class="number">2</span></span><br><span class="line">    q.put(l)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">multithreading</span>():</span><br><span class="line">    q=Queue()</span><br><span class="line">    threads=[]</span><br><span class="line">    data=[[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>],[<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>],[<span class="number">4</span>,<span class="number">4</span>,<span class="number">4</span>],[<span class="number">5</span>,<span class="number">5</span>,<span class="number">5</span>]]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>):</span><br><span class="line">        t=threading.Thread(target=job,args=(data[i],q))</span><br><span class="line">        t.start()</span><br><span class="line">        threads.append(t)</span><br><span class="line">    <span class="keyword">for</span> thread <span class="keyword">in</span> threads:</span><br><span class="line">        thread.join()</span><br><span class="line">    results=[]</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>):</span><br><span class="line">        results.append(q.get())</span><br><span class="line">    <span class="built_in">print</span>(results)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    multithreading()</span><br></pre></td></tr></table></figure>
+<p>返回结果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[[1, 4, 9], [9, 16, 25], [16, 16, 16], [25, 25, 25]]</span><br></pre></td></tr></table></figure>
+<h4 id="1-6、如果要使用线程同步"><a href="#1-6、如果要使用线程同步" class="headerlink" title="1.6、如果要使用线程同步"></a>1.6、如果要使用线程同步</h4><p>如果多个线程共同对某个数据修改，则可能出现不可预料的结果，为了保证数据的正确性，需要对多个线程进行同步。</p>
+<p>使用 Thread 对象的 Lock 和 Rlock 可以实现简单的线程同步，这两个对象都有 acquire 方法和 release 方法，对于那些需要每次只允许一个线程操作的数据，可以将其操作放到 acquire 和 release 方法之间。如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">myThread</span> (threading.Thread):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, threadID, name, counter</span>):</span><br><span class="line">        threading.Thread.__init__(self)</span><br><span class="line">        self.threadID = threadID</span><br><span class="line">        self.name = name</span><br><span class="line">        self.counter = counter</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span> (<span class="string">&quot;开启线程： &quot;</span> + self.name)</span><br><span class="line">        <span class="comment"># 获取锁，用于线程同步</span></span><br><span class="line">        threadLock.acquire()</span><br><span class="line">        print_time(self.name, self.counter, <span class="number">3</span>)</span><br><span class="line">        <span class="comment"># 释放锁，开启下一个线程</span></span><br><span class="line">        threadLock.release()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">print_time</span>(<span class="params">threadName, delay, counter</span>):</span><br><span class="line">    <span class="keyword">while</span> counter:</span><br><span class="line">        time.sleep(delay)</span><br><span class="line">        <span class="built_in">print</span> (<span class="string">&quot;%s: %s&quot;</span> % (threadName, time.ctime(time.time())))</span><br><span class="line">        counter -= <span class="number">1</span></span><br><span class="line"></span><br><span class="line">threadLock = threading.Lock()</span><br><span class="line">threads = []</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建新线程</span></span><br><span class="line">thread1 = myThread(<span class="number">1</span>, <span class="string">&quot;Thread-1&quot;</span>, <span class="number">1</span>)</span><br><span class="line">thread2 = myThread(<span class="number">2</span>, <span class="string">&quot;Thread-2&quot;</span>, <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 开启新线程</span></span><br><span class="line">thread1.start()</span><br><span class="line">thread2.start()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加线程到线程列表</span></span><br><span class="line">threads.append(thread1)</span><br><span class="line">threads.append(thread2)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 等待所有线程完成</span></span><br><span class="line"><span class="keyword">for</span> t <span class="keyword">in</span> threads:</span><br><span class="line">    t.join()</span><br><span class="line"><span class="built_in">print</span> (<span class="string">&quot;退出主线程&quot;</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="二、php-webshell相关知识"><a href="#二、php-webshell相关知识" class="headerlink" title="二、php webshell相关知识"></a>二、php webshell相关知识</h3><p>WebShell就是以asp、php、jsp或者cgi等网页文件形式存在的一种命令执行环境，也可以将其称做为一种网页后门。<br>执行命令常用的函数有:</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">system</span>(<span class="string">&#x27;命令&#x27;</span>）</span><br><span class="line"><span class="keyword">eval</span>(<span class="string">&#x27;php code&#x27;</span>)</span><br><span class="line"><span class="title function_ invoke__">assert</span>(<span class="string">&#x27;php code&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>其他一些骚函数导致的php webshell<br>str_replace字符替换函数:</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$s</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&#x27;p&#x27;</span>,<span class="string">&#x27;&#x27;</span>,<span class="string">&#x27;pspypsptpepmp&#x27;</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$s</span>;</span><br><span class="line"><span class="comment">#system</span></span><br></pre></td></tr></table></figure>
+<p>create_fuction()创建匿名函数：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">#create_function(&#x27;参数列表&#x27;, &#x27;php代码字符串&#x27;);</span></span><br><span class="line"><span class="variable">$info</span> = <span class="title function_ invoke__">create_function</span>(<span class="string">&#x27;&#x27;</span>,<span class="string">&#x27;phpinfo();&#x27;</span>);</span><br><span class="line"><span class="variable">$info</span>();<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>总结：</p>
+<ul>
+<li>系统命令执行: system, passthru, shell_exec, exec, popen, proc_open</li>
+<li>代码执行: eval, assert, call_user_func,base64_decode, gzinflate, gzuncompress, gzdecode, str_rot13</li>
+<li>文件包含: require, require_once, include, include_once, file_get_contents, file_put_contents, fputs, fwrite</li>
+</ul>
+<h3 id="三、暴力检验webshell存活"><a href="#三、暴力检验webshell存活" class="headerlink" title="三、暴力检验webshell存活"></a>三、暴力检验webshell存活</h3><p>回到本题，最开始不知道有这么多post，get点，所以拿D盾等工具，23333，所有文件全部被找到了，我估计这些工具就是单纯匹配这几个敏感函数和post,get点，为了确认是否存活我们需要在本地搭建这个服务，并且找到通用的回显来确定,因为我在windows上环境搭建的php code可以用<code>phpinfo()</code>或者<code>system(&#39;hostname&#39;);</code>前者更大所以倾向于后者,命令用<code>hostname</code>能拿到主机名称，反过来是不行的，（如果你用Linux服务器使用system(‘id’)能检验phpcode,id检验命令，</p>
+<p><img src="/2019/05/27/%E4%B9%8B%E5%89%8D%E7%9A%84/python3%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%AE%9E%E4%BE%8B%E4%B9%8B%E6%89%B9%E9%87%8F%E6%A3%80%E6%B5%8Bwebshell%E5%AD%98%E6%B4%BB%E5%B7%A5%E5%85%B7/1.png"><br>所以初期代码为（暂时只考虑了get请求的参数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">answer = <span class="built_in">open</span>(<span class="string">&#x27;answer.txt&#x27;</span>,<span class="string">&#x27;w&#x27;</span>)</span><br><span class="line">filePath = <span class="string">&#x27;./src/&#x27;</span></span><br><span class="line">files = os.listdir(filePath)</span><br><span class="line">url = <span class="string">&quot;http://localhost/src/&quot;</span></span><br><span class="line">file_count = <span class="number">0</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_rep</span>(<span class="params">filename, name</span>):</span><br><span class="line">    r_url = url + filename +  <span class="string">&quot;?&quot;</span> + name + <span class="string">&quot;=hostname&quot;</span></span><br><span class="line">    rep = requests.get(r_url)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;DESKTOP-CE0L9E5&#x27;</span> <span class="keyword">in</span> rep.content.decode(<span class="string">&#x27;utf-8&#x27;</span>):</span><br><span class="line">    	answer.write(<span class="string">&quot;Got It!   !!!!!!! &quot;</span> + filename + <span class="string">&quot; The param is: _GET[\&#x27;&quot;</span> + name +<span class="string">&quot;\&#x27;]\n&quot;</span>)</span><br><span class="line">    	<span class="built_in">print</span>(<span class="string">&quot;Got It!   !!!!!!! &quot;</span> + filename + <span class="string">&quot; The param is: _GET[\&#x27;&quot;</span> + name +<span class="string">&quot;\&#x27;]&quot;</span>)</span><br><span class="line"></span><br><span class="line">    r_url = url + filename +  <span class="string">&quot;?&quot;</span> + name + <span class="string">&quot;=system(&#x27;hostname&#x27;);&quot;</span></span><br><span class="line">    rep = requests.get(r_url)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;DESKTOP-CE0L9E5&#x27;</span> <span class="keyword">in</span> rep.content.decode(<span class="string">&#x27;utf-8&#x27;</span>):</span><br><span class="line">    	answer.write(<span class="string">&quot;Got It!   !!!!!!! &quot;</span> + filename + <span class="string">&quot; The param is: _GET[\&#x27;&quot;</span> + name +<span class="string">&quot;\&#x27;]\n&quot;</span>)</span><br><span class="line">    	<span class="built_in">print</span>(<span class="string">&quot;Got It!   !!!!!!! &quot;</span> + filename + <span class="string">&quot; The param is: _GET[\&#x27;&quot;</span> + name +<span class="string">&quot;\&#x27;]&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> k <span class="keyword">in</span> files:</span><br><span class="line">    <span class="keyword">if</span> k == <span class="string">&#x27;.DS_Store&#x27;</span>:</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">if</span> k == <span class="string">&#x27;index.html&#x27;</span>:</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="built_in">print</span>(k)</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(filePath + k, <span class="string">&#x27;rt&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        file_count+=<span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;已经完成: &#123;:.2%&#125;&#x27;</span>.<span class="built_in">format</span>(file_count/<span class="built_in">len</span>(files)))</span><br><span class="line">        content = f.read()</span><br><span class="line">        get = re.findall(<span class="string">r&quot;GET\[&#x27;(.+?)&#x27;\]&quot;</span>, content)</span><br><span class="line">        <span class="comment">#post = re.findall(r&quot;POST\[&#x27;(.+?)&#x27;\]&quot;, content)</span></span><br><span class="line">       	<span class="keyword">for</span> i <span class="keyword">in</span> get:</span><br><span class="line">        	 <span class="built_in">print</span>(<span class="string">&#x27;FileName：&#x27;</span>+k+<span class="string">&#x27;  ParamName:&#x27;</span>+i)</span><br><span class="line">        	 get_rep(k, i)</span><br><span class="line">        f.close()</span><br><span class="line">answer.close()</span><br></pre></td></tr></table></figure>
+<p>想了想有没有优化的地方，如果能找到一个phpcode和命令都能测试的一个通用函数就可以减少一半的网络请求，只要你找肯定是有的那就是<code>echo &#39;Hello Kitty&#39;;</code>我们会发现无论是phpcode还是system执行了就会有Hello Kitty的回显<br><img src="/2019/05/27/%E4%B9%8B%E5%89%8D%E7%9A%84/python3%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%AE%9E%E4%BE%8B%E4%B9%8B%E6%89%B9%E9%87%8F%E6%A3%80%E6%B5%8Bwebshell%E5%AD%98%E6%B4%BB%E5%B7%A5%E5%85%B7/2.png"><br>所以get请求就可以修改为</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">get_rep</span>(<span class="params">filename, name</span>):</span><br><span class="line">    r_url = url + filename +  <span class="string">&quot;?&quot;</span> + name + <span class="string">&quot;=echo &#x27;Hello Kitty&#x27;;&quot;</span></span><br><span class="line">    <span class="comment">#print(r_url)</span></span><br><span class="line">    rep = requests.get(r_url)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;Hello Kitty&#x27;</span> <span class="keyword">in</span> rep.content.decode(<span class="string">&#x27;gbk&#x27;</span>):</span><br><span class="line">        Record_To_File(filename,name)</span><br></pre></td></tr></table></figure>
+
+<h3 id="四、多线程检验webshell存活"><a href="#四、多线程检验webshell存活" class="headerlink" title="四、多线程检验webshell存活"></a>四、多线程检验webshell存活</h3><p>现在只需要把上面的暴力脚本和多线程脚本结合一下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> queue <span class="keyword">import</span> Queue</span><br><span class="line">file_count = <span class="number">0</span></span><br><span class="line">url = <span class="string">&quot;http://127.0.0.1/src/&quot;</span></span><br><span class="line">filePath = <span class="string">&#x27;./src/&#x27;</span></span><br><span class="line">files = os.listdir(filePath)</span><br><span class="line">nameList=[] <span class="comment">#存储名字名称列表</span></span><br><span class="line">nameSepList=[] <span class="comment">#存储分分离后的文件名称列表</span></span><br><span class="line"><span class="comment">#把文件名存储起来 过滤拿到我们想要的文件后缀</span></span><br><span class="line">threadLock = threading.Lock()</span><br><span class="line"><span class="keyword">global</span> start</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">storefile</span>():</span><br><span class="line">    <span class="keyword">for</span> k <span class="keyword">in</span> files:</span><br><span class="line">        <span class="keyword">if</span> k == <span class="string">&#x27;.DS_Store&#x27;</span>:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        <span class="keyword">if</span> k == <span class="string">&#x27;index.html&#x27;</span>:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        nameList.append(k)</span><br><span class="line">        <span class="comment">#print(k)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#分离文件名 给每个线程分一个</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">separateName</span>(<span class="params">threadCount</span>):</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="built_in">len</span>(files),threadCount):</span><br><span class="line">        nameSepList.append(nameList[i:i+threadCount])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#多线程函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">multithreading</span>(<span class="params">threadCount</span>):</span><br><span class="line">    separateName(threadCount)<span class="comment">#先分离</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(threadCount):</span><br><span class="line">        t=threading.Thread(target=run_one_thread,args=(nameSepList[i],))</span><br><span class="line">        t.start()</span><br><span class="line"></span><br><span class="line"><span class="comment">#每个线程的运作 参数为文件名称的列表</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">run_one_thread</span>(<span class="params">name_list</span>):</span><br><span class="line">    <span class="keyword">for</span> k <span class="keyword">in</span> name_list:</span><br><span class="line">        <span class="built_in">print</span>(k)</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(filePath + k, <span class="string">&#x27;rt&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            <span class="comment">#threadLock.acquire()</span></span><br><span class="line">            <span class="keyword">global</span> file_count</span><br><span class="line">            file_count+=<span class="number">1</span></span><br><span class="line">            <span class="comment">#threadLock.release()</span></span><br><span class="line">            <span class="comment">#print(&#x27;已经完成: &#123;:.2%&#125;&#x27;.format(file_count/len(files)))      </span></span><br><span class="line">            content = f.read()</span><br><span class="line">            get = re.findall(<span class="string">r&quot;GET\[&#x27;(.+?)&#x27;\]&quot;</span>, content)</span><br><span class="line">            <span class="comment">#post = re.findall(r&quot;POST\[&#x27;(.+?)&#x27;\]&quot;, content)</span></span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> get:</span><br><span class="line">                 <span class="comment">#print(&#x27;已经完成: &#123;:.2%&#125;&#x27;.format(file_count/len(files))+&#x27; FileName：&#x27;+k+&#x27;  ParamName:&#x27;+i)</span></span><br><span class="line">                 get_rep(k, i)</span><br><span class="line">            f.close()</span><br><span class="line"><span class="comment">#做GET请求</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_rep</span>(<span class="params">filename, name</span>):</span><br><span class="line">    r_url = url + filename +  <span class="string">&quot;?&quot;</span> + name + <span class="string">&quot;=echo &#x27;Hello Kitty&#x27;;&quot;</span></span><br><span class="line">    <span class="comment">#print(r_url)</span></span><br><span class="line">    rep = requests.get(r_url)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;Hello Kitty&#x27;</span> <span class="keyword">in</span> rep.content.decode(<span class="string">&#x27;gbk&#x27;</span>):</span><br><span class="line">        Record_To_File(filename,name)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Record_To_File</span>(<span class="params">filename,name</span>):</span><br><span class="line">    answer = <span class="built_in">open</span>(<span class="string">&#x27;answer.txt&#x27;</span>,<span class="string">&#x27;a+&#x27;</span>)</span><br><span class="line">    end = time.time()</span><br><span class="line">    answer.write(<span class="string">&quot;Got It!   !!!!!!! &quot;</span> + filename + <span class="string">&quot; The param is: _GET[\&#x27;&quot;</span> + name +<span class="string">&quot;\&#x27;]&quot;</span>+<span class="string">&quot; Need time :&quot;</span>+<span class="built_in">str</span>(end-start)+<span class="string">&quot;s\n&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Got It!   !!!!!!! &quot;</span> + filename + <span class="string">&quot; The param is: _GET[\&#x27;&quot;</span> + name +<span class="string">&quot;\&#x27;]&quot;</span>)</span><br><span class="line">    answer.close()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    start = time.time()</span><br><span class="line">    storefile()</span><br><span class="line">    multithreading(<span class="number">20</span>)</span><br></pre></td></tr></table></figure>
+<p>优化了一波，减少了多线程，但是递归文件查找,还有assert的改进</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> queue <span class="keyword">import</span> Queue</span><br><span class="line">file_count = <span class="number">0</span></span><br><span class="line">url = <span class="string">&quot;http://127.0.0.1&quot;</span></span><br><span class="line"></span><br><span class="line">url_list=[] <span class="comment">#存储名字名称列表</span></span><br><span class="line">nameSepList=[] <span class="comment">#存储分分离后的文件名称列表</span></span><br><span class="line"><span class="comment">#把文件名存储起来 过滤拿到我们想要的文件后缀</span></span><br><span class="line">threadLock = threading.Lock()</span><br><span class="line">base_dir=<span class="string">&#x27;E:/CodingSoftware/PhpStudy/PHPTutorial/WWW&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;base_url: &quot;</span>+url)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;base_dir: &quot;</span>+base_dir)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_url_list</span>():</span><br><span class="line">    base_url=url</span><br><span class="line">    work_dir = base_dir</span><br><span class="line">    length=<span class="built_in">len</span>(work_dir)</span><br><span class="line">    <span class="keyword">for</span> parent, dirnames, filenames <span class="keyword">in</span> os.walk(work_dir,  followlinks=<span class="literal">True</span>):</span><br><span class="line">        <span class="keyword">for</span> filename <span class="keyword">in</span> filenames:</span><br><span class="line">            file_path = os.path.join(parent, filename)</span><br><span class="line">            <span class="comment">#print(&#x27;文件名：%s&#x27; % filename)</span></span><br><span class="line">            file_path1=file_path[length:]</span><br><span class="line">            file_path2=file_path1.replace(<span class="string">&#x27;\\&#x27;</span>,<span class="string">&#x27;/&#x27;</span>)</span><br><span class="line">            <span class="keyword">if</span> file_path2.endswith(<span class="string">&#x27;.php&#x27;</span>) <span class="keyword">and</span>  (<span class="string">&#x27;phpMyAdmin&#x27;</span> <span class="keyword">not</span> <span class="keyword">in</span> file_path2):</span><br><span class="line">                url_list.append(base_url+file_path2)</span><br><span class="line">                <span class="comment">#print(base_url+file_path2)</span></span><br><span class="line"><span class="comment">#每个线程的运作 参数为文件名称的列表</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">name_list</span>):</span><br><span class="line">    <span class="keyword">for</span> k <span class="keyword">in</span> name_list:</span><br><span class="line">        <span class="comment">#print(k)</span></span><br><span class="line">        obj_path=k[<span class="built_in">len</span>(url):]</span><br><span class="line">        file_path=base_dir+obj_path</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">with</span> <span class="built_in">open</span>(file_path, <span class="string">&#x27;rt&#x27;</span>, errors=<span class="string">&#x27;ignore&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">                content = f.read()</span><br><span class="line">                get = re.findall(<span class="string">r&quot;GET\[&#x27;([A-Za-z_-]+?)&#x27;\]&quot;</span>, content)</span><br><span class="line">                get1 = re.findall(<span class="string">r&quot;GET\[\&quot;([A-Za-z_-]+?)\&quot;\]&quot;</span>, content)</span><br><span class="line">                get2 = re.findall(<span class="string">r&quot;GET\[([A-Za-z_-]+?)\]&quot;</span>, content)</span><br><span class="line">                post = re.findall(<span class="string">r&quot;POST\[&#x27;([A-Za-z_-]+?)&#x27;\]&quot;</span>, content)</span><br><span class="line">                post1 = re.findall(<span class="string">r&quot;POST\[\&quot;([A-Za-z_-]+?)\&quot;\]&quot;</span>, content)</span><br><span class="line">                post2 = re.findall(<span class="string">r&quot;POST\[([A-Za-z_-]+?)\]&quot;</span>, content)</span><br><span class="line">                <span class="keyword">for</span> i <span class="keyword">in</span> get:</span><br><span class="line">                    get_rep(k,i)</span><br><span class="line">                    <span class="built_in">print</span>(obj_path+<span class="string">&quot; Key is: &quot;</span>+i)</span><br><span class="line">                <span class="keyword">for</span> i <span class="keyword">in</span> get1:</span><br><span class="line">                    get_rep(k,i)</span><br><span class="line">                    <span class="built_in">print</span>(obj_path+<span class="string">&quot; Key is: &quot;</span>+i)</span><br><span class="line">                <span class="keyword">for</span> i <span class="keyword">in</span> get2:</span><br><span class="line">                    get_rep(k,i)</span><br><span class="line">                    <span class="built_in">print</span>(obj_path+<span class="string">&quot; Key is: &quot;</span>+i)</span><br><span class="line">                <span class="keyword">for</span> i <span class="keyword">in</span> post:</span><br><span class="line">                    post_rep(k,i)</span><br><span class="line">                    <span class="built_in">print</span>(obj_path+<span class="string">&quot; Key is: &quot;</span>+i)</span><br><span class="line">                <span class="keyword">for</span> i <span class="keyword">in</span> post1:</span><br><span class="line">                    post_rep(k,i)</span><br><span class="line">                    <span class="built_in">print</span>(obj_path+<span class="string">&quot; Key is: &quot;</span>+i)</span><br><span class="line">                <span class="keyword">for</span> i <span class="keyword">in</span> post2:</span><br><span class="line">                    post_rep(k,i)</span><br><span class="line">                    <span class="built_in">print</span>(obj_path+<span class="string">&quot; Key is: &quot;</span>+i)</span><br><span class="line">                f.close()</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="keyword">raise</span> e</span><br><span class="line"><span class="comment">#做GET请求</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_rep</span>(<span class="params">base_url, name</span>):</span><br><span class="line">    r_url = base_url +  <span class="string">&quot;?&quot;</span> + name + <span class="string">&quot;=echo &#x27;Hello Kitty&#x27;;&quot;</span></span><br><span class="line">    <span class="comment">#print(r_url)</span></span><br><span class="line">    rep = requests.get(r_url)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;Hello Kitty&#x27;</span> <span class="keyword">in</span> rep.content.decode(<span class="string">&#x27;gbk&#x27;</span>):</span><br><span class="line">        Record_To_File(r_url,name)</span><br><span class="line"></span><br><span class="line">    r_url = base_url +  <span class="string">&quot;?&quot;</span> + name + <span class="string">&quot;=phpinfo();&quot;</span> <span class="comment">#预防assert函数</span></span><br><span class="line">    <span class="comment">#print(r_url)</span></span><br><span class="line">    rep = requests.get(r_url)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;PHP Version&#x27;</span> <span class="keyword">in</span> rep.content.decode(<span class="string">&#x27;gbk&#x27;</span>):</span><br><span class="line">        Record_To_File(r_url,name)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">post_rep</span>(<span class="params">base_url, name</span>):</span><br><span class="line"></span><br><span class="line">    r_url = base_url </span><br><span class="line">    param = &#123;</span><br><span class="line">        name: <span class="string">&quot;echo &#x27;HelloKitty&#x27;;&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">    rep = requests.post(r_url, data=param)</span><br><span class="line">    <span class="comment">#print(r_url + &quot; POST: &quot; + name)</span></span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;HelloKitty&#x27;</span> <span class="keyword">in</span> rep.content.decode(<span class="string">&#x27;gbk&#x27;</span>):</span><br><span class="line">        Record_To_File(r_url,name)</span><br><span class="line"></span><br><span class="line">    param = &#123;</span><br><span class="line">        name: <span class="string">&quot;phpinfo();&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">    rep = requests.post(r_url, data=param)</span><br><span class="line">    <span class="comment">#print(r_url + &quot; POST: &quot; + name)</span></span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;PHP Version&#x27;</span> <span class="keyword">in</span> rep.content.decode(<span class="string">&#x27;gbk&#x27;</span>):</span><br><span class="line">        Record_To_File(r_url,name)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Record_To_File</span>(<span class="params">filename,name</span>):</span><br><span class="line">    answer = <span class="built_in">open</span>(<span class="string">&#x27;answer.txt&#x27;</span>,<span class="string">&#x27;a+&#x27;</span>)</span><br><span class="line">    end = time.time()</span><br><span class="line">    answer.write(<span class="string">&quot;Got It!   !!!!!!! &quot;</span> + filename + <span class="string">&quot; The param is: [\&#x27;&quot;</span> + name +<span class="string">&quot;\&#x27;]\n&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Got It!   !!!!!!! &quot;</span> + filename + <span class="string">&quot; The param is: [\&#x27;&quot;</span> + name +<span class="string">&quot;\&#x27;]&quot;</span>)</span><br><span class="line">    answer.close()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    get_url_list()</span><br><span class="line">    run(url_list)</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

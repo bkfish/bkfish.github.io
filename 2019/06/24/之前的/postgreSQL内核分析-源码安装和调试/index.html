@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>postgreSQL内核分析-源码安装和调试</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">postgreSQL内核分析-源码安装和调试</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2019/06/24/%E4%B9%8B%E5%89%8D%E7%9A%84/postgreSQL%E5%86%85%E6%A0%B8%E5%88%86%E6%9E%90-%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85%E5%92%8C%E8%B0%83%E8%AF%95/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">postgreSQL内核分析-源码安装和调试</h1>
+          
+            <div class="article-meta">2019-06-24</div>
+          
+        </div>
+        <article class="markdown">
+          <h3 id="一、环境配置"><a href="#一、环境配置" class="headerlink" title="一、环境配置"></a>一、环境配置</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Ubuntu 16.04                        </span><br><span class="line">PostgreSql v11.3</span><br></pre></td></tr></table></figure>
+<h3 id="二、源码下载解压"><a href="#二、源码下载解压" class="headerlink" title="二、源码下载解压"></a>二、源码下载解压</h3><p><a target="_blank" rel="noopener" href="https://www.postgresql.org/ftp/source/">https://www.postgresql.org/ftp/source/</a>,选择一个版本的,这里下载v11版本系列</p>
+<span id="more"></span>
+
+
+<p><img src="/2019/06/24/%E4%B9%8B%E5%89%8D%E7%9A%84/postgreSQL%E5%86%85%E6%A0%B8%E5%88%86%E6%9E%90-%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85%E5%92%8C%E8%B0%83%E8%AF%95/1.png"></p>
+<h3 id="解压到指定目录-新建用户（非强制只是为了方便管理"><a href="#解压到指定目录-新建用户（非强制只是为了方便管理" class="headerlink" title="解压到指定目录&amp;&amp;新建用户（非强制只是为了方便管理"></a>解压到指定目录&amp;&amp;新建用户（非强制只是为了方便管理</h3><p>在&#x2F;usr&#x2F;local&#x2F;下新建目录pgsql,记得<code>chmod -R 777 pgsql</code>否则后面打log会崩<br>然后将下载的压缩包丢到pgsql目录下解压</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar zxvf postgresql-11.3.tar.gz</span><br></pre></td></tr></table></figure>
+<p>解压后大概是这么些文件<br><img src="/2019/06/24/%E4%B9%8B%E5%89%8D%E7%9A%84/postgreSQL%E5%86%85%E6%A0%B8%E5%88%86%E6%9E%90-%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85%E5%92%8C%E8%B0%83%E8%AF%95/2.png"></p>
+<h3 id="三、安装过程"><a href="#三、安装过程" class="headerlink" title="三、安装过程"></a>三、安装过程</h3><p>配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/local/pgsql/</span><br><span class="line">./configure --prefix=/usr/local/pgsql --without-readline</span><br></pre></td></tr></table></figure>
+<h4 id="坑1：error-readline-library-not-found"><a href="#坑1：error-readline-library-not-found" class="headerlink" title="坑1：error:readline library not found"></a>坑1：error:readline library not found</h4><p>解决办法<code>apt-get install libreadline-dev</code></p>
+<h4 id="坑2：error-zlib-library-not-found"><a href="#坑2：error-zlib-library-not-found" class="headerlink" title="坑2：error: zlib library not found"></a>坑2：error: zlib library not found</h4><p>解决办法<code>apt-get install zlib1g</code><br><code>apt-get install zlib1g.dev</code><br>如果没有报错了,就可以去解压包里执行make了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make</span><br></pre></td></tr></table></figure>
+<p>如果不出意外大概需要一两分钟出现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">All of PostgreSQL successfully made. Ready to install.</span><br></pre></td></tr></table></figure>
+<p>然后执行install</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make install</span><br></pre></td></tr></table></figure>
+<p>出现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PostgreSQL installation complete.</span><br></pre></td></tr></table></figure>
+<p>安装完毕后应该在pgsql目录下会多一些<code>bin,include,lib</code>等文件夹<br><img src="/2019/06/24/%E4%B9%8B%E5%89%8D%E7%9A%84/postgreSQL%E5%86%85%E6%A0%B8%E5%88%86%E6%9E%90-%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85%E5%92%8C%E8%B0%83%E8%AF%95/3.png"></p>
+<h3 id="四、配置用户环境"><a href="#四、配置用户环境" class="headerlink" title="四、配置用户环境"></a>四、配置用户环境</h3><p>据我的理解是一个用户的数据库数据放在一个文件夹里储存？不知道是不是这样<br>先增加一个用户使用数据库</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">adduser postgres  //添加一个名为tommy的用户</span><br><span class="line">passwd postgres   //修改密码</span><br><span class="line">Changing password for user postgres.</span><br><span class="line">New UNIX password:     //在这里输入新密码</span><br><span class="line">Retype new UNIX password:  //再次输入新密码</span><br><span class="line">passwd: all authentication tokens updated successfully.</span><br></pre></td></tr></table></figure>
+<p>然后转换到postgres用户下，在刚刚新建的pgsql文件夹下<code>mkdir data</code>，如果有啥权限问题，也<code>chmod -R 777 data/</code>就完事了<br>ps:将用户添加到sudoers中操作（防止出现postgres用户不能sudo</p>
+<ol>
+<li>首先切换到root用户</li>
+<li>然后修改&#x2F;etc&#x2F;sudoers 权限 使其为可写</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod u+w /etc/sudoers</span><br><span class="line">vi  /etc/sudoers</span><br></pre></td></tr></table></figure>
+<p>然后在下面的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root ALL=(ALL)  ALL</span><br></pre></td></tr></table></figure>
+<p>这里增加自己需要的用户比如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root ALL=(ALL)  ALL</span><br><span class="line">postgres ALL=(ALL)  ALL</span><br></pre></td></tr></table></figure>
+<p>最后一定要把权限修改回来：chmod u-w &#x2F;etc&#x2F;sudoers</p>
+<h3 id="五、初始化和启动数据库"><a href="#五、初始化和启动数据库" class="headerlink" title="五、初始化和启动数据库"></a>五、初始化和启动数据库</h3><p>初始化</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">su postgres</span><br><span class="line">/usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data</span><br></pre></td></tr></table></figure>
+<p>启动数据库</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bin/pg_ctl start -D ./data/ -l logfile</span><br></pre></td></tr></table></figure>
+<p>重启和关闭</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./bin/pg_ctl restart -D ./data/</span><br><span class="line">./bin/pg_ctl stop -D ./data/</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/06/24/%E4%B9%8B%E5%89%8D%E7%9A%84/postgreSQL%E5%86%85%E6%A0%B8%E5%88%86%E6%9E%90-%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85%E5%92%8C%E8%B0%83%E8%AF%95/4.png"><br>然后可以执行<br>.&#x2F;bin&#x2F;psql进入命令行<br><img src="/2019/06/24/%E4%B9%8B%E5%89%8D%E7%9A%84/postgreSQL%E5%86%85%E6%A0%B8%E5%88%86%E6%9E%90-%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85%E5%92%8C%E8%B0%83%E8%AF%95/5.png"></p>
+<h3 id="六、创建数据库和用户"><a href="#六、创建数据库和用户" class="headerlink" title="六、创建数据库和用户"></a>六、创建数据库和用户</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">执行  ./createdb kitty   创建kitty数据库</span><br><span class="line">执行  ./createuser -P postgres  创建postgres用户</span><br></pre></td></tr></table></figure>
+<p>访问数据库后也可以用sql命令来新建用户</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create user postgres with password &#x27;xxx&#x27;;</span><br></pre></td></tr></table></figure>
+<h3 id="七、配置远程访问"><a href="#七、配置远程访问" class="headerlink" title="七、配置远程访问"></a>七、配置远程访问</h3><p>1）修改配置文件pgsql&#x2F;data&#x2F;postgresql.conf</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /usr/local/pgsql/data/postgresql.conf</span><br></pre></td></tr></table></figure>
+<p>修改监听地址：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#listen_addresses=&#x27;localhost&#x27;</span><br><span class="line">#将上面这行改成如下</span><br><span class="line">listen_addresses=&#x27;*&#x27;</span><br></pre></td></tr></table></figure>
+<p>2）修改配置文件&#x2F;pgsql&#x2F;data&#x2F;pg_hba.conf：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /usr/local/pgsql/data/pg_hba.conf</span><br></pre></td></tr></table></figure>
+<p>添加一条IP授权记录，可以对一个网段授权</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># IPv4 myhost connections:</span><br><span class="line">host    all         all         0.0.0.0/0          trust</span><br></pre></td></tr></table></figure>
+<h3 id="八、使用pwngdb调试"><a href="#八、使用pwngdb调试" class="headerlink" title="八、使用pwngdb调试"></a>八、使用pwngdb调试</h3><p>首先查看postgres进程，有两个方法</p>
+<h4 id="方法1：先查看客户端未连接后端的postgres进程"><a href="#方法1：先查看客户端未连接后端的postgres进程" class="headerlink" title="方法1：先查看客户端未连接后端的postgres进程"></a>方法1：先查看客户端未连接后端的postgres进程</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -aux | grep postgres</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/06/24/%E4%B9%8B%E5%89%8D%E7%9A%84/postgreSQL%E5%86%85%E6%A0%B8%E5%88%86%E6%9E%90-%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85%E5%92%8C%E8%B0%83%E8%AF%95/6.png"><br>然后执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./psql -h 127.0.0.1 -d postgres</span><br></pre></td></tr></table></figure>
+<p>再次查看进程<br><img src="/2019/06/24/%E4%B9%8B%E5%89%8D%E7%9A%84/postgreSQL%E5%86%85%E6%A0%B8%E5%88%86%E6%9E%90-%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85%E5%92%8C%E8%B0%83%E8%AF%95/7.png">,然后还是不确定</p>
+<h4 id="方法2：在客户端交互界面查询后端进程ID"><a href="#方法2：在客户端交互界面查询后端进程ID" class="headerlink" title="方法2：在客户端交互界面查询后端进程ID"></a>方法2：在客户端交互界面查询后端进程ID</h4><p>使用<code>postgres=# select pg_backend_pid();</code><br><img src="/2019/06/24/%E4%B9%8B%E5%89%8D%E7%9A%84/postgreSQL%E5%86%85%E6%A0%B8%E5%88%86%E6%9E%90-%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85%E5%92%8C%E8%B0%83%E8%AF%95/8.png"><br>就能确定是30270了</p>
+<h4 id="然后pwngdb出场"><a href="#然后pwngdb出场" class="headerlink" title="然后pwngdb出场"></a>然后pwngdb出场</h4><h4 id="8-1、设置gdb和屏蔽无用中断信号"><a href="#8-1、设置gdb和屏蔽无用中断信号" class="headerlink" title="8.1、设置gdb和屏蔽无用中断信号"></a>8.1、设置gdb和屏蔽无用中断信号</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo gdb attach 4208</span><br><span class="line">pwndbg&gt;handle SIGUSR1 nostop pass</span><br><span class="line">Signal        Stop	Print	Pass to program	Description</span><br><span class="line">SIGUSR1       No	Yes	Yes		User defined signal 1</span><br></pre></td></tr></table></figure>
+<h4 id="8-2、设置断点-随便设置，这里为了测试是打在计算结果处"><a href="#8-2、设置断点-随便设置，这里为了测试是打在计算结果处" class="headerlink" title="8.2、设置断点&#x2F;随便设置，这里为了测试是打在计算结果处"></a>8.2、设置断点&#x2F;随便设置，这里为了测试是打在计算结果处</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; b ExecResult</span><br><span class="line">Breakpoint 1 at 0x6275f0</span><br></pre></td></tr></table></figure>
+<h4 id="8-3、客户端发起查询"><a href="#8-3、客户端发起查询" class="headerlink" title="8.3、客户端发起查询"></a>8.3、客户端发起查询</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">postgres=# select 1+1;</span><br></pre></td></tr></table></figure>
+<p>此刻应该被断点断住的</p>
+<h4 id="8-4、调试"><a href="#8-4、调试" class="headerlink" title="8.4、调试"></a>8.4、调试</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt;c</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/06/24/%E4%B9%8B%E5%89%8D%E7%9A%84/postgreSQL%E5%86%85%E6%A0%B8%E5%88%86%E6%9E%90-%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85%E5%92%8C%E8%B0%83%E8%AF%95/9.png"><br>查看调用栈<br><img src="/2019/06/24/%E4%B9%8B%E5%89%8D%E7%9A%84/postgreSQL%E5%86%85%E6%A0%B8%E5%88%86%E6%9E%90-%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85%E5%92%8C%E8%B0%83%E8%AF%95/10.png"></p>
+
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

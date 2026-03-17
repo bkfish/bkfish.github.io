@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>Spring三大思想</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">Spring三大思想</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2019/02/27/%E4%B9%8B%E5%89%8D%E7%9A%84/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">Spring三大思想</h1>
+          
+            <div class="article-meta">2019-02-27</div>
+          
+        </div>
+        <article class="markdown">
+          <h3 id="一、DI-依赖注入-和IOC-控制反转"><a href="#一、DI-依赖注入-和IOC-控制反转" class="headerlink" title="一、DI(依赖注入)和IOC(控制反转)"></a>一、DI(依赖注入)和IOC(控制反转)</h3><p>Spring的三大思想为DI(依赖注入)，IOC(控制反转)，AOP（面向切面编程）。既然在学Spring就认真学一些思想，而不是仅仅停留在复制粘贴CURD的层面，这也许就是码农的自我修养吧。</p>
+<span id="more"></span>
+
+
+<h4 id="1-1、万物初始"><a href="#1-1、万物初始" class="headerlink" title="1.1、万物初始"></a>1.1、万物初始</h4><p>既然大家都没有女朋友，那今天书鱼教教大家怎么找女朋友吧。<br>假如你有了一个女朋友，，，，类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public class GirlFriend&#123;</span><br><span class="line">    String name; //有名字</span><br><span class="line">    Face face;</span><br><span class="line">    Head head; //有头有脸的意思</span><br><span class="line">    ....... //其他一堆优点</span><br><span class="line">    GirlFriend(String name)</span><br><span class="line">    &#123;</span><br><span class="line">        this.name=name;</span><br><span class="line">    &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>那么现在你是一个成功人士，即将走上人生巅峰，是不是还有一 点小激动呢</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public class Person&#123;</span><br><span class="line">    Person()&#123;</span><br><span class="line">    //给你女朋友加属性</span><br><span class="line">    GirlFriend girlFriend=new GirlFriend(&quot;迪丽热巴&quot;); </span><br><span class="line">    Car car=new Car(&quot;兰博基尼&quot;);</span><br><span class="line">    House house=new House(&quot;海景套房&quot;); //有车有房</span><br><span class="line">    &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<img src="3.jpg" width="400" hegiht="200" align=center />
+<!--more-->
+现在你要出生啦啦啦
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Person you;</span><br><span class="line">//当你需要你女朋友的时候你可以这样</span><br><span class="line">you.girlFriend;</span><br><span class="line">//比如当别人问你女朋友谁啊，你可以回答</span><br><span class="line">printf(&quot;%s&quot;,you.girlFriend.name);</span><br></pre></td></tr></table></figure>
+
+<p>直到一天，你和你女朋友的缘分尽了，经历一段痛心肺腑的分手诀别后，你找到了新的女朋友雏田小姐姐，当然这个时候将会有数百句渣男，臭鸡蛋扑面而来，但是，嘻嘻，你还是要更新你女朋友的名字。那么你要怎么做呢？<br>你要把Person类里GirlFriend的构造参数改一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GirlFriend girlFriend=new GirlFriend(&quot;日向雏田&quot;);</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/02/27/%E4%B9%8B%E5%89%8D%E7%9A%84/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/2.jpg"><br>这个时候你会发现你是全世界最成功的人士，但是<strong>等等</strong>你可能忽略了一个问题，因为你换女朋友，你自己的类<strong>改变了</strong>(person类改变了)，你不再是那个打娘胎里出来的那个单纯的Person,而是人工改造后的你，这样的你是没有灵魂的，这是因为，你依赖于你女盆友（<strong>Person类依赖于GirlFriend</strong>）,这样你和你女朋友的耦合性太强了（<strong>Person类和GirlFriend耦合性强</strong>），那么依赖注入就是为了解决一下这个问题。</p>
+<h4 id="1-2、控制反转和依赖注入（正经脸）"><a href="#1-2、控制反转和依赖注入（正经脸）" class="headerlink" title="1.2、控制反转和依赖注入（正经脸）"></a>1.2、控制反转和依赖注入（正经脸）</h4><p>以下来自百度百科</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">控制反转（Inversion of Control，缩写为IoC），是面向对象编程中的一种设计原则，</span><br><span class="line">可以用来减低计算机代码之间的耦合度。其中最常见的方式叫做依赖注入（Dependency </span><br><span class="line">Injection，简称DI。通过控制反转，对象在被创建的时候，由一个调控系统内所有对象</span><br><span class="line">的外界实体，将其所依赖的对象的引用传递给它。也可以说，依赖被注入到对象中。</span><br></pre></td></tr></table></figure>
+<p>是不是很晕，听不懂，如果你懂了，请直接跳过本博客，如果没看懂，请继续听我吹逼。<br>其实意思还是很简单的，就是为了解除Person和GirlFriend的耦合，在修改GirlFriend.name的同时不修改Person类，能不能做到呢，答案是肯定的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">class Person&#123;</span><br><span class="line">  GirlFriend girlFriend;</span><br><span class="line">  Person(GirlFriend girlFriend)&#123;</span><br><span class="line"> this.girlFriend = girlFriend;</span><br><span class="line">&#125;;</span><br><span class="line"> .........</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样就算你要天天换女朋友，又能保持自己的灵魂，你只要</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GirlFriend girlFriend=new GirlFriend(&quot;日向雏田&quot;);</span><br><span class="line">Person you= new Person(girlFriend);</span><br></pre></td></tr></table></figure>
+<p>字面意思就是将你女朋友注入到你中（为什么听起来优点别扭），这是通过构造函数依赖注入,而依赖注入有3种方式<br>分别为<strong>构造方法注入</strong>，<strong>setter注入</strong>，<strong>基于注解的注入</strong>。<br>思想和构造方法注入是一致的，比如<br><strong>setter函数注入</strong>：<br>其实也就是在Person中另外写一个函数来替代构造函数，然后在new person够调用这个函数。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">class Person&#123;</span><br><span class="line">  GirlFriend girlFriend;</span><br><span class="line">  SetGirlFriend(GirlFriend girlFriend)&#123;</span><br><span class="line"> this.girlFriend = girlFriend;</span><br><span class="line">&#125;;</span><br><span class="line">&#125;</span><br><span class="line">Person you=new Person();</span><br><span class="line">GirlFriend girlFriend=new GirlFriend(&quot;日向雏田&quot;);</span><br><span class="line">you.SetGirlFriend(girlFriend)</span><br></pre></td></tr></table></figure>
+<p><strong>基于注解的注入</strong>：<br>注解我看来就是为了加快人生进步发展（为了让后人偷懒），而定义的一些约定注释，提高我们的编程体验。<br>看一看spring有哪些关于注入的注解</p>
+<ol>
+<li>@Component注解：表明当前类为一个组件（bean）</li>
+<li>@Value注解：为bean注入值</li>
+<li>@Autowired注解 ：为bean注入其他bean（byType方式）</li>
+<li>@Qualifier注解：与Autowired注解联用实现byName方式注入</li>
+<li>@Resource注解：这个不是Spring提供的注解，这个是jdk提供的注解，要求jdk版本1.6以上，这个注解可以实现Autowired和Resource的功能。当直接注解@Resource时起到Autowired功能（byType），当加上参数@Resource（name&#x3D;”“）的时候，起到@Autowired和@Qualifier联合使用的功能（byName）</li>
+</ol>
+<p>当你能看到这里的时候，自然就会去学习注解的详细使用，这里只唠唠思维，就不展开。</p>
+<p><strong>控制反转</strong>名字由来：<br>对象A获得依赖对象B的过程,由主动行为变为了被动行为，控制权颠倒过来了，这就是“控制反转”这个名称的由来，其实就是通过IoC容器来关联这些对象类。这样对象与对象之间就通过IoC容器进行联系，但对象与对象之间并没有什么直接联系。在上面例子中，就是可以新建一个工厂类，专门生产女朋友的，然后你要什么女朋友通过调用女朋友工厂生产后再注入。<br><img src="/2019/02/27/%E4%B9%8B%E5%89%8D%E7%9A%84/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/1.png"></p>
+<h3 id="二、AOP（面向切面编程）"><a href="#二、AOP（面向切面编程）" class="headerlink" title="二、AOP（面向切面编程）"></a>二、AOP（面向切面编程）</h3><p>先来一个官方书面表述：<br>AOP（Aspect Oriented Programming）意为：面向切面编程，通过预编译方式和运行期动态代理实现程序功能的统一维护的一种技术。AOP是OOP的延续，是软件开发中的一个热点，也是Spring框架中的一个重要内容（Spring核心之一），是函数式编程的一种衍生范型。利用AOP可以对业务逻辑的各个部分进行隔离，从而使得业务逻辑各部分之间的耦合度降低，提高程序的可重用性，同时提高了开发的效率。<br>（反正我第一遍是看不懂的）</p>
+<h4 id="2-1、面向切面是面向啥玩意："><a href="#2-1、面向切面是面向啥玩意：" class="headerlink" title="2.1、面向切面是面向啥玩意："></a>2.1、面向切面是面向啥玩意：</h4><p>我们先抛开Spring对于AOP的事件机制，单纯说一说面向切面编程，切面其实就是一些切面性问题的受力点，也叫横切性问题即<strong>和主业务逻辑无关，散落四方的一些方法</strong>。比如日志记录，效率检查，时间记录等等。<br>比如再次回到女朋友问题，假如一位情场高手打算出一本泡妞宝典，所以打算在每个女朋友追求到手后记录下经验，然后写入宝典，现在需求就是在确认关系上添加记录经验,所以现在是这样的：</p>
+<p>认识女朋友1—&gt;相遇—&gt;追求—&gt;<font color=red size=4 >确认关系</font>—&gt;分手<br>认识女朋友2—&gt;相遇—&gt;追求—&gt;<font color=red size=4 >确认关系</font>—&gt;分手<br>认识女朋友3—&gt;相遇—&gt;追求—&gt;<font color=red size=4 >确认关系</font>—&gt;分手<br>认识女朋友4—&gt;相遇—&gt;追求—&gt;<font color=red size=4 >确认关系</font>—&gt;分手<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;|👇|<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;|总结经验|</p>
+<p>再回到AOP编程思想中，由于总结经验对于每一场恋爱的主线没有直接关系，最多是人品问题（天地良心，我个人不是这样水性杨花的），所以可以把确认关系当一个<strong>切面</strong>，而横切的问题就是总结经验。在编程上，如果每个业务的横切问题单独编程就会产生大量的垃圾代码，所以采用AOP能够在编程上可以大大减少你的时间</p>
+<h4 id="2-2、Spring的AOP具体概念（比较硬核）"><a href="#2-2、Spring的AOP具体概念（比较硬核）" class="headerlink" title="2.2、Spring的AOP具体概念（比较硬核）"></a>2.2、Spring的AOP具体概念（比较硬核）</h4><p><strong>这里还是先给出一个比较专业的概念定义：</strong></p>
+<ol>
+<li>Aspect（切面）： Aspect 声明类似于 Java 中的类声明，在 Aspect 中会包含着一些 Pointcut 以及相应的 Advice。</li>
+<li>Joint point（连接点）：表示在程序中明确定义的点，典型的包括方法调用，对类成员的访问以及异常处理程序块的执行等等，它自身还可以嵌套其它 joint point。</li>
+<li>Pointcut（切点）：表示一组 joint point，这些 joint point 或是通过逻辑关系组合起来，或是通过通配、正则表达式等方式集中起来，它定义了相应的 Advice 将要发生的地方。</li>
+<li>Advice（增强）：Advice 定义了在 Pointcut 里面定义的程序点具体要做的操作，它通过 before、after 和 around 来区别是在每个 joint point 之前、之后还是代替执行的代码。</li>
+<li>Target（目标对象）：织入 Advice 的目标对象.。<br>Weaving（织入）：将 Aspect 和其他对象连接起来, 并创建 Adviced object 的过程</li>
+</ol>
+<p>（放弃吧，光看是看不懂的，去撸代码吧）<br><img src="/2019/02/27/%E4%B9%8B%E5%89%8D%E7%9A%84/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/2.png"><br>本文只想通过简单的例子讲讲思想，具体代码就不涉及了，感兴趣可以另学，另外本文旨在于学习，本人从未参与里面任何事件逻辑，感谢迪丽热巴和雏田小姐姐的友情赞助照片。</p>
+<p><img src="/2019/02/27/%E4%B9%8B%E5%89%8D%E7%9A%84/Spring%E4%B8%89%E5%A4%A7%E6%80%9D%E6%83%B3/1.gif"></p>
+
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>简单介绍MVC,MVP,MVVM模式</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">简单介绍MVC,MVP,MVVM模式</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2019/02/11/%E4%B9%8B%E5%89%8D%E7%9A%84/%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8DMVC-MVP-MVVM%E6%A8%A1%E5%BC%8F/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">简单介绍MVC,MVP,MVVM模式</h1>
+          
+            <div class="article-meta">2019-02-11</div>
+          
+        </div>
+        <article class="markdown">
+          <h2 id="概述："><a href="#概述：" class="headerlink" title="概述："></a>概述：</h2><p>MVC,MVP,MVVM是三种常见的架构模式(Architectural Pattern)，还有MVI，MTV,它通过分离关注点来改进代码组织方式。不同于设计模式(Design Pattern),只是为了解决一类问题而总结出的抽象方法，一种架构模式往往能使用多种设计模式。</p>
+<h3 id="一、MVC"><a href="#一、MVC" class="headerlink" title="一、MVC"></a>一、MVC</h3><p>MVC模式是MVP,MVVM模式的基础，这两种模式更像是MVC模式的优化改良版,他们三个的MV即Model，view相同，不同的是MV之间的纽带部分。最初接触MVC模式是曾经阿汤哥手把手♂教的spring mvc，感谢一路上帮助过自己的所有人。</p>
+<span id="more"></span>
+
+
+<h4 id="1-1、mvc简介"><a href="#1-1、mvc简介" class="headerlink" title="1.1、mvc简介"></a>1.1、mvc简介</h4><p><img src="/2019/02/11/%E4%B9%8B%E5%89%8D%E7%9A%84/%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8DMVC-MVP-MVVM%E6%A8%A1%E5%BC%8F/1.png"><br>MVC是Model-View-Controller的缩写，它将应用程序划分为三个部分：</p>
+<ul>
+<li>Model: 模型（用于封装与应用程序的业务逻辑相关的数据以及对数据的处理方法）</li>
+<li>View: 视图（渲染页面）</li>
+<li>Controller: 控制器（M和V之间的连接器，用于控制应用程序的流程，及页面的业务逻辑）</li>
+</ul>
+<p>MVC允许在不改变视图的情况下改变视图对用户输入的响应方式，用户对View的操作交给了Controller处理，在Controller中响应View的事件调用Model的接口对数据进行操作，一旦Model发生变化便通知相关视图进行更新。)</p>
+<h4 id="1-2、MVC特点"><a href="#1-2、MVC特点" class="headerlink" title="1.2、MVC特点"></a>1.2、MVC特点</h4><p>MVC模式的特点在于实现关注点分离，即应用程序中的数据模型与业务和展示逻辑解耦。在客户端web开发中，就是将模型(M-数据、操作数据)、视图(V-显示数据的HTML元素)之间实现代码分离，松散耦合，使之成为一个更容易开发、维护和测试的客户端应用程序。</p>
+<ol>
+<li>View 传送指令到 Controller ；</li>
+<li>Controller 完成业务逻辑后，要求 Model 改变状态 ；</li>
+<li>Model 将新的数据发送到 View，用户得到反馈。</li>
+</ol>
+<h4 id="1-3、MVC的两种流程"><a href="#1-3、MVC的两种流程" class="headerlink" title="1.3、MVC的两种流程"></a>1.3、MVC的两种流程</h4><p>一种是通过 View 接受指令，传递给 Controller，然后对模型进行修改或者查找底层数据，最后把改动渲染在视图上。 <img src="/2019/02/11/%E4%B9%8B%E5%89%8D%E7%9A%84/%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8DMVC-MVP-MVVM%E6%A8%A1%E5%BC%8F/2.png"><br>另一种是通过controller接受指令，传给Model：<br> <img src="/2019/02/11/%E4%B9%8B%E5%89%8D%E7%9A%84/%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8DMVC-MVP-MVVM%E6%A8%A1%E5%BC%8F/3.png"></p>
+<h4 id="1-4、应用"><a href="#1-4、应用" class="headerlink" title="1.4、应用"></a>1.4、应用</h4><p>MVC模式的框架确实我认为是最多的，最开始接触的Spring MVC,然后<code>ASP.net</code>,Django甚至是某玖神(Orz膜玖神)的ofbiz框架都是使用MVC(虽然Django严格上是MVT模式，但是我个人觉得本质是MVC)，或者说是在MVC上改进，这里简单介绍一下spring mvc的模式。<br><strong>SpringMVC简介:</strong><br>springMVC框架是基于Java的实现了MVC框架模式的请求驱动类型的轻量级框架。前端控制器是DispatcherServlet接口实现类，映射处理器是HandlerMapping接口实现类，视图解析器是ViewResolver接口实现类，页面控制器是Controller接口实现类。SpringMVC的工作流程图如下：<br><img src="/2019/02/11/%E4%B9%8B%E5%89%8D%E7%9A%84/%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8DMVC-MVP-MVVM%E6%A8%A1%E5%BC%8F/4.png"><br>（1）客户端请求提交到前端控制器DispatcherServlet；<br>（2）前端控制器DispatcherServlet查找一个或者多个映射处理器HandlerMapping，从而确定调用哪个页面控制器Controller对请求进行处理；<br>（3）DispatcherServlet将请求提交给Controller；<br>（4）Controller根据业务逻辑对请求进行处理，并返回ModelAndView；<br>（5）DispatcherServlet查找一个或者多个ViewResolver，得到ModelAndView指定的视图view，并将model中的数据传入视图view中进行渲染；<br>（6）DispatcherServlet将渲染后的视图返回响应；</p>
+<p><strong>由上述过程可见</strong>DispatcherServlet是Spring MVC的核心，它负责协调SpringMVC的各个组成部分对所有的Http请求进行处理，其主要工作如下：<br>（1）截获符合特定格式的Http请求；<br>（2）初始化DispatcherServlet上下文对应的WebApplicationContext，并将其与业务层、持久层的WebApplicationContext关联起来；<br>（3）初始化Spring MVC的各个组件，并装配到DispatcherServlet中；<br><img src="/2019/02/11/%E4%B9%8B%E5%89%8D%E7%9A%84/%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8DMVC-MVP-MVVM%E6%A8%A1%E5%BC%8F/5.png"><br>其实本质上也是MVC模式的进阶版</p>
+<h3 id="二、MVVM"><a href="#二、MVVM" class="headerlink" title="二、MVVM"></a>二、MVVM</h3><p><img src="/2019/02/11/%E4%B9%8B%E5%89%8D%E7%9A%84/%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8DMVC-MVP-MVVM%E6%A8%A1%E5%BC%8F/6.png"></p>
+<h4 id="2-1、mvvm简介"><a href="#2-1、mvvm简介" class="headerlink" title="2.1、mvvm简介"></a>2.1、mvvm简介</h4><p>MVVM与MVC最大的区别就是：它实现了View和Model的自动同步，也就是当Model的属性改变时，我们不用再自己手动操作Dom元素，来改变View的显示，而是改变属性后该属性对应View层显示会自动改变。</p>
+<h4 id="2-2、典型的MVVM模式的代表，Vue"><a href="#2-2、典型的MVVM模式的代表，Vue" class="headerlink" title="2.2、典型的MVVM模式的代表，Vue"></a>2.2、典型的MVVM模式的代表，Vue</h4><p>刚好这两天在学习VUE,下面也是官网的一个例子<br>html</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id=&quot;app-5&quot;&gt;</span><br><span class="line">  &lt;p&gt;&#123;&#123; message &#125;&#125;&lt;/p&gt;</span><br><span class="line">  &lt;button v-on:click=&quot;reverseMessage&quot;&gt;逆转消息&lt;/button&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+<p>js</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">var app5 = new Vue(&#123;</span><br><span class="line">  el: &#x27;#app-5&#x27;,</span><br><span class="line">  data: &#123;</span><br><span class="line">    message: &#x27;Hello Vue.js!&#x27;</span><br><span class="line">  &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    reverseMessage: function () &#123;</span><br><span class="line">      this.message = this.message.split(&#x27;&#x27;).reverse().join(&#x27;&#x27;)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>这里的html部分相当于View层，可以看到这里的View通过通过模板语法来声明式的将数据渲染进DOM元素，当ViewModel对Model进行更新时，通过数据绑定更新到View。<br>Vue实例中的data相当于Model层，而ViewModel层的核心是Vue中的<strong>双向数据绑定</strong>，即Model变化时VIew可以实时更新，View变化也能让Model发生变化。<br>整体看来，MVVM比MVC精简很多，不仅简化了业务与界面的依赖，还解决了数据频繁更新的问题，不用再用选择器操作DOM元素。因为在MVVM中，View不知道Model的存在，Model和ViewModel也观察不到View，这种低耦合模式提高代码的可重用性。</p>
+<h3 id="三、MVP"><a href="#三、MVP" class="headerlink" title="三、MVP"></a>三、MVP</h3><h4 id="3-1、MVP简介"><a href="#3-1、MVP简介" class="headerlink" title="3.1、MVP简介"></a>3.1、MVP简介</h4><p>MVP 全称：Model-View-Presenter ；MVP 是从经典的模式 MVC 演变而来，它们的基本思想有相通的地方：Controller&#x2F;Presenter 负责逻辑的处理，Model 提供数据，View 负责显示。MVP模式可应用在于APP开发，其实还有MVI也应用于安卓。<br>MVP的模型图<br><img src="/2019/02/11/%E4%B9%8B%E5%89%8D%E7%9A%84/%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8DMVC-MVP-MVVM%E6%A8%A1%E5%BC%8F/7.png"><br>这个图也很简单，当 View 需要更新数据时，首先去找 Presenter，然后 Presenter 去找 Model 请求数据，Model 获取到数据之后通知 Presenter，Presenter 再通知 View 更新数据，这样 Model 和 View 就不会直接交互了，所有的交互都由 Presenter 进行，Presenter 充当了桥梁的角色。很显然，Presenter 必须同时持有 View 和 Model 的对象的引用，才能在它们之间进行通信。</p>
+<h4 id="3-2、MVP模式的核心思想"><a href="#3-2、MVP模式的核心思想" class="headerlink" title="3.2、MVP模式的核心思想"></a>3.2、MVP模式的核心思想</h4><p><code>MVP把Activity中的UI逻辑抽象成View接口，把业务逻辑抽象成Presenter接口，Model类还是原来的Model。</code></p>
+<h4 id="3-3、与MVC区别"><a href="#3-3、与MVC区别" class="headerlink" title="3.3、与MVC区别"></a>3.3、与MVC区别</h4><ol>
+<li>在MVP中，View并不直接使用Model，它们之间的通信是通过Presenter 也叫做中介(MVC中的Controller)来进行的，所有的交互都发生在Presenter内部。 </li>
+<li>在MVC中，View会直接从Model中读取数据而不是通过 Controller。</li>
+</ol>
+<h4 id="3-4、MVP的优点"><a href="#3-4、MVP的优点" class="headerlink" title="3.4、MVP的优点"></a>3.4、MVP的优点</h4><p>模型与视图完全分离，我们可以修改视图而不影响模型；<br>◆ 可以更高效地使用模型，因为所有的交互都发生在一个地方——Presenter内部；<br>◆ 我们可以将一个Presenter用于多个视图，而不需要改变Presenter的逻辑。这个特性非常的有用，因为视图的变化总是比模型的变化频繁；<br>◆ 如果我们把逻辑放在Presenter中，那么我们就可以脱离用户接口来测试这些逻辑（单元测试）。</p>
+<h4 id="3-5、MVP的应用"><a href="#3-5、MVP的应用" class="headerlink" title="3.5、MVP的应用"></a>3.5、MVP的应用</h4><p>MVP应用于APP开发，由于本人app方面经验少，所以就不讲MVP在app开发的应用。我们来讲讲MVP<strong>找女朋友</strong><br><strong>找老婆有两种方式</strong></p>
+<ol>
+<li>自己找</li>
+<li>父母之命，媒妁之言（媒婆，中介）</li>
+</ol>
+<p><strong>当然我们都倾向于第一种方式，但是我们这里确实要讲讲第二种方式的业务逻辑</strong><br><img src="/2019/02/11/%E4%B9%8B%E5%89%8D%E7%9A%84/%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8DMVC-MVP-MVVM%E6%A8%A1%E5%BC%8F/8.jpg"></p>
+<ol>
+<li>我要找妹子，我提出对妹子的要求（富萝莉的那种）</li>
+<li>媒婆根据我的要求，找到对应满足我的要求的人</li>
+</ol>
+<p><strong>中间有三个角色与MVP各层对应的关系</strong></p>
+<ol>
+<li>要找妹子的我-&gt; V层-&gt; UI层</li>
+<li>作为中介的媒婆-&gt; P层-&gt; Presenter</li>
+<li>要找的富萝莉-&gt; M层-&gt; 数据层</li>
+</ol>
+<p><strong>所以媒婆（中介）会与V,M层交互，而V与M层相互没有直接交互，业务逻辑如下</strong><br><img src="/2019/02/11/%E4%B9%8B%E5%89%8D%E7%9A%84/%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8DMVC-MVP-MVVM%E6%A8%A1%E5%BC%8F/8.png"><br>自己意会吧，祝大家都能找到妹子。</p>
+
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>精通Python网络爬虫-四五章基本使用</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">精通Python网络爬虫-四五章基本使用</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2019/03/21/%E4%B9%8B%E5%89%8D%E7%9A%84/%E7%B2%BE%E9%80%9APython%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB-%E4%B8%89%E5%9B%9B%E7%AB%A0%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">精通Python网络爬虫-四五章基本使用</h1>
+          
+            <div class="article-meta">2019-03-21</div>
+          
+        </div>
+        <article class="markdown">
+          <h3 id="一、时代变迁下的比较"><a href="#一、时代变迁下的比较" class="headerlink" title="一、时代变迁下的比较:"></a>一、时代变迁下的比较:</h3><table>
+<thead>
+<tr>
+<th>Python2.x时代</th>
+<th>Python3.x时代</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>import urllib2</td>
+<td>import urllib.request,urllib.error</td>
+</tr>
+<tr>
+<td>import urllib</td>
+<td>import urllib2.request,urllib.error,urllib.parse</td>
+</tr>
+<tr>
+<td>import urlparse</td>
+<td>import urllib.parse</td>
+</tr>
+<tr>
+<td>urllib2.urlopen</td>
+<td>urllib.request.urlopen</td>
+</tr>
+<tr>
+<td>urllib.urlencode</td>
+<td>urllib.parse.urlencode</td>
+</tr>
+<tr>
+<td>urllib.quote</td>
+<td>urllib.request.quote</td>
+</tr>
+<tr>
+<td>cookielib.CookieJar</td>
+<td>http.CookieJar</td>
+</tr>
+<tr>
+<td>urllib2.Request</td>
+<td>urllib.request.Request</td>
+</tr>
+</tbody></table>
+<span id="more"></span>
+
+
+<h4 id="1-1、快速使用"><a href="#1-1、快速使用" class="headerlink" title="1.1、快速使用"></a>1.1、快速使用</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">//导入模块</span><br><span class="line">&gt;&gt;&gt; import urllib.request</span><br><span class="line">//打开网页</span><br><span class="line">&gt;&gt;&gt; file=urllib.request.urlopen(&quot;http://baidu.com&quot;)</span><br><span class="line">//读取全部内容.内容赋给字符串变量</span><br><span class="line">&gt;&gt;&gt; data=file.read()</span><br><span class="line">//读取全部内容，内容赋给列表变量</span><br><span class="line">&gt;&gt;&gt; data=file.readlines()</span><br><span class="line">//读取一行内容</span><br><span class="line">&gt;&gt;&gt; dataline=file.readline()</span><br><span class="line">&gt;&gt;&gt; print dataline</span><br><span class="line">&gt;&gt;&gt; print data</span><br><span class="line">&gt;&gt;&gt; print(file.info())</span><br><span class="line">&gt;&gt;&gt; print(file.getcode())</span><br><span class="line">&gt;&gt;&gt; print(file.geturl())</span><br></pre></td></tr></table></figure>
+<p>URL标准中一般只允许一部分ASCII字符，如数字、字母、部分符号等。若是特殊字符，如中文、：、或者&amp;等，需要编码。编码格式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">urllib.request.quote(“http://www.baidu.com&quot;)</span><br><span class="line">urllib.request.unquote(“http%3A//www.baidu.com&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>保存本地方法1</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; fhandle=open(&quot;demo.html&quot;)</span><br><span class="line">&gt;&gt;&gt; fhandle.write(data)</span><br><span class="line">&gt;&gt;&gt; fhandle.close()</span><br></pre></td></tr></table></figure>
+<p>保存本地方法2</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">filename=urllib.request.urlretrieve(&quot;http://www.baidu.com&quot;,filename=&quot;demo.html&quot;)</span><br></pre></td></tr></table></figure>
+<h4 id="1-2、模拟浏览器-–-Headers-属性"><a href="#1-2、模拟浏览器-–-Headers-属性" class="headerlink" title="1.2、模拟浏览器 – Headers 属性"></a>1.2、模拟浏览器 – Headers 属性</h4><p>方法1、build_opener()修改报头</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">import urllib.request</span><br><span class="line">url=&quot;http://blog.csdn.net/weiwei_pig/article/details/51178226&quot;</span><br><span class="line">headers=(&quot;User-Agent&quot;,&quot;Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Mobile Safari/537.36&quot;)</span><br><span class="line">opener = urllib.request.build_opener()</span><br><span class="line">opener.addheaders = [headers]</span><br><span class="line">data = opener.open(url).read()</span><br><span class="line">print(data)</span><br></pre></td></tr></table></figure>
+<p>方法2、用add_header()添加报头</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">import urllib.request</span><br><span class="line">url=&quot;http://blog.csdn.net/weiwei_pig/article/details/51178226&quot;</span><br><span class="line">req=urllib.request.Request(url)</span><br><span class="line">req.add_header(&quot;User-Agent&quot;,&quot;Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Mobile Safari/537.36&quot;)</span><br><span class="line">data = urllib.request.urlopen(req).read()</span><br></pre></td></tr></table></figure>
+<h4 id="1-3、超时设置-比如gayhun"><a href="#1-3、超时设置-比如gayhun" class="headerlink" title="1.3、超时设置,比如gayhun"></a>1.3、超时设置,比如gayhun</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">import urllib.request</span><br><span class="line">for i in range(1,100):</span><br><span class="line">	try:</span><br><span class="line">		file = urllib.request.urlopen(&quot;https://github.com/&quot;,timeout=1)</span><br><span class="line">		data = file.read()</span><br><span class="line">		print(len(data))</span><br><span class="line">	except Exception as e:</span><br><span class="line">		print(&quot;出现异常–&gt;&quot;+str(e))</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-4、POST请求"><a href="#1-4、POST请求" class="headerlink" title="1.4、POST请求"></a>1.4、POST请求</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">import urllib.request</span><br><span class="line">import urllib.parse</span><br><span class="line">url = &quot;http://www.iqianyue.com/mypost&quot;</span><br><span class="line">postdata = urllib.parse.urlencode(&#123;</span><br><span class="line">&quot;name&quot;:&quot;Kitty&quot;,</span><br><span class="line">&quot;pass&quot;:&quot;haha&quot;</span><br><span class="line">&#125;).encode(&quot;utf-8&quot;) </span><br><span class="line">req = urllib.request.Request(url,postdata)</span><br><span class="line">req.add_header(&quot;User-Agent&quot;,&quot;Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Mobile Safari/537.36&quot;)</span><br><span class="line">data = urllib.request.urlopen(req).read().decode(&#x27;utf-8&#x27;)</span><br><span class="line">print(data)</span><br></pre></td></tr></table></figure>
+<h3 id="二、异常处理"><a href="#二、异常处理" class="headerlink" title="二、异常处理"></a>二、异常处理</h3><h4 id="2-1、DebugLog开启"><a href="#2-1、DebugLog开启" class="headerlink" title="2.1、DebugLog开启"></a>2.1、DebugLog开启</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">import urllib.request</span><br><span class="line">httphd=urllib.request.HTTPHandler(debuglevel=1)</span><br><span class="line">httpshd=urllib.request.HTTPSHandler(debuglevel=1)</span><br><span class="line">opener=urllib.request.build_opener(httphd,httpshd)</span><br><span class="line">urllib.request.install_opener(opener)</span><br><span class="line">data=urllib.request.urlopen(&quot;http://edu.51cto.com&quot;)</span><br><span class="line">print(data)</span><br></pre></td></tr></table></figure>
+<h4 id="2-2、URLError"><a href="#2-2、URLError" class="headerlink" title="2.2、URLError"></a>2.2、URLError</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">import urllib.request</span><br><span class="line">import urllib.error</span><br><span class="line">try:</span><br><span class="line">    file=urllib.request.urlopen(&quot;http://www.baiduddd.com&quot;)</span><br><span class="line">    print(file.read())</span><br><span class="line">except urllib.error.URLError as e:</span><br><span class="line">    if hasattr(e,&quot;code&quot;):</span><br><span class="line">        print(e.code)</span><br><span class="line">    if hasattr(e,&quot;reason&quot;):</span><br><span class="line">        print(e.reason)</span><br><span class="line"># except urllib.error.URLError as e:</span><br><span class="line">#     print(e.reason)</span><br><span class="line"># except urllib.error.HTTPError as e:</span><br><span class="line">#     print(e.code)</span><br><span class="line">#     print(e.reason)</span><br></pre></td></tr></table></figure>
+<h3 id="三、正则表达式的使用"><a href="#三、正则表达式的使用" class="headerlink" title="三、正则表达式的使用"></a>三、正则表达式的使用</h3><p>如果对正则表达式没概念，请移步<a href="/2019/01/15/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A/">正则表达式必知必会</a></p>
+<h4 id="3-1、正则表达式常用的功能函数包括：match、search、findall、sub"><a href="#3-1、正则表达式常用的功能函数包括：match、search、findall、sub" class="headerlink" title="3.1、正则表达式常用的功能函数包括：match、search、findall、sub"></a>3.1、正则表达式常用的功能函数包括：match、search、findall、sub</h4><h5 id="1、1、re-match-函数"><a href="#1、1、re-match-函数" class="headerlink" title="1、1、re.match()函数"></a>1、1、re.match()函数</h5><p>函数语法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">re.match(pattern, string, flags=0)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">def match(pattern, string, flags=0):</span><br><span class="line">    &quot;&quot;&quot;Try to apply the pattern at the start of the string, returning</span><br><span class="line">    a match object, or None if no match was found.&quot;&quot;&quot;</span><br><span class="line">    return _compile(pattern, flags).match(string)</span><br></pre></td></tr></table></figure>
+<p>函数参数说明：</p>
+<ul>
+<li>pattern：匹配的正则表达式</li>
+<li>string：要匹配的字符串</li>
+<li>flag：标志位，用于控制正则表达式的匹配方式（是否匹配大小写、多行匹配等）<br>作用：match()函数只在字符串的开始位置尝试匹配正则表达式，即从位置0开始匹配。如果匹配成功，则返回一个匹配的对象；如果字符串开始不符合正则表达式，则匹配失败，函数返回None。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">import  re</span><br><span class="line">test = &#x27;http://news.163.com/17/0624/10/CNMHVBJP0001899N.html&#x27;</span><br><span class="line">print(re.match(r&#x27;http&#x27;,test)) # &lt;_sre.SRE_Match object; span=(0, 4), match=&#x27;http&#x27;&gt;</span><br><span class="line">print(re.match(r&#x27;news&#x27;,test)) # None</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="2、re-search-函数"><a href="#2、re-search-函数" class="headerlink" title="2、re.search()函数"></a>2、re.search()函数</h5><p>函数语法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 re.search(pattern, string[, flags])</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 def search(pattern, string, flags=0):</span><br><span class="line">2     &quot;&quot;&quot;Scan through string looking for a match to the pattern, returning</span><br><span class="line">3     a match object, or None if no match was found.&quot;&quot;&quot;</span><br><span class="line">4     return _compile(pattern, flags).search(string)</span><br></pre></td></tr></table></figure>
+<p>re.search()匹配整个字符串，直到找到第一个匹配的，如果字符串中没有匹配的，则返回None。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 import  re</span><br><span class="line">2 test = &#x27;I am a loving child to learn.&#x27;</span><br><span class="line">3 print(re.search(r&#x27;I&#x27;,test)) # &lt;_sre.SRE_Match object; span=(0, 1), match=&#x27;I&#x27;&gt;</span><br><span class="line">4 print(re.search(r&#x27;learn&#x27;,test)) # &lt;_sre.SRE_Match object; span=(23, 28), match=&#x27;learn&#x27;&gt;</span><br><span class="line">5 print(re.search(r&#x27;alina&#x27;,test)) # None</span><br></pre></td></tr></table></figure>
+
+<h5 id="3、re-sub-函数"><a href="#3、re-sub-函数" class="headerlink" title="3、re.sub()函数"></a>3、re.sub()函数</h5><p>函数语法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 re.sub(pattern,repl,string,count,flags)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1 def sub(pattern, repl, string, count=0, flags=0):</span><br><span class="line">2     &quot;&quot;&quot;Return the string obtained by replacing the leftmost</span><br><span class="line">3     non-overlapping occurrences of the pattern in string by the</span><br><span class="line">4     replacement repl.  repl can be either a string or a callable;</span><br><span class="line">5     if a string, backslash escapes in it are processed.  If it is</span><br><span class="line">6     a callable, it&#x27;s passed the match object and must return</span><br><span class="line">7     a replacement string to be used.&quot;&quot;&quot;</span><br><span class="line">8     return _compile(pattern, flags).sub(repl, string, count)</span><br></pre></td></tr></table></figure>
+<p>函数参数说明：</p>
+<ul>
+<li>pattern：匹配的正则表达式</li>
+<li>repl：替换的字符串</li>
+<li>String：要被查找替换的原始字符串</li>
+<li>count：匹配后替换的最大次数，默认0表示途欢所有的匹配</li>
+<li>re.sub()函数用于替换字符串中的匹配项。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 import re</span><br><span class="line">2 test = &#x27;I am a loving child to learn.&#x27;</span><br><span class="line">3 print(re.sub(r&#x27;child&#x27;,&#x27;MMMMM&#x27;,test)) # 替换字符串，将child 替换成MMMMM</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="4、re-findall-函数"><a href="#4、re-findall-函数" class="headerlink" title="4、re.findall()函数"></a>4、re.findall()函数</h5><p>函数语法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 re.findall(pattern,string,flags)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1 def findall(pattern, string, flags=0):</span><br><span class="line">2     &quot;&quot;&quot;Return a list of all non-overlapping matches in the string.</span><br><span class="line">3 </span><br><span class="line">4     If one or more capturing groups are present in the pattern, return</span><br><span class="line">5     a list of groups; this will be a list of tuples if the pattern</span><br><span class="line">6     has more than one group.</span><br><span class="line">7 </span><br><span class="line">8     Empty matches are included in the result.&quot;&quot;&quot;</span><br><span class="line">9     return _compile(pattern, flags).findall(string)</span><br></pre></td></tr></table></figure>
+<p>re.findall()可以获取字符串中所有匹配的字符串</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 import re</span><br><span class="line">2 test = &#x27;&lt;a href=&quot;http://www.educity.cn/zhibo/&quot; target=&quot;_blank&quot;&gt;直播课堂&lt;/a&gt;&#x27;</span><br><span class="line">3 print(re.findall(r&#x27;&lt;a href=&quot;(.*)&quot; target=&quot;_blank&quot;&gt;(.*)&lt;/a&gt;&#x27;,test)) #[(&#x27;http://www.educity.cn/zhibo/&#x27;, &#x27;直播课堂&#x27;)]</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2、常见匹配"><a href="#3-2、常见匹配" class="headerlink" title="3.2、常见匹配"></a>3.2、常见匹配</h4><p>email</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line">pattern = &quot;\w+([.+-]\w+)*@\w+([.-]\w+)*\.\w+([.-]\w+)*&quot;</span><br><span class="line">string = &quot;&lt;a href=&#x27;http://www.baidu.com&#x27;&gt;百度&lt;/a&gt;&lt;br&gt;&lt;a href=&#x27;w.linkings@gail.com&#x27;&gt;电邮&lt;/a&gt;&quot;</span><br><span class="line">result = re.search(pattern,string)</span><br><span class="line">print(result)</span><br><span class="line">print(result.group(0))</span><br></pre></td></tr></table></figure>
+
+<p>电话</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line">pattern = &quot;\d&#123;4&#125;-\d&#123;7&#125;|\d&#123;3&#125;-\d&#123;8&#125;&quot;</span><br><span class="line">string = &quot;0551-54321234513451451345&quot;</span><br><span class="line">result1 = re.search(pattern,string)</span><br><span class="line">print(result1)</span><br><span class="line">print(result1.group(0))</span><br></pre></td></tr></table></figure>
+
+<p>网站</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line">pattern = &quot;[a-zA-Z]+://[^\s]*[.com|.cn]&quot;</span><br><span class="line">string = &quot;&lt;a href=&#x27;http://www.baidu.com&#x27;&gt;百度首页&lt;/a&gt;&quot;</span><br><span class="line">result1 = re.search(pattern,string)</span><br><span class="line">print(result1)</span><br><span class="line">print(result1.group(0))</span><br></pre></td></tr></table></figure>
+<h3 id="四、Session"><a href="#四、Session" class="headerlink" title="四、Session"></a>四、Session</h3><p>一道CTF简答的题目,讲表达式结果迅速返回到服务器（秋名山老司机</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">import re</span><br><span class="line">url = &#x27;http://120.24.86.145:8002/qiumingshan/&#x27;</span><br><span class="line">s = requests.Session()</span><br><span class="line">source = s.get(url)</span><br><span class="line">expression = re.search(r&#x27;(\d+[+\-*])+(\d+)&#x27;, source.text).group()</span><br><span class="line">result = eval(expression)</span><br><span class="line">post = &#123;&#x27;value&#x27;: result&#125;</span><br><span class="line">print(s.post(url, data = post).text)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="五、更优雅的包，requests"><a href="#五、更优雅的包，requests" class="headerlink" title="五、更优雅的包，requests"></a>五、更优雅的包，requests</h3><h4 id="5-1、简单使用"><a href="#5-1、简单使用" class="headerlink" title="5.1、简单使用"></a>5.1、简单使用</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; import requests</span><br><span class="line">然后，尝试获取某个网页。本例子中，我们来获取Github的公共时间线</span><br><span class="line">&gt;&gt;&gt; r = requests.get(&#x27;https://github.com/timeline.json&#x27;)</span><br><span class="line">&gt;&gt;&gt; r = requests.post(&quot;http://httpbin.org/post&quot;)</span><br><span class="line">&gt;&gt;&gt; r = requests.put(&quot;http://httpbin.org/put&quot;)</span><br><span class="line">&gt;&gt;&gt; r = requests.delete(&quot;http://httpbin.org/delete&quot;)</span><br><span class="line">&gt;&gt;&gt; r = requests.head(&quot;http://httpbin.org/get&quot;)</span><br><span class="line">&gt;&gt;&gt; r = requests.options(&quot;http://httpbin.org/get&quot;)</span><br></pre></td></tr></table></figure>
+<h4 id="5-2、为URL传递参数"><a href="#5-2、为URL传递参数" class="headerlink" title="5.2、为URL传递参数"></a>5.2、为URL传递参数</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; payload = &#123;&#x27;key1&#x27;: &#x27;value1&#x27;, &#x27;key2&#x27;: &#x27;value2&#x27;&#125;</span><br><span class="line">&gt;&gt;&gt; r = requests.get(&quot;http://httpbin.org/get&quot;, params=payload)</span><br><span class="line">通过打印输出该URL，你能看到URL已被正确编码:</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; print r.url</span><br><span class="line">u&#x27;http://httpbin.org/get?key2=value2&amp;key1=value1&#x27;</span><br></pre></td></tr></table></figure>
+<h4 id="5-3、响应内容"><a href="#5-3、响应内容" class="headerlink" title="5.3、响应内容"></a>5.3、响应内容</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; import requests</span><br><span class="line">&gt;&gt;&gt; r = requests.get(&#x27;https://github.com/timeline.json&#x27;)</span><br><span class="line">&gt;&gt;&gt; r.text</span><br><span class="line">&#x27;[&#123;&quot;repository&quot;:&#123;&quot;open_issues&quot;:0,&quot;url&quot;:&quot;https://github.com/...</span><br></pre></td></tr></table></figure>
+<p>Requests会自动解码来自服务器的内容。大多数unicode字符集都能被无缝地解码。</p>
+<p>请求发出后，Requests会基于HTTP头部对响应的编码作出有根据的推测。当你访问r.text 之时，Requests会使用其推测的文本编码。你可以找出Requests使用了什么编码，并且能够使用 r.encoding 属性来改变它:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; r.encoding</span><br><span class="line">&#x27;utf-8&#x27;</span><br><span class="line">&gt;&gt;&gt; r.encoding = &#x27;ISO-8859-1&#x27;</span><br></pre></td></tr></table></figure>
+<p>如果你改变了编码，每当你访问 r.text ，Request都将会使用 r.encoding 的新值。</p>
+<h4 id="5-4、二进制响应内容"><a href="#5-4、二进制响应内容" class="headerlink" title="5.4、二进制响应内容"></a>5.4、二进制响应内容</h4><p>你也能以字节的方式访问请求响应体，对于非文本请求:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; r.content</span><br><span class="line">b&#x27;[&#123;&quot;repository&quot;:&#123;&quot;open_issues&quot;:0,&quot;url&quot;:&quot;https://github.com/...</span><br></pre></td></tr></table></figure>
+<p>Requests会自动为你解码 gzip 和 deflate 传输编码的响应数据。</p>
+<p>例如，以请求返回的二进制数据创建一张图片，你可以使用如下代码:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; from PIL import Image</span><br><span class="line">&gt;&gt;&gt; from StringIO import StringIO</span><br><span class="line">&gt;&gt;&gt; i = Image.open(StringIO(r.content))</span><br></pre></td></tr></table></figure>
+<h4 id="5-5、JSON响应内容"><a href="#5-5、JSON响应内容" class="headerlink" title="5.5、JSON响应内容"></a>5.5、JSON响应内容</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; import requests</span><br><span class="line">&gt;&gt;&gt; r = requests.get(&#x27;https://github.com/timeline.json&#x27;)</span><br><span class="line">&gt;&gt;&gt; r.json()</span><br><span class="line">[&#123;u&#x27;repository&#x27;: &#123;u&#x27;open_issues&#x27;: 0, u&#x27;url&#x27;: &#x27;https://github.com/...</span><br></pre></td></tr></table></figure>
+<p>如果JSON解码失败， r.json 就会抛出一个异常。</p>
+<h4 id="5-6、原始响应内容"><a href="#5-6、原始响应内容" class="headerlink" title="5.6、原始响应内容"></a>5.6、原始响应内容</h4><p>在罕见的情况下你可能想获取来自服务器的原始套接字响应，那么你可以访问 r.raw 。 如果你确实想这么干，那请你确保在初始请求中设置了 stream&#x3D;True 。具体的你可以这么做:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; r = requests.get(&#x27;https://github.com/timeline.json&#x27;, stream=True)</span><br><span class="line">&gt;&gt;&gt; r.raw</span><br><span class="line">&lt;requests.packages.urllib3.response.HTTPResponse object at 0x101194810&gt;</span><br><span class="line">&gt;&gt;&gt; r.raw.read(10)</span><br><span class="line">&#x27;\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\x03&#x27;</span><br></pre></td></tr></table></figure>
+<h4 id="5-7、定制请求头"><a href="#5-7、定制请求头" class="headerlink" title="5.7、定制请求头"></a>5.7、定制请求头</h4><p>如果你想为请求添加HTTP头部，只要简单地传递一个 dict 给 headers 参数就可以了。</p>
+<p>例如，在前一个示例中我们没有指定content-type:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; import json</span><br><span class="line">&gt;&gt;&gt; url = &#x27;https://api.github.com/some/endpoint&#x27;</span><br><span class="line">&gt;&gt;&gt; payload = &#123;&#x27;some&#x27;: &#x27;data&#x27;&#125;</span><br><span class="line">&gt;&gt;&gt; headers = &#123;&#x27;content-type&#x27;: &#x27;application/json&#x27;&#125;</span><br><span class="line">&gt;&gt;&gt; r = requests.post(url, data=json.dumps(payload), headers=headers)</span><br></pre></td></tr></table></figure>
+<h3 id="六、BeautifulSoup4的基本使用"><a href="#六、BeautifulSoup4的基本使用" class="headerlink" title="六、BeautifulSoup4的基本使用"></a>六、BeautifulSoup4的基本使用</h3><p>安装</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install beautifulsoup4</span><br></pre></td></tr></table></figure>
+<p>使用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">from bs4 import BeautifulSoup</span><br><span class="line"></span><br><span class="line">html_str = &quot;&quot;&quot;</span><br><span class="line">    &lt;ul&gt;</span><br><span class="line">        &lt;li&gt;</span><br><span class="line">            &lt;a href=&quot;http://www.baidu.com/&quot;&gt;百度一下&lt;/a&gt;</span><br><span class="line">        &lt;/li&gt;</span><br><span class="line">        &lt;li&gt;合适的话发多少&lt;/li&gt;</span><br><span class="line">        &lt;li&gt;</span><br><span class="line">            &lt;a class=&quot;baidu&quot; href=&quot;http://www.baidu.com/&quot;&gt;不会发生看到&lt;/a&gt;</span><br><span class="line">        &lt;/li&gt;</span><br><span class="line">        &lt;li&gt;</span><br><span class="line">            &lt;a  id=&quot;lagou&quot; href=&quot;http://www.lagou.com/&quot;&gt;lagou&lt;/a&gt;</span><br><span class="line">        &lt;/li&gt;</span><br><span class="line">        &lt;li&gt;</span><br><span class="line">            &lt;label class=&quot;enterText enterArea&quot;&gt;列表图预览：&lt;/label&gt;</span><br><span class="line">            &lt;p class=&quot;enterImg&quot;&gt;</span><br><span class="line">                &lt;img id=&quot;previewImage&quot; title=&#x27;mmm&#x27; src=&quot;http://www.google.com/logo.png&quot;/&gt;</span><br><span class="line">            &lt;/p&gt;</span><br><span class="line">            &lt;div class=&quot;Validform_checktip&quot;&gt;范德萨范德萨&lt;/div&gt;</span><br><span class="line">        &lt;/li&gt;</span><br><span class="line">    &lt;/ul&gt;</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">soup = BeautifulSoup(html_str,&#x27;html.parser&#x27;)</span><br><span class="line"></span><br><span class="line">#html对象  text文本去掉标签</span><br><span class="line"># print(soup)</span><br><span class="line"># print(soup.text)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># &lt;class &#x27;bs4.BeautifulSoup&#x27;&gt; 对象类型</span><br><span class="line"># print(type(soup))</span><br><span class="line"></span><br><span class="line"># 查找a标签 .text打印a的内容</span><br><span class="line"># print(soup.find(&#x27;a&#x27;))</span><br><span class="line"># print(soup.find(&#x27;a&#x27;).text)</span><br><span class="line"></span><br><span class="line"># 查找a标签 class=baidu的</span><br><span class="line"># print(soup.find(&#x27;a&#x27;,class_=&#x27;baidu&#x27;))</span><br><span class="line"></span><br><span class="line"># 查找id=lagou</span><br><span class="line"># print(soup.find(id=&#x27;lagou&#x27;))</span><br><span class="line"></span><br><span class="line"># 查找title=&#x27;mmm&#x27; 前边可以写具体找哪个标签</span><br><span class="line"># print(soup.find(title=&#x27;mmm&#x27;))</span><br><span class="line"></span><br><span class="line"># find_all 找所有  返回一个list 数组类型</span><br><span class="line"># print(soup.find_all(&#x27;a&#x27;))</span><br><span class="line"># print(soup.find_all(&#x27;a&#x27;)[0]) #第一个</span><br><span class="line">all_a = soup.find_all(&#x27;a&#x27;)</span><br><span class="line">for item in all_a:</span><br><span class="line">    if item:</span><br><span class="line">        # print(item.attrs)</span><br><span class="line">        print(item.attrs[&#x27;href&#x27;]) #dict类型</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

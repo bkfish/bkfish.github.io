@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>CRC推导以及一道CRC32爆破例题</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">CRC推导以及一道CRC32爆破例题</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2019/03/15/%E4%B9%8B%E5%89%8D%E7%9A%84/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">CRC推导以及一道CRC32爆破例题</h1>
+          
+            <div class="article-meta">2019-03-15</div>
+          
+        </div>
+        <article class="markdown">
+          <p>[TOC]</p>
+<h3 id="一、在计算机网络自顶向下链路层有一笔带过CRC检验，感觉这个地方很实用，也经常见所以还是认真对待了一下"><a href="#一、在计算机网络自顶向下链路层有一笔带过CRC检验，感觉这个地方很实用，也经常见所以还是认真对待了一下" class="headerlink" title="一、在计算机网络自顶向下链路层有一笔带过CRC检验，感觉这个地方很实用，也经常见所以还是认真对待了一下"></a>一、在计算机网络自顶向下链路层有一笔带过CRC检验，感觉这个地方很实用，也经常见所以还是认真对待了一下</h3><p><strong>百度百科</strong>：循环冗余校验(Cyclic Redundancy Check, CRC)是一种根据网络数据包或电脑文件等数据产生简短固定位数校验码的一种散列函数，主要用来检测或校验数据传输或者保存后可能出现的错误。它是利用除法及余数的原理来作错误侦测的</p>
+<span id="more"></span>
+
+
+<p><strong>一句话定义就是</strong>：假设数据传输过程中需要发送15位的二进制信息g&#x3D;101001110100001，这串二进制码可表示为代数多项式g(x) &#x3D; x^14 + x^12 + x^9 + x^8 + x^7 + x^5 + 1，其中g中第k位的值，对应g(x)中x^k的系数。将g(x)乘以x^m，既将g后加m个0，然后除以m阶多项式h(x)，得到的(m-1)阶余项r(x)对应的二进制码r就是CRC编码。<br>正常人类一下子应该看不太懂，那多说几句话。<br>1、一个不同寻常的除法运算<br>g(x)和h(x)的除运算，可以通过g和h做xor（异或）运算。比如将11001与10101做xor运算：</p>
+<p><img src="/2019/03/15/%E4%B9%8B%E5%89%8D%E7%9A%84/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/1.gif"></p>
+<p>明白了xor运算法则后，举一个例子使用CRC-8算法求101001110100001的效验码。CRC-8标准的h(x) &#x3D; x^8 + x^7 + x^6 + x^4 + x^2 + 1，既h是9位的二进制串111010101。 </p>
+<p><img src="/2019/03/15/%E4%B9%8B%E5%89%8D%E7%9A%84/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/2.gif"><br>经过迭代运算后，最终得到的r是10001100，这就是CRC效验码。<br>得到余数R也就是FCS，将FCS加到M上，就得到了要发送的帧。<br>M&#x3D;10100111010000110001100</p>
+<h4 id="怎么检验？："><a href="#怎么检验？：" class="headerlink" title="怎么检验？："></a>怎么检验？：</h4><p>把M循环再除111010101 最后余数一定为0，否者比特流中途出现错误</p>
+<h3 id="二、数学推理"><a href="#二、数学推理" class="headerlink" title="二、数学推理"></a>二、数学推理</h3><p>1.设欲传输的信息有K位,如图6.1所示<br>2.首先将欲传输的数据序列m(x)乘以 XR , 其中R为g(x)的最高次冥。<br>3.将得到的多项式XR m(x)除以约定的多项式g(x)<br>4.忽略除法结果的“商”，取出其余数，并与XRm(x)相加，形成K+R位的发送序列，即：m’(x) &#x3D; XRm(x) +r(x)</p>
+<p><img src="/2019/03/15/%E4%B9%8B%E5%89%8D%E7%9A%84/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/7.png"></p>
+<p>CRC编码过程如下：<br>设待校验的信息码有k位，即：$$m &#x3D; (m^{k-1}、m^{k-2}、m^{k-3}……m^{1}、m^{0})$$, 多项式m(x)可表示为<br>$$m(x) &#x3D; m^{k-1}x^{k-1}+ m^{k-2}x^{k-2} +……m^1x^1+ m^0x^0   $$———————————————————————— 式（1）</p>
+<p>用多项式g(x)的最高次幂R对应的XR 乘以m(x)，将得到式（2）<br>$$X^Rm(x) &#x3D; m^{k-1}x^{k+R-1}+ m^{k-2}x^{k+R-2} +……m^1x^{1+R}+ m^0x^0+R $$——————————————————– 式（2）</p>
+<p>将$$X^Rm(x)$$ 模2除以g(x)，得到多项式商为A(x),余数为r(x)，即：<br>$$A(x)g(x) &#x3D; X^Rm(x) +r(x) $$—————————————————————————————————–式（3）</p>
+<p>余数多项式r(x)可表示为<br>$$r(x) &#x3D; r^{R-1}x^{R-1}+ r^{R-2}x^{R-2} +……r^1x^1+ r^0x^0 $$————————————————————————————式（4）</p>
+<p>将式（2）和式（4）代入式（3）得<br>$$A(x)g(x) &#x3D; m^{k-1}x^{k+R-1}+ m^{k-2}x^{k+R-2} +……m^1x^{R+1}+ m^0x^0+R  + r^{R-1}x^{R-1}+ r^{R-2}x^{R-2} +……r^1x^1+ r^0x^0 $$  ——–式（5）</p>
+<p>式（5）对应的码组为K+R位，即：<br>N &#x3D; (mk-1+ mk-2 +……m1+ m0  + rR-1+ rR-2 +……r1+ r0) ————————————————————式（6）<br>从M到N就是CRC的编码过程mk-1+ mk-2 +……m1+ m0  为k位信息码；rR-1+ rR-2 +……r1+ r0为R位校验码。<br>在信息接收端，将接受到的K+R位码除以相同的多项式g(x),根据式（3）所产生的余数为0，则接受到的数据信息正确无误，否则则认为信息在传输过程中产生的误码。</p>
+<h3 id="三、bugku例题："><a href="#三、bugku例题：" class="headerlink" title="三、bugku例题："></a>三、bugku例题：</h3><p><img src="/2019/03/15/%E4%B9%8B%E5%89%8D%E7%9A%84/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/3.png"></p>
+<p>zip压缩包以及帮大家撸下来了<br><a href="/images/123.zip">123.zip</a><br><br>解压下载后的文件，发现有68个压缩文件，并且每个压缩文件里都有一个4个字节大小的名为data.txt的txt文件，还有文本所对应的CRC32码，于是尝试用crc32碰撞还原出所有压缩包中的文件内容<br><img src="/2019/03/15/%E4%B9%8B%E5%89%8D%E7%9A%84/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/22.png"><br>python3 脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">#coding:utf-8</span><br><span class="line">import zipfile</span><br><span class="line">import string</span><br><span class="line">import binascii</span><br><span class="line"></span><br><span class="line">def CrackCrc(crc):</span><br><span class="line">    for i in dic:</span><br><span class="line">        for j in dic:</span><br><span class="line">            for p in dic:</span><br><span class="line">                for q in dic:</span><br><span class="line">                    s = i + j + p + q</span><br><span class="line">                    if crc == (binascii.crc32(s.encode()) &amp; 0xffffffff):</span><br><span class="line">                        print (s)</span><br><span class="line">                        f.write(s)</span><br><span class="line">                        return</span><br><span class="line"></span><br><span class="line">def CrackZip():</span><br><span class="line">    for I in range(68):</span><br><span class="line">        file = &#x27;out&#x27; + str(I) + &#x27;.zip&#x27;</span><br><span class="line">        f = zipfile.ZipFile(file, &#x27;r&#x27;)</span><br><span class="line">        GetCrc = f.getinfo(&#x27;data.txt&#x27;)</span><br><span class="line">        crc = GetCrc.CRC</span><br><span class="line">        #以上3行为获取压缩包CRC32值的步骤</span><br><span class="line">        print (hex(crc))</span><br><span class="line">        CrackCrc(crc)</span><br><span class="line"></span><br><span class="line">dic = string.ascii_letters + string.digits + &#x27;+/=&#x27;</span><br><span class="line"></span><br><span class="line">f = open(&#x27;out.txt&#x27;, &#x27;w&#x27;)</span><br><span class="line">CrackZip()</span><br><span class="line">f.close()</span><br></pre></td></tr></table></figure>
+<p>然后out.txt文本是这样的,根据碰撞出内容的格式（末尾两个&#x3D;&#x3D;）推断这段数据是base64编码过的，先解码，根据解码结果中的flag.txt推断这可能是一个压缩包，同时根据fix the file and get the flag知需要修复文件<br><img src="/2019/03/15/%E4%B9%8B%E5%89%8D%E7%9A%84/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/4.png"><br>将解码后的文件导入16进制编辑器（如010editor），观察数据，发现存在rar的文件尾C43D7B00400700，但缺少文件头，于是补上rar的文件头526172211A0700。</p>
+<p><img src="/2019/03/15/%E4%B9%8B%E5%89%8D%E7%9A%84/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/5.png"><br><img src="/2019/03/15/%E4%B9%8B%E5%89%8D%E7%9A%84/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/6.png"><br><strong>试了好久不会玩winhex 尴尬，最后发现是先填充0然后覆盖</strong><br>然后改后缀名拿到了这个包<br><a href="/images/out.rar">out.rar</a> flag在注释里<br><img src="/2019/03/15/%E4%B9%8B%E5%89%8D%E7%9A%84/CRC%E6%8E%A8%E5%AF%BC%E4%BB%A5%E5%8F%8A%E4%B8%80%E9%81%93CRC32%E7%88%86%E7%A0%B4%E4%BE%8B%E9%A2%98/1.png"></p>
+
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

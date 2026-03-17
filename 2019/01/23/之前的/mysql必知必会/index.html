@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>mysql必知必会</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">mysql必知必会</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2019/01/23/%E4%B9%8B%E5%89%8D%E7%9A%84/mysql%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">mysql必知必会</h1>
+          
+            <div class="article-meta">2019-01-23</div>
+          
+        </div>
+        <article class="markdown">
+          <h4 id="一、目录（整体看一波这本书怎么讲的mysql）"><a href="#一、目录（整体看一波这本书怎么讲的mysql）" class="headerlink" title="一、目录（整体看一波这本书怎么讲的mysql）"></a>一、目录（整体看一波这本书怎么讲的mysql）</h4><p>第一章——了解SQL<br>第二章——MySQL简介<br>第三章——使用MySQL<br>第四章——检索数据<br>第五章——排序检索数据<br>第六章——过滤数据<br>第七章——数据过滤<br>第八章——用通配符进行过滤<br>第九章——用正则表达式进行搜索<br>第十章——创建计算字段<br>第十一章——使用数据处理函数 </p>
+<span id="more"></span>
+
+
+<p>第十二章——汇总数据<br>第十三章——分组数据<br>第十四章——使用子查询<br>第十五章——联结表<br>第十六章——创建高级联结<br>第十七章——组合查询<br>第十八章——全文本搜索<br>第十九章——插入数据<br>第二十章——更新和删除数据<br>第二十一章——创建和操纵表<br>第二十二章——使用视图<br>第二十三章——使用储存过程<br>第二十四章——使用游标<br>第二十五章——使用触发器<br>第二十六章——管理事务处理<br>第二十七章——全球化和本地化<br>第二十八章——安全管理<br>第二十九章——数据库维护<br>第三十章——改善性能<br>和正则表达式必知必会一样，出自于(BenForta)福塔大师傅，看起来还是很舒服，除了常规大家使用的几条语句外对于包括联结的使用、子查询、正则表达式和基于全文本的搜索、存储过程、游标、触发器、表约束，等等有详细的描述，完整看下来还是有收获的</p>
+<h4 id="二、忘记mysql密码或者初始化如何重置密码的两个方法（是不是很突兀，尴尬主要是遇到太多次了，还是记一下跳过密码登陆直接修改）"><a href="#二、忘记mysql密码或者初始化如何重置密码的两个方法（是不是很突兀，尴尬主要是遇到太多次了，还是记一下跳过密码登陆直接修改）" class="headerlink" title="二、忘记mysql密码或者初始化如何重置密码的两个方法（是不是很突兀，尴尬主要是遇到太多次了，还是记一下跳过密码登陆直接修改）"></a>二、忘记mysql密码或者初始化如何重置密码的两个方法（是不是很突兀，尴尬主要是遇到太多次了，还是记一下跳过密码登陆直接修改）</h4><p>方法1、</p>
+<ol>
+<li>进入dos窗口，停止mysql服务：net stop mysql </li>
+<li>进入mysql的安装目录，进入bin目录 </li>
+<li>mysqld –skip-grant-tables </li>
+<li>重新打开一个dos窗口，进入mysql的bin目录 </li>
+<li>mysql -u root -p </li>
+<li>不需要输入密码，直接回车 </li>
+<li>直接修改密码<br> update mysql.user set password&#x3D;PASSWORD(“root”) where User&#x3D;”root”; </li>
+<li>flush privileges; 刷新权限<br> 退出dos窗口之后，就可以重新建立mysql连接，用新密码登陆mysql</li>
+</ol>
+<p>方法2、</p>
+<ol>
+<li>修改本地mysql目录中的my.ini文件（如果没有可自己新建）<br>添加skip-grant-tables<br><img src="/1.png"></li>
+<li>进行mysql的重启启动操作<br><img src="/2.png"></li>
+<li>直接输入mysql -u root -p<br>然后不输入密码直接回车就可以进入数据库<br>执行sql修改root用户的密码：<br>update user set authentication_string &#x3D; password(“123456”) where user &#x3D; “root”;</li>
+</ol>
+<h4 id="三、大致总结一丢丢"><a href="#三、大致总结一丢丢" class="headerlink" title="三、大致总结一丢丢"></a>三、大致总结一丢丢</h4><h5 id="第1章-了解SQL"><a href="#第1章-了解SQL" class="headerlink" title="第1章 了解SQL"></a>第1章 了解SQL</h5><p>数据库：保存有组织的数据的容器（通常是一个文件或一组文件）<br>模式：关于数据库和表的布局及特性信息。<br>主键：一列（或一组列），其值能够唯一区分表中每个行。</p>
+<p>表：某种特定类型数据的结构化清单。<br>列：表中的一个字段，所有表都是由一个或多个列组成的。<br>行：表中的一条记录。</p>
+<h5 id="第2章-MySQL简介-不区分大小写"><a href="#第2章-MySQL简介-不区分大小写" class="headerlink" title="第2章 MySQL简介(不区分大小写)"></a>第2章 MySQL简介(不区分大小写)</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">在win终端下启动MySQL，不带分号</span><br><span class="line">C:\Users\Dylan&gt;mysql -u root mysql</span><br><span class="line"></span><br><span class="line">退出终端，不带分号</span><br><span class="line">mysql&gt; quit</span><br><span class="line">mysql&gt; exit</span><br></pre></td></tr></table></figure>
+<p>推荐使用图形交互的数据库客户端，比如Navicat</p>
+<h5 id="第3章-使用MySQL"><a href="#第3章-使用MySQL" class="headerlink" title="第3章 使用MySQL"></a>第3章 使用MySQL</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show databases;</span><br><span class="line">返回数据库数据库</span><br><span class="line">mysql&gt; use databases_name;</span><br><span class="line">选择数据库</span><br><span class="line">mysql&gt; show columns from table_name;</span><br><span class="line">mysql&gt; describe table_name;</span><br><span class="line">返回一个表中各个字段的详细信息。</span><br></pre></td></tr></table></figure>
+<h5 id="第4章-检索数据"><a href="#第4章-检索数据" class="headerlink" title="第4章 检索数据"></a>第4章 检索数据</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SQL语句以；来结束，可以delimiter来切换。比如用delimiter \\来切换为用\\来结束。(对于后面函数调用尤其重要)</span><br></pre></td></tr></table></figure>
+<h5 id="第5章-排序检索数据"><a href="#第5章-排序检索数据" class="headerlink" title="第5章 排序检索数据"></a>第5章 排序检索数据</h5><p>如果在多个列上执行降序排序，必须对每个列指定DESC关键字。反之ASC（放在最末尾</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from table_name order by id DESC(ASC)</span><br></pre></td></tr></table></figure>
+<h5 id="第6章-过滤数据"><a href="#第6章-过滤数据" class="headerlink" title="第6章 过滤数据"></a>第6章 过滤数据</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">通过WHERE子句以及子句操作符来作为过滤条件。</span><br></pre></td></tr></table></figure>
+<h5 id="第7章-数据过滤"><a href="#第7章-数据过滤" class="headerlink" title="第7章 数据过滤"></a>第7章 数据过滤</h5><p><strong>多数语言一样）在处理OR操作符之前，优先处理AND操作符。如下代码：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">select prod_name, prod_price</span><br><span class="line">from products</span><br><span class="line">where vend_id = 1002 or vend_id = 1003 and prod_price &gt;=10;</span><br><span class="line">#它理解为由供应商1003制造的任何价格为10美元（含）以上的产品</span><br><span class="line">或者由供应商1002制造的任何产品，而不管其价格如何。</span><br></pre></td></tr></table></figure>
+<h5 id="第8章-用通配符进行过滤"><a href="#第8章-用通配符进行过滤" class="headerlink" title="第8章 用通配符进行过滤"></a>第8章 用通配符进行过滤</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MySQL在执行匹配时默认不区分大小写。不过，根据配置搜索市可以区分大小写的。</span><br><span class="line">LIKE操作符包括两个匹配符%和_，其中%表示任何字符出现任意次数，_只匹配单个字符而不是多个字符。</span><br></pre></td></tr></table></figure>
+<h5 id="第9章-用正则表达式进行搜索"><a href="#第9章-用正则表达式进行搜索" class="headerlink" title="第9章 用正则表达式进行搜索"></a>第9章 用正则表达式进行搜索</h5><p>LIKE和REGEXP之间的一个重要差别</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select prod_name from products where prod_name like &#x27;1000&#x27; order by prod_name;</span><br><span class="line">Empty set (0.04 sec)</span><br><span class="line">mysql&gt; select prod_name from products where prod_name regexp &#x27;1000&#x27; order by prod_name;</span><br><span class="line">+--------------+</span><br><span class="line">| prod_name    |</span><br><span class="line">+--------------+</span><br><span class="line">| JetPack 1000 |</span><br><span class="line">+--------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">#如上执行上面的两条语句，第一个不返回数据，而第二条返回一行。原因如下：</span><br><span class="line">#LIKE是全匹配，如果被匹配的文本只是列值的一部分，LIKE将不会找到它，相应的行也不会被返回。</span><br><span class="line">#而REGEXP在列值内进行匹配，如果匹配的文本在列值中出现，REGEXP将会找到它，相应的行降被返回。这是一个重要的差别。</span><br></pre></td></tr></table></figure>
+<h5 id="第10章-创建计算字段"><a href="#第10章-创建计算字段" class="headerlink" title="第10章 创建计算字段"></a>第10章 创建计算字段</h5><p>可能单纯为了好看吧，逃（</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">select Concat(vend_name,&#x27;(&#x27;,vend_country,&#x27;)&#x27;) </span><br><span class="line">from venders</span><br><span class="line">order by vend_name;</span><br></pre></td></tr></table></figure>
+<h5 id="第11章-使用数据处理函数"><a href="#第11章-使用数据处理函数" class="headerlink" title="第11章 使用数据处理函数"></a>第11章 使用数据处理函数</h5><p>主要是文本处理函数对日期格式的管理，数值处理函数，我觉得可以具体用时针对性查一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">常用的文本处理函数</span><br><span class="line">Left() 返回串左边的字符</span><br><span class="line">Length() 返回串的长度</span><br><span class="line">Locate() 找出串的一个子串</span><br><span class="line">Lower() 将串转换为小写</span><br><span class="line">LTrim() 去掉串左边的空格</span><br><span class="line">Right() 返回串右边的字符</span><br><span class="line">RTrim() 去掉串右边的空格</span><br><span class="line">Soundex() 返回串的SOUNDEX值</span><br><span class="line">SubString() 返回子串的字符</span><br><span class="line">Upper() 将串转换为大写</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Abs() 返回一个数的绝对值</span><br><span class="line">Cos() 返回一个角度的余弦</span><br><span class="line">Exp() 返回一个数的指数值</span><br><span class="line">Mod() 返回除操作的余数</span><br><span class="line">Pi() 返回圆周率</span><br><span class="line">Rand() 返回一个随机数</span><br><span class="line">Sin() 返回一个角度的正弦</span><br><span class="line">Sqrt() 返回一个数的平方根</span><br><span class="line">Tan() 返回一个角度的正切</span><br></pre></td></tr></table></figure>
+<h5 id="第12章-汇总数据"><a href="#第12章-汇总数据" class="headerlink" title="第12章 汇总数据"></a>第12章 汇总数据</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这5个聚集函数，AVG()，COUNT()，MAX()，MIN()，SUM()</span><br></pre></td></tr></table></figure>
+<h5 id="第13章-分组数据-group-by"><a href="#第13章-分组数据-group-by" class="headerlink" title="第13章 分组数据(group by)"></a>第13章 分组数据(group by)</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HAVING和WHERE的差别</span><br><span class="line">WHERE在数据分组前进行过滤，HAVING在数据分组后进行过滤。</span><br></pre></td></tr></table></figure>
+<h5 id="第14章-使用子查询"><a href="#第14章-使用子查询" class="headerlink" title="第14章 使用子查询"></a>第14章 使用子查询</h5><p>要求MySQL4.1以上的版本,一般采用另外一个select的返回值当做当前select IN里面的参数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">select cust_id </span><br><span class="line">from orders </span><br><span class="line">where order_num IN(select order_num </span><br><span class="line">                   from orderitems </span><br><span class="line">                   where prod_id=2);</span><br></pre></td></tr></table></figure>
+<h5 id="第15章-联结表"><a href="#第15章-联结表" class="headerlink" title="第15章 联结表"></a>第15章 联结表</h5><p>简单地说，联结是一种机制，用来在一条SELECT语句中关联表，因此称之为联结。使用特殊的语法，可以联结多个表返回一组输出，联结在运行时关联表中正确的行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">创建联结</span><br><span class="line">SELECT vend_name, prod_name, prod_price </span><br><span class="line">FROM vendors, products</span><br><span class="line">WHERE vendors.vend_id = products.vend_id;</span><br></pre></td></tr></table></figure>
+<p>完全限定列名 在引用的列可能出现二义性时，必须使用完全限定列名（用一个点分隔的表名和列名）。如果引用一个没有用表名限制的具有二义性的列名，MySQL将返回错误。<br><strong>笛卡尔积</strong>(是不是很熟悉)<br>由于没有联结条件的表关系返回的结果为笛卡尔积。检索出的行的数目将是第一个表中的行数*第二个表中的行数。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT  vend_name,prod_name,prod_price FROM vendors,products </span><br><span class="line">ORDER BY vend_name,prod_name;</span><br></pre></td></tr></table></figure>
+<h5 id="第16章-创建高级联结-有点复杂，故不全部细讲"><a href="#第16章-创建高级联结-有点复杂，故不全部细讲" class="headerlink" title="第16章 创建高级联结(有点复杂，故不全部细讲)"></a>第16章 创建高级联结(有点复杂，故不全部细讲)</h5><p>16.1 使用表别名<br>16.2 使用不同类型的联结<br>16.2.1 自联结<br>16.2.2 自然联结<br>16.2.3 外部联结<br>16.3 使用带聚集函数的联结<br>16.4 使用联结和联结条件<br>16.5 小结<br><strong>内部联结</strong><br>目前为止所用的联结称为等值联结。它基于两个表之间的相等测试。这种联结也称为内部联结。事实上，对于这种联结可以使用稍微不同的语法来明确指定联结的类型。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT vend_name,prod_name,prod_price FROM vendors INNER JOIN products ON vendors.vend_id=products_vend_id;</span><br></pre></td></tr></table></figure>
+
+<p><strong>联结多个表</strong></p>
+<p>SQL对一条SELECT语句中可以联结的表的数目没有限制。创建联结的基本规则也相同。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT prod_name,vend_name,prod_price,quantity FROM orderitems,products,vendors WHERE products.vend_id=vendors.vend_id</span><br><span class="line"></span><br><span class="line">AND orderitems.prod_id=products.prod_id</span><br><span class="line"></span><br><span class="line">AND order_num=&#x27;20005&#x27;</span><br></pre></td></tr></table></figure>
+<p>性能考虑：MYSQL在运行时关联指定的每个表以处理联结，这种处理可能非常耗费资源的。有时候可以通过不同的方式来调优。</p>
+<p>比如返回订购产品TNT2的客户列表。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT cust_name,cust_contact FROM customers WHERE cust_id IN (SELECT cust_id FROM orders WHERE order_num IN(SELECT order_num FROM orderitems WHERE prod_id=&#x27;TNT2&#x27;));</span><br></pre></td></tr></table></figure>
+<p>其实上面的句子并不是最有效的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT cust_name,cust_contact FROM customers,orders,orderitems WHERE customers.cust_id=orders.cust_id AND orderitems.order_num=orders.order_num AND prod_id=&#x27;TNT12&#x27;</span><br></pre></td></tr></table></figure>
+<p><strong>自联结</strong><br>比如知道ID 为DTNTR的物品存在问题，因此想知道生产该物品的供应商生产的其他物品是否也存在这种问题</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT prod_id ,prod_name FROM products WHERE vend_id=(SELECT vend_id FROM products WHERE prod_id=&#x27;DTNTR&#x27;);</span><br></pre></td></tr></table></figure>
+<p>其等价于下面的语句</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT p1.prod_id,p1.prod_name FROM products AS p1products AS p2 WHERE p1.vend_id =p2.vend.id AND p2.prod_id=&#x27;DNTR&#x27;;</span><br></pre></td></tr></table></figure>
+<h5 id="第17章-组合查询"><a href="#第17章-组合查询" class="headerlink" title="第17章 组合查询"></a>第17章 组合查询</h5><p>组合查询适用于下面两种情境中：<br>1、从多个表中查询出相似结构的数据，并且返回一个结果集<br>2、从单个表中多次SELECT查询，将结果合并成一个结果集返回。</p>
+<p>Union有他的强大之处，详细介绍之前，首先明确一下Union的使用注意规则。<br>1、Union必须由两条或者两条以上的SELECT语句组成，语句之间使用Union链接。<br>2、Union中的每个查询必须包含相同的列、表达式或者聚合函数，他们出现的顺序可以不一致（这里指查询字段相同，表不一定一样）<br>3、列的数据类型必须兼容，兼容的含义是必须是数据库可以隐含的转换他们的类型</p>
+<p>我们可以使用Union All操作符来取消自动合并功能</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">select user_id,user_nickname,user_status from yy_user where user_status = 1 </span><br><span class="line">UNION ALL</span><br><span class="line">select user_id,user_nickname,user_status from yy_user where user_id &gt; 3</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>结果排序</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(select user_id,user_nickname,user_status from yy_user where user_status = 1) </span><br><span class="line">UNION ALL</span><br><span class="line">(select user_id,user_nickname,user_status from yy_user where user_id &gt; 3)</span><br><span class="line">order by user_id desc</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h5 id="第18章-全文本搜索"><a href="#第18章-全文本搜索" class="headerlink" title="第18章 全文本搜索"></a>第18章 全文本搜索</h5><p>MySQL支持几种基本的数据库引擎，但并非所有的引擎都支持全文本搜索。两个最常使用的引擎为MyISAM和InnoDB，前者支持全文本搜索，后者就不支持。<br>当我们想利用全文本搜索得到 包含MySQL内容的数据。<br>如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from test_text where match(content) against(&#x27;MySQL&#x27;);</span><br></pre></td></tr></table></figure>
+<p>上面语句中 match(content) 指示MySQL针对指定的列进行搜索，注意：传递给match()的值必须与fulltext()定义中的相同。against(‘MySQL’)指定词MySQL作为搜索文本。</p>
+<h5 id="第19章-插入数据"><a href="#第19章-插入数据" class="headerlink" title="第19章 插入数据"></a>第19章 插入数据</h5><p>1、正因为没有字段名，则values中值得顺序必须与字段在表中顺序一致。<br>基本语法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INSERT INTO 表名 VALUES(值1，值2，....);</span><br></pre></td></tr></table></figure>
+<p>2、为表的指定字段添加数据<br>基本语法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">INSERT INTO 表名（字段1，字段2，...）</span><br><span class="line">     VALUES (值1，值2，...);</span><br></pre></td></tr></table></figure>
+<h5 id="第20章-更新和删除数据"><a href="#第20章-更新和删除数据" class="headerlink" title="第20章 更新和删除数据"></a>第20章 更新和删除数据</h5><p><strong>UPDATE 语句</strong><br>基本语法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">UPDATE 表名</span><br><span class="line">  SET  字段名1=值1[,字段名2=值2，...]</span><br><span class="line">  [WHERE 条件表达式]</span><br></pre></td></tr></table></figure>
+<p><strong>删除数据</strong><br>即，对表中存在的记录进行删除。<br>基本语法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DELETE FROM 表名 [ WHERE 条件表达式 ]  ;</span><br></pre></td></tr></table></figure>
+<p><strong>删除指定列</strong><br>基本语法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alter table tablename drop columnname;</span><br></pre></td></tr></table></figure>
+<h5 id="第21章-创建和操纵表"><a href="#第21章-创建和操纵表" class="headerlink" title="第21章 创建和操纵表"></a>第21章 创建和操纵表</h5><p>为了利用CREATE TABLE创建表，必须给出下列信息：<br>1 新表的名字，在关键字CREATE TABLE之后给出<br>2 表列的名字和定义，用逗号分隔</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">CREATE TABLE table</span><br><span class="line"></span><br><span class="line">(</span><br><span class="line"></span><br><span class="line">column_id  int       NOT NULL  AUTO_INCRMENT,</span><br><span class="line"></span><br><span class="line">columnOne  char(20)  NOT NULL  DEFAULT 1,</span><br><span class="line"></span><br><span class="line">columnOne  char(20)  NOT NULL ,</span><br><span class="line"></span><br><span class="line">column  char(20)  NOT NULL ,</span><br><span class="line"></span><br><span class="line">.....</span><br><span class="line"></span><br><span class="line">PRIMARY  KEY ( column_id)</span><br><span class="line"></span><br><span class="line">) ENGINE =  InnoDB</span><br></pre></td></tr></table></figure>
+<p>如果表已经存在，则必须先删除后在创建他，不可以直接覆盖。如果仅想在表没有存在的情况下创建它，应该在表名后给出 IF NOT EXISTS<br>使用NULL值  如果不指定列为NOT NULL则它默认是NULL<br>主键再介绍  主键的值必须是唯一的。创建主键时可以用单列做主键PRIMARY KEY(columnOne,columnTwo)，也可以使用多列做主键PRIMARY KEY(columnOne,columnTwo).主键值不允许为NULL<br><strong>引擎搜索</strong><br>1 InnoDB是一个可靠的事务处理引擎，它不支持全文本搜索。<br>2 MEMORY 在功能上等同于MySAM，但由于数据存储在内存，所以速度更快（特别适用于临时表）<br>3 MySAM是一个性能极高的引擎，它支持全文本搜索，但不支持事务处理</p>
+<h5 id="第22章-使用视图"><a href="#第22章-使用视图" class="headerlink" title="第22章 使用视图"></a>第22章 使用视图</h5><p>视图中不存放任何数据，在使用SQL语句访问视图的时候，返回的数据时MySQL从其他表中生成的。视图和表在同一个命名空间，在很多地方对于视图和表是同样对待的。不过也有不同，不能对视图创建触发器，不能使用DROP TABLE命令删除视图。<br>[1] 创建一个视图：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">create view Oceania as</span><br><span class="line"></span><br><span class="line">select * from Country where Continent =&#x27;Oceania&#x27;</span><br><span class="line"></span><br><span class="line">with check option;</span><br></pre></td></tr></table></figure>
+<p>[2] 删除视图</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">drop view view_name;</span><br></pre></td></tr></table></figure>
+<p>[3] 使用视图</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from view_name;</span><br></pre></td></tr></table></figure>
+<h5 id="第23章-使用存储过程-类似于函数"><a href="#第23章-使用存储过程-类似于函数" class="headerlink" title="第23章 使用存储过程(类似于函数)"></a>第23章 使用存储过程(类似于函数)</h5><p>存储过程，是为了完成一个复杂任务，而编写的多条sql语句的集合，语句执行次序不定，需要根据检索条件判断。<br>存储过程实际上是一种函数，因此存储过程名后要加括号（），来放置参数，即使没有参数也要括号。<br><strong>创建存储过程</strong><br>返回产品的平均价格：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">delimiter //</span><br><span class="line">create procedure product_avgprice()  #括号来放置参数，即使没有参数也要括号。</span><br><span class="line">beginselect avg(prod_price) as avg_price  </span><br><span class="line">from products;</span><br><span class="line">end//</span><br><span class="line"> ;</span><br></pre></td></tr></table></figure>
+<p><strong>自定义分隔符：</strong><br>DELIMITER &#x2F;&#x2F; 自定义定界符、分隔符，除了\，都可以作为分隔符。<br>自定义分隔符作用：替换系统分隔符-分号（;），防止系统报错。因为系统分不清（;）是存储过程结尾，还是sql语句结尾。<br><strong>执行存储过程</strong><br>例：查询产品平均价：call product_avgprice();  #括号来放置参数，即使没有参数也要括号。<br><strong>存储过程</strong><br>例：删除product_avgprice2存储过程：<br>drop procedure if exists product_avgprice2;  #注意这里过程名称后不带括号</p>
+<h5 id="第24章-使用游标"><a href="#第24章-使用游标" class="headerlink" title="第24章 使用游标"></a>第24章 使用游标</h5><p>在检索出来的行中，前进或者后退一行或多行，就需要用到所谓的“游标”。游标不是某个SELECT语句，但是它是被该语句检索出来的结果集，另外，MySQL游标只能用于存储过程（和函数）。<br><strong>创建游标</strong><br>使用DECLARE和CURSOR关键字：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">CREATE PROCEDURE processorders()</span><br><span class="line">BEGIN</span><br><span class="line">  DECLARE ordernumbers CURSOR</span><br><span class="line">  FOR</span><br><span class="line">  SELECT order_num FROM orders;</span><br><span class="line">END;</span><br></pre></td></tr></table></figure>
+<p><strong>打开和关闭游标</strong><br>因为游标局限于存储过程，所以如果存储过程处理完成后，游标就会消失。所以往往在存储过程中要关键字OPEN进行打开。另，游标相关的SELECT查询语句，在定义时是不执行的，在OPEN时才执行查询，存储检索出的数据以供浏览和滚动。在游标使用完成后，使用CLOSE进行关闭：</p>
+<h5 id="第25章-触发器的使用"><a href="#第25章-触发器的使用" class="headerlink" title="第25章 触发器的使用"></a>第25章 触发器的使用</h5><p>触发器是MySQL响应DELETE,INSERT,UPDATE而自动执行的一条MySQL语句,其他语句不支持触发器。</p>
+<p>　　创建触发器时，需要4个条件；<br>　　　　唯一的触发器名<br>　　　　触发器关联的表<br>　　　　触发器应该响应的活动<br>　　　　触发器何时执行</p>
+<p>　　MySQL中触发器名在每个表中必须唯一，但是在同一个数据库中的两个表可具有相同名字的触发器。这个条件在其他的DBMS中是不允许的，所以为了统一，最好在同一个数据库中，触发器名设置成唯一的。</p>
+<p><strong>创建触发器</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">CREATE TRIGGER newproduct AFTER INSERT ON products</span><br><span class="line">FOR EACH ROW SELECT &#x27;Product added&#x27;;</span><br><span class="line"></span><br><span class="line">CREATE TRIGGER--创建一个叫newproduct的新触发器</span><br><span class="line">AFTER INSERT--此触发器将在INSERT语句成功后执行</span><br><span class="line">FOR EACH ROW--代码对每个插入行执行</span><br></pre></td></tr></table></figure>
+<p><strong>删除触发器</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DROP TRIGGER newproduct;</span><br></pre></td></tr></table></figure>
+<p>使用触发器<br>　　INSERT触发器<br>　　　　可以引用一个叫NEW的虚拟表，来访问插入的行<br>　　DELETE触发器<br>　　　　引用一个叫OLD的虚拟表，来访问被删除的行<br>　　UPDATE触发器<br>　　　　书中缺页未介绍</p>
+<h5 id="第26章-管理事务处理"><a href="#第26章-管理事务处理" class="headerlink" title="第26章 管理事务处理"></a>第26章 管理事务处理</h5><p>MySQL中有好几种引擎，但是不是每种引擎都支持事务处理<br>　　常用的引擎中InnoDB支持事务，MyISAM不支持事务<br>　　几个名词:<br>　　　　事务transaction<br>　　　　回退rollback<br>　　　　提交commit<br>　　　　保留点savepoint<br>控制事务管理</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ROLLBACK</span><br><span class="line"></span><br><span class="line">SELECT * FROM ordertotals;</span><br><span class="line">START TRANSACTION;</span><br><span class="line">DELETE FROM ordertotals;</span><br><span class="line">SELECT * FROM ordertotals;</span><br><span class="line">ROLLBACK;</span><br><span class="line">SELECT * FROM ordertotals;</span><br></pre></td></tr></table></figure>
+<p>注意：事务用来管理INSERT、UPDATE和DELETE。不能回退CREATE或者DROP操作<br>更改默认的提交行为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SET autocommit=0</span><br></pre></td></tr></table></figure>
+<p>注意：autocommit标志是针对每个连接，而不是服务器；</p>
+<h5 id="第27章-国际化与本地化"><a href="#第27章-国际化与本地化" class="headerlink" title="第27章 国际化与本地化"></a>第27章 国际化与本地化</h5><p>字符集和校对顺序<br>字符集：字母和符号的集合<br>编码：某个字符集成员的内部表示<br>校对：规定字符如何比较的指令<br>使用字符集和校对顺序<br>show character set; – 显示所有可用的字符集以及描述和默认校对<br>SHOW COLLATION; – 显示所有可用的校对以及它们适用的字符集</p>
+<p>SHOW VARIABLES LIKE ‘character%’;<br>SHOW VARIABLES LIKE ‘collation%’; – 为了确定所用的字符集和校对</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE mytable</span><br><span class="line">(</span><br><span class="line">    column1 INT,</span><br><span class="line">    column2 VARCHAR(10)</span><br><span class="line">) DEFAULT CHARACTER SET hebrew</span><br><span class="line">  COLLATE hebrew_general_ci;</span><br><span class="line"></span><br><span class="line">CREATE TABLE mytable</span><br><span class="line">(</span><br><span class="line">    columnn1 INT,</span><br><span class="line">    columnn2 VARCHAR(10),</span><br><span class="line">    column3  VARCHAR(10) CHARACTER SET latin1 COLLATE latin1_general_ci </span><br><span class="line">) DEFAULT CHARACTER SET hebrew</span><br><span class="line">  COLLATE hebrew_general_ci;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM customers</span><br><span class="line">ORDER BY lastname, firstname COLLATE latin1_general_cs;</span><br></pre></td></tr></table></figure>
+<h5 id="第28章-安全管理"><a href="#第28章-安全管理" class="headerlink" title="第28章 安全管理"></a>第28章 安全管理</h5><p>1.访问控制<br>管理访问控制需要创建和管理用户账号<br>有的用于管理，有的供用户使用，有的供开发人员使用；<br>建议不要使用root；<br>2.管理用户</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">-- 获得用户列表</span><br><span class="line">SELECT user FROM user;</span><br><span class="line"></span><br><span class="line">-- 创建用户账号，ben是用户名，BY后面是口令；</span><br><span class="line">CREATE USER ben IDENTIFIED BY &#x27;p@$$w0rd&#x27;;</span><br><span class="line"></span><br><span class="line">-- 删除用户账号</span><br><span class="line">DROP USER bforta;</span><br><span class="line"></span><br><span class="line">-- 设置访问权限</span><br><span class="line">SHOW GRATNS FOR bforta; -- 显示权限</span><br><span class="line">GRANT SELECT ON crashcourse.* TO bforta;　--　添加SELECT权限</span><br><span class="line">REVOKE SELECT ON crashcourse.* FROM bforta; --　删除SELECT权限</span><br><span class="line"></span><br><span class="line">-- 设置口令(不指定用户，则默认更新当前用户口令)</span><br></pre></td></tr></table></figure>
+<h5 id="第29章-数据库维护"><a href="#第29章-数据库维护" class="headerlink" title="第29章 数据库维护"></a>第29章 数据库维护</h5><p>1.备份数据<br>使用命令行实用程序mysqldump转储所有数据库内容到某个外部文件；<br>可用命令行实用程序mysqlhotcopy从一个数据库复制所有数据；<br>可以使用MySQL的BACKUP TABLE或SELECT INTO OUTFILE转储所有数据到某个外部文件；<br>2.进行数据库维护</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-- 用来检查表键是否正确；</span><br><span class="line">ANALYZE TABLE orders;</span><br><span class="line"></span><br><span class="line">-- 用来针对许多问题对表进行检查；</span><br><span class="line">CHECK TABLE orders,orderitems;</span><br></pre></td></tr></table></figure>
+<p>3.查看日志文件<br>错误日志；<br>查询日志；<br>二进制日志；<br>缓慢查询日志；</p>
+<h5 id="第30章-改善性能"><a href="#第30章-改善性能" class="headerlink" title="第30章 改善性能"></a>第30章 改善性能</h5><p>一大堆优化性能的建议</p>
+<h3 id="四、操作符优先级"><a href="#四、操作符优先级" class="headerlink" title="四、操作符优先级"></a>四、操作符优先级</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">优先级 运算符</span><br><span class="line">(最高)  !</span><br><span class="line">    -（负号）,~（按位取反）</span><br><span class="line">    ^（按位异或）</span><br><span class="line">    *,/(DIV),%(MOD)</span><br><span class="line">    +,-</span><br><span class="line">    &gt;&gt;,&lt;&lt;</span><br><span class="line">    &amp;</span><br><span class="line">    |</span><br><span class="line">    =(比较运算),&lt;=&gt;,&lt;,&lt;=,&gt;,&gt;=,!=,&lt;&gt;,IN,IS NULL,LIKE,REGEXP</span><br><span class="line">   BETWEEN AND,CASE,WHEN,THEN,ELSE</span><br><span class="line">   NOT</span><br><span class="line">   &amp;&amp;,AND</span><br><span class="line">   XOR</span><br><span class="line">   ||,OR</span><br><span class="line">(最低)    =(赋值运算),:=</span><br></pre></td></tr></table></figure>
+<h3 id="你是妖怪吧！！！有耐心看到这Orz-熟能生巧，天道酬勤，一起加油"><a href="#你是妖怪吧！！！有耐心看到这Orz-熟能生巧，天道酬勤，一起加油" class="headerlink" title="你是妖怪吧！！！有耐心看到这Orz 熟能生巧，天道酬勤，一起加油"></a>你是妖怪吧！！！有耐心看到这Orz 熟能生巧，天道酬勤，一起加油</h3>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

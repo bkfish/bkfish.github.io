@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>正则表达式必知必会&amp;&amp;python-re模块简单使用</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">正则表达式必知必会&amp;&amp;python-re模块简单使用</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2019/01/15/%E4%B9%8B%E5%89%8D%E7%9A%84/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">正则表达式必知必会&amp;&amp;python-re模块简单使用</h1>
+          
+            <div class="article-meta">2019-01-15</div>
+          
+        </div>
+        <article class="markdown">
+          <h4 id="正则表达式还是要会的，不然你连受处分得资格都没有（无意调侃，莫怪罪。虽然说这样的工具类的东西，知道1，其他的要什么再去查博客啦，文档啦什么的就行，但是如果你觉得有必要，系统性的过一遍，收获还是蛮大的，突然又回想起暑假PM工作那问会不会Linux-shell编程，其实之前是看过的，但是没有系统的去学，突然要你写起来就非常僵硬，还是咕咕咕了"><a href="#正则表达式还是要会的，不然你连受处分得资格都没有（无意调侃，莫怪罪。虽然说这样的工具类的东西，知道1，其他的要什么再去查博客啦，文档啦什么的就行，但是如果你觉得有必要，系统性的过一遍，收获还是蛮大的，突然又回想起暑假PM工作那问会不会Linux-shell编程，其实之前是看过的，但是没有系统的去学，突然要你写起来就非常僵硬，还是咕咕咕了" class="headerlink" title="正则表达式还是要会的，不然你连受处分得资格都没有（无意调侃，莫怪罪。虽然说这样的工具类的东西，知道1，其他的要什么再去查博客啦，文档啦什么的就行，但是如果你觉得有必要，系统性的过一遍，收获还是蛮大的，突然又回想起暑假PM工作那问会不会Linux shell编程，其实之前是看过的，但是没有系统的去学，突然要你写起来就非常僵硬，还是咕咕咕了"></a>正则表达式还是要会的，不然你连受处分得资格都没有（无意调侃，莫怪罪。虽然说这样的工具类的东西，知道1，其他的要什么再去查博客啦，文档啦什么的就行，但是如果你觉得有必要，系统性的过一遍，收获还是蛮大的，突然又回想起暑假PM工作那问会不会Linux shell编程，其实之前是看过的，但是没有系统的去学，突然要你写起来就非常僵硬，还是咕咕咕了</h4><h3 id="本书主要内容"><a href="#本书主要内容" class="headerlink" title="本书主要内容"></a>本书主要内容</h3><span id="more"></span>
+
+
+<p><img src="/2019/01/15/%E4%B9%8B%E5%89%8D%E7%9A%84/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A/1.png"><br>前人栽树后人乘凉，前人画图后人观赏<br>（意思就是图是盗来的（读书人怎么能叫盗呢，ε&#x3D;ε&#x3D;ε&#x3D;┏(゜ロ゜;)┛逃。</p>
+<h4 id="第一章、入门"><a href="#第一章、入门" class="headerlink" title="第一章、入门"></a>第一章、入门</h4><p>正则表达式（regular expression，简称 regex）是文本处理方面最强大的工具之一。正则表达式语言用来构造正则表达式（最终构造出来的字符串就称为正则表达式），正则表达式用来完成搜索或替换操作。实际的正则表达式经常被简称为模式，它们其实是一些由字符构成的字符串。这些字符可以是普通字符（纯文本）或元字符（有特殊含义的特殊字符）。<br>推荐一个工具Regester，本地测试的小工具<br><a target="_blank" rel="noopener" href="http://deerchao.net/tools/regester/index.htm">Regester传送门</a></p>
+<h4 id="第二章、匹配单个字符"><a href="#第二章、匹配单个字符" class="headerlink" title="第二章、匹配单个字符"></a>第二章、匹配单个字符</h4><p>1.匹配纯文本：  </p>
+<p>文本：Hello , my name is Ben. Please visit my website at <a target="_blank" rel="noopener" href="http://www.forta.com/">http://www.forta.com/</a> .</p>
+<p>正则表达式：Ben</p>
+<p>结果：Hello , my name is Ben. Please visit my website at <a target="_blank" rel="noopener" href="http://www.forta.com/">http://www.forta.com/</a> .</p>
+<p>2.匹配任意字符：</p>
+<p>“.”元字符可以匹配任何一个单个的字符。</p>
+<p>3.匹配特殊字符：</p>
+<p>“\”元字符可以对有含义的字符进行转义。</p>
+<p>小结：正则表达式经常被简称为模式，它们其实是一些由字符构成的字符串。这些字符可以是普通字符（纯文本）或元字符（特殊含义的字符）。“.”可以匹配任何字符。“\”用来对字符进行转义。</p>
+<h4 id="第三章、匹配一组字符"><a href="#第三章、匹配一组字符" class="headerlink" title="第三章、匹配一组字符"></a>第三章、匹配一组字符</h4><p>1.匹配多个字符中的某一个：</p>
+<p>“[”和“]”元字符定义一个字符集合。</p>
+<p>在使用“[”和“]”定义的字符集合里，这两个字符之间的所有字符都是该集合的组成部分，字符集合的匹配结果是能够与该集合里的任意一个成员相匹配的文本。</p>
+<p>2.利用字符集合区间：</p>
+<p>正则表达式提供了一个特殊的元字符，字符区间可以用“-”（连字符）来定义。</p>
+<p>字符区间：[A-Z]、[a-z]、[A-z]、[A-Za-z0-9]</p>
+<p>Ps：区间外为“-”本身，无需转义</p>
+<p>3.取非匹配：</p>
+<p>“^”元字符表明对一个字符集合进行取非匹配。</p>
+<p>取非：[^0-9]：匹配任何不是数字的字符</p>
+<p>小结：元字符“[”和“]”用来定义一个字符集合，其含义是必须匹配该集合里的字符之一。定义一个字符集合的具体做法有两种：一是把所有的字符都列举出来；二是利用元字符“-”以字符区间的方式给出。字符集合可以以元字符“^”来求非，这将把给定的字符集强行排除在匹配操作以外，除了该字符集合里的字符，其他字符都可匹配。</p>
+<h4 id="第四章、使用元字符"><a href="#第四章、使用元字符" class="headerlink" title="第四章、使用元字符"></a>第四章、使用元字符</h4><p>1.元字符：是在正则表达式里有特殊含义的字符。</p>
+<p>元字符分类：  ①匹配文字（例如“.”）</p>
+<p> ②正则表达式语法要求（例如“[”“]”）<br> <img src="/2019/01/15/%E4%B9%8B%E5%89%8D%E7%9A%84/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A/2.png"><br> <img src="/2019/01/15/%E4%B9%8B%E5%89%8D%E7%9A%84/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A/3.png"><br> <img src="/2019/01/15/%E4%B9%8B%E5%89%8D%E7%9A%84/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A/4.png"><br> <img src="/2019/01/15/%E4%B9%8B%E5%89%8D%E7%9A%84/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A/5.png"></p>
+<h4 id="第五章、重复匹配"><a href="#第五章、重复匹配" class="headerlink" title="第五章、重复匹配"></a>第五章、重复匹配</h4><p> 1.匹配一个或多个字符：</p>
+<p>“+”：匹配一个或多个字符或字符集合，不可匹配0个字符。</p>
+<p>Ps：一般来说，当在字符集合里使用“.”“+”这样的元字符时，被看做普通字符，无需转义。</p>
+<p>2.匹配零个或多个字符：</p>
+<p>“*”：匹配字符连续出现零次或多次的情况。</p>
+<p>3.匹配零个或一个字符：</p>
+<p>“？”：只能匹配一个字符或字符集合的零次或一次重复。</p>
+<p>4.匹配的重复次数：</p>
+<p>“{”“}”：在其中给出重复次数。</p>
+<p>{数字}：确切的数</p>
+<p>{小值，大值}：区间</p>
+<p>{小值， }：至少重复“小值”次。<br> <img src="/2019/01/15/%E4%B9%8B%E5%89%8D%E7%9A%84/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A/6.png"></p>
+<h4 id="第六章、位置匹配"><a href="#第六章、位置匹配" class="headerlink" title="第六章、位置匹配"></a>第六章、位置匹配</h4><p> 1.边界限定符：<br>  <img src="/2019/01/15/%E4%B9%8B%E5%89%8D%E7%9A%84/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A/7.png"><br>  ③分行匹配模式：“（?m）”为分行匹配模式，把行分隔符当一个字符串分隔符。</p>
+<h4 id="第七章、使用子表达式"><a href="#第七章、使用子表达式" class="headerlink" title="第七章、使用子表达式"></a>第七章、使用子表达式</h4><p>1.子表达式必须用“（”和“）”括起来。</p>
+<p>2.子表达式的嵌套：</p>
+<p>文本：Pinging hog.forta.com [12.159.46.200] with 32 bytes of data:</p>
+<p>正则表达式：(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5])).){3}((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))</p>
+<p>结果：Pinging hog.forta.com [<strong>12.159.46.200</strong>] with 32 bytes of data:</p>
+<p>小结：子表达式的作用是把同一个表达式的各个相关部分组合在一起。用“(”“)”来定义。子表达式的常见用途包括：对重复次数元字符的作用对象作出精确的设定和控制、对“|”操作符的OR条件作出准确的定义。</p>
+<h4 id="第八章、回溯引用，前后一致匹配"><a href="#第八章、回溯引用，前后一致匹配" class="headerlink" title="第八章、回溯引用，前后一致匹配"></a>第八章、回溯引用，前后一致匹配</h4><p>1.子表达式的另一用途：定义回溯引用。</p>
+<p>2.“\1”是一个回溯引用，回溯引用指的是模式的后半部分引用在前半部分中定义的子表达式。</p>
+<p>Ps：“\0”用来表示整个正则表达式。</p>
+<p>文本：This is a block of of text,several words here are are repeated ,and and they should not be.</p>
+<p>正则表达式：[ ]+(\w+)[ ]+\1</p>
+<p>结果：This is a block of of text,several words here are are repeated ,and and they should not be.</p>
+<p>3.回溯引用在替换操作中的应用：</p>
+<p>替换操作需要用到两个正则表达式：搜索模式和替换模式。</p>
+<p>文本：Hello , <a href="mailto:&#x62;&#x65;&#x6e;&#x40;&#x66;&#111;&#x72;&#116;&#97;&#46;&#99;&#x6f;&#109;">&#x62;&#x65;&#x6e;&#x40;&#x66;&#111;&#x72;&#116;&#97;&#46;&#99;&#x6f;&#109;</a> is my email address.</p>
+<p>正则表达式： (\w+[\w.]*@[\w.]+.\w+)</p>
+<p>替换：<A HREF = “mailto:$1”>$1</A></p>
+<p>结果：Hello , <A HREF = “mailto:ben@forta.com”> ben@forta.com</A> is my email address.<br><img src="/2019/01/15/%E4%B9%8B%E5%89%8D%E7%9A%84/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A/8.png"></p>
+<h4 id="第九章、前后查找"><a href="#第九章、前后查找" class="headerlink" title="第九章、前后查找"></a>第九章、前后查找</h4><p>1.向前查找：指定了一个必须匹配但不在结果中返回的模式。</p>
+<p>从语法上来看，一个向前查找模式其实就是一个以“?&#x3D;”开头的子表达式，需要匹配的文本跟在“&#x3D;”的后面。</p>
+<p>“匹配和返回文本”：消费</p>
+<p>“只匹配不返回”：不消费</p>
+<p>向前查找（向后查找）匹配本身其实是有返回结果的，只是这个结果的字节长度永远为0而已。因此，前后查找操作有时也称为零宽度匹配操作。</p>
+<p>文本：</p>
+<pre><code>    http://www.forta.com/
+     
+    https://mail.forta.com/
+
+    ftp://ftp.forta.com/
+</code></pre>
+<p>正则表达式： .+(?&#x3D;:)</p>
+<p>结果：<br><strong>http</strong></p>
+<p><strong>https</strong></p>
+<p>2.向后查找：“?&lt;&#x3D;”元字符。</p>
+<p>文本：</p>
+<pre><code>    ABC01：$23.45
+
+    HGG42：$5.31
+
+    CFMX1：$899.00
+
+    XTC99：$69.96
+
+    Total items found: 4
+</code></pre>
+<p>正则表达式：(?&lt;&#x3D;$)[0-9.]+</p>
+<p>结果：<br>ABC01：$<strong>23.45</strong></p>
+<p>HGG42：$<strong>5.31</strong></p>
+<p>CFMX1：$<strong>899.00</strong></p>
+<p>XTC99：$<strong>69.96</strong></p>
+<p>Total items found: 4<br><img src="/2019/01/15/%E4%B9%8B%E5%89%8D%E7%9A%84/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A/9.png"></p>
+<p>$30 for 100 apples, 50 oranges, and 60 pears. I saved $5 on this order . </p>
+<p>正则表达式：\b(?&lt;!$)\d+\b</p>
+<p>结果：I paid $30 for <strong>100</strong> apples, <strong>50</strong> oranges, and <strong>60</strong> pears. I saved $5 on this order . （匹配数量）</p>
+<p>小结：有了向后查找，可以对最终的匹配结果包含且只包含哪些内容作出更精确的控制。前后查找操作可以利用子表达式来指定文本匹配操作的发生位置，并收到只匹配不消费的效果。</p>
+<h4 id="第十章、-嵌入条件"><a href="#第十章、-嵌入条件" class="headerlink" title="第十章、 嵌入条件"></a>第十章、 嵌入条件</h4><p>1.正则表达式里的条件用“?”来定义。</p>
+<p>2.嵌入条件：①根据一个回溯引用来进行条件处理。</p>
+<p> ②根据一个前后查找来进行条件处理。</p>
+<p>3.回溯引用条件：</p>
+<p>?(1)：检查第一个回溯引用是否存在。</p>
+<p>文本：</p>
+<pre><code>     123-456-7890
+
+     (123)456-7890
+
+     (123)-456-7890
+
+     (123-456-7890
+
+     1234567890
+
+     123 456 7890
+</code></pre>
+<p>正则表达式：(\()?\d{3}(?(1))|-)\d{3}-\d{4}</p>
+<p>结果：<br><strong>123-456-7890</strong></p>
+<p><strong>(123)456-7890</strong></p>
+<p>(123)-456-7890</p>
+<p>(123-456-7890</p>
+<p>1234567890</p>
+<p>123 456 7890</p>
+<p>4.前后查找条件:  (?(前后查找表达式))</p>
+<p>文本：</p>
+<pre><code>    11111
+    
+    22222
+
+    33333-
+
+    44444-4444
+</code></pre>
+<p>正则表达式：\d{5}(?(?&#x3D;-)-\d{4})</p>
+<p>结果：<br><strong>11111</strong></p>
+<p><strong>22222</strong></p>
+<p>33333-</p>
+<p><strong>44444-4444</strong></p>
+<h3 id="简单的python正则表达式-re模块"><a href="#简单的python正则表达式-re模块" class="headerlink" title="简单的python正则表达式(re模块)"></a>简单的python正则表达式(re模块)</h3><p>1、一个网页的HTML源码。其中有一段</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;&lt;body&gt;&lt;h1&gt;hello world&lt;h1&gt;&lt;/body&gt;&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p>你想要把这个hello world提取出来</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line"></span><br><span class="line">key = r&quot;&lt;html&gt;&lt;body&gt;&lt;h1&gt;hello world&lt;h1&gt;&lt;/body&gt;&lt;/html&gt;&quot;#这段是你要匹配的文本</span><br><span class="line">p1 = r&quot;(?&lt;=&lt;h1&gt;).+?(?=&lt;h1&gt;)&quot;#这是我们写的正则表达式规则，你现在可以不理解啥意思</span><br><span class="line">pattern1 = re.compile(p1)#我们在编译这段正则表达式</span><br><span class="line">matcher1 = re.search(pattern1,key)#在源文本中搜索符合正则表达式的部分</span><br><span class="line">print matcher1.group(0)#打印出来</span><br></pre></td></tr></table></figure>
+
+<p>2、既有http:&#x2F;&#x2F;开头的，又有https:&#x2F;&#x2F;开头的，我们怎么处理？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line"></span><br><span class="line">key = r&quot;http://www.nsfbuhwe.com and https://www.auhfisna.com&quot;#胡编乱造的网址，别在意</span><br><span class="line">p1 = r&quot;https*://&quot;#看那个星号！1</span><br><span class="line">pattern1 = re.compile(p1)</span><br><span class="line">print pattern1.findall(key)</span><br></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[&#x27;http://&#x27;, &#x27;https://&#x27;]</span><br></pre></td></tr></table></figure>
+<p>findall函数返回的总是正则表达式在字符串中所有匹配结果的列表</p>
+
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

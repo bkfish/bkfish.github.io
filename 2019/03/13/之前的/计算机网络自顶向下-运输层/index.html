@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>计算机网络自顶向下-运输层</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">计算机网络自顶向下-运输层</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2019/03/13/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E8%BF%90%E8%BE%93%E5%B1%82/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">计算机网络自顶向下-运输层</h1>
+          
+            <div class="article-meta">2019-03-13</div>
+          
+        </div>
+        <article class="markdown">
+          <h3 id="一、运输层提供的服务"><a href="#一、运输层提供的服务" class="headerlink" title="一、运输层提供的服务"></a>一、运输层提供的服务</h3><p>运输层为运行在不同主机上的应用<strong>进程</strong>之间提供逻辑通信功能。应用进程使用运输层提供的逻辑通信功能彼此发送报文，而无需考虑承载这些报文的物理基础。、<br><strong>运输层和网络层的关系</strong>：网络层提供了主机之间的逻辑通信，运输层为在不同主机上的进程之间提供了逻辑通信。运输层协议只在主机起作用，运输层能够提供的服务受制于网络层协议的服务模型。</p>
+<h3 id="二、多路复用和多路分解"><a href="#二、多路复用和多路分解" class="headerlink" title="二、多路复用和多路分解"></a>二、多路复用和多路分解</h3><p>将运输层报文段中的数据交付到正确的套接字的工作成为多路分解。源主机从不同的套接字接收数据块，并为每个数据块封装上首部信息形成报文段，并将报文段传到网络的过程叫做多路复用。</p>
+<span id="more"></span>
+
+
+<p><img src="/2019/03/13/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E8%BF%90%E8%BE%93%E5%B1%82/1.jpg"><br>多路复用要求：（1）套接字有唯一标识符（2）每个报文段有特殊字段来指示该报文段要交付到的套接字。特殊字段是指端口号。端口号是一个16比特数，0-1023为固定端口号，如HTTP（80端口）、FTP（21端口）。</p>
+<h3 id="三、UDP协议（无连接运输）（8字节首部）"><a href="#三、UDP协议（无连接运输）（8字节首部）" class="headerlink" title="三、UDP协议（无连接运输）（8字节首部）"></a>三、UDP协议（无连接运输）（8字节首部）</h3><h4 id="3-1、UDP的优势：（1）实时性较强，TCP由于其拥塞控制实时性较弱（2）无需建立连接，没有建立连接的时延，因此DNS运行在UDP上，HTTP运行在TCP上（3）无连接状态，TCP需要在端系统中维护连接状态，包括接收和发送的缓存、拥塞控制参数以及序号与确认号的参数（4）分组首部开销小。"><a href="#3-1、UDP的优势：（1）实时性较强，TCP由于其拥塞控制实时性较弱（2）无需建立连接，没有建立连接的时延，因此DNS运行在UDP上，HTTP运行在TCP上（3）无连接状态，TCP需要在端系统中维护连接状态，包括接收和发送的缓存、拥塞控制参数以及序号与确认号的参数（4）分组首部开销小。" class="headerlink" title="3.1、UDP的优势：（1）实时性较强，TCP由于其拥塞控制实时性较弱（2）无需建立连接，没有建立连接的时延，因此DNS运行在UDP上，HTTP运行在TCP上（3）无连接状态，TCP需要在端系统中维护连接状态，包括接收和发送的缓存、拥塞控制参数以及序号与确认号的参数（4）分组首部开销小。"></a>3.1、UDP的优势：（1）实时性较强，TCP由于其拥塞控制实时性较弱（2）无需建立连接，没有建立连接的时延，因此DNS运行在UDP上，HTTP运行在TCP上（3）无连接状态，TCP需要在端系统中维护连接状态，包括接收和发送的缓存、拥塞控制参数以及序号与确认号的参数（4）分组首部开销小。</h4><p><img src="/2019/03/13/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E8%BF%90%E8%BE%93%E5%B1%82/6.png"><br>常见应用及其运输协议：</p>
+<table>
+<thead>
+<tr>
+<th>应用</th>
+<th align="center">应用层协议</th>
+<th align="right">运输层协议</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>电子邮件</td>
+<td align="center">SMTP</td>
+<td align="right">TCP</td>
+</tr>
+<tr>
+<td>远程终端访问</td>
+<td align="center">Telnet</td>
+<td align="right">TCP</td>
+</tr>
+<tr>
+<td>Web</td>
+<td align="center">HTTP</td>
+<td align="right">TCP</td>
+</tr>
+<tr>
+<td>文件传输</td>
+<td align="center">FTP</td>
+<td align="right">TCP</td>
+</tr>
+<tr>
+<td>远程文件服务器</td>
+<td align="center">NFS</td>
+<td align="right">UDP</td>
+</tr>
+<tr>
+<td>流式多媒体</td>
+<td align="center">通常专用</td>
+<td align="right">UDP或TCP</td>
+</tr>
+<tr>
+<td>因特网电话</td>
+<td align="center">通常专用</td>
+<td align="right">UDP或TCP</td>
+</tr>
+<tr>
+<td>网络管理</td>
+<td align="center">SNMP</td>
+<td align="right">UDP</td>
+</tr>
+<tr>
+<td>路由选择协议</td>
+<td align="center">RIP</td>
+<td align="right">UDP</td>
+</tr>
+<tr>
+<td>名字转换</td>
+<td align="center">DNS</td>
+<td align="right">UDP</td>
+</tr>
+</tbody></table>
+<h4 id="3-2、UDP检验和：差错检测功能"><a href="#3-2、UDP检验和：差错检测功能" class="headerlink" title="3.2、UDP检验和：差错检测功能"></a>3.2、UDP检验和：差错检测功能</h4><p>发送方的UDP对报文段中的所有16比特字的和进行反码运算，求和时遇到的任何溢出都被回卷（溢出后加到最后一位）。然后将该结果取反码作为检验和。在接收端，如果没有出错，所有数据和检验和相加的结果为1111111111111111。可以自己抓个包，自己静下来算一下，保证爽死你。</p>
+<h3 id="四、可靠数据传输原理"><a href="#四、可靠数据传输原理" class="headerlink" title="四、可靠数据传输原理"></a>四、可靠数据传输原理</h3><p>可靠数据传输协议往往建立在不可靠IP网络层协议之上。</p>
+<h4 id="4-1、构造可靠数据传输协议"><a href="#4-1、构造可靠数据传输协议" class="headerlink" title="4.1、构造可靠数据传输协议"></a>4.1、构造可靠数据传输协议</h4><h5 id="1、经完全可靠信道的可靠数据传输：rdt-1-0"><a href="#1、经完全可靠信道的可靠数据传输：rdt-1-0" class="headerlink" title="1、经完全可靠信道的可靠数据传输：rdt 1.0"></a>1、经完全可靠信道的可靠数据传输：rdt 1.0</h5><p>最简答的情况，底层信号完全可靠，然而这在实际中不能实现</p>
+<h5 id="2、经具有比特差错信道的可靠数据传输：rdt-2-0"><a href="#2、经具有比特差错信道的可靠数据传输：rdt-2-0" class="headerlink" title="2、经具有比特差错信道的可靠数据传输：rdt 2.0"></a>2、经具有比特差错信道的可靠数据传输：rdt 2.0</h5><p>假设所有发送的分组都可以按其发送顺序被接收。基于重传机制的可靠数据传输协议称为自动重传请求协议（ARQ）。<br>ARQ协议中还需要另外三种协议功能来处理存在比特差错的情况：差错检测，接收方反馈，重传。<br>rdt2.0的发送端每发送一个分组需要等待接收端的确认信号，这种协议被称为停等协议。这种协议的一个关键问题是没有考虑确认信号受损的情况。解决这一问题的方法是在数据分组中添加一个新字段，让发送方对其数据分组编号，即序号的概念。此为rdt2.1。rdt2.2时在rdt2.1的基础上实现了一个没有否定确认的可靠传输协议。</p>
+<h5 id="3、经具有比特差错的丢包信道的可靠数据传输：rdt3-0"><a href="#3、经具有比特差错的丢包信道的可靠数据传输：rdt3-0" class="headerlink" title="3、经具有比特差错的丢包信道的可靠数据传输：rdt3.0"></a>3、经具有比特差错的丢包信道的可靠数据传输：rdt3.0</h5><p>检测丢包的方法：倒计数定时器用于实现基于时间的重传机制。<br>总结可靠传输需要的技术：检验和、序号、定时器、肯定和否定确认分组。</p>
+<h4 id="4-2、流水线可靠数据传输协议"><a href="#4-2、流水线可靠数据传输协议" class="headerlink" title="4.2、流水线可靠数据传输协议"></a>4.2、流水线可靠数据传输协议</h4><p>rdt3.0的最大缺陷在于它是一个停等协议。因此诞生流水线概念，发送端不需要等待确认信号就可以发送下一个分组。但会带来如下影响：必须增加序号范围；协议双方必须缓存多个分组；序号范围和缓存大小取决于数据传输协议如何处理丢失、损坏及延时过大的分组。有两种基本方法：回退N步和选择重传<br>（1）回退N步（GBN）：允许发送端发送多个分组，但在流水线中未被确认的分组数不能大于N，N被称为窗口长度，GBN协议也被称为滑动窗口协议。如果出现超时，发送方会重传所有已发送但未被确认的分组，即回退N步，从而保证接收端可以按序将数据交付给上层。<br>（2）选择重传（SR）：GBN中单个分组的错误会引起重传大量分组。选择重传协议通过让发送端仅重传那些它怀疑在接收方出错的分组。</p>
+<p>SR中发送端和接收端的序列空间：<br><img src="/2019/03/13/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E8%BF%90%E8%BE%93%E5%B1%82/1.png"><br>SR协议会产生接收方不能确定新到的分组是一个新的分组还是一次重传，因此要求窗口长度必须小于或等于序号空间大小的一半。</p>
+<h5 id="PS：其实意思就是当我回复我收到了第五个包，根据前面的协议，我虽然说的是第五个，但是前4个包我都已经收到了，所以现在你就不必纠结于第四个包是不是丢了我收没收到，其实你可以放心直接去发第六个包，不知道合不合理，逃ε-ε-ε-┏-゜ロ゜-┛"><a href="#PS：其实意思就是当我回复我收到了第五个包，根据前面的协议，我虽然说的是第五个，但是前4个包我都已经收到了，所以现在你就不必纠结于第四个包是不是丢了我收没收到，其实你可以放心直接去发第六个包，不知道合不合理，逃ε-ε-ε-┏-゜ロ゜-┛" class="headerlink" title="(PS：其实意思就是当我回复我收到了第五个包，根据前面的协议，我虽然说的是第五个，但是前4个包我都已经收到了，所以现在你就不必纠结于第四个包是不是丢了我收没收到，其实你可以放心直接去发第六个包，不知道合不合理，逃ε&#x3D;ε&#x3D;ε&#x3D;┏(゜ロ゜;)┛)"></a>(PS：其实意思就是当我回复我收到了第五个包，根据前面的协议，我虽然说的是第五个，但是前4个包我都已经收到了，所以现在你就不必纠结于第四个包是不是丢了我收没收到，其实你可以放心直接去发第六个包，不知道合不合理，逃ε&#x3D;ε&#x3D;ε&#x3D;┏(゜ロ゜;)┛)</h5><h4 id="五、TCP协议（面向连接的运输）（20字节首部）"><a href="#五、TCP协议（面向连接的运输）（20字节首部）" class="headerlink" title="五、TCP协议（面向连接的运输）（20字节首部）"></a>五、TCP协议（面向连接的运输）（20字节首部）</h4><p>TCP之所谓是面向连接的，是因为两个进程间通信前要先相互握手，且TCP提供全双工服务。TCP连接的组成包括：客户端主机上的缓存、变量和套接字，服务端上的缓存、变量和套接字。</p>
+<h5 id="5-1、TCP报文段结构"><a href="#5-1、TCP报文段结构" class="headerlink" title="5.1、TCP报文段结构"></a>5.1、TCP报文段结构</h5><p><img src="/2019/03/13/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E8%BF%90%E8%BE%93%E5%B1%82/2.png"></p>
+<ol>
+<li>源端口和目的端口，各占两个字节；</li>
+<li>序号seq，4个字节，TCP传送的字节流中每个字节都要编号；</li>
+<li>确认号ack，4个字节，期望发送方下一个报文的第一个数据字节的序号；</li>
+<li>2个字节的接收窗口字段，用于流量控制；</li>
+<li>4比特的首部长度，通常为空；</li>
+<li>可选与变长的选项字段，用于发送方和接收方协商最大报文段长度时，或在高速网络环境下用于窗口调节因子使用；</li>
+<li>6比特的标志字段：紧急URG，表明此报文中有紧急数据，紧急数据的最后一个字节的指针由紧急指针指出；确认ACK，表明该报文段为已成功接收报文段的确认；PSH&#x3D;1时，表明接收方应立即将数据报交给上层；复位RST，当RST&#x3D;1时，表明TCP连接出现错误，必须释放连接；同步SYN，在建立连接时用来同步序号。当SYN&#x3D;1，ACK&#x3D;0时表明是连接请求报文；响应报文为SYN&#x3D;1，ACK&#x3D;1；终止FIN，用来释放连接；</li>
+</ol>
+<p><strong>序号和确认号</strong>：TCP把数据看做有序无结构的字节流，用序号对每个传输的字节进行编号。由于TCP是全双工服务，在主机A向主机B发送报文的同时A也会接收B发送的报文，确认号则是接收方希望发送方发送的下一字节的序号。例如A已收到B发送的序号为0-535的所有字节，则A会在发给B的报文段的确认号中填入536。如果A在收到536-899之前收到900-1000，则确认号仍为536，这叫TCP的累积确认。</p>
+<h5 id="5-2、抓包分析"><a href="#5-2、抓包分析" class="headerlink" title="5.2、抓包分析"></a>5.2、抓包分析</h5><p><img src="/2019/03/13/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E8%BF%90%E8%BE%93%E5%B1%82/7.png"></p>
+<h5 id="5-3、可靠数据传输"><a href="#5-3、可靠数据传输" class="headerlink" title="5.3、可靠数据传输"></a>5.3、可靠数据传输</h5><p>TCP的定时器管理过程只使用单一的重传定时器。</p>
+<p>首先给出TCP高度简化的描述：发送方只用超时来恢复报文段的丢失。发送方有3个与发送和重传有关的事件：（1）TCP从应用程序接收数据，并编号交给IP，若定时器未启动则启动定时器（2）超时，则重传超时的报文段，并重启定时器（3）收到确认，采用累积确认，，所以当前确认号之前的所有报文段都已被接收，若仍有未确认的报文段，重启定时器。累积确认详见书图3.36。</p>
+<p>超时间隔加倍：TCP每次重传都会将下一次超时间隔设为当前值的两倍，而不是通过EstimatedRTT设置。这是一种简单的拥塞控制。</p>
+<p>快速重传：超时间隔加倍会增加端到端时延。而由于接收端累积确认，在未收到期望序号报文段时会不断的发送相同的ACK确认号，此为冗余ACK。当接收端收到3个冗余ACK时，TCP就执行快速重传，在定时器过期前重传丢失的报文段。</p>
+<h5 id="5-4-流量控制"><a href="#5-4-流量控制" class="headerlink" title="5.4 流量控制"></a>5.4 流量控制</h5><p>TCP为其应用程序提供流量控制服务以消除发送方使接收方缓存溢出的可能性。TCP的流量控制通过接收窗口来实现，用于给发送方表明接收方还有多少可用的缓存空间。接收窗口用rwnd表示，有一个情况：A向B通信，当B缓存满了的时候，他返回的报文段中rwnd&#x3D;0，如果B的应用程序将缓存清空了，同时B没有数据要向A发送，则A不能知道B的缓存清空。TCP规定在rwnd&#x3D;0时A继续发送一个字节数据的报文段。</p>
+<h5 id="5-5、三次握手，四次挥手"><a href="#5-5、三次握手，四次挥手" class="headerlink" title="5.5、三次握手，四次挥手"></a>5.5、三次握手，四次挥手</h5><p>三次握手：<br><img src="/2019/03/13/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E8%BF%90%E8%BE%93%E5%B1%82/3.png"><br>为什么是3次握手？</p>
+<p>1、主要是为了防止已经失效的连接请求报文突然又传送到了服务器，从而产生错误连接。2、改为两次握手可能产生死锁。假设A向B发送请求，B收到请求后发送确认信号。此时如果按照两次握手协议，连接已建立，B开始传输数据。然后如果B的确认信号A没有接受到，A将不能知道B的序列号，将无法接受B的数据。而B在发送数据超时后会重复发送数据，从而死锁。<br><img src="/2019/03/13/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E8%BF%90%E8%BE%93%E5%B1%82/4.png"><br>为什么要客户端要等待2MSL（报文最大生存时间）？</p>
+<p>1、保证客户端发送的最后一个ACK报文能够到达服务器。2、如果客户端直接进入closed状态，而服务端还有数据在网络中，当有一个新连接的端口和服务端端口一样时，那么客户端会认为这些数据是新连接的。</p>
+<p>当主机接收到一个TCP报文段，其端口号或源IP地址与该主机上进行中的套接字都不匹配，此时主机会向源发送一个特殊的重置报文段，其RST标志位置1.</p>
+<h5 id="六、拥塞控制"><a href="#六、拥塞控制" class="headerlink" title="六、拥塞控制"></a>六、拥塞控制</h5><p>拥塞控制的方法：（1）端到端拥塞控制，网络层并没有为运输层的拥塞控制提供支持，TCP运用的方式，只能推断是否发生拥塞。（2）网络辅助的拥塞控制，路由器可以向发送端反馈网络的拥塞情况，但还未被用于TCP中。</p>
+<h4 id="6-1、-TCP拥塞控制（加性增、乘性减（AIMD）拥塞控制方法）"><a href="#6-1、-TCP拥塞控制（加性增、乘性减（AIMD）拥塞控制方法）" class="headerlink" title="6.1、 TCP拥塞控制（加性增、乘性减（AIMD）拥塞控制方法）"></a>6.1、 TCP拥塞控制（加性增、乘性减（AIMD）拥塞控制方法）</h4><p>TCP采用的方法是让每一个发送方根据所感知到的网络拥塞程度来限制其能向连接发送流量的速率。<br>如何调整发送方的发送速率：在发送方跟踪一个变量，即拥塞窗口（cwnd），其对一个TCP发送方能向网络中发送流量的速率进行了限制（发送方中未被确认的数据量不超过cwnd和rwnd的最小值）。<br>如何感知拥塞：通过出现超时或3次冗余ACK来确认是否发生拥塞。<br>TCP发送方能够以更高的速率发送而不会使网络拥塞，有三个原则：（1）一个丢失的报文段意味拥塞，此时应降低TCP发送方速率（减小cwnd的大小）。（2）一个确认报文段指示网络正在向接收方交付发送方的报文段，此时可以增加发送方的速率。（3）带宽探测</p>
+<h4 id="6-2、TCP拥塞控制算法：慢启动，拥塞避免，快速恢复"><a href="#6-2、TCP拥塞控制算法：慢启动，拥塞避免，快速恢复" class="headerlink" title="6.2、TCP拥塞控制算法：慢启动，拥塞避免，快速恢复"></a>6.2、TCP拥塞控制算法：慢启动，拥塞避免，快速恢复</h4><p>（1）慢启动</p>
+<p>当TCP连接开始时，cwnd的值置为1个MSS（最大报文段长度），每当传输的报文段首次被确认就增加1个MSS，因此cwnd以指数增长。</p>
+<p>指数增长的结束方案：（1）如果出现超时的丢包事件，将慢启动阈值ssthresh置为cwnd&#x2F;2，并将cwnd重新置为1并重新开始慢启动。（2）当新的cwnd增长到超过ssthresh时，结束慢启动进入拥塞避免模式。（3）如果检测到3个冗余ACK则进入快速恢复状态。</p>
+<p>（2）拥塞避免</p>
+<p>每个RTT（往返时间）只增加一个MSS。假设当前MSS为1460字节而cwnd为14600字节，则一个RTT发送10个报文段，每到达一个ACK增加MSS&#x2F;10的拥塞窗口长度，当收到10个报文段的所有ACK时增则会增加1个MSS。</p>
+<p>当出现超时时，将ssthresh置为cwnd&#x2F;2，同时将cwnd置为1，开始慢启动。当出现3次冗余ACK时，表示当前网络仍可以交付，TCP将ssthresh置为cwnd&#x2F;2，同时cwnd&#x3D;cwnd&#x2F;2+3MSS，并进入快速恢复。</p>
+<p>（3）快速恢复</p>
+<p>在快速恢复中，对于引起TCP进入快速恢复状态的缺失报文段，每收到一个它的冗余ACK就将cwnd增加一个MSS。当收到丢失报文段的ACK时，cwnd&#x3D;ssthresh，并进入拥塞避免。如果在这个阶段超时，同样进入慢启动。<br><img src="/2019/03/13/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E8%BF%90%E8%BE%93%E5%B1%82/5.png"><br>公平性：在K条TCP连接经过传输速率为R的链路时，如果每条连接的平均传输速率接近R&#x2F;K，则认为该拥塞控制是公平的。在每条TCP连接的RTT相等的情况下，上述TCP拥塞控制是公平的（详见图3.56），但实际中RTT小的连接会有更高的吞吐量。</p>
+
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

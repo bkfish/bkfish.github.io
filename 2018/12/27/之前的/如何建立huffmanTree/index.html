@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>如何建立huffmanTree</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">如何建立huffmanTree</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2018/12/27/%E4%B9%8B%E5%89%8D%E7%9A%84/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">如何建立huffmanTree</h1>
+          
+            <div class="article-meta">2018-12-27</div>
+          
+        </div>
+        <article class="markdown">
+          <h3 id="1、一些基本概念"><a href="#1、一些基本概念" class="headerlink" title="1、一些基本概念"></a>1、一些基本概念</h3><h4 id="1-1、定义"><a href="#1-1、定义" class="headerlink" title="1.1、定义"></a>1.1、定义</h4><p>哈夫曼树，又称最优树，是一类带权路径长度最短的树(为了防止前缀重复，所有数据一定为树叶)。</p>
+<h4 id="1-2、路径和路径长度"><a href="#1-2、路径和路径长度" class="headerlink" title="1.2、路径和路径长度"></a>1.2、路径和路径长度</h4><p>从树中一个结点到另一个结点之间的分支构成两个结点的路径，路径上的分支数目叫做路径长度。树的路径长度是从树根到每一个结点的路径长度之和。</p>
+<span id="more"></span>
+
+
+<h4 id="1-3、带权路径长度"><a href="#1-3、带权路径长度" class="headerlink" title="1.3、带权路径长度"></a>1.3、带权路径长度</h4><p>结点的带权路径长度为从该结点到树根之间的路径长度与结点上权的乘积。树的带权路径长度为树中所有叶子结点的带权路径长度之和，通常记作WPL。</p>
+<p>若有n个权值为w1,w2,…,wn的结点构成一棵有n个叶子结点的二叉树，则树的带权路径最小的二叉树叫做哈夫曼树或最优二叉树。<br><img src="/2018/12/27/%E4%B9%8B%E5%89%8D%E7%9A%84/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/1.png"><br>在上图中，3棵二叉树都有4个叶子结点a、b、c、d，分别带权7、5、2、4，则它们的带权路径长度为</p>
+<p>（a）WPL &#x3D; 7 × 2 + 5 × 2 + 2 × 2 + 4 × 2 &#x3D; 36</p>
+<p>（b）WPL &#x3D; 4 × 2 + 7 × 3 + 5 × 3 + 2 × 1 &#x3D; 46</p>
+<p>（c）WPL &#x3D; 7 × 1 + 5 × 2 + 2 × 3 + 4 × 3 &#x3D; 35</p>
+<p>其中（c）的WPL最小，可以验证，（c）恰为哈夫曼树。</p>
+<h3 id="2、数据结构表示"><a href="#2、数据结构表示" class="headerlink" title="2、数据结构表示"></a>2、数据结构表示</h3><h4 id="2-1、结点表示"><a href="#2-1、结点表示" class="headerlink" title="2.1、结点表示"></a>2.1、结点表示</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">typedef struct&#123;</span><br><span class="line">	int weight;</span><br><span class="line">	int parent;</span><br><span class="line">	int lchild,rchild;</span><br><span class="line">&#125;HuffmanTreeNode;</span><br></pre></td></tr></table></figure>
+<h4 id="2-2、一些数据关系"><a href="#2-2、一些数据关系" class="headerlink" title="2.2、一些数据关系"></a>2.2、一些数据关系</h4><p>1、哈夫曼树除了根结点，其他结点度数都为<strong>2</strong><br>2、m&#x3D;2<em>n-1(m代表总结点个数，n代表树叶结点个数)<br>证明:<br>因为 结点总数&#x3D;度数为0 1 2之和&#x3D;度数为1+ 2</em>度数为2 +1（根节点）<br>所以 叶子结点数&#x3D;度数为2的结点数+1<br>所以total&#x3D;叶子+度数为2&#x3D;2*n-1 得证</p>
+<h4 id="2-3、初始状态"><a href="#2-3、初始状态" class="headerlink" title="2.3、初始状态"></a>2.3、初始状态</h4><p><img src="/2018/12/27/%E4%B9%8B%E5%89%8D%E7%9A%84/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/4.png"></p>
+<h4 id="2-4、最终状态"><a href="#2-4、最终状态" class="headerlink" title="2.4、最终状态"></a>2.4、最终状态</h4><p><img src="/2018/12/27/%E4%B9%8B%E5%89%8D%E7%9A%84/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/5.png"></p>
+<h3 id="3、创建哈夫曼树步骤"><a href="#3、创建哈夫曼树步骤" class="headerlink" title="3、创建哈夫曼树步骤"></a>3、创建哈夫曼树步骤</h3><p><img src="/2018/12/27/%E4%B9%8B%E5%89%8D%E7%9A%84/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/2.png"><br>假设有n个结点，n个结点的权值分别为w1,w2,…,wn，构成的二叉树的集合为F&#x3D;{T1,T2,…,Tn}，则可构造一棵含有n个叶子结点的哈夫曼树。步骤如下：<br>（1）从F中选取两棵根结点权值最小的树作为左右子树构造一棵新的二叉树，其新的二叉树的权值为其左右子树根结点权值之和；</p>
+<p>（2）从F中删除上一步选取的两棵二叉树，将新构造的树放到F中；</p>
+<p>（3）重复（1）（2），直到F只含一棵树为止。</p>
+<h3 id="4、哈夫曼编码"><a href="#4、哈夫曼编码" class="headerlink" title="4、哈夫曼编码"></a>4、哈夫曼编码</h3><p>我们约定左分支表示字符’0’，右分支表示字符’1’，在哈夫曼树中从根结点开始，到叶子结点的路径上分支字符组成的字符串为该叶子结点的哈夫曼编码。上面代码所创建的哈夫曼树如下所示：<br><img src="/2018/12/27/%E4%B9%8B%E5%89%8D%E7%9A%84/%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8BhuffmanTree/3.png"><br>可以看出3被编码为00，1为010，2为011,4为10,5为11。在这些编码中，任何一个字符的编码均不是另一个字符编码的前缀。</p>
+<h3 id="5、C-建立haffmanTree"><a href="#5、C-建立haffmanTree" class="headerlink" title="5、C++建立haffmanTree"></a>5、C++建立haffmanTree</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line">#include&lt;iostream&gt;</span><br><span class="line">#include&lt;stack&gt;</span><br><span class="line">#include&lt;cstdlib&gt;</span><br><span class="line">#include&lt;vector&gt;</span><br><span class="line">using namespace std;</span><br><span class="line">typedef struct&#123;</span><br><span class="line">	int weight;</span><br><span class="line">	int parent;</span><br><span class="line">	int lchild,rchild;</span><br><span class="line">&#125;HuffmanTreeNode;</span><br><span class="line">int min(HuffmanTreeNode* &amp;tree,int k)&#123;</span><br><span class="line">	int minnum,min_weight;</span><br><span class="line">	int i=0;</span><br><span class="line">	while(tree[i].parent!=-1)</span><br><span class="line">	i++;//先将第一个parent为-1的元素的weight值赋给min_weight,留作以后比较用。</span><br><span class="line">	min_weight=tree[i].weight;</span><br><span class="line">	minnum=i;</span><br><span class="line">	for(;i&lt;k;i++)</span><br><span class="line">	&#123;</span><br><span class="line">		if(tree[i].weight&lt;min_weight&amp;&amp;tree[i].parent==-1)</span><br><span class="line">		&#123;</span><br><span class="line">			min_weight=tree[i].weight;</span><br><span class="line">			minnum=i;</span><br><span class="line">		 &#125; </span><br><span class="line">	&#125;</span><br><span class="line">	tree[minnum].parent=1;</span><br><span class="line">	return minnum;</span><br><span class="line">&#125;</span><br><span class="line">void Select(HuffmanTreeNode * &amp;tree,int k ,int &amp; i1,int &amp; i2)&#123;</span><br><span class="line">	i1=min(tree,k);</span><br><span class="line">	i2=min(tree,k);</span><br><span class="line">&#125;</span><br><span class="line">void HaffmanTree(HuffmanTreeNode * &amp; tree,int w[],int n)&#123;</span><br><span class="line">	for(int i=0;i&lt;2*n-1;i++)</span><br><span class="line">	&#123;</span><br><span class="line">		tree[i].parent=-1;</span><br><span class="line">		tree[i].lchild=-1;</span><br><span class="line">		tree[i].rchild=-1;</span><br><span class="line">	&#125;</span><br><span class="line">	for(int i=0;i&lt;n;i++)</span><br><span class="line">	tree[i].weight=w[i];</span><br><span class="line">	int i1,i2;</span><br><span class="line">	for(int k=n;k&lt;2*n-1;k++)</span><br><span class="line">	&#123;</span><br><span class="line">		Select(tree,k,i1,i2);//前K个找最小和第二小 </span><br><span class="line">		tree[k].weight=tree[i1].weight+tree[i2].weight;</span><br><span class="line">		tree[i1].parent=k;</span><br><span class="line">		tree[i2].parent=k;</span><br><span class="line">		tree[k].lchild=i1;</span><br><span class="line">		tree[k].rchild=i2;</span><br><span class="line">	&#125;</span><br><span class="line">	cout&lt;&lt;&quot;建哈夫曼树成功:\n&quot;;</span><br><span class="line">	for (int i=0; i&lt;2*n-1; i++) &#123;</span><br><span class="line">		cout&lt;&lt;tree[i].weight&lt;&lt;&quot; &quot;&lt;&lt;tree[i].parent&lt;&lt;&quot; &quot;&lt;&lt;tree[i].lchild&lt;&lt;&quot; &quot;&lt;&lt;tree[i].rchild&lt;&lt;endl;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">void ShowHaffmanCoding(HuffmanTreeNode* tree,int n)&#123;</span><br><span class="line">	int w=2*n-1;</span><br><span class="line">	vector&lt;stack &lt;char&gt; &gt;HuffmanCode;</span><br><span class="line">	stack&lt;char&gt;temp;</span><br><span class="line">	cout&lt;&lt;&quot;debug1&quot;&lt;&lt;endl;</span><br><span class="line">	//从结点开始找双亲</span><br><span class="line">	for(int i=0;i&lt;n;i++)&#123;</span><br><span class="line">			cout&lt;&lt;&quot;debug2&quot;&lt;&lt;endl;</span><br><span class="line">		int j=i;</span><br><span class="line">		int parent= tree[i].parent;//找到双亲</span><br><span class="line">		while(parent!=-1)</span><br><span class="line">		&#123; </span><br><span class="line">			if(tree[parent].lchild==j) temp.push(&#x27;0&#x27;);//如果是左孩子</span><br><span class="line">			else temp.push(&#x27;1&#x27;);//右孩子</span><br><span class="line">			int j=parent;</span><br><span class="line">			parent=tree[j].parent;//直到根结点结束 </span><br><span class="line">		 &#125; </span><br><span class="line">		 HuffmanCode.push_back(temp);</span><br><span class="line">		 while(!temp.empty()) temp.pop();</span><br><span class="line">	&#125; </span><br><span class="line">	for(int i=0;i&lt;n;i++)</span><br><span class="line">	&#123;</span><br><span class="line">		cout&lt;&lt;&quot;第&quot;&lt;&lt;i+1&lt;&lt;&quot;个数的权值为 : &quot;&lt;&lt;tree[i].weight&lt;&lt;&quot; 编码为： &quot;;</span><br><span class="line">		while(!HuffmanCode[i].empty())</span><br><span class="line">		&#123;</span><br><span class="line">			cout&lt;&lt;HuffmanCode[i].top();</span><br><span class="line">			HuffmanCode[i].pop();</span><br><span class="line">		 &#125; </span><br><span class="line">		 cout&lt;&lt;endl;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">int main()&#123;</span><br><span class="line">	cout&lt;&lt;&quot;请输入权值个数n\n&quot;;</span><br><span class="line">	int n=0;</span><br><span class="line">	cin&gt;&gt;n;</span><br><span class="line">	int m=2*n-1;</span><br><span class="line">	HuffmanTreeNode * tree=(HuffmanTreeNode *)malloc(sizeof(HuffmanTreeNode)*m);</span><br><span class="line">	for(int i=0;i&lt;m;i++)&#123;</span><br><span class="line">		tree[i].weight=tree[i].parent=tree[i].lchild=tree[i].rchild=0;</span><br><span class="line">	&#125;</span><br><span class="line">	cout&lt;&lt;&quot;请输入权值: \n&quot;;</span><br><span class="line">	int w[n];</span><br><span class="line">	for(int i=0;i&lt;n;i++)</span><br><span class="line">	cin&gt;&gt;w[i];</span><br><span class="line">	HaffmanTree(tree,w,n);</span><br><span class="line">	ShowHaffmanCoding(tree,n);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>计算机网络自顶向下-无线网络和移动网络</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">计算机网络自顶向下-无线网络和移动网络</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2019/03/18/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">计算机网络自顶向下-无线网络和移动网络</h1>
+          
+            <div class="article-meta">2019-03-18</div>
+          
+        </div>
+        <article class="markdown">
+          <h3 id="一、概述："><a href="#一、概述：" class="headerlink" title="一、概述："></a>一、概述：</h3><p>这篇文章主要是讨论无线网络和移动网络即我们一般所说的WiFi和手机网络.主要分为4个部分<br>第一部分引言主要大致的描述一下无线网络和移动网络的特点以及和有限网络的区别<br>第二部分讨论WiFi<br>第三部分讨论蜂窝网络.由于有线网络和和无线网络的最大区别在于无线网络可以移动而且需要保持网络的连接<br>第四部分会讨论无线网络的移动管理.</p>
+<span id="more"></span>
+
+
+<h4 id="名词简介："><a href="#名词简介：" class="headerlink" title="名词简介："></a>名词简介：</h4><ol>
+<li>无线主机（wireless host）。端系统。</li>
+<li>无线链路（wireless communication link）。主机连接基站或另一台主机。</li>
+<li>基站（base station）。主机和基站关联：主机位于基站的无线通信覆盖范围，且主机使用基站中继和更大的网络的数据。例如，蜂窝网中的 蜂窝塔（cell tower），Wifi中的接入点（access point）。</li>
+<li>网络基础设施。与主机通信的更大的网络。</li>
+</ol>
+<p>与基站关联的主机以基础设施模式（infrastructure mode）运行，传统网络服务（地址分配、路由选择）通过基站提供给主机。自组织网络（ad hoc network）中，主机不与基站相连，主机本身提供这些服务。<br>无线网络类型。标准：无线网分组跨越的无线跳、是否有基础设施。 </p>
+<ol>
+<li>单跳、基于基础设施。802.11、3G蜂窝网等。</li>
+<li>单跳、无基础设施。蓝牙、自组织模式的802.11</li>
+<li>多跳、基于基础设施。结点通过无线结点中继通信，连接到基站，如无线网状网络。</li>
+<li>多跳、无基础设施。移动自组织网络，包括车载自组织网络。</li>
+</ol>
+<h3 id="二、无线链路和网络特征"><a href="#二、无线链路和网络特征" class="headerlink" title="二、无线链路和网络特征"></a>二、无线链路和网络特征</h3><h4 id="2-1、与有限链路的区别"><a href="#2-1、与有限链路的区别" class="headerlink" title="2.1、与有限链路的区别"></a>2.1、与有限链路的区别</h4><p>无线链路和有限链路最主要的区别如下:</p>
+<ol>
+<li>递减的信号强度:随着阻碍物和距离的增加,信号的强度会有相当大的损失</li>
+<li>来自其他源的干扰:无线信号会被其他源的无线信号干扰到,比如电磁炉</li>
+<li>多径传播:同一个信号可能会经过多种物质的反射从而在不同时间点传播的同一接收点中.</li>
+</ol>
+<h4 id="2-2、会产生的问题"><a href="#2-2、会产生的问题" class="headerlink" title="2.2、会产生的问题"></a>2.2、会产生的问题</h4><p>由于信号的减弱和障碍物的作用,所以无线链路通信会产生一些有线链路所没有的问题</p>
+<ol>
+<li>信噪比SNR:即信号和噪音的比值,用于衡量信号的优劣,值越高代表信号越好,相反,若太低,则表明噪声太多,信号质量差</li>
+<li>比特差错率BER:在无线链路的特性决定了传输的数据容易出现比特差错,BER用于衡量这一参数</li>
+<li>隐藏终端问题:基站是需要多路访问协议即MAC协议来控制多个无线主机向此基站发送的数据,通常采用CSMA(码多分址),其原理已经介绍过了,主要就是将每一个比特乘以一个特殊的编码在接收端再次解码,通过不同的无线站点分配不同的编码以解决碰撞的问题.原理如下图:</li>
+</ol>
+<p><img src="/2019/03/18/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/1.png"><br>而无线链路的情况不同于有线链路,它很有可能是检测不到其他无线主机正在想基站发送数据的,比如其中一台无线主机被大山挡住,导致另一台主机不能接收到此主机正在发送数据的信号,再比如说,随着位置的增加,可能会有基站可以接受到两台无线主机信号而两台无线主机之间不能接受到彼此的信号的情况.这就被称为隐藏终端问题.如下图:<br><img src="/2019/03/18/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/2.png"></p>
+<h3 id="三、Wifi-802-11无线LAN"><a href="#三、Wifi-802-11无线LAN" class="headerlink" title="三、Wifi(802.11无线LAN)"></a>三、Wifi(802.11无线LAN)</h3><h4 id="3-1、分类"><a href="#3-1、分类" class="headerlink" title="3.1、分类"></a>3.1、分类</h4><p>无线网络所使用的WiFi协议有许多种,他们分别有不同的频率范围和传输速度,如以下三种协议<br><img src="/2019/03/18/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/3.png"></p>
+<h4 id="3-2、组成"><a href="#3-2、组成" class="headerlink" title="3.2、组成"></a>3.2、组成</h4><p>无线网络主要由两部分组成,一是基本服务集BSS,包括无线站点和接入点AP,他们都具有唯一的MAC地址,二是分组交换机,BSS就是通过分组交换机与因特网连接.如下图:</p>
+<p><img src="/2019/03/18/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/4.png"></p>
+<h4 id="3-3、信道与关联"><a href="#3-3、信道与关联" class="headerlink" title="3.3、信道与关联"></a>3.3、信道与关联</h4><p>那么无线站点是如何通过上图中的体系结构连接如互联网的呢?<br>每个基本服务集BSS都拥有一个SSID,用于唯一标识,WiFi协议信道的频率可以分为11个部分,他们互相之间有重叠,只有1,6,11号信道之间是完全没有重叠的,所以可以在一个物理网络中使用三个信道,每个基站都有自己的信号范围,那么我们定义WiFi丛林的概念,即无线站点在任意物质可以接收到多个基站所发出的信号,那么在这种情况之下,无线站点如何同基站关联的?<br>主要有两种方法:</p>
+<ol>
+<li>被动扫描:每个接入点AP都会周期性的发送信标帧,信标帧中包括该AP的SSID和MAC地址,无线站点为了关联AP,就会扫描11 个信道,然后选择一个与之关联</li>
+<li>主动扫描:无线主机会向所有在其范围内的AP广播探测帧,AP接收到探测帧后会发送探测响应帧给无线站点,然后无线站点和AP关联</li>
+</ol>
+<p><img src="/2019/03/18/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/5.png"></p>
+<h4 id="3-4、MAC协议"><a href="#3-4、MAC协议" class="headerlink" title="3.4、MAC协议"></a>3.4、MAC协议</h4><p>我们在无线链路可能会遇到的问题中已经描述过隐藏终端问题,WiFi有时如何解决碰撞和处理隐藏终端问题的呢?<br> WiFi所使用的MAC协议叫做CSMA&#x2F;CA,CSMA即是载波侦听,其原理同以前讲述的一样,他会检测其他无线站点是否正在发送数据,如果是则停止传输,知道信道空闲.但是和以前不同的是,CA是碰撞避免,而不是CD碰转检测,因为CD完全不适用于无线链路,其一,两个无线站点之间如果需要互相检测到对方的发送信号所需的成本太大,其二,即使可以互相检测到信号,也会因为隐藏终端问题导致大量的重传.</p>
+<p>碰撞避免CA的原理是:</p>
+<ol>
+<li>在发送信号之前,即侦听到信道空闲时,会在一个分布式帧间间隔DIFS的短时间后发送数据帧.</li>
+<li>若信道繁忙,会选取一个随机回退值,每当侦听到信道空闲时此回退值就会减小,信道繁忙则会冻结回退值,当回退值为0时,发送数据帧</li>
+<li>发送数据帧并等待确认,目的地则会在等待一个被称为短帧间间隔SIFS的短时间后发送确认帧.</li>
+<li>如果源收到确认帧,表示被正确接收了,需要发送其他帧会从第二部开始.如果未收到确认,进入第二部的回退阶段,并从更大的范围选取回退值</li>
+</ol>
+<p><img src="/2019/03/18/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/6.png"><br> 而为了解决隐藏终端问题,在上述的基础上,源会在传输数据帧之前发送一个请求发送控制帧RTS,其中包含了此次传输需要的总时间,目的地在接收到RTS后等待SIFS的短时间,会广播一个允许发送控制帧CTS,CTS的目的是给发送方明确的发送许可及禁止其他无线站点在预约的时间内发送数据帧,但是这种处理方式会消耗信道资源,所以只有需要交换长数据时才会使用.<br><img src="/2019/03/18/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/7.png"></p>
+<h4 id="3-5、帧结构"><a href="#3-5、帧结构" class="headerlink" title="3.5、帧结构"></a>3.5、帧结构</h4><p>802.11协议(WiFi)所使用的帧的结构如下图所示:<br><img src="/2019/03/18/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/8.png"></p>
+<ol>
+<li>帧控制:包含许多子字段,类型和子类型用于区分管理,RTS,CTS,ACK和数据帧,WEP用于知识是否加密,to,from定义不同地址字段的含义等等,不做具体描述</li>
+<li>持续期:表示预约信道的时间,即在上文中描述的如何处理隐藏终端问题的预约时间</li>
+<li>地址一:源MAC地址</li>
+<li>地址二:接收该帧的设备的MAC地址</li>
+<li>地址三:AP所连的交换机的MAC地址,是基本服务集BSS和因特网连接的关键</li>
+<li>序号控制:用于区分帧的重传和新的发送</li>
+<li>地址四:用于自组织间的MAC地址</li>
+<li>有效载荷:存放数据</li>
+<li>CRC:循环冗余检测字段</li>
+</ol>
+<h4 id="3-6、高级特色"><a href="#3-6、高级特色" class="headerlink" title="3.6、高级特色"></a>3.6、高级特色</h4><p> 802.11协议可以实现一些高级的功能,比如速率适应,无线站点会要求越来越多的带宽,知道接入点AP说”够了”,功率管理可以让无线 站点向接入点AP发送一个帧以设置一个定时器,无线站点进入睡眠模式,知道接入点在发送下一个信标帧时,唤醒该节点.</p>
+<h3 id="四、蜂窝因特网"><a href="#四、蜂窝因特网" class="headerlink" title="四、蜂窝因特网"></a>四、蜂窝因特网</h3><h4 id="4-1、2G"><a href="#4-1、2G" class="headerlink" title="4.1、2G"></a>4.1、2G</h4><p>以下是2G网络的组成,统称为GSM蜂窝网体系:<br><img src="/2019/03/18/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/9.png"></p>
+<ol>
+<li>基站控制器BSC:连接几十个基站,执行寻呼,移动用户的切换</li>
+<li>移动交换中心MSC:用于用户鉴别和账户管理,一级呼叫建立和切换</li>
+<li>网关MSC:与更大的网络相连</li>
+</ol>
+<h4 id="4-2、3G"><a href="#4-2、3G" class="headerlink" title="4.2、3G"></a>4.2、3G</h4><p><img src="/2019/03/18/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/10.png"><br>在2G的基础上,将BSC换为了RNC,并添加了一些新设备</p>
+<h3 id="五、802-15协议"><a href="#五、802-15协议" class="headerlink" title="五、802.15协议"></a>五、802.15协议</h3><p>除了WiFi和蜂窝网络之外,还有其他的无线网络,这里只做极其简单的介绍,</p>
+<ol>
+<li>蓝牙:使用802.15.1协议,以TDM方式工作于无需2.4GHz无线电波段,存在主设备和从设备之分,使用自组织模式,形成一个皮可网.</li>
+</ol>
+<p><img src="/2019/03/18/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/11.png"></p>
+<ol start="2">
+<li>ZigBee:多个简化功能设备在单个全功能设备控制下运行.</li>
+</ol>
+<h3 id="最后给一张思维导图"><a href="#最后给一张思维导图" class="headerlink" title="最后给一张思维导图"></a>最后给一张思维导图</h3><p><img src="/2019/03/18/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%BD%91%E7%BB%9C/daotu.png"></p>
+
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

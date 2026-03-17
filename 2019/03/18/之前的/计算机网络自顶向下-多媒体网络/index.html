@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>计算机网络自顶向下-多媒体网络</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">计算机网络自顶向下-多媒体网络</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2019/03/18/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E5%A4%9A%E5%AA%92%E4%BD%93%E7%BD%91%E7%BB%9C/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">计算机网络自顶向下-多媒体网络</h1>
+          
+            <div class="article-meta">2019-03-18</div>
+          
+        </div>
+        <article class="markdown">
+          <h3 id="一、多媒体网络应用"><a href="#一、多媒体网络应用" class="headerlink" title="一、多媒体网络应用"></a>一、多媒体网络应用</h3><h4 id="1-1视频的性质"><a href="#1-1视频的性质" class="headerlink" title="1.1视频的性质"></a>1.1视频的性质</h4><ol>
+<li>高比特率:视频最主要的特点就是极大地数据量,由此产生的高比特率的传输</li>
+<li>可压缩:为了稍微减少传输的数据量,由此产生了压缩技术,比如会对空白区域进行处理或者由于视频一般具有较多的重复,由此来压缩视频</li>
+<li>多版本:在服务器上放置不同版本不同质量的文件.</li>
+</ol>
+<h4 id="1-2音频的性质"><a href="#1-2音频的性质" class="headerlink" title="1.2音频的性质"></a>1.2音频的性质</h4><ol>
+<li>音频一般是由专用的采样工具先采集样本,在转化为固定数量的量化值进行传输,接收方再解码,这样的技术被称为脉冲编码调制.</li>
+<li>同视频一样,音频也可以进行压缩,MP3就是比较常用的一种技术.</li>
+</ol>
+<span id="more"></span>
+
+
+
+<h4 id="1-3多媒体应用的分类"><a href="#1-3多媒体应用的分类" class="headerlink" title="1.3多媒体应用的分类"></a>1.3多媒体应用的分类</h4><p>多媒体应用主要可以分为以下几类:</p>
+<ol>
+<li>流式存储视频&#x2F;音频:流是一种在选定播放时间点后可以直接播放而不用储存所有的数据再进行播放的一种技术.所以流式视频&#x2F;音频可以进行暂停,重新定位等操作.而为了使视频&#x2F;音频连续的播放,接收方必须不停接收数据,否则就会暂停播放.比如优酷,bilibili提供的一些非直播的视频.</li>
+<li>会话式视频&#x2F;音频:不同于流式存储视频&#x2F;音频,这种方式是即时播放的.所以对时延的敏感性很高,有允许一些丢包,一般来说可以忍受.比如电话语音</li>
+<li>流式实况视频&#x2F;音频:应用的技术同流式存储视频&#x2F;音频是一样的,只不过更加的注重实时播放,类似于电视直播那样,比如直播.</li>
+</ol>
+<h3 id="二-流式存储视频"><a href="#二-流式存储视频" class="headerlink" title="二.流式存储视频"></a>二.流式存储视频</h3><p>流式存储视频同音频的区别不大,主要是比特率大小的区别,介绍流式存储技术就用视频来介绍.每个视频都被放置在服务器上,并具有特定的URL地址.客户端一般都通过URL来请求特定的视频.而流式存储视频又分为三种:UDP流,HTTP流,适应性DASH流,三者具有相同的特性,他们都会在客户端拥有缓存以对抗延迟和丢包,当然也具有一些不同的特点.以下做简要的描述</p>
+<h4 id="2-1、UDP流"><a href="#2-1、UDP流" class="headerlink" title="2.1、UDP流"></a>2.1、UDP流</h4><p>UDP流即使用UDP协议来传输视频数据,它具有的特点就是实时性,不像HTTP协议会被拥塞控制功能所控制速度.可以以最大的速度传输.也因为此,UDP流容易受到带宽变化所带来的影响.此外,使用UDP流需要额外的控制连接来控制视频的暂停,重定位等功能.由此也会给服务器带来额外的巨大消耗.最后,大量的UDP传输可能会被防火墙干掉.</p>
+<h4 id="2-2、HTTP流"><a href="#2-2、HTTP流" class="headerlink" title="2.2、HTTP流"></a>2.2、HTTP流</h4><p>HTTP流则不同于UDP流,主要使用HTTP协议.第一个特点即使拥有视频预取机制,即比如当前播放的视频需要1k的带宽,但是服务器传输时却回传输更大的带宽(如果线路允许的话),以此在客户端更多的缓存数据,以此对抗网速的变化或者拥塞控制等因素.</p>
+<p>HTTP流也不仅拥有客户端的应用缓存,还拥有接收缓存,和发送缓存,发送缓存在服务器中.以下是概念图:<br><img src="/2019/03/18/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E5%A4%9A%E5%AA%92%E4%BD%93%E7%BD%91%E7%BB%9C/2.png"><br>黑色的代表已使用的缓存空间.当应用缓存存储满时,他会立即通知接收缓存,接着通知发送缓存,此时服务器变不会再发送数据了,相反,如果应用缓存缓存的数据别使用完了,即当前已经没有可以播放的缓存是,就会陷入暂停,直到接收到一定数量的缓存后,才可以继续播放.<br>HTTP流也具有重定位的功能,这是通过对视频文件指定固定地址的字节来实现的.</p>
+<h4 id="2-3、适应性DASH流"><a href="#2-3、适应性DASH流" class="headerlink" title="2.3、适应性DASH流"></a>2.3、适应性DASH流</h4><p>因为各个用户的带宽大小不同,所以会在服务器上放置多种不同质量的视频文件,和一个告示文件,告示文件为每个视频映射一个URL地址,即可让用户得到不同质量的视频,</p>
+<h4 id="2-4、内容分发网CDN"><a href="#2-4、内容分发网CDN" class="headerlink" title="2.4、内容分发网CDN"></a>2.4、内容分发网CDN</h4><p>以上即使流式存数视频技术的不同类型,但是,视频都会被放置在服务器上,内容分发网即使管理这些视频的网络.<br>一般的,这些服务器都是几个及其巨大的服务器集群.他们会邀请ISP接入以使用户获取希望获取的数据.<br>那么CDN是如何管理如此大量的视频的呢?CDN会借用DNS来截获和重定向请求.以下是步骤图:<br><img src="/2019/03/18/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E5%A4%9A%E5%AA%92%E4%BD%93%E7%BD%91%E7%BB%9C/3.png"></p>
+<p>首先,用户进入视频网站,比如优酷等等,接着发送报文指定希望获取的视频,DNS服务器则会请求权威DNS服务器以获取储存视频的服务器,接着便请求此服务器以获得视频地址,最后,从指定服务器获取希望取得的视频.</p>
+<h3 id="三、IP语音"><a href="#三、IP语音" class="headerlink" title="三、IP语音"></a>三、IP语音</h3><h4 id="3-1-IP语音遇到问题"><a href="#3-1-IP语音遇到问题" class="headerlink" title="3.1 IP语音遇到问题"></a>3.1 IP语音遇到问题</h4><p>    前文已经讲过,由于会话式使用UDP(基本上使用UDP,有个例)来传输数据,所以会遇到丢包的问题,以及长时间的端到端时延,所以,如果在规定是时间内没有接受到包,此包就会被永远丢弃,而不再使用.</p>
+<p>    IP语音还会遇到时延抖动的问题,即即使里在服务器,两个包是连续发送的,但是在接收方,他们可能是不连续到达的(路径不同,排队等因素),如果不做处理,就会播放出难以理解的内容.在接收方和发送方都可以进行一定的处理</p>
+<p>接收方:<br>可以固定播放时延,即在固定的时间后播放此数据.发送的包中添加发送时的时间戳,接收方接收后,如果此时已在固定播放的时延之后,此包就会被丢弃,不在播放,</p>
+<p>发送方:<br>我们可以在发送前对包进行前向纠错EFC,比如把同一数据放入连个连续的包中,这样,即使丢了一个包,也可以通过另一包来恢复数据,或者在发送高质量数据的同时,在发送一段低质量的数据,当高质量包丢失或时延过高是,使用低质量的数据.也可以使用交织技术,主要原理是打乱包中数据的排序,这样,丢失了某个包后,因为是间歇性的丢失,因此对使用的影响较小</p>
+<h4 id="3-2、RTP协议"><a href="#3-2、RTP协议" class="headerlink" title="3.2、RTP协议"></a>3.2、RTP协议</h4><p>即VoIP所使用的协议,一般运行在UDP协议之上.主要功能就是进行会话式语音&#x2F;视频的传输.下图是报文结构:</p>
+<p><img src="/2019/03/18/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E5%A4%9A%E5%AA%92%E4%BD%93%E7%BD%91%E7%BB%9C/4.png">
+              </p>
+<ol>
+<li>有效载荷类型:编码类型,比如音频可能就是PCM.</li>
+<li>序号:用于检测丢包和恢复分组</li>
+<li>时间戳:用于消除时延抖动</li>
+<li>同步源标识符SSRC;表示了RTP流的源,一般来说,RTP会话中的每个流都有不同的SSRC值</li>
+</ol>
+<h4 id="3-3、会话发起协议SIP"><a href="#3-3、会话发起协议SIP" class="headerlink" title="3.3、会话发起协议SIP"></a>3.3、会话发起协议SIP</h4><p>主要功能是提供在呼叫者和被呼叫者经IP网络之间建立连接的功能.,连接的建立类似于三次握手,如下图:<br><img src="/2019/03/18/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E5%A4%9A%E5%AA%92%E4%BD%93%E7%BD%91%E7%BB%9C/5.png"></p>
+<p>SIP报文如下:</p>
+<p><img src="/2019/03/18/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E5%A4%9A%E5%AA%92%E4%BD%93%E7%BD%91%E7%BB%9C/6.png"></p>
+<p>类似于SMTP协议,也有from和to首部行,Call-ID唯一标志此呼叫,也有描述类型和大小的首部行.</p>
+<p>SIP地址不仅仅可以是如上图中的<a href="mailto:&#x62;&#x6f;&#x62;&#x40;&#x78;&#120;&#46;&#120;&#x78;&#x2e;&#x78;&#x78;&#46;&#x78;&#120;">&#x62;&#x6f;&#x62;&#x40;&#x78;&#120;&#46;&#120;&#x78;&#x2e;&#x78;&#x78;&#46;&#x78;&#120;</a>,也可以邮箱地址或者手机号,这可以通过使用特殊的设备实现.<br>因为通过SIP地址来建立连接,而IP地址有可能是动态变化的,所以就需要使用到SIP代理和SIP注册器.</p>
+<p>每个SIP用户都用相关联的SIP注册器,每当用户切换到新设别时,就会想SIP注册器注册新的IP地址.下图就是其作用机制:</p>
+<p><img src="/2019/03/18/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E5%A4%9A%E5%AA%92%E4%BD%93%E7%BD%91%E7%BB%9C/7.png"><br>呼叫者发送报文该SIP代理,指明希望呼叫的对象,SIP带了则向SIP注册器发送报文,说明希望获取的被呼叫者的SIP地址所对应的IP地址,如果此SIP注册器没有,就会返回报文,说那个SIP注册器拥有此映射,接着,SIP代理访问另一个SIP注册器,另一个SIP注册器接收到报文后,通知被呼叫的客户,别呼叫者通过以上链路返回一个报文,此时呼叫者和被呼叫者之就建立起了一次呼叫了.</p>
+<h3 id="本章思维导图"><a href="#本章思维导图" class="headerlink" title="本章思维导图"></a>本章思维导图</h3><p><img src="/2019/03/18/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E5%A4%9A%E5%AA%92%E4%BD%93%E7%BD%91%E7%BB%9C/1.png"></p>
+
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

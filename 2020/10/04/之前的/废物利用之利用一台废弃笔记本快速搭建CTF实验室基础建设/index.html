@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>废物利用之利用一台废弃笔记本快速搭建CTF实验室基础建设</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">废物利用之利用一台废弃笔记本快速搭建CTF实验室基础建设</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2020/10/04/%E4%B9%8B%E5%89%8D%E7%9A%84/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">废物利用之利用一台废弃笔记本快速搭建CTF实验室基础建设</h1>
+          
+            <div class="article-meta">2020-10-04</div>
+          
+        </div>
+        <article class="markdown">
+          <p>国庆返校了，感觉这是最后一段时间在学校，发现实验室有一台废弃的笔记本(4G内存，240G固态，废物U),丢了怪可惜的，就用这个笔记本来搭建一套基础设施吧。最后成效是靶场和所有题目穿透出网</p>
+<span id="more"></span>
+
+<p><img src="/2020/10/04/%E4%B9%8B%E5%89%8D%E7%9A%84/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/1.png"><br>内网服务有：共享网盘、共享协作文档、开源渗透靶场、sqlilabs、uploadlabs、xsslabs、w11scan基础指纹识别系统、awvs漏洞扫描系统等，反正白嫖开源项目就完了</p>
+<!-- toc -->
+
+<h3 id="一、制作系统"><a href="#一、制作系统" class="headerlink" title="一、制作系统"></a>一、制作系统</h3><p>必然是无图形界面的linux,安装也简单</p>
+<h4 id="1、下载镜像"><a href="#1、下载镜像" class="headerlink" title="1、下载镜像"></a>1、下载镜像</h4><p>我在<a target="_blank" rel="noopener" href="http://mirrors.ustc.edu.cn/ubuntu-releases/16.04/">http://mirrors.ustc.edu.cn/ubuntu-releases/16.04/</a>下载，下载ubuntu-16.04.7-server-amd64.is无图形界面就800m-900m</p>
+<h4 id="2-、制作系统"><a href="#2-、制作系统" class="headerlink" title="2 、制作系统"></a>2 、制作系统</h4><p>我直接使用软碟通制作启动盘，简单快捷<a target="_blank" rel="noopener" href="https://cn.ultraiso.net/xiazai.html">https://cn.ultraiso.net/xiazai.html</a>，写入硬盘映像即可</p>
+<h4 id="3、安装系统"><a href="#3、安装系统" class="headerlink" title="3、安装系统"></a>3、安装系统</h4><p>毕竟是废弃的笔记本，那就直接使用全磁盘安装</p>
+<h4 id="4、遇到的一些问题"><a href="#4、遇到的一些问题" class="headerlink" title="4、遇到的一些问题"></a>4、遇到的一些问题</h4><p>首先是网络问题，刚安装完的系统，为了在内网稳定还是需要配置稳定的ip<br>首先查看自己的网卡名字<code>ifconfig -a</code>,发现2个，一个是eno1 一个是lo,我们是要选择eno1来配置网络，修改<code>/etc/network/interfaces</code>，添加网络,这里路由器分配192.168.199.1段，我们给他192.168.199.136的ip</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># This file describes the network interfaces available on your system</span><br><span class="line"># and how to activate them. For more information, see interfaces(5).</span><br><span class="line"></span><br><span class="line">source /etc/network/interfaces.d/*</span><br><span class="line"></span><br><span class="line"># The loopback network interface</span><br><span class="line">auto eno1</span><br><span class="line">iface eno1 inet static</span><br><span class="line">address 192.168.199.136</span><br><span class="line">netmask 255.255.255.0</span><br><span class="line">gateway 192.168.199.1</span><br><span class="line">dns-nameservers 192.168.199.1</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>还需要修改dns,<code>/etc/resolv.conf </code>,指定网关就行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># Dynamic resolv.conf(5) file for glibc resolver(3) generated by resolvconf(8)</span><br><span class="line">nameserver 192.168.199.1</span><br><span class="line">#     DO NOT EDIT THIS FILE BY HAND -- YOUR CHANGES WILL BE OVERWRITTEN</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>然后更新网络配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo ifup eth0</span><br><span class="line">sudo ifdown eth0</span><br><span class="line">或者</span><br><span class="line">/etc/init.d/networking restart</span><br></pre></td></tr></table></figure>
+<p>修改语言</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">root@root:~#cat /etc/default/locale</span><br><span class="line">#  File generated by update-locale</span><br><span class="line">LANG=&quot;en_US.UTF-8&quot;</span><br><span class="line">LANGUAGE=&quot;en_US:en&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>然后就可以安装ssh，git</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">apt-get install openssh-server</span><br><span class="line">apt-get install ssh</span><br><span class="line">sudo apt install git</span><br></pre></td></tr></table></figure>
+<p>然后就可以使用xshell自己的笔记本连操作</p>
+<p>linux还需要设置一下关盖等不休眠不操作,总不可能让笔记本一直打开<br><code>vim /etc/systemd/logind.conf</code><br>核心配置为ignore</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">24	HandleLidSwitch=ignore</span><br><span class="line">25	HandleLidSwitchDocked=ignore</span><br></pre></td></tr></table></figure>
+
+<h3 id="二、搭建CTF平台"><a href="#二、搭建CTF平台" class="headerlink" title="二、搭建CTF平台"></a>二、搭建CTF平台</h3><p>我们选择的是<a target="_blank" rel="noopener" href="https://h1ve.dao.ge/">H1ve</a>在内网搭建，然后使用<a target="_blank" rel="noopener" href="https://github.com/fatedier/frp">frp</a>穿透服务</p>
+<p><img src="/2020/10/04/%E4%B9%8B%E5%89%8D%E7%9A%84/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/2.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">安装最新的docker</span><br><span class="line">wget -qO- https://get.docker.com/ | sh</span><br><span class="line"></span><br><span class="line">安装完会有一个提示，按照提示去执行</span><br><span class="line">sudo usermod -aG docker ubuntu</span><br></pre></td></tr></table></figure>
+<p>命令执行完成之后，执行 docker verison 来查看是否安装完成。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo curl -L https://github.com/docker/compose/releases/download/1.25.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose</span><br><span class="line"></span><br><span class="line">sudo chmod +x /usr/local/bin/docker-compose</span><br></pre></td></tr></table></figure>
+<p>同样的，命令执行完成之后，执行 docker-compose verison 来查看是否安装完成。<br>换源</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/docker/daemon.json</span><br></pre></td></tr></table></figure>
+<p>将daemon.json的值改为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	&quot;registry-mirrors&quot;: [&quot;https://docker.mirrors.ustc.edu.cn&quot;,&quot;https://mirror.ccs.tencentyun.com&quot;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/joyny/p/10486739.html">（这里还是用一下阿里云申请的镜像快很多）</a><br>安装H1ve,这里改了改源码的ui，不重要</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">git clone https://github.com/D0g3-Lab/H1ve.git</span><br><span class="line">cd H1ve</span><br><span class="line">docker-compose -f single.yml up</span><br><span class="line">#常用docker命令</span><br><span class="line">启动服务：</span><br><span class="line">docker-compose -f single.yml up -d</span><br><span class="line">停止服务：</span><br><span class="line">docker-compose -f single.yml stop</span><br></pre></td></tr></table></figure>
+<h3 id="三、配置frp"><a href="#三、配置frp" class="headerlink" title="三、配置frp"></a>三、配置frp</h3><h4 id="1、平台映射"><a href="#1、平台映射" class="headerlink" title="1、平台映射"></a>1、平台映射</h4><p>我们内网是8000，也就找了一台学生机来穿透出去，选择穿透好处是迁移方便以及废弃笔记本虽然废弃，也比服务器性能好多了（学生机就是穷）。<br>我们也直接在内网服务器上配置frp客户端,这里平台和ssh都映射一下，方便配置<br>frpc.ini</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr = &#123;&#123;公网ip&#125;&#125;</span><br><span class="line">server_port = 7000</span><br><span class="line"></span><br><span class="line">[tcp]</span><br><span class="line">type = tcp</span><br><span class="line">local_ip = 127.0.0.1</span><br><span class="line">local_port = 8000</span><br><span class="line">remote_port = 8000</span><br><span class="line"></span><br><span class="line">[real_ssh]</span><br><span class="line">type = tcp</span><br><span class="line">local_ip = 127.0.0.1</span><br><span class="line">local_port = 22</span><br><span class="line">remote_port = 2222</span><br></pre></td></tr></table></figure>
+<p>公网只需要配置frps.ini</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">bind_port = 7000</span><br></pre></td></tr></table></figure>
+<p>先运行公网的，然后运行内网的frpc，公网就可以访问到</p>
+<h4 id="2、题目映射，目前好像还没有全端口映射的，我想着把10001-10099的99个ip先映射"><a href="#2、题目映射，目前好像还没有全端口映射的，我想着把10001-10099的99个ip先映射" class="headerlink" title="2、题目映射，目前好像还没有全端口映射的，我想着把10001-10099的99个ip先映射"></a>2、题目映射，目前好像还没有全端口映射的，我想着把10001-10099的99个ip先映射</h4><p>其实多写一些配置就行，这里用脚本<br><code>python build_frp.py  &gt; frpc.ini</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">print(&quot;[common]\nserver_addr = XXX.XX.XXX.XX\nserver_port = 7002\n&quot;)</span><br><span class="line">#print(&quot;[real_ssh]\ntype = tcp\nlocal_ip = 127.0.0.1\nlocal_port = 22\nremote_port = 2222\n&quot;)</span><br><span class="line">for i in range(1,10):</span><br><span class="line">	print(&quot;[ssh2&quot;+str(i)+&quot;]\ntype = tcp\nlocal_ip = 127.0.0.1\nlocal_port = 1000&quot;+str(i)+&quot;\nremote_port = 1000&quot;+str(i)+&quot;\n&quot;)</span><br><span class="line">for i in range(10,99):</span><br><span class="line">	print(&quot;[ssh2&quot;+str(i)+&quot;]\ntype = tcp\nlocal_ip = 127.0.0.1\nlocal_port = 100&quot;+str(i)+&quot;\nremote_port = 100&quot;+str(i)+&quot;\n&quot;)</span><br></pre></td></tr></table></figure>
+
+<h4 id="3、我错了，真可以多端口range映射"><a href="#3、我错了，真可以多端口range映射" class="headerlink" title="3、我错了，真可以多端口range映射"></a>3、我错了，真可以多端口range映射</h4><p>参阅<a target="_blank" rel="noopener" href="https://github.com/fatedier/frp#range-ports-mapping">https://github.com/fatedier/frp#range-ports-mapping</a><br>Proxy with names that start with range: will support mapping range ports.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># frpc.ini</span><br><span class="line">[range:test_tcp]</span><br><span class="line">type = tcp</span><br><span class="line">local_ip = 127.0.0.1</span><br><span class="line">local_port = 6000-6006,6007</span><br><span class="line">remote_port = 6000-6006,6007</span><br></pre></td></tr></table></figure>
+<p>frpc will generate 8 proxies like test_tcp_0, test_tcp_1, …, test_tcp_7.<br>顺便把22也映射一下备用</p>
+<h3 id="四-、快速建设其他服务"><a href="#四-、快速建设其他服务" class="headerlink" title="四 、快速建设其他服务"></a>四 、快速建设其他服务</h3><p>网盘这样的丢内网就行、就配置穿透了</p>
+<h4 id="1、内网网盘"><a href="#1、内网网盘" class="headerlink" title="1、内网网盘"></a>1、内网网盘</h4><p>共享一下文件资源等<br><code>docker run -d -p 1880:80 owncloud:10.0</code><br><img src="/2020/10/04/%E4%B9%8B%E5%89%8D%E7%9A%84/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/3.png"></p>
+<h4 id="2、内网hackmd"><a href="#2、内网hackmd" class="headerlink" title="2、内网hackmd"></a>2、内网hackmd</h4><p>协作文档，下次在实验室打比赛啥的，或者记录一下内网文档啥的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/hackmdio/docker-hackmd.git</span><br><span class="line">cd docker-hackmd/</span><br><span class="line">docker-compose up</span><br></pre></td></tr></table></figure>
+<p>然后3000端口访问<br><img src="/2020/10/04/%E4%B9%8B%E5%89%8D%E7%9A%84/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/4.png"></p>
+<h4 id="3、内网webug安全靶场"><a href="#3、内网webug安全靶场" class="headerlink" title="3、内网webug安全靶场"></a>3、内网webug安全靶场</h4><p>webug是一个简单靶场，开源免费用起来方便</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull area39/webug</span><br><span class="line">docker run -d -p 1882:80 area39/webug</span><br></pre></td></tr></table></figure>
+<p>默认密码<br>admin<br>admin<br><img src="/2020/10/04/%E4%B9%8B%E5%89%8D%E7%9A%84/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/5.png"></p>
+<h4 id="4、内网DVWA"><a href="#4、内网DVWA" class="headerlink" title="4、内网DVWA"></a>4、内网DVWA</h4><p>DVWA靶场</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull vulnerables/web-dvwa</span><br><span class="line">docker run -d -p 1884:3443 vulnerables/web-dvwa</span><br></pre></td></tr></table></figure>
+<p>默认密码<br>admin<br>password<br><img src="/2020/10/04/%E4%B9%8B%E5%89%8D%E7%9A%84/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/6.png"></p>
+<h4 id="5、awvs"><a href="#5、awvs" class="headerlink" title="5、awvs"></a>5、awvs</h4><p>awvs简单漏扫用起来方便</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull secfa/docker-awvs</span><br><span class="line">docker run -d -p 1881:3443 secfa/docker-awvs</span><br></pre></td></tr></table></figure>
+<p>默认用户密码<br>username: <a href="mailto:&#x61;&#x64;&#109;&#x69;&#110;&#x40;&#x61;&#x64;&#x6d;&#105;&#x6e;&#x2e;&#x63;&#111;&#109;">&#x61;&#x64;&#109;&#x69;&#110;&#x40;&#x61;&#x64;&#x6d;&#105;&#x6e;&#x2e;&#x63;&#111;&#109;</a><br>password: Admin123<br><img src="/2020/10/04/%E4%B9%8B%E5%89%8D%E7%9A%84/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/7.png"></p>
+<h4 id="6、w11scan"><a href="#6、w11scan" class="headerlink" title="6、w11scan"></a>6、w11scan</h4><p><img src="/2020/10/04/%E4%B9%8B%E5%89%8D%E7%9A%84/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/8.png"><br>w11scan是一个开源指纹识别系统，用起来也挺舒服</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull boyhack/w11scan</span><br><span class="line">docker run -d -p 1883:8000 boyhack/w11scan:latest</span><br></pre></td></tr></table></figure>
+<p>默认密码<br>admin<br>w11scan</p>
+<h4 id="7、sqli-labs"><a href="#7、sqli-labs" class="headerlink" title="7、sqli-labs"></a>7、sqli-labs</h4><p><img src="/2020/10/04/%E4%B9%8B%E5%89%8D%E7%9A%84/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/9.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull acgpiano/sqli-labs</span><br><span class="line">docker run -d -p 1885:80 acgpiano/sqli-labs:latest</span><br></pre></td></tr></table></figure>
+
+<h4 id="8、upload-labs"><a href="#8、upload-labs" class="headerlink" title="8、upload-labs"></a>8、upload-labs</h4><p><img src="/2020/10/04/%E4%B9%8B%E5%89%8D%E7%9A%84/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/10.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull c0ny1/upload-labs  </span><br><span class="line">docker run -d -p 1886:80 c0ny1/upload-labs</span><br></pre></td></tr></table></figure>
+
+<h4 id="9、bwapp"><a href="#9、bwapp" class="headerlink" title="9、bwapp"></a>9、bwapp</h4><p><img src="/2020/10/04/%E4%B9%8B%E5%89%8D%E7%9A%84/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/11.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull raesene/bwapp</span><br><span class="line">docker run -d -p 1887:80 raesene/bwapp</span><br></pre></td></tr></table></figure>
+<p>默认账号密码<br>bee bug</p>
+<h4 id="10、webgoat-8-0"><a href="#10、webgoat-8-0" class="headerlink" title="10、webgoat-8.0"></a>10、webgoat-8.0</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull webgoat/webgoat-8.0</span><br><span class="line">docker run -d -p 1888:80 webgoat/webgoat-8.0</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/10/04/%E4%B9%8B%E5%89%8D%E7%9A%84/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/12.png"></p>
+<h4 id="11、XSS靶场"><a href="#11、XSS靶场" class="headerlink" title="11、XSS靶场"></a>11、XSS靶场</h4><p>先去这里拉下来<br><a target="_blank" rel="noopener" href="https://github.com/c0ny1/vulstudy">https://github.com/c0ny1/vulstudy</a><br>里面有几个目录，这里xss用这2个，都有dockerfile自己进去build然后run就行<br><img src="/2020/10/04/%E4%B9%8B%E5%89%8D%E7%9A%84/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/13.png"><br>xssed<br><img src="/2020/10/04/%E4%B9%8B%E5%89%8D%E7%9A%84/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/14.png"><br>XSS-challenge-tour<br><img src="/2020/10/04/%E4%B9%8B%E5%89%8D%E7%9A%84/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/15.png"></p>
+<h4 id="12、hexo导航栏"><a href="#12、hexo导航栏" class="headerlink" title="12、hexo导航栏"></a>12、hexo导航栏</h4><p>随着靶场多了，还是整一个内网门户的样子</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name hexo -p 4000:4000 -v hexo:/usr/hexo wangcaitao/hexo:1.0.0-alpine</span><br></pre></td></tr></table></figure>
+<p>docker inspect 10b6cac876a8查看挂载盘,大概就是为了不需要每次拷贝文件，让服务器和docker的默认文件夹同步一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&quot;Mounts&quot;: [</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;Type&quot;: &quot;volume&quot;,</span><br><span class="line">        &quot;Name&quot;: &quot;hexo&quot;,</span><br><span class="line">        &quot;Source&quot;: &quot;/var/lib/docker/volumes/hexo/_data&quot;,</span><br><span class="line">        &quot;Destination&quot;: &quot;/usr/hexo&quot;,</span><br><span class="line">        &quot;Driver&quot;: &quot;local&quot;,</span><br><span class="line">        &quot;Mode&quot;: &quot;z&quot;,</span><br><span class="line">        &quot;RW&quot;: true,</span><br><span class="line">        &quot;Propagation&quot;: &quot;&quot;</span><br><span class="line">    &#125;</span><br><span class="line">],</span><br></pre></td></tr></table></figure>
+<p>找到那个<code>/var/lib/docker/volumes/hexo/_data</code>文件夹然后，每次修改里面的文件<br>然后命令执行就行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@asuri:# docker exec -it 10b6cac876a8 hexo clean</span><br><span class="line">root@asuri:# docker exec -it 10b6cac876a8 hexo g</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/10/04/%E4%B9%8B%E5%89%8D%E7%9A%84/%E5%BA%9F%E7%89%A9%E5%88%A9%E7%94%A8%E4%B9%8B%E5%88%A9%E7%94%A8%E4%B8%80%E5%8F%B0%E5%BA%9F%E5%BC%83%E7%AC%94%E8%AE%B0%E6%9C%AC%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BACTF%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE/16.png"></p>
+<h4 id="13、hackmd"><a href="#13、hackmd" class="headerlink" title="13、hackmd"></a>13、hackmd</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">version: &quot;3&quot;</span><br><span class="line">services:</span><br><span class="line">  database:</span><br><span class="line">    image: postgres:11.6-alpine</span><br><span class="line">    environment:</span><br><span class="line">      - POSTGRES_USER=codimd</span><br><span class="line">      - POSTGRES_PASSWORD=change_password</span><br><span class="line">      - POSTGRES_DB=codimd</span><br><span class="line">    volumes:</span><br><span class="line">      - &quot;database-data:/var/lib/postgresql/data&quot;</span><br><span class="line">    restart: always</span><br><span class="line">  codimd:</span><br><span class="line">    image: hackmdio/hackmd:2.4.1</span><br><span class="line">    environment:</span><br><span class="line">      - CMD_DB_URL=postgres://codimd:change_password@database/codimd</span><br><span class="line">      - CMD_USECDN=false</span><br><span class="line">    depends_on:</span><br><span class="line">      - database</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;3000:3000&quot;</span><br><span class="line">    volumes:</span><br><span class="line">      - upload-data:/home/hackmd/app/public/uploads</span><br><span class="line">    restart: always</span><br><span class="line">volumes:</span><br><span class="line">  database-data: &#123;&#125;</span><br><span class="line">  upload-data: &#123;&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>复制上面的配置并另存为 docker-compose.yml放在文件夹里<br>修改你的数据库用户名和密码（默认不安全）<br>docker-compose up -d<br><code>http://localhost:3000</code></p>
+
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

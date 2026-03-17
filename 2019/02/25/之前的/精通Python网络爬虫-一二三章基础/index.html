@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>精通Python网络爬虫-一二三章基础</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">精通Python网络爬虫-一二三章基础</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2019/02/25/%E4%B9%8B%E5%89%8D%E7%9A%84/%E7%B2%BE%E9%80%9APython%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB-%E4%B8%80%E4%BA%8C%E4%B8%89%E7%AB%A0%E5%9F%BA%E7%A1%80/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">精通Python网络爬虫-一二三章基础</h1>
+          
+            <div class="article-meta">2019-02-25</div>
+          
+        </div>
+        <article class="markdown">
+          <h4 id="科创要用到深层网络爬虫所以系统学一次python爬虫，另外一个项目采用spring-boot当后端，果然面向需求编程才是王道，这本书叫精通python网络爬虫，不求精通，好歹入个门吧-还有个原因前几天拿爬虫试了试水，确实天下武功，唯快不破，脚本的速度真的可以为所欲为"><a href="#科创要用到深层网络爬虫所以系统学一次python爬虫，另外一个项目采用spring-boot当后端，果然面向需求编程才是王道，这本书叫精通python网络爬虫，不求精通，好歹入个门吧-还有个原因前几天拿爬虫试了试水，确实天下武功，唯快不破，脚本的速度真的可以为所欲为" class="headerlink" title="科创要用到深层网络爬虫所以系统学一次python爬虫，另外一个项目采用spring boot当后端，果然面向需求编程才是王道，这本书叫精通python网络爬虫，不求精通，好歹入个门吧(还有个原因前几天拿爬虫试了试水，确实天下武功，唯快不破，脚本的速度真的可以为所欲为)"></a>科创要用到深层网络爬虫所以系统学一次python爬虫，另外一个项目采用spring boot当后端，果然面向需求编程才是王道，这本书叫精通python网络爬虫，不求精通，好歹入个门吧(还有个原因前几天拿爬虫试了试水，确实天下武功，唯快不破，脚本的速度真的可以为所欲为)</h4><img src="1.jpg" width="400" hegiht="200" align=center />
+
+<span id="more"></span>
+
+
+<h3 id="一、爬虫介绍"><a href="#一、爬虫介绍" class="headerlink" title="一、爬虫介绍"></a>一、爬虫介绍</h3><h4 id="1-1、为何学习网络爬虫"><a href="#1-1、为何学习网络爬虫" class="headerlink" title="1.1、为何学习网络爬虫"></a>1.1、为何学习网络爬虫</h4><p>（1）定制一个个性化的搜索引擎 搜索引擎离不开爬虫，例:百度（百度蜘蛛BaiduSpider）360(360Spider) 搜狗（SougouSpider）必应（BingBot）<br>（2）数据分析<br>（3）优化搜索引擎<br>（4）工作生计<br>（5）兴趣爱好</p>
+<h4 id="1-2、网络爬虫的组成"><a href="#1-2、网络爬虫的组成" class="headerlink" title="1.2、网络爬虫的组成"></a>1.2、网络爬虫的组成</h4><p>网络爬虫由控制节点，爬虫节点，资源库构成。<br><img src="/2019/02/25/%E4%B9%8B%E5%89%8D%E7%9A%84/%E7%B2%BE%E9%80%9APython%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB-%E4%B8%80%E4%BA%8C%E4%B8%89%E7%AB%A0%E5%9F%BA%E7%A1%80/1.png"></p>
+<h5 id="控制节点：爬虫的中央控制器，根据URL地址分配线程，调用爬虫节点具体爬行。"><a href="#控制节点：爬虫的中央控制器，根据URL地址分配线程，调用爬虫节点具体爬行。" class="headerlink" title="控制节点：爬虫的中央控制器，根据URL地址分配线程，调用爬虫节点具体爬行。"></a>控制节点：爬虫的中央控制器，根据URL地址分配线程，调用爬虫节点具体爬行。</h5><h5 id="爬虫节点：应用相关算法，对网页进行具体爬行。"><a href="#爬虫节点：应用相关算法，对网页进行具体爬行。" class="headerlink" title="爬虫节点：应用相关算法，对网页进行具体爬行。"></a>爬虫节点：应用相关算法，对网页进行具体爬行。</h5><h5 id="资源库：将爬虫节点爬行结果存储到对应的资源库中。"><a href="#资源库：将爬虫节点爬行结果存储到对应的资源库中。" class="headerlink" title="资源库：将爬虫节点爬行结果存储到对应的资源库中。"></a>资源库：将爬虫节点爬行结果存储到对应的资源库中。</h5><h4 id="1-3、爬虫的分类"><a href="#1-3、爬虫的分类" class="headerlink" title="1.3、爬虫的分类"></a>1.3、爬虫的分类</h4><table>
+<thead>
+<tr>
+<th>爬虫类型</th>
+<th>具体说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>通用网络爬虫</td>
+<td>爬行目标数据巨大，范围广</td>
+</tr>
+<tr>
+<td>聚集网络爬虫</td>
+<td>目标网页是定位与主题相关网页</td>
+</tr>
+<tr>
+<td>增量式网络爬虫</td>
+<td>只爬取内容发生变化的网页</td>
+</tr>
+<tr>
+<td>深层网络爬虫</td>
+<td>爬取深层页面</td>
+</tr>
+<tr>
+<td>注明：在互联网中，网页按存在方式分类，分为表层页面和深层页面。</td>
+<td></td>
+</tr>
+<tr>
+<td>（1）表层页面，不需要提交表单，使用静态链接到达的静态页面。</td>
+<td></td>
+</tr>
+<tr>
+<td>（2）深层页面，需提交表单，才能获取的页面。</td>
+<td></td>
+</tr>
+<tr>
+<td>（3）深层网络爬虫最重要的部分是填写表单，以爬取深层页面。</td>
+<td></td>
+</tr>
+</tbody></table>
+<h4 id="二、搜索引擎核心"><a href="#二、搜索引擎核心" class="headerlink" title="二、搜索引擎核心"></a>二、搜索引擎核心</h4><p>爬虫与搜索引擎密不可分。<br>下图所示搜索引擎的核心工作流程。<br><img src="/2019/02/25/%E4%B9%8B%E5%89%8D%E7%9A%84/%E7%B2%BE%E9%80%9APython%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB-%E4%B8%80%E4%BA%8C%E4%B8%89%E7%AB%A0%E5%9F%BA%E7%A1%80/2.png"><br>（1）搜索引擎利用爬虫模块（控制器，爬行器）从互联网爬取相应网页存储至原始数据库中。</p>
+<p>（2）对原始数据库中数据进行索引（相当于索引器给数据起名字），并存储到索引数据库中。</p>
+<p>（3）用户交互检索信息，检索器会从索引数据库中获取数据进行相应的检索处理。</p>
+<p>（4）同时，用户输入信息会被存储到用户日志数据库中。</p>
+<p>（5）用户日志数据库中的数据会交给日志分析器进行处理。</p>
+<p>（6）日志分析器会根据大量的用户数据去调用原始数据库和索引数据库，改变排名结果或进行其他操作。</p>
+<h3 id="三、网络爬虫实现原理与实现技术"><a href="#三、网络爬虫实现原理与实现技术" class="headerlink" title="三、网络爬虫实现原理与实现技术"></a>三、网络爬虫实现原理与实现技术</h3><h4 id="3-1、通用网络爬虫VS聚焦网络爬虫"><a href="#3-1、通用网络爬虫VS聚焦网络爬虫" class="headerlink" title="3.1、通用网络爬虫VS聚焦网络爬虫"></a>3.1、通用网络爬虫VS聚焦网络爬虫</h4><ol>
+<li>通用网络爬虫<br><img src="/2019/02/25/%E4%B9%8B%E5%89%8D%E7%9A%84/%E7%B2%BE%E9%80%9APython%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB-%E4%B8%80%E4%BA%8C%E4%B8%89%E7%AB%A0%E5%9F%BA%E7%A1%80/3.png"></li>
+<li>聚焦网络爬虫<br><img src="/2019/02/25/%E4%B9%8B%E5%89%8D%E7%9A%84/%E7%B2%BE%E9%80%9APython%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB-%E4%B8%80%E4%BA%8C%E4%B8%89%E7%AB%A0%E5%9F%BA%E7%A1%80/4.png"><br>聚焦网络爬虫，是有目的的进行爬取。<br>必须增加目标的定义和过滤机制。<br>其执行原理和过程需要比通用网络爬虫多出三步，即目标的定义、过滤无关链接、下一步要爬取的 URL 地址的选取等。本质上就是增加了一个<strong>过滤机制</strong></li>
+</ol>
+<h4 id="3-2、爬行策略"><a href="#3-2、爬行策略" class="headerlink" title="3.2、爬行策略"></a>3.2、爬行策略</h4><p><img src="/2019/02/25/%E4%B9%8B%E5%89%8D%E7%9A%84/%E7%B2%BE%E9%80%9APython%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB-%E4%B8%80%E4%BA%8C%E4%B8%89%E7%AB%A0%E5%9F%BA%E7%A1%80/5.png"></p>
+<table>
+<thead>
+<tr>
+<th>爬行策略</th>
+<th>具体说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>深度优先爬行策略</td>
+<td>A-D-E-B-C-F-G</td>
+</tr>
+<tr>
+<td>广度优先爬行策略</td>
+<td>A-B-C-D-E-F-G</td>
+</tr>
+<tr>
+<td>大站优先策略</td>
+<td>优先爬取大站（网页数量多的网站）中的 URL 地址</td>
+</tr>
+<tr>
+<td>反链策略</td>
+<td>优先爬取反链数量（被其他网页指向的次数）多的网站</td>
+</tr>
+<tr>
+<td>其他爬行策略</td>
+<td>如 OPIC 策略、Partial 策略、PageRank 策略等</td>
+</tr>
+<tr>
+<td>反链策略要防止作弊现象，某些循环指向判断机制。</td>
+<td></td>
+</tr>
+</tbody></table>
+<h4 id="3-3、网站更新策略"><a href="#3-3、网站更新策略" class="headerlink" title="3.3、网站更新策略"></a>3.3、网站更新策略</h4><table>
+<thead>
+<tr>
+<th>更新策略</th>
+<th>具体说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>用户体验策略</td>
+<td>大部分用户只关注排名靠前的网页，爬虫优先更新排名结果靠前的网页</td>
+</tr>
+<tr>
+<td>历史数据策略</td>
+<td>依据网页历史更新数据，利用数学建模，预测下一次更新时间，从而确定更新周期</td>
+</tr>
+<tr>
+<td>聚类分析策略</td>
+<td>一般具有类似属性的网页更新频率类似–&gt;对海量网页进行聚类分析，形成多个类–&gt;对同一个类抽样，取平均值更新–&gt;从而确定爬行频率</td>
+</tr>
+</tbody></table>
+<h4 id="3-4、网站分析算法"><a href="#3-4、网站分析算法" class="headerlink" title="3.4、网站分析算法"></a>3.4、网站分析算法</h4><table>
+<thead>
+<tr>
+<th>网页分析算法</th>
+<th>具体说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>基于用户行为</td>
+<td>基于用户访问行为（如访问频率、时长等）</td>
+</tr>
+<tr>
+<td>基于网络拓扑（如PageRank，谷歌引擎核心算法）</td>
+<td>依靠网页间链接关系计算权重，进行排名</td>
+</tr>
+<tr>
+<td>基于网页内容</td>
+<td>依据网页数据、文本网页内容特征等</td>
+</tr>
+</tbody></table>
+
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

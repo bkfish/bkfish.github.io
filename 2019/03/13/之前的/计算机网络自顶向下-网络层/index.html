@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>计算机网络自顶向下-网络层</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">计算机网络自顶向下-网络层</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2019/03/13/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">计算机网络自顶向下-网络层</h1>
+          
+            <div class="article-meta">2019-03-13</div>
+          
+        </div>
+        <article class="markdown">
+          <h3 id="网络层提供的服务"><a href="#网络层提供的服务" class="headerlink" title="网络层提供的服务"></a>网络层提供的服务</h3><p>网络层提供主机到主机的通信服务。</p>
+<h3 id="一、转发和路由选择"><a href="#一、转发和路由选择" class="headerlink" title="一、转发和路由选择"></a>一、转发和路由选择</h3><p>区别：转发是将分组从一个输入链路接口转移到适当的输出链路接口的路由器<code>本地动作</code>。路由选择是<code>网络范围</code>的过程，决定分组从源到目的地所采取的端到端路径。<br>考虑旅行者从宾夕法尼亚州到佛罗里达州的行程，转发就类似于图中要经过很多立交桥，离开每个立交桥的时候才决定走哪一条路，而路由选择像出发前旅行者就看地图在许多可能的路径(每条路径包含多个立交桥)中选择一条路线。</p>
+<span id="more"></span>
+
+
+<h3 id="二、虚电路和数据报网络"><a href="#二、虚电路和数据报网络" class="headerlink" title="二、虚电路和数据报网络"></a>二、虚电路和数据报网络</h3><p>目前所有网络层不同时提供两种不同服务，在网络层提供连接服务被称为虚电路（VC）网络，在网络层提供无连接服务的计算机网络称为数据报网络。</p>
+<h5 id="虚电路："><a href="#虚电路：" class="headerlink" title="虚电路："></a>虚电路：</h5><p>属于一条虚电路的分组将在首部携带一个VC号，因为一条虚电路在每条链路上可能具有不同的VC号，每台中间路由器必须用一个新的VC号来替代每个传输分组的VC号。新VC号从转发表获得。<br>无论何时跨越一台路由器创建一条新的虚电路，转发表就增加了一个新表项。类似地，无论何时终止一条虚电路，沿着该途径每个表中的相应项将被删除。</p>
+<h5 id="数据报网络"><a href="#数据报网络" class="headerlink" title="数据报网络:"></a>数据报网络:</h5><p>在数据报网络中，每台路由器由一个将目的地址映射到链路接口的转发表，当分组到达路由器时，路由器使用该分组的目的底子好在转发表中查找适当的输出链路接口。然后路由器有意将分组向该输出链路接口转发。<br><img src="/2019/03/13/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/1.png"></p>
+<h3 id="三、路由器的工作原理"><a href="#三、路由器的工作原理" class="headerlink" title="三、路由器的工作原理"></a>三、路由器的工作原理</h3><p>一台路由器的<code>输入端口</code>，<code>输出端口</code>和<code>交换结构与</code>共同实现了这种转发功能，而且总是用硬件实现。这些转发功能有时总称为路由器转发平面。</p>
+<h4 id="路由器的组成部分"><a href="#路由器的组成部分" class="headerlink" title="路由器的组成部分"></a>路由器的组成部分</h4><h5 id="输入端口："><a href="#输入端口：" class="headerlink" title="输入端口："></a>输入端口：</h5><ol>
+<li>执行将一条输入的物理链路与路由器相连接的物理层功能</li>
+<li>执行与位于入链路远端的数据链路层交互的数据链路层功能</li>
+<li>查找功能，查询转发表决定路由器的输出端口，将分组转发到输出端口</li>
+</ol>
+<h5 id="交换结构"><a href="#交换结构" class="headerlink" title="交换结构"></a>交换结构</h5><ol>
+<li>将路由器的输入端口与输出端口相连</li>
+<li>分组通过交换结构转发到输出端口</li>
+</ol>
+<h5 id="输出端口"><a href="#输出端口" class="headerlink" title="输出端口"></a>输出端口</h5><ol>
+<li>存储从交换结构接收的分组，执行必要的链路层和物理层功能在输入链路上传输这些分组。</li>
+<li>当链路是双向的时，输出端口与输入端口在同一线路卡成对出现</li>
+</ol>
+<h5 id="路由选择处理器"><a href="#路由选择处理器" class="headerlink" title="路由选择处理器"></a>路由选择处理器</h5><ol>
+<li>执行路由选择协议</li>
+<li>维护路由选择表、连接的链路状态信息，为路由器计算转发表</li>
+<li>网络管理</li>
+</ol>
+<h5 id="路由转发平面"><a href="#路由转发平面" class="headerlink" title="路由转发平面"></a>路由转发平面</h5><ol>
+<li>一台路由器的输入端口、输出端口和交换结构共同实现了转发功能，并且用硬件实现（软件太慢，需以纳秒时间尺度运行）</li>
+</ol>
+<h5 id="路由控制平面"><a href="#路由控制平面" class="headerlink" title="路由控制平面"></a>路由控制平面</h5><ol>
+<li>路由器的控制功能（执行路由选择协议、对上线或者下线链路进行响应、管理功能），在毫秒时间尺度上运行，用软件实现并在选择处理器上执行（一种cpu）</li>
+</ol>
+<h4 id="三种交换模式"><a href="#三种交换模式" class="headerlink" title="三种交换模式"></a>三种交换模式</h4><h5 id="经内存交换"><a href="#经内存交换" class="headerlink" title="经内存交换"></a>经内存交换</h5><p>一个分组到达输入端口时，该端口会先通过中断方式向路由选择处理器发出信号<br>分组从输入端口复制到处理器内存中（现代路由器查找交换进内存，是由输入线路卡处理的）<br>早期路由选择处理器从首部提取目的地址，在转发表查找输出端口，将分组复制到输出端口</p>
+<h5 id="经总线交换"><a href="#经总线交换" class="headerlink" title="经总线交换"></a>经总线交换</h5><p>输入端口经一根共享总线将分组直接传送到输出端口，无需路由选择处理器的干预<br>路由器的交换带宽受总线速率限制</p>
+<h5 id="经互联网络交换"><a href="#经互联网络交换" class="headerlink" title="经互联网络交换"></a>经互联网络交换</h5><p>纵横式交换机，2N条总线组成网络，连接N各输入端口和N个输出端口<br>每条垂直的总线与每条水平的总线交叉，交叉点通过交换结构控制器开启闭合<br>某分组到达端口A，需要转发到Y，交换机控制器闭合总线A和Y的交叉点，A在其总线上发送分组，仅由Y接收；同时B也能发分组到X，因为没有公用总线。纵横式网络能并行转发多个分组</p>
+<h3 id="四、网际协议（IP）：因特网中的转发和编址"><a href="#四、网际协议（IP）：因特网中的转发和编址" class="headerlink" title="四、网际协议（IP）：因特网中的转发和编址"></a>四、网际协议（IP）：因特网中的转发和编址</h3><h4 id="网络层三个组件"><a href="#网络层三个组件" class="headerlink" title="网络层三个组件"></a>网络层三个组件</h4><ol>
+<li>IP协议</li>
+<li>路由选择协议</li>
+<li>控制报文协议（ICMP）：报告数据报中的差错、对某些网络层信息请求进行响应的设施</li>
+</ol>
+<h4 id="IP数据报格式分析"><a href="#IP数据报格式分析" class="headerlink" title="IP数据报格式分析"></a>IP数据报格式分析</h4><p><img src="/2019/03/13/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/2.png"></p>
+<ol>
+<li>版本号（IPv4、IPv6）：不同版本对数据报不同解释</li>
+<li>首部长度：数据报可包含可变数量的选项。不过大部分没有，首部固定20字节</li>
+<li>服务类型：区分不同类型的IP数据报</li>
+<li>数据报长度：首部+数据的长度。该字段16bit，然而一般数据报很少超过1500字节<br>标识、标志、片偏移：IP分片相关。不过IPv6不允许在路由器上对分组分片</li>
+<li>寿命TTL：确保数据报不会永远在网络中循环。每被一个路由器处理时，值-1。若值减到0，丢弃数据报</li>
+<li>协议号：到达最终目的地才有用，指示了IP数据报的数据部分应该交给哪个运输层协议。如6交给TCP，如17交给UDP </li>
+<li>协议号是将网络层与运输层绑定到一起的粘合剂；端口号是将运输层和应用层绑定的粘合剂</li>
+<li>首部检验和：帮忙路由器检测收到IP数据报中首部的比特错误，有错一般丢弃</li>
+<li>源和目的IP地址：源主机通过DNS查找目的地址</li>
+<li>选项：IPv6已抛弃选项字段</li>
+<li>数据（有效载荷）：包含运输层报文段（TCP或UDP），或ICMP报文段<br>一个IP数据报有长为20的首部，如果数据报承载一个TCP报文段，则每个无分片数据报承载总长40的首部（还有TCP的20）以及应用层报文</li>
+</ol>
+<h4 id="IP数据报分片"><a href="#IP数据报分片" class="headerlink" title="IP数据报分片"></a>IP数据报分片</h4><p>因为不是所有的链路层协议都能承载相同长度的网络层分组。比如以太网帧的MTU(Maximum Transmission)即最大传送单元(一个链路层帧能承载的最大数据量)为1500字节。链路层的MTU严格限制IP数据报的长度。因此要进行分片，将IP数据报中的数据分片成多个较小的IP数据报(fragment)再分别用链路层帧封装。</p>
+<p>e.g. 一个4000字节的数据报(20字节IP首部加上3980字节IP有效载荷)到达一台路由器，且必须被转发到一条MTU为1500字节的链路上。问要分多少片？每片多少字节？<br>解答： 3980&#x2F;1500 &#x3D; 2.65 &lt; 3 则应该分为3片，数据字段分别长1480, 1480, 1020 <code>(3980-1480-1480)</code><br>注意！分片除了最后一片，所有数据字段长应该是8的倍数！偏移值应当被规定以8字节块为单位！</p>
+<h4 id="分类的IP地址-—-最基本的编址方法"><a href="#分类的IP地址-—-最基本的编址方法" class="headerlink" title="分类的IP地址 — 最基本的编址方法"></a>分类的IP地址 — 最基本的编址方法</h4><p><img src="/2019/03/13/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/3.png"></p>
+<h5 id="A类地址"><a href="#A类地址" class="headerlink" title="A类地址"></a>A类地址</h5><p>可指派的网络号是126即：$2^{7}-2$个.(减去全0和全1两种情况)。最大主机数 $2^{24}-2$个。(减去主机号全0和全1)</p>
+<h5 id="B类地址"><a href="#B类地址" class="headerlink" title="B类地址"></a>B类地址</h5><p>可指派的网络号是16383即：$2^{14}-1$个.(没有主机号全0和全1的情况，但是128.0.0.0不指配，最小网络地址128.1.0.0)。最大主机数$2^{16}-2$个。(减去主机号全0和全1)</p>
+<h5 id="C类地址"><a href="#C类地址" class="headerlink" title="C类地址"></a>C类地址</h5><p>可指派的网络号是2097151即：$2^{21}-1$个.(没有主机号全0和全1的情况，但是192.0.0.0不指配,最小网络地址192.0.1.0)。最大主机数$2^{8}-2$个。(减去主机号全0和全1)</p>
+<h5 id="D，E类专用了，一般很少见"><a href="#D，E类专用了，一般很少见" class="headerlink" title="D，E类专用了，一般很少见"></a>D，E类专用了，一般很少见</h5><p><img src="/2019/03/13/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/4.png"><br><img src="/2019/03/13/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/5.png"></p>
+<h4 id="划分子网"><a href="#划分子网" class="headerlink" title="划分子网"></a>划分子网</h4><p>从网络的主机号借用若干位作为子网号。划分子网在内部，因此对外仍是一个网络！<br><img src="/2019/03/13/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/6.png"><br>子网掩码(network mask)<br><img src="/2019/03/13/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/7.png"><br>子网的网络地址 &#x3D; 子网掩码 &amp; IP地址 (相与 and)<br>一张图足以概括。另外，若没有划分子网，也必须有子网掩码，使用默认子网掩码。<br><img src="/2019/03/13/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/8.png"></p>
+<h3 id="五、路由选择算法"><a href="#五、路由选择算法" class="headerlink" title="五、路由选择算法"></a>五、路由选择算法</h3><h4 id="一种广义分类可将路由选择算法分为"><a href="#一种广义分类可将路由选择算法分为" class="headerlink" title="一种广义分类可将路由选择算法分为"></a>一种广义分类可将路由选择算法分为</h4><ol>
+<li>全局式路由选择算法(global routing algorithm)：用完整的、全局性的网络制式计算出从源到目的地之间的最低费用路径。实践中，具有全局状态信息的算法常被称为链路状态(Link State, LS)算法。</li>
+<li>分散式路由选择算法(decentralized routing algorithm)：以迭代、分布式的方式计算出最低费用路径。一个常用的算法为距离向量(Distance-Vector, DV)算法。<br>由于过于复杂，需要单独研究</li>
+</ol>
+<h3 id="六、自治系统内路由选择-–-内部网关协议"><a href="#六、自治系统内路由选择-–-内部网关协议" class="headerlink" title="六、自治系统内路由选择 – 内部网关协议"></a>六、自治系统内路由选择 – 内部网关协议</h3><h4 id="6-1、路由选择信息协议-Routing-Information-Protocol-RIP"><a href="#6-1、路由选择信息协议-Routing-Information-Protocol-RIP" class="headerlink" title="6.1、路由选择信息协议(Routing Information Protocol, RIP)"></a>6.1、路由选择信息协议(Routing Information Protocol, RIP)</h4><p>使用距离向量算法。</p>
+<ol>
+<li>仅和相邻路由器交换信息。</li>
+<li>路由器交换的信息时当前本路由器知道的全部信息。</li>
+<li>按固定的时间间隔交换路由信息。</li>
+</ol>
+<p>刚开始时，到直接相连的网络距离定义为1。每经过一个路由器，跳数加1，跳数为16相当于不可达。事实证明，RIP协议可以较快收敛。<br>缺点是当网络出现故障，要记过比较长的时间才能将信息传送到所有的路由器。</p>
+<p>RIP协议使用运输层的用户数据报UDP进行传送。RIP1和RIP2的报文首部相同，路由部分有些不同。<br><img src="/2019/03/13/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/9.png"></p>
+<h4 id="6-2、开放最短路径优先-Open-Shortest-Path-First-OSPF"><a href="#6-2、开放最短路径优先-Open-Shortest-Path-First-OSPF" class="headerlink" title="6.2、开放最短路径优先(Open Shortest Path First, OSPF)"></a>6.2、开放最短路径优先(Open Shortest Path First, OSPF)</h4><p>使用链路状态协议。</p>
+<ol>
+<li>向本自治系统中所有路由器发送信息。使洪泛法(flooding)。</li>
+<li>发送的信息就是与本路由器相邻的所有路由器的链路状态。</li>
+<li>只有当链路状态发生变化时，路由器才向所有路由器用洪泛法发送此消息。</li>
+</ol>
+<p>各个路由器频繁的交换链路状态信息，所有的路由器建立一个链路状态数据库，这实际上就是全网的拓扑图。OSPF的更新过程收敛得快。<br>OSPF直接用IP数据报传送。(注意RIP是用UDP的)<br><img src="/2019/03/13/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/10.png"></p>
+<h4 id="6-3、外部网关协议BGP"><a href="#6-3、外部网关协议BGP" class="headerlink" title="6.3、外部网关协议BGP"></a>6.3、外部网关协议BGP</h4><p>BGP采用路径向量(path vector)路由选择协议。协议交换路由信息节点数量级是自治系统个数的数量级。刚开始运行时，BGP的邻站是交换整个的BGP路由表。但以后只需要在发生变化时更新有变化的部分。<br><img src="/2019/03/13/%E4%B9%8B%E5%89%8D%E7%9A%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%BD%91%E7%BB%9C%E5%B1%82/11.png"></p>
+<h3 id="七、广播与多播路由选择"><a href="#七、广播与多播路由选择" class="headerlink" title="七、广播与多播路由选择"></a>七、广播与多播路由选择</h3><h4 id="7-1、-广播路由选择算法"><a href="#7-1、-广播路由选择算法" class="headerlink" title="7.1、 广播路由选择算法"></a>7.1、 广播路由选择算法</h4><h5 id="N次单播"><a href="#N次单播" class="headerlink" title="N次单播"></a>N次单播</h5><p>给定N个目的节点，源结点产生该分组的N份副本，对不同目的地每个副本编址，用单播路由选择传送<br>效率低，多份独立的副本会重复经过某段链路，让网络结点本身生成分组副本更有效</p>
+<h5 id="无控制洪泛"><a href="#无控制洪泛" class="headerlink" title="无控制洪泛"></a>无控制洪泛</h5><p>源节点向所有邻居发送分组副本，结点复制该分组并向它邻居转发<br>图中有环，会无休止循环<br>当一个结点与两个以上结点连接时，它将生成并转发广播分组的多个副本，副本中的每个又产生多个副本，产生广播风暴，使网络变得毫无用处</p>
+<h5 id="受控洪泛"><a href="#受控洪泛" class="headerlink" title="受控洪泛"></a>受控洪泛</h5><p>序号控制洪泛：源节点将其地址或其他唯一标识和广播序号放入广播分组，每个结点维护源地址和序号列表<br>反向路径转发RPF：仅当分组到达的链路正好位于它自己返回源的最短单薄路径上，才传输报文，否则丢弃</p>
+<h5 id="生成树广播"><a href="#生成树广播" class="headerlink" title="生成树广播"></a>生成树广播</h5><p>构造最小生成树；结点只需知道哪些邻居在生成树中<br>分布式生成树算法<br>基于中心的方法：建立一棵生成树时，定义一个中心结点（汇合点、核），结点向中心结点单薄加入树的报文。加入树的报文使用单播路由选择朝着中心结点进发，直到它到达一个生成树中，经过的路径再嫁接到现有生成树中</p>
+<h4 id="7-2、多播"><a href="#7-2、多播" class="headerlink" title="7.2、多播"></a>7.2、多播</h4><h5 id="一些新兴应用要求将分组从一个或多个发送方交付给一组接收方，比如各种直播、游戏"><a href="#一些新兴应用要求将分组从一个或多个发送方交付给一组接收方，比如各种直播、游戏" class="headerlink" title="一些新兴应用要求将分组从一个或多个发送方交付给一组接收方，比如各种直播、游戏"></a>一些新兴应用要求将分组从一个或多个发送方交付给一组接收方，比如各种直播、游戏</h5><h5 id="多播数据报使用间接地址来编址。每个分组难道携带所有接收方IP地址？这不科学"><a href="#多播数据报使用间接地址来编址。每个分组难道携带所有接收方IP地址？这不科学" class="headerlink" title="多播数据报使用间接地址来编址。每个分组难道携带所有接收方IP地址？这不科学"></a>多播数据报使用间接地址来编址。每个分组难道携带所有接收方IP地址？这不科学</h5><p>用一个标识表示一组接收方（D类多播地址），接收方小组称为多播组</p>
+<h5 id="因特网组管理协议IGMP"><a href="#因特网组管理协议IGMP" class="headerlink" title="因特网组管理协议IGMP"></a>因特网组管理协议IGMP</h5><p>IGMP + 多播路由选择协议 组成网络层多播</p>
+<ol>
+<li>第一阶段：当某个主机加入新的多播组时，该主机应向多播组的多播地址发送IGMP 报文，声明自己要成为该组的成员。本地的多播路由器收到 IGMP 报文后，将组成员关系转发给因特网上的其他多播路由器。</li>
+<li>第二阶段：因为组成员关系是动态的，因此本地多播路由器要周期性地探询本地局域网上的主机，以便知道这些主机是否还继续是组的成员。只要对某个组有一个主机响应，那么多播路由器就认为这个组是活跃的。但一个组在经过几次的探询后仍然没有一个主机响应，则不再将该组的成员关系转发给其他的多播路由器。</li>
+</ol>
+
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

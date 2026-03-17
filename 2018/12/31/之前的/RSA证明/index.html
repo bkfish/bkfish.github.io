@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>RSA证明</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">RSA证明</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2018/12/31/%E4%B9%8B%E5%89%8D%E7%9A%84/RSA%E8%AF%81%E6%98%8E/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">RSA证明</h1>
+          
+            <div class="article-meta">2018-12-31</div>
+          
+        </div>
+        <article class="markdown">
+          <h3 id="一、RSA介绍"><a href="#一、RSA介绍" class="headerlink" title="一、RSA介绍"></a>一、RSA介绍</h3><p>RSA 加密算法是一种非对称加密算法。在公开密钥加密和电子商业中 RSA 被广泛使用。RSA 是 1977 年由罗纳德 · 李维斯特（Ron Rivest）、阿迪 · 萨莫尔（Adi Shamir）和伦纳德 · 阿德曼（Leonard Adleman）一起提出的。RSA 就是他们三人姓氏开头字母拼在一起组成的。<br>RSA 算法的可靠性由极大整数因数分解的难度决定。换言之，对一极大整数做因数分解愈困难，RSA 算法愈可靠。假如有人找到一种快速因数分解的算法的话，那么用 RSA 加密的信息的可靠性就肯定会极度下降。但找到这样的算法的可能性是非常小的。如今，只有短的 RSA 密钥才可能被强力方式解破。到 2017 年为止，还没有任何可靠的攻击 RSA 算法的方式。</p>
+<span id="more"></span>
+
+
+<h3 id="二、已知条件"><a href="#二、已知条件" class="headerlink" title="二、已知条件"></a>二、已知条件</h3><p>RSA的加密规则：$ \color{blue}{m^e \equiv c\pmod n}$<br>RSA的解密规则：$\color{red}{c^d \equiv m\pmod n}$</p>
+<p>约束条件及规则说明：</p>
+<ol>
+<li>m为明文字符，c为密文字符</li>
+<li>m为0到n-1之间的数值</li>
+<li>n&#x3D;pq，p,q为素数</li>
+<li>φ(n)&#x3D;(p-1)*(q-1) [根据欧拉定理]</li>
+<li>e与φ(n)互素</li>
+<li>$ ed \equiv 1\pmod {φ(n)}$</li>
+<li>欧拉公式$m^φ(n) \equiv 1\pmod n$</li>
+</ol>
+<p>要根据加密规则，数论及欧拉定理，来证明解密公式正确性：$\color{red}{c^d \equiv m\pmod n}$</p>
+<h3 id="三、证明过程"><a href="#三、证明过程" class="headerlink" title="三、证明过程"></a>三、证明过程</h3><p><strong>step1</strong>、根据加密规则公式$ \color{blue}{m^e \equiv c\pmod n}$<br>可以得出 $$c&#x3D;m^e-kn$$<br><strong>step2</strong>、 将C带入解密公式，得到<br>$$(m^e-kn)^d \equiv m\pmod n$$<br><strong>step3</strong>、左边的展开中，除了第一项以外，其他项都与n相乘过，所以可以直接忽略左边括号中的kn项目，即：<br>$$m^{ed} \equiv m\pmod n$$<br><strong>step4</strong>、因为 $ed\equiv1 \pmod {φ(n)}$ 即：<br> $$ed&#x3D;hφ(n)+1$$<br><strong>step5</strong>、上述结论代入step3的公式，得到<br>$$m^{hφ(n)+1} \equiv m \pmod n $$<br><strong>step6</strong>、分情况讨论<br>6.1 、<strong>m与n互质</strong>（如果你已经忘了m和n是什么了，请往前再看一遍）<br>根据欧拉定理$m^φ(n) \equiv 1\pmod n$ 得到 $m^{φ(n)}&#x3D;kn+1$<br>然后左右两边分别h次方得到(kn+1)的h次方还是kn+1只不过这里的k变了：<br>$$(m^{φ(n)})^h&#x3D;kn+1$$<br>然后左右两边乘以m即得到$$m^{hφ(n)+1} \equiv m \pmod n $$<br>6.2 、<strong>m与n不互质</strong><br>此时，由于n等于质数p和q的乘积，所以m必然等于kp或kq。<br>以 m &#x3D; kp为例，这时k与q必然互质。如果k与q 不为互质关系，则k&#x3D;tq, m&#x3D; tqp&#x3D;tn, 但是按照RSA规范，m∈(0…n−1) m\in(0…n-1)m∈(0…n−1), m &lt; n的，所以k与q肯定是互质关系的。由于k与q互质，p与q互质，kp与q肯定互质，则根据欧拉定理，下面的式子成立：<br>$$\Large (kp)^{ q-1} \equiv 1\pmod q$$<br>进一步扩展，可得：<br>$$ \Large [(kp)^{ q-1}]^{h(p-1)}\times kp \equiv kp\pmod q$$<br>即<br>$$\Large (kp)^{ed} \equiv kp\pmod q$$<br>进一步改写成等式：<br>$$\Large (kp)^{ed} &#x3D; kp+tq$$<br>显然，t能被p整除， 即t&#x3D;t’p,可以得出<br>$$\Large (kp)^{ed} &#x3D; kp+t’pq$$</p>
+<p>因为m&#x3D;kp, n&#x3D;pq, 最后得出<br>$$\Large m^{ed} \equiv m\pmod n$$<br>解密公式得到完全证明。</p>
+<h3 id="四、关于共模攻击脚本（其他的脚本要求安一堆奇怪的包，在win10还装不上，这里贴一个野生的共模攻击脚本"><a href="#四、关于共模攻击脚本（其他的脚本要求安一堆奇怪的包，在win10还装不上，这里贴一个野生的共模攻击脚本" class="headerlink" title="四、关于共模攻击脚本（其他的脚本要求安一堆奇怪的包，在win10还装不上，这里贴一个野生的共模攻击脚本"></a>四、关于共模攻击脚本（其他的脚本要求安一堆奇怪的包，在win10还装不上，这里贴一个野生的共模攻击脚本</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"># coding=utf-8</span><br><span class="line">import sys</span><br><span class="line">sys.setrecursionlimit(10000000)</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line">选择相同的模 n 加密相同的信息 m</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">helpstr = &#x27;&#x27;&#x27;</span><br><span class="line">usage:</span><br><span class="line">    c1 = m ^ e1 % n</span><br><span class="line">    c2 = m ^ e2 % n</span><br><span class="line">&#x27;&#x27;&#x27;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def egcd(a, b):</span><br><span class="line">    if a == 0:</span><br><span class="line">        return (b, 0, 1)</span><br><span class="line">    else:</span><br><span class="line">        g, y, x = egcd(b % a, a)</span><br><span class="line">        return (g, x - (b // a) * y, y)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def modinv(a, m):</span><br><span class="line">    g, x, y = egcd(a, m)</span><br><span class="line">    if g != 1:</span><br><span class="line">        raise Exception(&#x27;modular inverse does not exist&#x27;)</span><br><span class="line">    else:</span><br><span class="line">        return x % m</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def main():</span><br><span class="line">    print(helpstr)</span><br><span class="line">    n = int(input(&quot;input n: &quot;))</span><br><span class="line">    c1 = int(input(&quot;input c1: &quot;))</span><br><span class="line">    c2 = int(input(&quot;input c2: &quot;))</span><br><span class="line">    e1 = int(input(&quot;input e1: &quot;))</span><br><span class="line">    e2 = int(input(&quot;input e2: &quot;))</span><br><span class="line">    s = egcd(e1, e2)</span><br><span class="line">    s1 = s[1]</span><br><span class="line">    s2 = s[2]</span><br><span class="line">    # 求模反元素</span><br><span class="line">    if s1 &lt; 0:</span><br><span class="line">        s1 = - s1</span><br><span class="line">        c1 = modinv(c1, n)</span><br><span class="line">    elif s2 &lt; 0:</span><br><span class="line">        s2 = - s2</span><br><span class="line">        c2 = modinv(c2, n)</span><br><span class="line">    m = (c1**s1)*(c2**s2) % n</span><br><span class="line">    print(m)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">if __name__ == &#x27;__main__&#x27;:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<p>分解模数脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"># 分解模数n</span><br><span class="line">def rsa_moder(n):</span><br><span class="line">    base = 2</span><br><span class="line">    while base &lt; n:</span><br><span class="line">        if n % base == 0:</span><br><span class="line">            return base, n // base</span><br><span class="line">        base += 1</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># 求欧拉函数f(n)</span><br><span class="line">def rsa_get_euler(prime1, prime2):</span><br><span class="line">    return (prime1 - 1) * (prime2 - 1)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># 求私钥</span><br><span class="line">def rsa_get_key(e, euler):</span><br><span class="line">    k = 1</span><br><span class="line">    while True:</span><br><span class="line">        if (((euler * k) + 1) % e) == 0:</span><br><span class="line">            return (euler * k + 1) // e</span><br><span class="line">        k += 1</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># 根据n,e计算d(或根据n,d计算e)</span><br><span class="line">def get_rsa_e_d(n, e=None, d=None):</span><br><span class="line">    if e is None and d is None:</span><br><span class="line">        return</span><br><span class="line"></span><br><span class="line">    arg = e</span><br><span class="line">    if arg is None:</span><br><span class="line">        arg = d</span><br><span class="line"></span><br><span class="line">    primes = rsa_moder(n)</span><br><span class="line">    p = primes[0]</span><br><span class="line">    q = primes[1]</span><br><span class="line"></span><br><span class="line">    d = rsa_get_key(arg, rsa_get_euler(p, q))</span><br><span class="line"></span><br><span class="line">    return d</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def test():</span><br><span class="line">    str_fmt = &#x27;n: &#123;:&lt;10&#125; e: &#123;:&lt;10&#125; d: &#123;:&lt;10&#125;&#x27;</span><br><span class="line"></span><br><span class="line">    # 导入rsa库</span><br><span class="line">    import rsa as rsa</span><br><span class="line">    key = rsa.newkeys(24)</span><br><span class="line"></span><br><span class="line">    # 产生rsa密钥对</span><br><span class="line">    if isinstance(key[1], rsa.PrivateKey):</span><br><span class="line">        print(str_fmt.format(key[1].n, key[1].e, key[1].d))</span><br><span class="line"></span><br><span class="line">    # 解密</span><br><span class="line">    n = 14666299</span><br><span class="line">    d = 2101153</span><br><span class="line">    e = get_rsa_e_d(n, None, d)</span><br><span class="line">    print(str_fmt.format(n, e, d))</span><br><span class="line"></span><br><span class="line">    n = 12748507</span><br><span class="line">    e = 65537</span><br><span class="line">    d = get_rsa_e_d(n, e, None)</span><br><span class="line">    print(str_fmt.format(n, e, d))</span><br><span class="line"></span><br><span class="line">if __name__ == &#x27;__main__&#x27;:</span><br><span class="line">    test()</span><br></pre></td></tr></table></figure>
+
+
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

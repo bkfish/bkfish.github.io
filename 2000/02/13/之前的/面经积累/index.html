@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>web安全面经积累</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">web安全面经积累</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2000/02/13/%E4%B9%8B%E5%89%8D%E7%9A%84/%E9%9D%A2%E7%BB%8F%E7%A7%AF%E7%B4%AF/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">web安全面经积累</h1>
+          
+            <div class="article-meta">2000-02-13</div>
+          
+        </div>
+        <article class="markdown">
+          <!-- toc -->
+
+<h3 id="一、安全"><a href="#一、安全" class="headerlink" title="一、安全"></a>一、安全</h3><h4 id="1、PHP-作为弱类型语言，在底层它是怎么判断变量的类型的"><a href="#1、PHP-作为弱类型语言，在底层它是怎么判断变量的类型的" class="headerlink" title="1、PHP 作为弱类型语言，在底层它是怎么判断变量的类型的"></a>1、PHP 作为弱类型语言，在底层它是怎么判断变量的类型的</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/tangchuanyang/p/6185655.html">PHP 作为弱类型语言，在底层它是怎么判断变量的类型的</a></p>
+<h4 id="2、SQL-注入时有哪些替代空格"><a href="#2、SQL-注入时有哪些替代空格" class="headerlink" title="2、SQL 注入时有哪些替代空格"></a>2、SQL 注入时有哪些替代空格</h4><p>&#x2F;**&#x2F;替代空格<br>and(1&#x3D;0)括号绕过<br><code>%09  %0A  %0D  +都可以替代空格</code>绕过</p>
+<span id="more"></span>
+
+
+<h4 id="3、xss与csrf区别"><a href="#3、xss与csrf区别" class="headerlink" title="3、xss与csrf区别"></a>3、xss与csrf区别</h4><p><code>CSRF</code>：无法获取受害者的cookie，无法看到cookie；<br>              只是利用受害者是被服务器信任的（靠验证cookie），而给服务器发送请求；<br><code>XSS</code>：利用cookie只是xss的一种体现，xss还可以篡改网页、URL跳转等等；跨站脚本，脚本可以做什么，xss就可以做什么；单在利用cookie上来说：获取受害者的cookie，从而得到服务器的信任，进行后续攻击<br>获取手段是反射、存储、dom</p>
+<h4 id="4、啥是同源策略，跨域有几种方式"><a href="#4、啥是同源策略，跨域有几种方式" class="headerlink" title="4、啥是同源策略，跨域有几种方式"></a>4、啥是同源策略，跨域有几种方式</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/lsg14215/article/details/102753275">https://blog.csdn.net/lsg14215/article/details/102753275</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/203217977b22">https://www.jianshu.com/p/203217977b22</a><br>跨域1、通过jsonp请求  2、通过服务器代理进行跨域请求</p>
+<h4 id="5、jsonp"><a href="#5、jsonp" class="headerlink" title="5、jsonp"></a>5、jsonp</h4><p><a target="_blank" rel="noopener" href="https://www.runoob.com/json/json-jsonp.html">https://www.runoob.com/json/json-jsonp.html</a><br>jsonp是jquery提供的跨域方式<br>cors是w3c提供的一个跨域标准<br>jsonp只支持get方式的跨域<br>cors支持get和post方式的跨域</p>
+<h4 id="6、内容安全策略（CSP）"><a href="#6、内容安全策略（CSP）" class="headerlink" title="6、内容安全策略（CSP）"></a>6、内容安全策略（CSP）</h4><p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/Security/CSP/CSP_policy_directives">https://developer.mozilla.org/zh-CN/docs/Web/Security/CSP/CSP_policy_directives</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_37943295/article/details/79978761">https://blog.csdn.net/qq_37943295&#x2F;article&#x2F;details&#x2F;79978761</a></p>
+<h4 id="7、SSRF漏洞原理是什么？利用时有哪些伪协议"><a href="#7、SSRF漏洞原理是什么？利用时有哪些伪协议" class="headerlink" title="7、SSRF漏洞原理是什么？利用时有哪些伪协议"></a>7、SSRF漏洞原理是什么？利用时有哪些伪协议</h4><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/dd46267a8947">SSRF漏洞原理是什么？利用时有哪些伪协议</a><br>原理：利用一个可以发起网络请求的服务当作跳板来攻击内部其他服务。<br>ssrf用处：探测内网信息,用协议探ftp%26ip&#x3D;{ip}%26port&#x3D;{port}，攻击内网或本地其他服务，穿透防火墙<br>利用协议：curl,file:&#x2F;&#x2F;,Dict:&#x2F;&#x2F;,SFTP:&#x2F;&#x2F;,TFTP:&#x2F;&#x2F;,LDAP:&#x2F;&#x2F;,Gopher:&#x2F;&#x2F;</p>
+<h4 id="8、云waf"><a href="#8、云waf" class="headerlink" title="8、云waf"></a>8、云waf</h4><p>云WAF部署在web应用程序前面，在用户请求到达web服务器前对用户请求进行扫描和过滤，分析并校验每个用户请求的网络包，确保每个用户请求有效且安全，对无效或有攻击行为的请求进行阻断或隔离。通过检查HTTP流量，可以防止源自web应用程序的安全漏洞（如SQL注入，跨站脚本攻击，文件包含和安全配置错误）的攻击。<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/bmjoker/p/8806214.html">https://www.cnblogs.com/bmjoker/p/8806214.html</a><br><a target="_blank" rel="noopener" href="https://www.idcbest.com/idcnews/11003330.html">https://www.idcbest.com/idcnews/11003330.html</a></p>
+<h4 id="9、链路层劫持"><a href="#9、链路层劫持" class="headerlink" title="9、链路层劫持"></a>9、链路层劫持</h4><p>链路层劫持是指第三方（可能是运营商、黑客）通过在用户至服务器之间，植入恶意设备或者控制网络设备的手段，侦听或篡改用户和服务器之间的数据，达到窃取用户重要数据（包括用户密码，用户身份数据等等）的目的。链路层劫持最明显的危害就是帐号、密码被窃取。<br><a target="_blank" rel="noopener" href="http://www.sohu.com/a/84898660_188485">http://www.sohu.com/a/84898660_188485</a></p>
+<h4 id="10、如何绕过cdn，获取真实ip"><a href="#10、如何绕过cdn，获取真实ip" class="headerlink" title="10、如何绕过cdn，获取真实ip"></a>10、如何绕过cdn，获取真实ip</h4><p><a target="_blank" rel="noopener" href="https://www.sohu.com/a/223174102_609556">如何绕过cdn，获取真实ip </a><br>1、二级域名法<br>2、nslookup<br>例如：<code>nslookup http://xxx.com 8.8.8.8</code>，提示：你要找冷门国外DNS才行，像谷歌的DNS，国内用的人越来越多了，很多CDN提供商都把谷歌DNS作为国内市场之一<br>3、第三方搜索，fofa,凌波微步<br>4、phpinfo，rss订阅</p>
+<h4 id="11、ARP攻击"><a href="#11、ARP攻击" class="headerlink" title="11、ARP攻击"></a>11、ARP攻击</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/zhydream77/article/details/85334042">https://blog.csdn.net/zhydream77/article/details/85334042</a></p>
+<h4 id="12、HTTPS原理，以及加密、解密的原理"><a href="#12、HTTPS原理，以及加密、解密的原理" class="headerlink" title="12、HTTPS原理，以及加密、解密的原理"></a>12、HTTPS原理，以及加密、解密的原理</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/liuqiyun/p/10250891.html">HTTPS原理，以及加密、解密的原理</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/e30a8c4fa329">https://www.jianshu.com/p/e30a8c4fa329</a><br>HTTPS &#x3D; HTTP + SSL</p>
+<h4 id="13、MYSQL5-7中的安全特性"><a href="#13、MYSQL5-7中的安全特性" class="headerlink" title="13、MYSQL5.7中的安全特性"></a>13、MYSQL5.7中的安全特性</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/bamuta/article/details/52213660">https://blog.csdn.net/bamuta/article/details/52213660</a><br><a target="_blank" rel="noopener" href="http://www.imooc.com/article/47820">http://www.imooc.com/article/47820</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_33805992/article/details/86132485">https://blog.csdn.net/weixin_33805992&#x2F;article&#x2F;details&#x2F;86132485</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zhoujinyi/p/5627494.html">https://www.cnblogs.com/zhoujinyi/p/5627494.html</a></p>
+<p>5.7版本的用户表mysql.user要求plugin字段非空，且默认值是mysql_native_password认证插件，并且不再支持mysql_old_password认证插件。5.7用户长度最大为32字节，之前最大长度为16字节，并且CREATE USER 和 DROP USER 命令里实现了<code> IF [NOT] EXISTS</code> 条件判断。5.7之后用户通过grant创建用户报warning</p>
+<h4 id="14、MYSQL加密方式"><a href="#14、MYSQL加密方式" class="headerlink" title="14、MYSQL加密方式"></a>14、MYSQL加密方式</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/ichunqiu/p/7810914.html">https://www.cnblogs.com/ichunqiu/p/7810914.html</a><br>MYSQL数据库的认证密码有两种方式，MYSQL 4.1版本之前是MYSQL323加密，MYSQL 4.1和之后的版本都是MYSQLSHA1加密，MYSQL数据库中自带Old_Password（str）和Password（str）函数,它们均可以在MYSQL数据库里进行查询，前者是MYSQL323加密，后者是MYSQLSHA1方式加密。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">show create user dxy@localhost;</span><br><span class="line">+----------------------------------------------------------------------------------+</span><br><span class="line">| CREATE USER &#x27;dxy&#x27;@&#x27;localhost&#x27; IDENTIFIED WITH &#x27;mysql_native_password&#x27; AS &#x27;*6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9&#x27; REQUIRE NONE PASSWORD EXPIRE DEFAULT ACCOUNT UNLOCK |</span><br><span class="line">+----------------------------------------------------------------------------------+</span><br></pre></td></tr></table></figure>
+<h4 id="15、localStorage-sesseionStorage"><a href="#15、localStorage-sesseionStorage" class="headerlink" title="15、localStorage,sesseionStorage"></a>15、localStorage,sesseionStorage</h4><p><a target="_blank" rel="noopener" href="https://jerryzou.com/posts/cookie-and-web-storage/">https://jerryzou.com/posts/cookie-and-web-storage/</a><br>sessionStorage和localStorage不会把数据发给服务器，仅在本地保存</p>
+<ul>
+<li>cookie只在设置的cookie过期时间之前一直有效，即使窗口或浏览器关闭</li>
+<li>sessionStorage：仅在当前浏览器窗口关闭前有效</li>
+<li>localStorage 始终有效，长期保存</li>
+</ul>
+<p>1、cookie<br>本身用于客户端和服务端通信，但是它有本地存储的功能，于是就被“借用”，document.cookie &#x3D; …获取和修改即可，cookie用于存储的缺点<br>存储量太小，只有4kb<br>所有http请求都带着，会影响获取资源的效率<br>api简单，需要封装才能用document.cookie<br>2、localStorage,sesseionStorage<br>html5专门为存储而设计，最大容量5M，api简单易用，lcoalStorage.setItem(key, value);localStorage.getItem(key);，ios safari隐藏模式下:localStorage.getItem会报错，建议统一使用try-catch封装<br>3、sessionStorage用于本地存储一个会话（session）中的数据，这些数据只有在同一个会话中的页面才能访问并且当会话结束后数据也随之销毁。因此sessionStorage不是一种持久化的本地存储，仅仅是会话级别的存储。而localStorage用于持久化的本地存储，除非主动删除数据，否则数据是永远不会过期的。</p>
+<h4 id="16、HQL注入"><a href="#16、HQL注入" class="headerlink" title="16、HQL注入"></a>16、HQL注入</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/-qing-/p/11650774.html">Hibernate HQL注入与防御(ctf实例)</a></p>
+<h4 id="17、order-by-注入"><a href="#17、order-by-注入" class="headerlink" title="17、order by 注入"></a>17、order by 注入</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/icez/p/Mysql-Order-By-Injection-Summary.html">https://www.cnblogs.com/icez/p/Mysql-Order-By-Injection-Summary.html</a></p>
+<h4 id="18、-limit-注入"><a href="#18、-limit-注入" class="headerlink" title="18、 limit 注入"></a>18、 limit 注入</h4><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/6c1420a7a7d9">https://www.jianshu.com/p/6c1420a7a7d9</a><br>不存在 order by 关键字:这种情况下的 limit 后面可以使用union进行联合查询注入<br>存在 order by 关键字会报错：limit 关键字后面还可跟PROCEDURE和 INTO两个关键字，但是 INTO 后面写入文件需要知道绝对路径以及写入shell的权限，因此利用比较难，因此这里以PROCEDURE为例进行注入<br>mysql时间盲注一般都怎么注?</p>
+<p>最简单的就是sleep了，用if(1&#x3D;1,sleep(5),0)</p>
+<p>benchmark函数</p>
+<p>heavy query 笛卡尔积 —-&gt;具体的方式就是将简单的表查询不断的叠加，使之以指数倍运算量的速度增长，不断增加系统执行 sql 语句的负荷，直到产生攻击者想要的时间延迟</p>
+<p>get_lock GET_LOCK有两个参数，一个是key,表示要加锁的字段，另一个是加锁失败后的等待时间(s)，一个客户端对某个字段加锁以后另一个客户端再想对这个字段加锁就会失败，然后就会等待设定好的时间</p>
+<h4 id="19、PHP文件包含–session"><a href="#19、PHP文件包含–session" class="headerlink" title="19、PHP文件包含–session"></a>19、PHP文件包含–session</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/Oran9e/p/8082962.html">https://www.cnblogs.com/Oran9e/p/8082962.html</a><br>利用条件：session文件路径已知，且其中内容部分可控。<br>文件包含：伪协议，session，包含日志，包含environ，包含fd，包含临时文件，包含上传文件</p>
+<h4 id="20、IIS短文件名漏洞"><a href="#20、IIS短文件名漏洞" class="headerlink" title="20、IIS短文件名漏洞"></a>20、IIS短文件名漏洞</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/20180ss916/p/9602568.html">IIS短文件名漏洞</a><br><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/web/172561.html">https://www.freebuf.com/articles/web/172561.html</a></p>
+<h4 id="21、SSRF无回显"><a href="#21、SSRF无回显" class="headerlink" title="21、SSRF无回显"></a>21、SSRF无回显</h4><p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/6373#toc-2">https://xz.aliyun.com/t/6373#toc-2</a><br>Bool型</p>
+<h4 id="22、redis未授权getshell"><a href="#22、redis未授权getshell" class="headerlink" title="22、redis未授权getshell"></a>22、redis未授权getshell</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/csacs/article/details/86776708">ssrf打内网</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/KevinGeorge/p/7995462.html">redis未授权getshell</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zuoxiaolongzzz/p/8945413.html">https://www.cnblogs.com/zuoxiaolongzzz/p/8945413.html</a></p>
+<h4 id="23、phar-反序列化"><a href="#23、phar-反序列化" class="headerlink" title="23、phar+反序列化"></a>23、phar+反序列化</h4><p><a target="_blank" rel="noopener" href="https://st4ck.gitee.io/2019/07/20/php-fan-xu-lie-hua-lou-dong/">https://st4ck.gitee.io/2019/07/20/php-fan-xu-lie-hua-lou-dong/</a><br><a target="_blank" rel="noopener" href="https://st4ck.gitee.io/2020/01/06/python-fan-xu-lie-hua-lou-dong/">https://st4ck.gitee.io/2020/01/06/python-fan-xu-lie-hua-lou-dong/</a><br><a target="_blank" rel="noopener" href="https://st4ck.gitee.io/2020/01/04/phar-de-li-yong-zi-shi/">phar的利用姿https://st4ck.gitee.io/2020/01/04/phar-de-li-yong-zi-shi/)势</a><br>php反序列化：变量覆盖的问题吧，我们传入的字符串反序列化，导致控制参数或者任意代码执行<br>phar:在使用phar:&#x2F;&#x2F;协议读取文件时，文件会被解析成phar<br>解析过程中会触发php_var_unserialize()函数对meta-data的操作，造成反序列化。</p>
+<h4 id="23、http-only绕过方法"><a href="#23、http-only绕过方法" class="headerlink" title="23、http-only绕过方法"></a>23、http-only绕过方法</h4><p><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/web/129384.html">利用HTML5的CORS特性绕过httpOnly的限制实现XSS会话劫持</a></p>
+<h4 id="24、PHP5-5-PHP7-2-新特性"><a href="#24、PHP5-5-PHP7-2-新特性" class="headerlink" title="24、PHP5.5 ~ PHP7.2 新特性"></a>24、PHP5.5 ~ PHP7.2 新特性</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_16885135/article/details/79755713">PHP5.5 ~ PHP7.2 新特性整理</a><br>null合并运算符 +太空船操作符（组合比较符）+preg_replace () 的&#x2F;e修饰符+assert() 默认不在可以执行代码</p>
+<p>php7.2<br>允许重写抽象方法(Abstract method)，扩展了参数类型，允许分组命名空间的尾部逗号<br>php5-&gt;7<br>标量类型声明 有两种模式: 强制 (默认) 和 严格模式。 现在可以使用下列类型参数（无论用强制模式还是严格模式）： 字符串(string), 整数 (int), 浮点数 (float), 以及布尔值 (bool)<br>返回值类型声明<br>null合并运算符</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//Before PHP7:</span><br><span class="line">$id = isset($_GET[‘id’]) ? $_GET[‘id’] : null;</span><br><span class="line">//In PHP7:</span><br><span class="line">$id = $_GET[‘id’] ?? null;  //equivalent of writing old above syntax</span><br></pre></td></tr></table></figure>
+<p>CSPRNG（伪随机数产生器）<br>php7取消了preg_replace () 的&#x2F;e修饰符，<br>preg_replace_callback()<br>assert() 默认不在可以执行代码<br> 性能提升</p>
+<h4 id="25、OWASP-top10"><a href="#25、OWASP-top10" class="headerlink" title="25、OWASP-top10"></a>25、OWASP-top10</h4><p><a target="_blank" rel="noopener" href="http://blog.nsfocus.net/owasp-top10-2017/">http://blog.nsfocus.net/owasp-top10-2017/</a></p>
+<h4 id="26、GOpher协议"><a href="#26、GOpher协议" class="headerlink" title="26、GOpher协议"></a>26、GOpher协议</h4><p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/5844">https://xz.aliyun.com/t/5844</a></p>
+<h4 id="27、文件名解析漏洞"><a href="#27、文件名解析漏洞" class="headerlink" title="27、文件名解析漏洞"></a>27、文件名解析漏洞</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zlgxzswjy/p/6561229.html">https://www.cnblogs.com/zlgxzswjy/p/6561229.html</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/224ac688d135">https://www.jianshu.com/p/224ac688d135</a></p>
+<h4 id="28、java安全"><a href="#28、java安全" class="headerlink" title="28、java安全"></a>28、java安全</h4><p>Java家族安全</p>
+<p> 在Java中的反射机制是指在运行状态中，对于任意一个类都能够知道这个类所有的属性和方法；并且对于任意一个对象，都能够调用它的任意一个方法；这种动态获取信息以及动态调用对象方法的功能成为Java语言的反射机制。 </p>
+<p><a target="_blank" rel="noopener" href="https://javasec.org/">https://javasec.org/</a><br>著名java发序列化漏洞 Apache的common Collection组件里的调用链的原理和利用思路(这个文章特别多) 后续的很多软件的漏洞都是因为使用了这个apache的组件导致的。我写了一个关于我的理解(<a target="_blank" rel="noopener" href="https://tiaotiaolong.net/2019/07/19/Apache-Common%E7%BB%84%E4%BB%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%9F%E7%90%86/)%E5%90%8C%E6%97%B6%E4%B9%9F%E6%94%B6%E5%BD%95%E5%88%B0%E6%88%91%E8%87%AA%E5%B7%B1%E7%9A%84git%E9%A1%B9%E7%9B%AE[tiaoVulenv](https://github.com/tiaotiaolong/tiaoVulenv)%E9%87%8C%E3%80%82">https://tiaotiaolong.net/2019/07/19/Apache-Common组件反序列化原理/)同时也收录到我自己的git项目[tiaoVulenv](https://github.com/tiaotiaolong/tiaoVulenv)里。</a></p>
+<p>关于java反序列化一般都是怎么修复的，修复思路是什么？黑名单？</p>
+<p>fastjson 反序列化的问题 关于fastjson我写了一个连载，在博客里，同时也在我自己的git项目tiaoVulenv里。<br><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/5680">https://xz.aliyun.com/t/5680</a><br>shiro 认证模块反序列化漏洞 大致原理以及利用方式。<br>读取cookie -&gt; base64解码 -&gt; AES解密 -&gt; 反序列化<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/paperpen/p/11312671.html">https://www.cnblogs.com/paperpen/p/11312671.html</a><br><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av57241403/">https://www.bilibili.com/video/av57241403/</a><br>Spring 安全 原理 利用方法</p>
+<p>Struts2 安全 原理 利用方法（s-45上传模块异常处理）<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/qiantan/p/10695567.html">https://www.cnblogs.com/qiantan/p/10695567.html</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/xiao190128/article/details/61202955">045-https://blog.csdn.net/xiao190128/article/details/61202955</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/xiao190128/article/details/61202955">https://blog.csdn.net/xiao190128/article/details/61202955</a><br>JBoss 安全 原理 利用方法(未授权上传+反序列化)<br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/55ef524dd85d">https://www.jianshu.com/p/55ef524dd85d</a><br>Tomcat 安全 原理 利用方法（可通过 PUT 方式创建一个 JSP 文件，并可以执行任意代码。）<br><a target="_blank" rel="noopener" href="https://www.freebuf.com/vuls/148283.html">Tomcat 远程代码执行</a></p>
+<p>WebLogic安全 原理 利用方法<br><a target="_blank" rel="noopener" href="https://www.freebuf.com/column/203816.html">https://www.freebuf.com/column/203816.html</a><br>由WebLogic Server WLS组件远程命令执行漏洞通过构造构造SOAP（XML）格式的请求，在解析的过程中导致XMLDecoder反序列化漏洞。</p>
+<p>jenkins 安全问题</p>
+<p>JVM学习 可以参考深入理解Java虚拟机。</p>
+<h4 id="29、后渗透"><a href="#29、后渗透" class="headerlink" title="29、后渗透"></a>29、后渗透</h4><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/21090f74edb3">https://www.jianshu.com/p/21090f74edb3</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/aa1e23ccda92">https://www.jianshu.com/p/aa1e23ccda92</a></p>
+<h4 id="30、FastJson反序列化"><a href="#30、FastJson反序列化" class="headerlink" title="30、FastJson反序列化"></a>30、FastJson反序列化</h4><p>fastjson 反序列化的问题 关于fastjson我写了一个连载，在博客里，同时也在我自己的git项目tiaoVulenv里。<br><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/5680">https://xz.aliyun.com/t/5680</a></p>
+<h4 id="31、DNSlog"><a href="#31、DNSlog" class="headerlink" title="31、DNSlog"></a>31、DNSlog</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/sstfy/p/10351807.html">https://www.cnblogs.com/sstfy/p/10351807.html</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/afanti/p/8047530.html">https://www.cnblogs.com/afanti/p/8047530.html</a></p>
+<h4 id="32、iptables"><a href="#32、iptables" class="headerlink" title="32、iptables"></a>32、iptables</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_37998647/article/details/78895754">https://blog.csdn.net/weixin_37998647&#x2F;article&#x2F;details&#x2F;78895754</a></p>
+<h4 id="33、JavaScript-原型链污染"><a href="#33、JavaScript-原型链污染" class="headerlink" title="33、JavaScript 原型链污染"></a>33、JavaScript 原型链污染</h4><p><a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/176884">https://www.anquanke.com/post/id/176884</a><br>在javascript中,每个对象的都有一个指向他的原型(prototype)的内部链接，这个原型对象又有它自己的原型，直到null为止</p>
+<h4 id="34、websocket"><a href="#34、websocket" class="headerlink" title="34、websocket"></a>34、websocket</h4><p>它的最大特点就是，服务器可以主动向客户端推送信息，客户端也可以主动向服务器发送信息，是真正的双向平等对话，属于服务器推送技术的一种。</p>
+<h4 id="35、一些cms漏洞分析"><a href="#35、一些cms漏洞分析" class="headerlink" title="35、一些cms漏洞分析"></a>35、一些cms漏洞分析</h4><p>discuz任意代码执行<br><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1511932">https://cloud.tencent.com/developer/article/1511932</a></p>
+<p>thinkphp任意代码执行<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_40884727/article/details/101452478">https://blog.csdn.net/qq_40884727&#x2F;article&#x2F;details&#x2F;101452478</a></p>
+<h4 id="36、免杀"><a href="#36、免杀" class="headerlink" title="36、免杀"></a>36、免杀</h4><p>混淆<br>Powershell天然免杀，我们可以直接用Powershell命令去加载相应的脚本，下载后执行。这种方法是在内存中直接加载，能够绕过杀软的检测<br>第一步，上传Procdump到服务器，Procdump是一个Windows Debug工具，而且是微软爸爸官方提供的，所以无论如何杀软都不会把这货列进黑名单的</p>
+<p><a target="_blank" rel="noopener" href="https://www.wtfsec.org/mimikatz-mian-sha/">https://www.wtfsec.org/mimikatz-mian-sha/</a></p>
+<p>利用抽空ProcessImage就起了一个进程（正常软件），然后把里面的Image抽掉然后映射你的软件进去</p>
+<h4 id="37、sql注入防御"><a href="#37、sql注入防御" class="headerlink" title="37、sql注入防御"></a>37、sql注入防御</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/nzjdsds/article/details/77829158">https://blog.csdn.net/nzjdsds/article/details/77829158</a></p>
+<h4 id="38、一次有趣的绕过"><a href="#38、一次有趣的绕过" class="headerlink" title="38、一次有趣的绕过"></a>38、一次有趣的绕过</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/xishaonian/p/7693136.html">https://www.cnblogs.com/xishaonian/p/7693136.html</a></p>
+<h4 id="39、linux下passwd和shadow区别"><a href="#39、linux下passwd和shadow区别" class="headerlink" title="39、linux下passwd和shadow区别"></a>39、linux下passwd和shadow区别</h4><p>shadow是root可读<br>passwd匿名都可读</p>
+<h3 id="二、python"><a href="#二、python" class="headerlink" title="二、python"></a>二、python</h3><h4 id="1、PYTHON三大神器：装饰器，迭代器，生成器"><a href="#1、PYTHON三大神器：装饰器，迭代器，生成器" class="headerlink" title="1、PYTHON三大神器：装饰器，迭代器，生成器"></a>1、PYTHON三大神器：装饰器，迭代器，生成器</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/leeeel/p/10769278.html">PYTHON三大神器：装饰器，迭代器，生成器</a></p>
+<h4 id="2、标准库线程安全的队列是哪一个？不安全的是哪一个？logging是线程安全的吗？"><a href="#2、标准库线程安全的队列是哪一个？不安全的是哪一个？logging是线程安全的吗？" class="headerlink" title="2、标准库线程安全的队列是哪一个？不安全的是哪一个？logging是线程安全的吗？"></a>2、标准库线程安全的队列是哪一个？不安全的是哪一个？logging是线程安全的吗？</h4><p>Python队列都是线程安全的,该问题主要考察你对队列的了解和线程安全的概念.<br>所谓线程安全：就是对于多线程同时操作是是安全的而不会发生写冲突,比如python的Queue<br>相反非线程安全：就是多线程同时操作时会发生写冲突,比如python的其他list,set,dict<br>logging是Python标准库里的日志模块(线程安全)</p>
+<h3 id="三、后渗透"><a href="#三、后渗透" class="headerlink" title="三、后渗透"></a>三、后渗透</h3><h4 id="1、mysql提权"><a href="#1、mysql提权" class="headerlink" title="1、mysql提权"></a>1、mysql提权</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/he_and/article/details/81434865">https://blog.csdn.net/he_and&#x2F;article&#x2F;details&#x2F;81434865</a><br>mof提权:在windows平台下，c:&#x2F;windows&#x2F;system32&#x2F;wbem&#x2F;mof&#x2F;nullevt.mof这个文件会每间隔一段时间（很短暂）就会以system权限执行一次，所以，只要我们将我们先要做的事通过代码存储到这个mof文件中，就可以实现权限提升。<br>udf提权:UDF提权是利用MYSQL的自定义函数功能，将MYSQL账号转化为系统system权限<br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/d01167862c42">https://www.jianshu.com/p/d01167862c42</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/R4v3n/articles/8722657.html">https://www.cnblogs.com/R4v3n/articles/8722657.html</a><br>mysql写木马<br>mysql反弹shell提权<br>phpmyadmin提权</p>
+<h3 id="四、其他"><a href="#四、其他" class="headerlink" title="四、其他"></a>四、其他</h3><h4 id="数据库设计的三大范式"><a href="#数据库设计的三大范式" class="headerlink" title="数据库设计的三大范式"></a>数据库设计的三大范式</h4><p>1、<a target="_blank" rel="noopener" href="https://blog.csdn.net/xy707707/article/details/80509123">数据库设计的三大范式</a></p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a target="_blank" rel="noopener" href="https://attacker.cc/index.php/archives/24/">https://attacker.cc/index.php/archives/24/</a></p>
+
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>

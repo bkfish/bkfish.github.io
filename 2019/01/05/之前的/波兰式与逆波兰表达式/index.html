@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#d8f3ff">
+<title>波兰式与逆波兰表达式</title>
+
+  <style>
+    :root { --wallpaper: url("/images/wallpaper.jpg"); }
+  </style>
+
+<link rel="stylesheet" href="/css/main.css">
+<script defer src="/js/main.js"></script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body class="theme-mac js is-article-page has-wallpaper">
+  <div class="menu-bar">
+  <div class="menu-left">
+    <div class="menu-apple" id="menu-apple">
+      <button class="menu-apple-btn" id="menu-apple-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Apple">
+        <svg class="menu-apple-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+          <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+        </svg>
+      </button>
+      <div class="menu-dropdown" id="menu-apple-dropdown" role="menu">
+        <button class="menu-dropdown-item" type="button" data-open="about">关于本机</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">系统设置...</button>
+        <button class="menu-dropdown-item" type="button">App Store...</button>
+        <div class="menu-divider"></div>
+        <button class="menu-dropdown-item" type="button">关机...</button>
+      </div>
+    </div>
+    <span class="menu-item brand">Finder</span>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Go</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="menu-right">
+    <span class="menu-item status icon" aria-label="WeChat" title="WeChat">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M8.5 6.5c-3.2 0-5.8 2.1-5.8 4.8 0 1.7 1 3.3 2.6 4.2l-.6 2.3 2.3-1.2c.5.1 1 .2 1.5.2 3.2 0 5.8-2.1 5.8-4.8S11.7 6.5 8.5 6.5z"/>
+        <path d="M15.5 11c3.1 0 5.7 2.1 5.7 4.7 0 1.5-.8 2.9-2.2 3.8l.5 2-2.1-1.1c-.4.1-.9.1-1.4.1-3.1 0-5.7-2.1-5.7-4.7S12.4 11 15.5 11z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="QQ" title="QQ">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 18c-1.4 0-2.6 1-2.6 2.3 0 1.1 1 2.1 2.6 2.1h10c1.6 0 2.6-1 2.6-2.1 0-1.3-1.2-2.3-2.6-2.3"/>
+        <path d="M6.5 12.5c-1.2 2.1-1.7 4.2-1.7 5.5M17.5 12.5c1.2 2.1 1.7 4.2 1.7 5.5"/>
+        <path d="M12 4.2c-3.6 0-6.5 3-6.5 6.7 0 3.7 2.9 6.7 6.5 6.7s6.5-3 6.5-6.7c0-3.7-2.9-6.7-6.5-6.7z"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Bluetooth" title="Bluetooth">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M7 6l10 10-5 4V4l5 4-10 10"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Wi-Fi" title="Wi-Fi">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M3.5 9.5a12 12 0 0 1 17 0"/>
+        <path d="M6.8 12.8a7.2 7.2 0 0 1 10.4 0"/>
+        <path d="M10.4 16.4a2.6 2.6 0 0 1 3.2 0"/>
+        <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item status icon" aria-label="Battery" title="Battery">
+      <svg class="menu-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <rect x="3" y="7.5" width="16" height="9" rx="2"/>
+        <rect x="19" y="10" width="2" height="4" rx="1"/>
+        <rect x="5.2" y="9.6" width="11.4" height="4.8" rx="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="menu-item" id="menu-time">--:--</span>
+  </div>
+</div>
+
+
+  <main class="desktop">
+    <div class="window wide reveal" style="--delay: 120ms;">
+      <div class="window-bar">
+        <div class="traffic">
+          <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+          <span class="traffic-dot yellow"></span>
+          <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+        </div>
+        <div class="window-title">波兰式与逆波兰表达式</div>
+        <div class="window-actions">
+          <a class="window-link" href="/">Desktop</a>
+          
+          
+            <a class="window-link" href="/2019/01/05/%E4%B9%8B%E5%89%8D%E7%9A%84/%E6%B3%A2%E5%85%B0%E5%BC%8F%E4%B8%8E%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/" target="_blank" rel="noopener">Share</a>
+          
+        </div>
+      </div>
+      <div class="window-body">
+        
+        <div class="article-head">
+          <h1 class="article-title">波兰式与逆波兰表达式</h1>
+          
+            <div class="article-meta">2019-01-05</div>
+          
+        </div>
+        <article class="markdown">
+          <h2 id="前缀、中缀、后缀表达式-逆波兰表达式-整体介绍"><a href="#前缀、中缀、后缀表达式-逆波兰表达式-整体介绍" class="headerlink" title="前缀、中缀、后缀表达式(逆波兰表达式)整体介绍"></a>前缀、中缀、后缀表达式(逆波兰表达式)整体介绍</h2><blockquote>
+<p>前缀表达式、中缀表达式、后缀表达式都是四则运算的表达方式,用以四则运算表达式求值  ,即数学表达式的求值</p>
+</blockquote>
+<h3 id="一、中缀表达式"><a href="#一、中缀表达式" class="headerlink" title="一、中缀表达式"></a>一、中缀表达式</h3><h3 id="1-1、简介"><a href="#1-1、简介" class="headerlink" title="1.1、简介"></a>1.1、简介</h3><blockquote>
+<p>中缀表达式就是常见的运算表达式，如(3+4)×5-6</p>
+</blockquote>
+<span id="more"></span>
+
+
+<h3 id="二、前缀表达式"><a href="#二、前缀表达式" class="headerlink" title="二、前缀表达式"></a>二、前缀表达式</h3><h4 id="2-1、简介"><a href="#2-1、简介" class="headerlink" title="2.1、简介"></a>2.1、简介</h4><blockquote>
+<p>前缀表达式又称波兰式，<strong>前缀表达式的运算符位于操作数之前</strong></p>
+</blockquote>
+<blockquote>
+<p>比如:<strong>- × + 3 4 5 6</strong></p>
+</blockquote>
+<h4 id="2-2、如何通过前缀表达式来求值"><a href="#2-2、如何通过前缀表达式来求值" class="headerlink" title="2.2、如何通过前缀表达式来求值"></a>2.2、如何通过前缀表达式来求值</h4><blockquote>
+<p>从右至左扫描表达式，遇到数字时，将数字压入堆栈，遇到运算符时，弹出栈顶的两个数，用运算符对它们做相应的计算（栈顶元素 op 次顶元素），并将结果入栈；重复上述过程直到表达式最左端，最后运算得出的值即为表达式的结果</p>
+</blockquote>
+<ul>
+<li><p>例如:<strong>- × + 3 4 5 6</strong></p>
+<blockquote>
+<ol>
+<li>从右至左扫描，将6、5、4、3压入堆栈</li>
+<li>遇到+运算符，因此弹出3和4（3为栈顶元素，4为次顶元素，注意与后缀表达式做比较），计算出3+4的值，得7，再将7入栈</li>
+<li>接下来是×运算符，因此弹出7和5，计算出7×5&#x3D;35，将35入栈</li>
+<li>最后是-运算符，计算出35-6的值，即29，由此得出最终结果</li>
+</ol>
+</blockquote>
+</li>
+</ul>
+<h4 id="2-3、将中缀表达式转换为前缀表达式"><a href="#2-3、将中缀表达式转换为前缀表达式" class="headerlink" title="2.3、将中缀表达式转换为前缀表达式"></a>2.3、将中缀表达式转换为前缀表达式</h4><blockquote>
+<p><strong>转换步骤如下</strong>:</p>
+</blockquote>
+<ol>
+<li>初始化两个栈:运算符栈s1，储存中间结果的栈s2</li>
+<li>从右至左扫描中缀表达式</li>
+<li>遇到操作数时，将其压入s2</li>
+<li>遇到运算符时，比较其与s1栈顶运算符的优先级<ol>
+<li>如果s1为空，或栈顶运算符为右括号“)”，则直接将此运算符入栈</li>
+<li>否则，若优先级比栈顶运算符的较高或相等，也将运算符压入s1</li>
+<li>否则，将s1栈顶的运算符弹出并压入到s2中，再次转到(4-1)与s1中新的栈顶运算符相比较</li>
+</ol>
+</li>
+<li>遇到括号时<ol>
+<li>如果是右括号“)”，则直接压入s1</li>
+<li>如果是左括号“(”，则依次弹出S1栈顶的运算符，并压入S2，直到遇到右括号为止，此时将这一对括号丢弃</li>
+</ol>
+</li>
+<li>重复步骤2至5，直到表达式的最左边</li>
+<li>将s1中剩余的运算符依次弹出并压入s2</li>
+<li>依次弹出s2中的元素并输出，结果即为中缀表达式对应的前缀表达式</li>
+</ol>
+<blockquote>
+<p><strong>例如:1+((2+3)×4)-5具体过程，如下表</strong></p>
+</blockquote>
+<p><img src="/1.png"></p>
+<blockquote>
+<p><strong>结果是:- + 1 × + 2 3 4 5</strong></p>
+</blockquote>
+<h3 id="三、后缀表达式-逆波兰表达式"><a href="#三、后缀表达式-逆波兰表达式" class="headerlink" title="三、后缀表达式(逆波兰表达式)"></a>三、后缀表达式(逆波兰表达式)</h3><h4 id="3-1、简介"><a href="#3-1、简介" class="headerlink" title="3.1、简介"></a>3.1、简介</h4><blockquote>
+<p>后缀表达式又称逆波兰表达式,与前缀表达式相似，只是运算符位于操作数之后</p>
+</blockquote>
+<blockquote>
+<p>比如:<strong>3 4 + 5 × 6 -</strong></p>
+</blockquote>
+<h4 id="3-2、后缀表达式计算机求值"><a href="#3-2、后缀表达式计算机求值" class="headerlink" title="3.2、后缀表达式计算机求值"></a>3.2、后缀表达式计算机求值</h4><blockquote>
+<p>与前缀表达式类似，只是顺序是从左至右：</p>
+</blockquote>
+<blockquote>
+<p>从左至右扫描表达式，遇到数字时，将数字压入堆栈，遇到运算符时，弹出栈顶的两个数，用运算符对它们做相应的计算（次顶元素 op 栈顶元素），并将结果入栈；重复上述过程直到表达式最右端，最后运算得出的值即为表达式的结果</p>
+</blockquote>
+<blockquote>
+<p><strong>例如后缀表达式“3 4 + 5 × 6 -”</strong>：</p>
+</blockquote>
+<ol>
+<li>从左至右扫描，将3和4压入堆栈；</li>
+<li>遇到+运算符，因此弹出4和3（4为栈顶元素，3为次顶元素，注意与前缀表达式做比较），计算出3+4的值，得7，再将7入栈；</li>
+<li>将5入栈；</li>
+<li>接下来是×运算符，因此弹出5和7，计算出7×5&#x3D;35，将35入栈；</li>
+<li>将6入栈；</li>
+<li>最后是-运算符，计算出35-6的值，即29，由此得出最终结果。</li>
+</ol>
+<h4 id="3-3、将中缀表达式转换为后缀表达式步骤"><a href="#3-3、将中缀表达式转换为后缀表达式步骤" class="headerlink" title="3.3、将中缀表达式转换为后缀表达式步骤"></a>3.3、将中缀表达式转换为后缀表达式步骤</h4><blockquote>
+<p>与转换为前缀表达式相似，步骤如下：</p>
+</blockquote>
+<ol>
+<li>初始化两个栈：运算符栈s1和储存中间结果的栈s2；</li>
+<li>从左至右扫描中缀表达式；</li>
+<li>遇到操作数时，将其压s2；</li>
+<li>遇到运算符时，比较其与s1栈顶运算符的优先级：<ol>
+<li>如果s1为空，或栈顶运算符为左括号“(”，则直接将此运算符入栈；</li>
+<li>否则，若优先级比栈顶运算符的高，也将运算符压入s1（<strong>注意转换为前缀表达式时是优先级较高或相同，而这里则不包括相同的情况</strong>）；</li>
+<li>否则，将s1栈顶的运算符弹出并压入到s2中，再次转到(4-1)与s1中新的栈顶运算符相比较；</li>
+</ol>
+</li>
+<li>遇到括号时：<ol>
+<li>如果是左括号“(”，则直接压入s1；</li>
+<li>如果是右括号“)”，则依次弹出s1栈顶的运算符，并压入s2，直到遇到左括号为止，此时将这一对括号丢弃；</li>
+</ol>
+</li>
+<li>重复步骤2至5，直到表达式的最右边；</li>
+<li>将s1中剩余的运算符依次弹出并压入s2；</li>
+<li>依次弹出s2中的元素并输出，<strong>结果的逆序即为中缀表达式对应的后缀表达式（转换为前缀表达式时不用逆序）</strong></li>
+</ol>
+<blockquote>
+<p><strong>例如，将中缀表达式“1+((2+3)×4)-5”转换为后缀表达式的过程如下</strong>：</p>
+</blockquote>
+<p><img src="/2.png"></p>
+<blockquote>
+<p><strong>因此结果为“1 2 3 + 4 × + 5 -”</strong></p>
+</blockquote>
+<h4 id="3-4、C语言实现中缀表达式变后缀表达式"><a href="#3-4、C语言实现中缀表达式变后缀表达式" class="headerlink" title="3.4、C语言实现中缀表达式变后缀表达式"></a>3.4、C语言实现中缀表达式变后缀表达式</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line"></span><br><span class="line">typedef struct Node</span><br><span class="line">&#123;</span><br><span class="line">    char ele;</span><br><span class="line">    struct Node * next;</span><br><span class="line">&#125;Node;</span><br><span class="line"></span><br><span class="line">typedef Node * Stack;</span><br><span class="line"></span><br><span class="line">Stack MakeStack(void)//新建栈并返回栈顶</span><br><span class="line">&#123;</span><br><span class="line">    Stack S = (Node *)malloc(sizeof(Node));</span><br><span class="line">    S-&gt;next = NULL;</span><br><span class="line">    return S;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void MakeNUll(Stack S)//置空栈</span><br><span class="line">&#123;</span><br><span class="line">    S-&gt;next = NULL;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void Pop(Stack S)//将栈顶弹出</span><br><span class="line">&#123;</span><br><span class="line">    Stack temp = S-&gt;next;</span><br><span class="line">    S-&gt;next = temp-&gt;next;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void Push(Stack S, char c)//将新节点压入栈</span><br><span class="line">&#123;</span><br><span class="line">    Stack temp = (Node *)malloc(sizeof(Node));</span><br><span class="line">    temp-&gt;ele = c;</span><br><span class="line">    temp-&gt;next = S-&gt;next;</span><br><span class="line">    S-&gt;next = temp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Stack FindHead(Stack S)//返回栈顶</span><br><span class="line">&#123;</span><br><span class="line">    Stack temp = S-&gt;next;</span><br><span class="line">    return temp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void PrintHead(Stack S)//打印栈顶元素</span><br><span class="line">&#123;</span><br><span class="line">    Stack temp = S-&gt;next;</span><br><span class="line">    printf(&quot;%c&quot;, temp-&gt;ele);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main(void)</span><br><span class="line">&#123;</span><br><span class="line">    Stack S = MakeStack();</span><br><span class="line">    int i = 0;</span><br><span class="line">    char str[200];</span><br><span class="line">    printf(&quot;Type something.\n&quot;);</span><br><span class="line">    gets(str);</span><br><span class="line"></span><br><span class="line">    while(str[i] != &#x27;\0&#x27;)</span><br><span class="line">    &#123;</span><br><span class="line">        if(str[i] == &#x27;+&#x27; || str[i] == &#x27;-&#x27;)//如果str[i]是加号或减号，则先弹出栈顶直到栈已空或栈顶元素为左括号，再将str[i]压入栈</span><br><span class="line">        &#123;</span><br><span class="line">            if(FindHead(S) == NULL)//若栈已空时，栈顶指针为空，找不到其元素，故须单独讨论</span><br><span class="line">            &#123;</span><br><span class="line">                Push(S, str[i]);</span><br><span class="line">            &#125;</span><br><span class="line">            else</span><br><span class="line">            &#123;</span><br><span class="line">                while(FindHead(S)-&gt;ele == &#x27;+&#x27; || FindHead(S)-&gt;ele == &#x27;-&#x27; || FindHead(S)-&gt;ele == &#x27;*&#x27; || FindHead(S)-&gt;ele == &#x27;/&#x27;)</span><br><span class="line">                &#123;</span><br><span class="line">                    PrintHead(S);</span><br><span class="line">                    Pop(S);</span><br><span class="line">                &#125;</span><br><span class="line">                Push(S, str[i]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        else if(str[i] == &#x27;*&#x27; || str[i] == &#x27;/&#x27;)//如果str[i]是乘号或除号，则只有栈顶也是乘除号时才需要弹出</span><br><span class="line">        &#123;</span><br><span class="line">            if(FindHead(S) == NULL)</span><br><span class="line">            &#123;</span><br><span class="line">                Push(S, str[i]);</span><br><span class="line">            &#125;</span><br><span class="line">            else</span><br><span class="line">            &#123;</span><br><span class="line">                while(FindHead(S)-&gt;ele == &#x27;*&#x27; || FindHead(S)-&gt;ele == &#x27;/&#x27;)</span><br><span class="line">                &#123;</span><br><span class="line">                    PrintHead(S);</span><br><span class="line">                    Pop(S);</span><br><span class="line">                &#125;</span><br><span class="line">                Push(S, str[i]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        else if(str[i] == &#x27;(&#x27;)//如果str[i]是左括号则直接压入栈</span><br><span class="line">        &#123;</span><br><span class="line">            Push(S, str[i]);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        else if(str[i] == &#x27;)&#x27;)//如果str[i]是右括号，则打印并弹出栈中第一个左括号前的所有操作符，最后将此左括号直接弹出</span><br><span class="line">        &#123;</span><br><span class="line">            while(FindHead(S)-&gt;ele != &#x27;(&#x27;)</span><br><span class="line">            &#123;</span><br><span class="line">                PrintHead(S);</span><br><span class="line">                Pop(S);</span><br><span class="line">            &#125;</span><br><span class="line">            Pop(S);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        else//如果str[i]不是操作符则直接打印</span><br><span class="line">        &#123;</span><br><span class="line">            printf(&quot;%c&quot;, str[i]);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        i++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    while(FindHead(S) != NULL)//遍历后如果栈不为空，则弹出所有操作符</span><br><span class="line">    &#123;</span><br><span class="line">        PrintHead(S);</span><br><span class="line">        Pop(S);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="3-5、C语言实现逆波兰计算器"><a href="#3-5、C语言实现逆波兰计算器" class="headerlink" title="3.5、C语言实现逆波兰计算器"></a>3.5、C语言实现逆波兰计算器</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;math.h&gt;</span><br><span class="line"></span><br><span class="line">#define STACK_INIT_SIZE 20</span><br><span class="line">#define STACKINCREMENT 10</span><br><span class="line">#define MAXBUFFER 10</span><br><span class="line"></span><br><span class="line">typedef double ElemType;</span><br><span class="line">typedef struct&#123;</span><br><span class="line">    ElemType *base;</span><br><span class="line">    ElemType *top;</span><br><span class="line">    int stackSize;</span><br><span class="line">&#125;sqStack;</span><br><span class="line"></span><br><span class="line">// 创建一个栈</span><br><span class="line">void InitStack(sqlStack *s)&#123;</span><br><span class="line">    s-&gt;base = (ElemType *)malloc(STACK_INIT_SIZE *sizeof(ElemType));</span><br><span class="line"></span><br><span class="line">    if(!s-&gt;base)&#123;</span><br><span class="line">        exit(0);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    s-&gt;top = s-&gt;base;</span><br><span class="line">    s-&gt;stackSize = STACK_INIT_SIZE;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 压栈</span><br><span class="line">void Push(sqStack *s, ElemType e)&#123;</span><br><span class="line"></span><br><span class="line">    if(s-&gt;top - s-&gt;base &gt;= s-&gt;stackSize)&#123;</span><br><span class="line">        s-&gt;base = (ElemType *)realloc(s-&gt;base, (s-&gt;stackSize + STACKINCREMENT)*sizeof(ElemType));</span><br><span class="line">        if(!s-&gt;base)&#123;</span><br><span class="line">            exit(0);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    *(s-&gt;top) = e;</span><br><span class="line">    s-&gt;top++;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void Pop(sqStack *s, ElemType *e)&#123;</span><br><span class="line">    if(s-&gt;top == s-&gt;base)&#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    *e = *--(s-&gt;top);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 计算栈的当前容量 </span><br><span class="line">int StackLen(sqStack s)&#123;</span><br><span class="line">    return (s.top - s.base);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">double main()&#123;</span><br><span class="line">    sqStack s;      </span><br><span class="line">    char c;</span><br><span class="line">    double d, e;</span><br><span class="line">    char str[MAXBUFFER];</span><br><span class="line"> </span><br><span class="line">    InitStacke(&amp;s);</span><br><span class="line"></span><br><span class="line">    printf(&quot;请按逆波兰表达式输入待计算数据，数据与运算符之间用空格隔开，以#号作为结束标志：\n&quot;);</span><br><span class="line">    scanf(&quot;%c&quot;, &amp;c);</span><br><span class="line"></span><br><span class="line">    while(C != &#x27;#&#x27;)&#123;</span><br><span class="line"></span><br><span class="line">        while(isdigit(c) || c==&#x27;.&#x27;)&#123; // 用于过滤数字</span><br><span class="line">            str[i++] = c;</span><br><span class="line">            str[i] = &#x27;\0&#x27;;</span><br><span class="line">            if(i&gt;=10)&#123;</span><br><span class="line">                printf(&quot;出错：输入的单个数据过大!\n&quot;);</span><br><span class="line">                return -1;</span><br><span class="line">            &#125;</span><br><span class="line">            scanf(&quot;%c&quot;, &amp;c);</span><br><span class="line">            if(c == &#x27; &#x27;)&#123;</span><br><span class="line">                d = atof(str);</span><br><span class="line">                Push(&amp;s, d);</span><br><span class="line">                i = 0;</span><br><span class="line">                break;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        switch(c)&#123;</span><br><span class="line">            case &#x27;+&#x27;:</span><br><span class="line">                Pop(&amp;s, &amp;e);</span><br><span class="line">                Pop(&amp;s, &amp;d);</span><br><span class="line">                Push(&amp;s, d+e);</span><br><span class="line">                break;</span><br><span class="line">            case &#x27;-&#x27;:</span><br><span class="line">                Pop(&amp;s, &amp;e);</span><br><span class="line">                Pop(&amp;s, &amp;d);</span><br><span class="line">                Push(&amp;s, d-e);</span><br><span class="line">                break;</span><br><span class="line">            case &#x27;*&#x27;:</span><br><span class="line">                Pop(&amp;s, &amp;e);</span><br><span class="line">                Pop(&amp;s, &amp;d);</span><br><span class="line">                Push(&amp;s, d*e);</span><br><span class="line">                break;</span><br><span class="line">            case &#x27;/&#x27;:</span><br><span class="line">                Pop(&amp;s, &amp;e);</span><br><span class="line">                Pop(&amp;s, &amp;d);</span><br><span class="line">                if(e != 0)&#123;</span><br><span class="line">                    Push(&amp;s, d/e);</span><br><span class="line">                &#125;else&#123;</span><br><span class="line">                    printf(&quot;\n出错：除数为零!\n&quot;);</span><br><span class="line">                    return -1;</span><br><span class="line">                &#125;</span><br><span class="line">                </span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line">        scanf(&quot;%c&quot;, &amp;c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    Pop(&amp;s, &amp;d);</span><br><span class="line">    printf(&quot;\n最终的计算结果为:%f\n&quot;, d);</span><br><span class="line"></span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 计算案例 </span><br><span class="line">// 1 2 - 4 5 + *   结果：9.000000</span><br><span class="line">// 5 - (6 + 7) * 8 + 9 / 4      5 6 7 + 8 * - 9 4 / +   结果：-96.750000</span><br></pre></td></tr></table></figure>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <section id="about" class="about-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">关于本机</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body about-body">
+      <div class="about-card">
+        <div class="about-brand">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.36 2.2c0 1.05-.43 2.06-1.15 2.8-.8.83-2.12 1.47-3.25 1.39-.13-1.11.34-2.2 1.1-2.95.75-.81 2.06-1.42 3.3-1.24z"/>
+              <path d="M19.2 8.3c-.97-1.23-2.32-1.95-3.59-1.95-1.69 0-2.4.81-3.58.81-1.21 0-2.12-.79-3.6-.79-1.43 0-2.95.87-3.92 2.36-1.37 2.1-1.13 6.05 1.08 9.42.8 1.21 1.86 2.57 3.23 2.56 1.19-.01 1.53-.76 3.2-.76 1.67 0 1.98.76 3.19.75 1.41-.01 2.55-1.51 3.33-2.72.58-.89.8-1.34 1.24-2.35-3.26-1.24-3.78-5.87-.58-7.33z"/>
+            </svg>
+          </div>
+          <div class="about-title">MacBook Pro</div>
+          <div class="about-sub">16-inch, 2099</div>
+        </div>
+        <div class="about-specs">
+          <div class="about-row">
+            <span class="about-key">内存</span>
+            <span class="about-val">256 GB 2667 MHz DDR4</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">处理器</span>
+            <span class="about-val">Apple M9 Pro</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">显卡</span>
+            <span class="about-val">Neural X 32-Core</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">序列号</span>
+            <span class="about-val">MACF-2099-A1B2C3</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">系统</span>
+            <span class="about-val">macOS 15.2</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">主题作者</span>
+            <span class="about-val">bkfish</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+
+<section id="music" class="tool-window music-window">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+      <div class="window-title">Music</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+        
+      </div>
+    </div>
+    <div class="window-body tool-body music-body">
+      
+        <div class="empty-state">
+          <div class="empty-title">未发现本地音乐</div>
+          <div class="empty-sub">把 MP3 放在 `source/music/`（或在主题配置里设置 `desktop.music_dir`）</div>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+  <section id="search" class="search-window" data-index-url="/mac-search.json">
+  <a class="folder-backdrop" href="#"></a>
+  <div class="window wide reveal" style="--delay: 140ms;">
+    <div class="window-bar">
+      <div class="traffic">
+        <a class="traffic-dot red traffic-button" href="/" aria-label="Close"></a>
+        <span class="traffic-dot yellow"></span>
+        <button class="traffic-dot green traffic-button traffic-max" type="button" aria-label="Maximize"></button>
+      </div>
+    <div class="window-title">聚焦搜索</div>
+      <div class="window-actions">
+        <a class="window-link" href="#">Close</a>
+      </div>
+    </div>
+    <div class="window-body search-body">
+      <div class="search-input-wrap">
+        <input id="search-input" class="search-input" type="search" placeholder="搜索文章..." autocomplete="off">
+        <span class="search-hint">⌘K</span>
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+      <div id="search-empty" class="search-empty">未找到结果</div>
+    </div>
+  </div>
+</section>
+
+  <div class="dock">
+  <div class="dock-inner">
+    <span class="dock-item app finder">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6.5c0-1.4 1.1-2.5 2.5-2.5h11c1.4 0 2.5 1.1 2.5 2.5v11c0 1.4-1.1 2.5-2.5 2.5h-11C5.1 20 4 18.9 4 17.5z"/>
+          <path d="M12 4v16"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1" fill="currentColor"/>
+          <path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Finder</span>
+    </span>
+    <a class="dock-item app spotlight" href="#search">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"/>
+          <path d="M15.5 15.5L20 20"/>
+        </svg>
+      </span>
+      <span class="dock-label">聚焦搜索</span>
+    </a>
+    <a class="dock-item app notes" href="#notes">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="4.5" width="14" height="15" rx="2"/>
+          <path d="M8 8h8M8 11.5h8M8 15h5"/>
+        </svg>
+      </span>
+      <span class="dock-label">文章清单</span>
+    </a>
+    <span class="dock-item app safari">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 7l2.8 5.2-5.2 2.8z"/>
+        </svg>
+      </span>
+      <span class="dock-label">Safari</span>
+    </span>
+    <a class="dock-item app music" href="#music">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18a2.5 2.5 0 1 0 0-5"/>
+          <path d="M9 13V6l9-2v7"/>
+          <path d="M16 16a2.5 2.5 0 1 0 0-5"/>
+        </svg>
+      </span>
+      <span class="dock-label">Music</span>
+    </a>
+    <span class="dock-item app trash">
+      <span class="dock-icon">
+        <svg class="dock-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h12l-1 11H7z"/>
+          <path d="M9 8V5h6v3M5 8h14"/>
+        </svg>
+      </span>
+      <span class="dock-label">Trash</span>
+    </span>
+    <span class="dock-divider"></span>
+    
+    
+      
+      <a class="dock-item tool" href="#tool-flag">
+        <span class="dock-icon">
+          <span class="tool-letter">F</span>
+        </span>
+        <span class="dock-label">flag</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-bomb">
+        <span class="dock-icon">
+          <span class="tool-letter">B</span>
+        </span>
+        <span class="dock-label">bomb</span>
+      </a>
+    
+      
+      <a class="dock-item tool" href="#tool-sudoku">
+        <span class="dock-icon">
+          <span class="tool-letter">S</span>
+        </span>
+        <span class="dock-label">sudoku</span>
+      </a>
+    
+  </div>
+</div>
+
+
+  <!-- embed resize script removed: fixed-height iframe -->
+</body>
+</html>
